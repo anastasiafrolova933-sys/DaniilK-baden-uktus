@@ -5,36 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Баден-Баден — Термы Уктус</title>
 <style>
-:root {
-  --dark:#181e14; --dark2:#0e130b; --gold:#c9a96e; --gold2:#e8c97a;
-  --green:#8aad6a; --cream:#faf6ef; --text-d:#dfd3b0; --text-l:#2c2816; --dim:#7a9060;
-}
+:root{--dark:#181e14;--dark2:#0e130b;--gold:#c9a96e;--gold2:#e8c97a;--green:#8aad6a;--cream:#faf6ef;--text-d:#dfd3b0;--text-l:#2c2816;--dim:#7a9060;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--cream);color:var(--text-l);}
 
-header{
-  position:fixed;top:0;width:100%;z-index:200;
-  background:var(--dark2);border-bottom:2px solid var(--gold);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 20px;gap:12px;
-}
+/* HEADER */
+header{position:fixed;top:0;width:100%;z-index:200;background:var(--dark2);border-bottom:2px solid var(--gold);display:flex;align-items:center;justify-content:space-between;padding:8px 20px;gap:12px;}
 .logo{color:var(--gold);font-size:20px;font-weight:700;letter-spacing:2px;font-variant:small-caps;line-height:1.1;white-space:nowrap;}
 .logo span{color:var(--text-d);font-size:10px;display:block;letter-spacing:2px;font-weight:400;opacity:.7;}
 nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
 nav a{color:var(--text-d);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:4px;transition:all .2s;white-space:nowrap;}
 nav a:hover{background:var(--gold);color:var(--dark);}
 
-.hero{
-  margin-top:58px;
-  background:linear-gradient(135deg,var(--dark2) 0%,#1d2e18 100%);
-  padding:70px 20px 60px;text-align:center;border-bottom:3px solid var(--gold);
-}
+/* HERO */
+.hero{margin-top:58px;background:linear-gradient(135deg,var(--dark2) 0%,#1d2e18 100%);padding:70px 20px 60px;text-align:center;border-bottom:3px solid var(--gold);}
 .hero h1{font-size:48px;color:var(--gold);font-variant:small-caps;letter-spacing:5px;margin-bottom:8px;}
 .hero p{font-size:14px;color:var(--text-d);letter-spacing:2px;opacity:.75;}
 .hero-badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
-.badge{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.3);color:var(--gold);padding:8px 18px;border-radius:20px;font-size:12px;}
+.badge{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.3);color:var(--gold);padding:8px 18px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+.badge:hover{background:rgba(201,169,110,.25);}
 
+/* SECTIONS */
 .s-dark{background:var(--dark);padding:56px 20px;}
 .s-light{background:var(--cream);padding:56px 20px;}
 .s-cream{background:#f0ece2;padding:56px 20px;}
@@ -45,16 +37,37 @@ nav a:hover{background:var(--gold);color:var(--dark);}
 
 /* ТАРИФЫ */
 .tariff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px;}
-.t-card{background:var(--dark2);border:1px solid #2a3820;border-radius:12px;overflow:hidden;}
+.t-card{background:var(--dark2);border:1px solid #2a3820;border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default;}
+.t-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
 .t-head{background:#1a2817;padding:13px 18px;color:var(--gold);font-size:13px;font-weight:700;text-align:center;letter-spacing:2px;text-transform:uppercase;}
 .t-row{display:flex;justify-content:space-between;align-items:center;padding:9px 18px;border-bottom:1px solid #1c2416;font-size:13px;color:var(--text-d);}
 .t-row .pr{color:var(--gold);font-weight:700;}
 .t-note{padding:8px 18px 12px;font-size:11px;color:var(--dim);line-height:1.5;}
 .termy-spa{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:14px;margin-top:28px;}
-.tsp-card{background:white;border-radius:10px;padding:18px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08);border-top:3px solid var(--gold);}
+.tsp-card{background:white;border-radius:10px;padding:18px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08);border-top:3px solid var(--gold);transition:transform .2s;cursor:pointer;}
+.tsp-card:hover{transform:translateY(-3px);}
 .tsp-lbl{font-size:12px;color:#888;margin-bottom:6px;line-height:1.5;}
 .tsp-amt{font-size:24px;font-weight:700;color:#8B6914;}
 .tsp-sub{font-size:11px;color:#aaa;margin-top:3px;}
+
+/* КАЛЬКУЛЯТОР */
+.calc-wrap{background:var(--dark2);border-radius:16px;padding:30px;border:2px solid var(--gold);max-width:700px;margin:0 auto;}
+.calc-title{color:var(--gold);font-size:18px;font-weight:700;margin-bottom:22px;text-align:center;font-variant:small-caps;letter-spacing:2px;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:560px){.calc-grid{grid-template-columns:1fr;}}
+.calc-group label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;}
+.calc-group select,.calc-group input[type=number]{width:100%;background:#1a2817;border:1px solid #2a3820;border-radius:8px;padding:9px 12px;color:var(--text-d);font-size:13px;outline:none;transition:border-color .2s;}
+.calc-group select:focus,.calc-group input:focus{border-color:var(--gold);}
+.calc-check{display:flex;flex-direction:column;gap:8px;}
+.calc-check label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-d);cursor:pointer;}
+.calc-check input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);}
+.calc-btn{width:100%;background:var(--gold);color:var(--dark);border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:18px;transition:background .2s;letter-spacing:.5px;}
+.calc-btn:hover{background:var(--gold2);}
+.calc-result{display:none;margin-top:20px;background:#212d19;border-radius:12px;padding:20px;border:1px solid #2a3820;}
+.calc-result.show{display:block;}
+.res-main{font-size:32px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:8px;}
+.res-desc{font-size:13px;color:var(--text-d);text-align:center;line-height:1.7;}
+.res-promo{background:#1a2817;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--green);border-left:3px solid var(--green);}
 
 /* MAP */
 .map-frame{border-radius:12px;overflow:hidden;border:2px solid #2a3820;height:560px;}
@@ -64,17 +77,18 @@ nav a:hover{background:var(--gold);color:var(--dark);}
 .tab-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
 .tb{padding:7px 14px;border-radius:20px;border:1px solid #ddd;background:white;cursor:pointer;font-size:12px;transition:all .2s;color:var(--text-l);}
 .tb.on{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600;}
-.tc{display:none;} .tc.on{display:block;}
+.tc{display:none;}.tc.on{display:block;}
 .m-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:8px;}
-.m-item{background:white;border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.08);gap:8px;}
+.m-item{background:white;border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.08);gap:8px;transition:transform .15s,box-shadow .15s;}
+.m-item:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12);}
 .m-name{font-size:13px;flex:1;line-height:1.4;}
 .m-wt{font-size:11px;color:#aaa;margin-top:2px;}
 .m-pr{color:#8B6914;font-weight:700;font-size:15px;white-space:nowrap;}
 .new{background:#e74c3c;color:white;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700;vertical-align:middle;margin-left:3px;}
 .sub-head{font-size:14px;font-weight:600;color:#8B6914;margin:18px 0 10px;}
-
 .bfast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(208px,1fr));gap:14px;}
-.bfast-card{background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.09);text-align:center;}
+.bfast-card{background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.09);text-align:center;transition:transform .2s;}
+.bfast-card:hover{transform:translateY(-3px);}
 .bfast-card h4{font-size:16px;color:#8B6914;margin-bottom:4px;}
 .bfast-wt{font-size:11px;color:#aaa;margin-bottom:10px;}
 .bfast-card p{font-size:12px;line-height:1.7;color:#555;}
@@ -87,25 +101,38 @@ nav a:hover{background:var(--gold);color:var(--dark);}
 
 /* SPA */
 .spa-block{background:#1a2817;border-radius:12px;overflow:hidden;border:1px solid #2a3820;margin-bottom:18px;}
-.spa-head{background:#212d19;padding:13px 18px;color:var(--gold);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.spa-head{background:#212d19;padding:13px 18px;color:var(--gold);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;}
+.spa-head:hover{background:#263520;}
+.spa-arrow{transition:transform .3s;font-size:16px;}
+.spa-body{display:none;}
+.spa-body.open{display:block;}
 .spa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:1px;background:#1c2416;}
-.sp-item{background:#1a2817;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.sp-item{background:#1a2817;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:background .15s;}
+.sp-item:hover{background:#1e2e1a;}
 .sp-name{font-size:13px;color:var(--text-d);flex:1;line-height:1.4;}
 .sp-pr{color:var(--gold);font-weight:600;font-size:13px;white-space:nowrap;text-align:right;line-height:1.5;}
 .spa-note{padding:10px 18px;font-size:11px;color:var(--dim);line-height:1.5;}
 
 /* АКЦИИ */
-.ak-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px;}
-.ak-card{background:white;border-radius:14px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.09);border-top:4px solid var(--gold);position:relative;overflow:hidden;}
-.ak-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(201,169,110,.07);}
-.ak-card h3{font-size:18px;color:var(--dark);margin-bottom:7px;}
-.ak-card p{font-size:13px;color:#777;line-height:1.6;margin-bottom:12px;}
-.ak-pr{font-size:26px;font-weight:700;color:#8B6914;}
-.ak-sub{font-size:13px;color:#aaa;font-weight:400;}
+.ak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.ak-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.ak-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.14);}
+.ak-top{padding:20px 20px 14px;border-top:4px solid var(--gold);}
+.ak-top h3{font-size:17px;color:var(--dark);margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+.ak-badge{font-size:10px;background:#f0fae8;color:#4a7a2a;border:1px solid #8aad6a;border-radius:10px;padding:2px 8px;font-weight:600;white-space:nowrap;}
+.ak-badge.red{background:#fff0f0;color:#c0392b;border-color:#e74c3c;}
+.ak-short{font-size:13px;color:#666;line-height:1.5;padding:0 20px 14px;}
+.ak-price{padding:12px 20px;background:#faf6ef;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee;}
+.ak-price .amt{font-size:22px;font-weight:700;color:#8B6914;}
+.ak-price .when{font-size:11px;color:#aaa;line-height:1.4;}
+.ak-expand{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.ak-expand.open{max-height:400px;}
+.ak-detail{padding:14px 20px 18px;background:#f5f5f5;font-size:13px;color:#444;line-height:1.7;border-top:1px solid #eee;}
 
 /* ПРОЖИВАНИЕ */
 .pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px;}
-.pr-card{background:var(--dark2);border:1px solid #2a3820;border-radius:14px;padding:28px;text-align:center;}
+.pr-card{background:var(--dark2);border:1px solid #2a3820;border-radius:14px;padding:28px;text-align:center;transition:transform .2s,box-shadow .2s;}
+.pr-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.4);}
 .pr-card .ic{font-size:44px;margin-bottom:14px;}
 .pr-card h3{color:var(--gold);font-size:20px;margin-bottom:10px;font-variant:small-caps;letter-spacing:2px;}
 .pr-card p{font-size:13px;color:var(--text-d);line-height:1.7;}
@@ -127,6 +154,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <nav>
     <a href="#karta">🗺 Карта</a>
     <a href="#tarify">🎟 Тарифы</a>
+    <a href="#calc">🧮 Калькулятор</a>
     <a href="#menu">🍽 Меню</a>
     <a href="#spa">💆 СПА</a>
     <a href="#aktsii">🎁 Акции</a>
@@ -138,10 +166,12 @@ footer a{color:var(--gold);text-decoration:none;}
   <h1>Баден-Баден</h1>
   <p>Термальный курорт на Уктусе · Екатеринбург</p>
   <div class="hero-badges">
-    <div class="badge">🌊 Термы и бассейны</div>
-    <div class="badge">💆 СПА и хаммам</div>
-    <div class="badge">🍕 Кафе и бар</div>
-    <div class="badge">🏠 Проживание</div>
+    <a class="badge" href="#karta">🗺 Схема комплекса</a>
+    <a class="badge" href="#tarify">🌊 Тарифы терм</a>
+    <a class="badge" href="#calc">🧮 Рассчитать стоимость</a>
+    <a class="badge" href="#aktsii">🎁 Акции и скидки</a>
+    <a class="badge" href="#spa">💆 СПА и массаж</a>
+    <a class="badge" href="#menu">🍕 Меню кафе</a>
   </div>
 </section>
 
@@ -188,9 +218,75 @@ footer a{color:var(--gold);text-decoration:none;}
     <div style="margin-top:32px;text-align:center;">
       <div style="font-size:16px;font-weight:600;color:var(--dark);margin-bottom:16px;">Термы + СПА <span style="font-size:13px;color:#888;font-weight:400">— вход без очереди</span></div>
       <div class="termy-spa">
-        <div class="tsp-card"><div class="tsp-lbl">1 час термы + 1 час СПА</div><div class="tsp-amt">4 900 р</div><div class="tsp-sub">120 мин · 1 чел.</div></div>
-        <div class="tsp-card"><div class="tsp-lbl">1,5 ч. термы + 1,5 ч. СПА</div><div class="tsp-amt">6 500 р</div><div class="tsp-sub">360 мин · 1 чел.</div></div>
-        <div class="tsp-card"><div class="tsp-lbl">2 часа термы + 2 часа СПА</div><div class="tsp-amt">8 000 р</div><div class="tsp-sub">480 мин · 1 чел.</div></div>
+        <div class="tsp-card"><div class="tsp-lbl">1 час термы + 1 час СПА<br><small>(скраб + массаж спины)</small></div><div class="tsp-amt">4 900 р</div><div class="tsp-sub">120 мин · 1 чел.</div></div>
+        <div class="tsp-card"><div class="tsp-lbl">1,5 ч. термы + 1,5 ч. СПА<br><small>(скраб + массаж + маска)</small></div><div class="tsp-amt">6 500 р</div><div class="tsp-sub">360 мин · 1 чел.</div></div>
+        <div class="tsp-card"><div class="tsp-lbl">2 часа термы + 2 часа СПА<br><small>(скраб + массаж тела + маска)</small></div><div class="tsp-amt">8 000 р</div><div class="tsp-sub">480 мин · 1 чел.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КАЛЬКУЛЯТОР -->
+<section class="s-dark" id="calc">
+  <div class="container">
+    <div class="sec-title">🧮 Калькулятор стоимости</div>
+    <div class="calc-wrap">
+      <div class="calc-title">Рассчитайте точную стоимость с учётом акций</div>
+      <div class="calc-grid">
+        <div class="calc-group">
+          <label>День недели</label>
+          <select id="c-day">
+            <option value="weekday">Понедельник – пятница</option>
+            <option value="wednesday">Среда</option>
+            <option value="saturday">Суббота</option>
+            <option value="sunday">Воскресенье</option>
+          </select>
+        </div>
+        <div class="calc-group">
+          <label>Время покупки</label>
+          <select id="c-time">
+            <option value="morning">9:00 – 12:00 (утро)</option>
+            <option value="day">12:00 – 16:00 (день)</option>
+            <option value="evening16">16:00 – 20:45 (вечер)</option>
+            <option value="late">После 20:45 (поздно)</option>
+          </select>
+        </div>
+        <div class="calc-group">
+          <label>Кол-во взрослых</label>
+          <input type="number" id="c-adults" value="2" min="0" max="20">
+        </div>
+        <div class="calc-group">
+          <label>Кол-во детей (4–12 лет)</label>
+          <input type="number" id="c-kids" value="0" min="0" max="10">
+        </div>
+        <div class="calc-group">
+          <label>Длительность</label>
+          <select id="c-hours">
+            <option value="2">2 часа</option>
+            <option value="3">3 часа</option>
+          </select>
+        </div>
+        <div class="calc-group">
+          <label>Категория взрослых</label>
+          <select id="c-cat">
+            <option value="general">Общая</option>
+            <option value="lgot">Льготная (пенсионер, инвалид, ветеран)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="display:block;font-size:11px;color:var(--dim);margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase;">Дополнительные условия</label>
+        <div class="calc-check">
+          <label><input type="checkbox" id="c-bday"> 🎂 День рождения (±2 дня) — скидка 10%</label>
+          <label><input type="checkbox" id="c-student"> 🎓 Студент очного отделения (по средам до 19:00) — скидка 20%</label>
+          <label><input type="checkbox" id="c-family"> 👨‍👩‍👧 Семья 3+ (льготная)</label>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">🧮 Рассчитать стоимость</button>
+      <div class="calc-result" id="calc-result">
+        <div class="res-main" id="res-total"></div>
+        <div class="res-desc" id="res-desc"></div>
+        <div class="res-promo" id="res-promo" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -211,40 +307,33 @@ footer a{color:var(--gold);text-decoration:none;}
       <button class="tb" onclick="tab(this,'zavt')">🌅 Завтраки</button>
       <button class="tb" onclick="tab(this,'kids')">👶 Детское</button>
     </div>
-
-    <div class="tc on" id="t-napit">
-      <div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30 / 120 мл</div></div><div class="m-pr">200 р</div></div>
-        <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
-        <div class="m-item"><div><div class="m-name">Чай фирменный Баден-Баден <span style="font-size:11px;color:#bbb">(с вареньем из сосновых шишек)</span></div><div class="m-wt">900 мл</div></div><div class="m-pr">400 р</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 р</div></div>
-        <div class="m-item"><div><div class="m-name">Чай классический (в ассортименте)</div><div class="m-wt">900 мл</div></div><div class="m-pr">370 р</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский (в чашке)</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 р</div></div>
-        <div class="m-item"><div><div class="m-name">Глинтвейн Б/А</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
-        <div class="m-item"><div><div class="m-name">Сбитень ежевичный</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
-        <div class="m-item"><div><div class="m-name">Бабл Ти Черника / Манго</div><div class="m-wt">300 мл</div></div><div class="m-pr">400 р</div></div>
-        <div class="m-item"><div><div class="m-name">Лимонад</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 р</div></div>
-        <div class="m-item"><div><div class="m-name">Мохито Б/А</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 р</div></div>
-        <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 р</div></div>
-        <div class="m-item"><div><div class="m-name">Газированная вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 р</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво светлое / тёмное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 р</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво нефильтрованное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 р</div></div>
-        <div class="m-item"><div><div class="m-name">Вино Аристов белое / красное</div><div class="m-wt">125 мл</div></div><div class="m-pr">450 р</div></div>
-      </div>
-    </div>
-
-    <div class="tc" id="t-zakus">
-      <div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Креветки в панировке с соусом Васаби</div><div class="m-wt">120 г</div></div><div class="m-pr">490 р</div></div>
-        <div class="m-item"><div><div class="m-name">Куриные крылышки</div><div class="m-wt">230 г</div></div><div class="m-pr">450 р</div></div>
-        <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 р</div></div>
-        <div class="m-item"><div><div class="m-name">Гренки чесночные</div><div class="m-wt">150 г</div></div><div class="m-pr">200 р</div></div>
-        <div class="m-item"><div><div class="m-name">Кольца кальмара с соусом Тар-тар<span class="new">NEW</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 р</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Болоньезе<span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 р</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Бекон Сыр<span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 р</div></div>
-      </div>
-    </div>
-
+    <div class="tc on" id="t-napit"><div class="m-grid">
+      <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30/120 мл</div></div><div class="m-pr">200 р</div></div>
+      <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
+      <div class="m-item"><div><div class="m-name">Чай фирменный Баден-Баден <span style="font-size:11px;color:#bbb">(сосновые шишки)</span></div><div class="m-wt">900 мл</div></div><div class="m-pr">400 р</div></div>
+      <div class="m-item"><div><div class="m-name">Чай авторский</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 р</div></div>
+      <div class="m-item"><div><div class="m-name">Чай классический (в ассортименте)</div><div class="m-wt">900 мл</div></div><div class="m-pr">370 р</div></div>
+      <div class="m-item"><div><div class="m-name">Чай авторский (в чашке)</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 р</div></div>
+      <div class="m-item"><div><div class="m-name">Глинтвейн Б/А</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
+      <div class="m-item"><div><div class="m-name">Сбитень ежевичный</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 р</div></div>
+      <div class="m-item"><div><div class="m-name">Бабл Ти Черника / Манго</div><div class="m-wt">300 мл</div></div><div class="m-pr">400 р</div></div>
+      <div class="m-item"><div><div class="m-name">Лимонад</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 р</div></div>
+      <div class="m-item"><div><div class="m-name">Мохито Б/А</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 р</div></div>
+      <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 р</div></div>
+      <div class="m-item"><div><div class="m-name">Газированная вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 р</div></div>
+      <div class="m-item"><div><div class="m-name">Пиво светлое / тёмное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 р</div></div>
+      <div class="m-item"><div><div class="m-name">Пиво нефильтрованное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 р</div></div>
+      <div class="m-item"><div><div class="m-name">Вино Аристов белое / красное</div><div class="m-wt">125 мл</div></div><div class="m-pr">450 р</div></div>
+    </div></div>
+    <div class="tc" id="t-zakus"><div class="m-grid">
+      <div class="m-item"><div><div class="m-name">Креветки в панировке с соусом Васаби</div><div class="m-wt">120 г</div></div><div class="m-pr">490 р</div></div>
+      <div class="m-item"><div><div class="m-name">Куриные крылышки</div><div class="m-wt">230 г</div></div><div class="m-pr">450 р</div></div>
+      <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 р</div></div>
+      <div class="m-item"><div><div class="m-name">Гренки чесночные</div><div class="m-wt">150 г</div></div><div class="m-pr">200 р</div></div>
+      <div class="m-item"><div><div class="m-name">Кольца кальмара с соусом Тар-тар<span class="new">NEW</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 р</div></div>
+      <div class="m-item"><div><div class="m-name">Фрит Болоньезе<span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 р</div></div>
+      <div class="m-item"><div><div class="m-name">Фрит Бекон Сыр<span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 р</div></div>
+    </div></div>
     <div class="tc" id="t-salat">
       <div class="sub-head">🥗 Салаты</div>
       <div class="m-grid" style="margin-bottom:20px;">
@@ -263,29 +352,21 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="m-item"><div><div class="m-name">Суп-крем грибной</div><div class="m-wt">280 г</div></div><div class="m-pr">450 р</div></div>
       </div>
     </div>
-
-    <div class="tc" id="t-gor">
-      <div class="sub-head">🥢 WOK / Горячее</div>
-      <div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Рис с креветками и овощами 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 р</div></div>
-        <div class="m-item"><div><div class="m-name">Удон с креветками 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">690 р</div></div>
-        <div class="m-item"><div><div class="m-name">Соба с рваной говядиной 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">760 р</div></div>
-        <div class="m-item"><div><div class="m-name">Яичная лапша с курицей 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 р</div></div>
-        <div class="m-item"><div><div class="m-name">Крабовые котлетки с зелёным пюре</div><div class="m-wt">250 г</div></div><div class="m-pr">590 р</div></div>
-      </div>
-    </div>
-
-    <div class="tc" id="t-pasta">
-      <div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Ньокки с креветками и сливочным песто</div><div class="m-wt">300 г</div></div><div class="m-pr">690 р</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с креветками в сливочно-томатном соусе</div><div class="m-wt">270 г</div></div><div class="m-pr">690 р</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с грибами и трюфельным кремом</div><div class="m-wt">220 г</div></div><div class="m-pr">490 р</div></div>
-        <div class="m-item"><div><div class="m-name">Лазанья мясная</div><div class="m-wt">300 г</div></div><div class="m-pr">490 р</div></div>
-        <div class="m-item"><div><div class="m-name">Паста Карбонара</div><div class="m-wt">270 г</div></div><div class="m-pr">490 р</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с курицей и грибами<span class="new">NEW</span></div><div class="m-wt">310 г</div></div><div class="m-pr">550 р</div></div>
-      </div>
-    </div>
-
+    <div class="tc" id="t-gor"><div class="sub-head">🥢 WOK / Горячее</div><div class="m-grid">
+      <div class="m-item"><div><div class="m-name">Рис с креветками и овощами 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 р</div></div>
+      <div class="m-item"><div><div class="m-name">Удон с креветками 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">690 р</div></div>
+      <div class="m-item"><div><div class="m-name">Соба с рваной говядиной 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">760 р</div></div>
+      <div class="m-item"><div><div class="m-name">Яичная лапша с курицей 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 р</div></div>
+      <div class="m-item"><div><div class="m-name">Крабовые котлетки с зелёным пюре</div><div class="m-wt">250 г</div></div><div class="m-pr">590 р</div></div>
+    </div></div>
+    <div class="tc" id="t-pasta"><div class="m-grid">
+      <div class="m-item"><div><div class="m-name">Ньокки с креветками и сливочным песто</div><div class="m-wt">300 г</div></div><div class="m-pr">690 р</div></div>
+      <div class="m-item"><div><div class="m-name">Пенне с креветками в сливочно-томатном соусе</div><div class="m-wt">270 г</div></div><div class="m-pr">690 р</div></div>
+      <div class="m-item"><div><div class="m-name">Пенне с грибами и трюфельным кремом</div><div class="m-wt">220 г</div></div><div class="m-pr">490 р</div></div>
+      <div class="m-item"><div><div class="m-name">Лазанья мясная</div><div class="m-wt">300 г</div></div><div class="m-pr">490 р</div></div>
+      <div class="m-item"><div><div class="m-name">Паста Карбонара</div><div class="m-wt">270 г</div></div><div class="m-pr">490 р</div></div>
+      <div class="m-item"><div><div class="m-name">Пенне с курицей и грибами<span class="new">NEW</span></div><div class="m-wt">310 г</div></div><div class="m-pr">550 р</div></div>
+    </div></div>
     <div class="tc" id="t-pizza">
       <div style="font-size:12px;color:#999;margin-bottom:12px;">Цена: целый круг 40 см / слайс</div>
       <div class="m-grid">
@@ -298,27 +379,22 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="m-item"><div><div class="m-name">Маргарита</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 р</div></div>
       </div>
     </div>
-
-    <div class="tc" id="t-burger">
-      <div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Баден Бургер</div><div class="m-wt">350 г</div></div><div class="m-pr">690 р</div></div>
-        <div class="m-item"><div><div class="m-name">Крабсбургер</div><div class="m-wt">360 г</div></div><div class="m-pr">690 р</div></div>
-        <div class="m-item"><div><div class="m-name">УФО-бургер с рваной говядиной</div><div class="m-wt">200 г</div></div><div class="m-pr">530 р</div></div>
-        <div class="m-item"><div><div class="m-name">Чикенбургер<span class="new">NEW</span></div><div class="m-wt">260 г</div></div><div class="m-pr">490 р</div></div>
-      </div>
-    </div>
-
+    <div class="tc" id="t-burger"><div class="m-grid">
+      <div class="m-item"><div><div class="m-name">Баден Бургер</div><div class="m-wt">350 г</div></div><div class="m-pr">690 р</div></div>
+      <div class="m-item"><div><div class="m-name">Крабсбургер</div><div class="m-wt">360 г</div></div><div class="m-pr">690 р</div></div>
+      <div class="m-item"><div><div class="m-name">УФО-бургер с рваной говядиной</div><div class="m-wt">200 г</div></div><div class="m-pr">530 р</div></div>
+      <div class="m-item"><div><div class="m-name">Чикенбургер<span class="new">NEW</span></div><div class="m-wt">260 г</div></div><div class="m-pr">490 р</div></div>
+    </div></div>
     <div class="tc" id="t-zavt">
-      <div class="bfast-banner">🌅 Завтрак — <strong>720 р</strong> · Ежедневно с 9:00 до 12:00 · Напиток на выбор: чай / капучино / американо</div>
+      <div class="bfast-banner">🌅 Завтрак — <strong>720 р</strong> · Ежедневно с 9:00 до 12:00 · Напиток: чай / капучино / американо</div>
       <div class="bfast-grid">
-        <div class="bfast-card"><h4>Завтрак 1</h4><div class="bfast-wt">280 г</div><p>Свежий хрустящий круассан<br>—<br>Омлет с лентами цукини, болгарским перцем и обжаренными креветками в сливочном соусе</p></div>
+        <div class="bfast-card"><h4>Завтрак 1</h4><div class="bfast-wt">280 г</div><p>Свежий хрустящий круассан<br>—<br>Омлет с цукини, болгарским перцем и обжаренными креветками в сливочном соусе</p></div>
         <div class="bfast-card"><h4>Завтрак 2</h4><div class="bfast-wt">390 г</div><p>Картофельные драники с Бюргерской колбаской и фасолью в томатном соусе<br>—<br>Глазунья из 2-х яиц</p></div>
-        <div class="bfast-card"><h4>Завтрак 3</h4><div class="bfast-wt">280 г</div><p>Блинчики с крем-сыром и слабосолёным лососем<br>—<br>Творожная запеканка с изюмом и сливочно-облепиховым кремом</p></div>
-        <div class="bfast-card"><h4>Детский завтрак</h4><div class="bfast-wt">320 г</div><p>Рисовая каша на молоке с фруктами и ягодами<br>—<br>Пицца с сосисками и томатами<br>—<br>Йогурт с гранолой</p></div>
+        <div class="bfast-card"><h4>Завтрак 3</h4><div class="bfast-wt">280 г</div><p>Блинчики с крем-сыром и слабосолёным лососем<br>—<br>Запеканка с изюмом и сливочно-облепиховым кремом</p></div>
+        <div class="bfast-card"><h4>Детский завтрак</h4><div class="bfast-wt">320 г</div><p>Рисовая каша с фруктами и ягодами<br>—<br>Пицца с сосисками и томатами<br>—<br>Йогурт с гранолой</p></div>
       </div>
-      <div style="font-size:12px;color:#999;text-align:center;margin-top:12px;">* Завтраки включены в стоимость проживания в резиденции и в акцию «Бодрое утро»</div>
+      <div style="font-size:12px;color:#999;text-align:center;margin-top:12px;">* Завтраки включены в проживание и в акцию «Бодрое утро»</div>
     </div>
-
     <div class="tc" id="t-kids">
       <div class="m-grid">
         <div class="m-item"><div><div class="m-name">Суп куриный с домашней лапшой</div><div class="m-wt">180 г</div></div><div class="m-pr">210 р</div></div>
@@ -329,11 +405,7 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="m-item"><div><div class="m-name">Картошка фри</div><div class="m-wt">150 г</div></div><div class="m-pr">200 р</div></div>
         <div class="m-item"><div><div class="m-name">Сырники творожные с соусом</div><div class="m-wt">140 г</div></div><div class="m-pr">270 р</div></div>
       </div>
-      <div class="badya">
-        <div class="ic2">🎁</div>
-        <div><h3>Бадя-Бокс</h3><p>Детский бургер с куриной котлеткой · Картофель фри · Сок · Игрушка</p></div>
-        <div class="pr2">650 р</div>
-      </div>
+      <div class="badya"><div class="ic2">🎁</div><div><h3>Бадя-Бокс</h3><p>Детский бургер · Картофель фри · Сок · Игрушка</p></div><div class="pr2">650 р</div></div>
     </div>
   </div>
 </section>
@@ -342,98 +414,89 @@ footer a{color:var(--gold);text-decoration:none;}
 <section class="s-dark" id="spa">
   <div class="container">
     <div class="sec-title">💆 СПА — Прайс</div>
+    <div style="font-size:13px;color:var(--dim);text-align:center;margin-bottom:20px;">Нажмите на раздел чтобы раскрыть</div>
 
     <div class="spa-block">
-      <div class="spa-head">Массажи тела и лица</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Массаж спины</div><div class="sp-pr">30 мин · 2 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">Массаж головы и ШВЗ «Основы разума»</div><div class="sp-pr">30 мин · 2 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">Массаж ног</div><div class="sp-pr">30 мин · 2 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Ломи-Ломи» с горящей свечой</div><div class="sp-pr">60 мин · 7 500 р<br>90 мин · 8 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Расслабляющий «Нега»</div><div class="sp-pr">60 мин · 3 800 р<br>90 мин · 4 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Императорский шелк»</div><div class="sp-pr">60 мин · 4 000 р<br>90 мин · 5 700 р</div></div>
-      </div>
-      <div class="spa-note">* При добавлении к услуге от 3000 р — стоимость короткого массажа 1 600 р</div>
-    </div>
-
-    <div class="spa-block">
-      <div class="spa-head">Профилактический массаж</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Тайский на кушетке</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Авторский массаж</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Оздоровительный классический</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Лимфодренажный массаж</div><div class="sp-pr">90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Спортивный массаж</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Русский спа-массаж</div><div class="sp-pr">90 мин · 5 100 р</div></div>
-        <div class="sp-item"><div class="sp-name">Французский классический массаж лица</div><div class="sp-pr">50 мин · 3 200 р</div></div>
-        <div class="sp-item"><div class="sp-name">Лимфодренажный массаж лица</div><div class="sp-pr">50 мин · 3 300 р</div></div>
+      <div class="spa-head" onclick="toggleSpa(this)"><span>Массажи тела и лица</span><span class="spa-arrow">▼</span></div>
+      <div class="spa-body open">
+        <div class="spa-grid">
+          <div class="sp-item"><div class="sp-name">Массаж спины</div><div class="sp-pr">30 мин · 2 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">Массаж головы и ШВЗ «Основы разума»</div><div class="sp-pr">30 мин · 2 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">Массаж ног</div><div class="sp-pr">30 мин · 2 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Ломи-Ломи» с горящей свечой</div><div class="sp-pr">60 мин · 7 500 р<br>90 мин · 8 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Расслабляющий «Нега»</div><div class="sp-pr">60 мин · 3 800 р<br>90 мин · 4 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Императорский шелк»</div><div class="sp-pr">60 мин · 4 000 р<br>90 мин · 5 700 р</div></div>
+        </div>
+        <div class="spa-note">* При добавлении к услуге от 3000 р — стоимость короткого массажа 1 600 р</div>
       </div>
     </div>
-
     <div class="spa-block">
-      <div class="spa-head">Экспресс-уход с применением скраба</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Скраб на Ваш выбор</div><div class="sp-pr">30 мин · 2 400 р</div></div>
-        <div class="sp-item"><div class="sp-name">Уход со скрабом в хаммаме (самостоятельно)</div><div class="sp-pr">30 мин · 1 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">Уход со скрабом в хаммаме (с мастером)</div><div class="sp-pr">30 мин · 2 400 р</div></div>
-        <div class="sp-item"><div class="sp-name">Уход с маской на тело в хаммаме</div><div class="sp-pr">45 мин · 2 800 р</div></div>
+      <div class="spa-head" onclick="toggleSpa(this)"><span>Профилактический массаж</span><span class="spa-arrow">▼</span></div>
+      <div class="spa-body">
+        <div class="spa-grid">
+          <div class="sp-item"><div class="sp-name">Тайский на кушетке</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Авторский массаж</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Оздоровительный классический</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Лимфодренажный массаж</div><div class="sp-pr">90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Спортивный массаж</div><div class="sp-pr">60 мин · 4 200 р<br>90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Русский спа-массаж</div><div class="sp-pr">90 мин · 5 100 р</div></div>
+          <div class="sp-item"><div class="sp-name">Французский классический массаж лица</div><div class="sp-pr">50 мин · 3 200 р</div></div>
+          <div class="sp-item"><div class="sp-name">Лимфодренажный массаж лица</div><div class="sp-pr">50 мин · 3 300 р</div></div>
+        </div>
       </div>
     </div>
-
     <div class="spa-block">
-      <div class="spa-head">Хаммам</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Марроканский хаммам</div><div class="sp-pr">75 мин · 4 300 р</div></div>
-        <div class="sp-item"><div class="sp-name">Великолепный век Султан и Хюрем</div><div class="sp-pr">165 мин · 10 500 р</div></div>
-        <div class="sp-item"><div class="sp-name">Великолепный век (для двоих)</div><div class="sp-pr">195 мин · 20 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Турецкий пенный массаж</div><div class="sp-pr">60 мин · 4 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Возрождение</div><div class="sp-pr">100 мин · 6 500 р</div></div>
-        <div class="sp-item"><div class="sp-name">Возрождение (для двоих)</div><div class="sp-pr">125 мин · 12 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Аюрведа</div><div class="sp-pr">105 мин · 7 500 р</div></div>
-        <div class="sp-item"><div class="sp-name">Аюрведа (для двоих)</div><div class="sp-pr">150 мин · 14 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">САНДАЛ</div><div class="sp-pr">150 мин · 8 000 р</div></div>
+      <div class="spa-head" onclick="toggleSpa(this)"><span>Хаммам</span><span class="spa-arrow">▼</span></div>
+      <div class="spa-body">
+        <div class="spa-grid">
+          <div class="sp-item"><div class="sp-name">Марроканский хаммам</div><div class="sp-pr">75 мин · 4 300 р</div></div>
+          <div class="sp-item"><div class="sp-name">Великолепный век Султан и Хюрем</div><div class="sp-pr">165 мин · 10 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">Великолепный век (для двоих)</div><div class="sp-pr">195 мин · 20 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Турецкий пенный массаж</div><div class="sp-pr">60 мин · 4 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Возрождение</div><div class="sp-pr">100 мин · 6 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">Возрождение (для двоих)</div><div class="sp-pr">125 мин · 12 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Аюрведа</div><div class="sp-pr">105 мин · 7 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">Аюрведа (для двоих)</div><div class="sp-pr">150 мин · 14 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">САНДАЛ</div><div class="sp-pr">150 мин · 8 000 р</div></div>
+        </div>
       </div>
     </div>
-
     <div class="spa-block">
-      <div class="spa-head">Обертывания</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Морской бриз (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Тропический коктейль (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Каннабис (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Шоколадные страсти (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Тропический коктейль (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Каннабис (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Шоколадные страсти (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Сила леса» (один)</div><div class="sp-pr">120 мин · 6 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Сила леса» (для двоих)</div><div class="sp-pr">150 мин · 12 500 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Сила океана» (для двоих)</div><div class="sp-pr">180 мин · 14 500 р</div></div>
+      <div class="spa-head" onclick="toggleSpa(this)"><span>Обертывания и СПА-программы</span><span class="spa-arrow">▼</span></div>
+      <div class="spa-body">
+        <div class="spa-grid">
+          <div class="sp-item"><div class="sp-name">Морской бриз (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Тропический коктейль (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Каннабис (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Шоколадные страсти (один)</div><div class="sp-pr">60 мин · 5 500 р<br>90 мин · 5 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Тропический коктейль (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Каннабис (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Шоколадные страсти (двое)</div><div class="sp-pr">60 мин · 9 000 р<br>90 мин · 11 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Сила леса» (один)</div><div class="sp-pr">120 мин · 6 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Сила леса» (двое)</div><div class="sp-pr">150 мин · 12 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Сила океана» (двое)</div><div class="sp-pr">180 мин · 14 500 р</div></div>
+        </div>
       </div>
     </div>
-
     <div class="spa-block">
-      <div class="spa-head">Детский массаж</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">До 8 лет</div><div class="sp-pr">40 мин · 2 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">От 9 до 13 лет</div><div class="sp-pr">60 мин · 2 700 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Полезный шоколад»</div><div class="sp-pr">45 мин · 1 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">«Приключения мыльных пузырей»</div><div class="sp-pr">45 мин · 2 500 р</div></div>
+      <div class="spa-head" onclick="toggleSpa(this)"><span>Детский массаж и доп. услуги</span><span class="spa-arrow">▼</span></div>
+      <div class="spa-body">
+        <div class="spa-grid">
+          <div class="sp-item"><div class="sp-name">До 8 лет</div><div class="sp-pr">40 мин · 2 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">От 9 до 13 лет</div><div class="sp-pr">60 мин · 2 700 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Полезный шоколад»</div><div class="sp-pr">45 мин · 1 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">«Приключения мыльных пузырей»</div><div class="sp-pr">45 мин · 2 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">Маска альгинатная на лицо</div><div class="sp-pr">от 1 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Маска кремовая</div><div class="sp-pr">900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Маска тканевая</div><div class="sp-pr">2 800 р</div></div>
+          <div class="sp-item"><div class="sp-name">Аппаратная прессотерапия ног</div><div class="sp-pr">от 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Прессотерапия</div><div class="sp-pr">20 мин · 900 р</div></div>
+          <div class="sp-item"><div class="sp-name">Прогревание в фитобочке / хаммаме</div><div class="sp-pr">20 мин · 1 500 р</div></div>
+          <div class="sp-item"><div class="sp-name">Альгинатная маска лицо</div><div class="sp-pr">20 мин · 1 000 р</div></div>
+          <div class="sp-item"><div class="sp-name">Альгинатная маска лицо + декольте</div><div class="sp-pr">20 мин · 1 400 р</div></div>
+        </div>
+        <div class="spa-note">СПА-массажи доступны только гостям без проблем со здоровьем. Дети до 18 лет — в присутствии родителей.</div>
       </div>
-    </div>
-
-    <div class="spa-block">
-      <div class="spa-head">Дополнительные услуги</div>
-      <div class="spa-grid">
-        <div class="sp-item"><div class="sp-name">Маска альгинатная на лицо</div><div class="sp-pr">от 1 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Маска кремовая</div><div class="sp-pr">900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Маска тканевая</div><div class="sp-pr">2 800 р</div></div>
-        <div class="sp-item"><div class="sp-name">Аппаратная прессотерапия ног</div><div class="sp-pr">от 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Прессотерапия</div><div class="sp-pr">20 мин · 900 р</div></div>
-        <div class="sp-item"><div class="sp-name">Прогревание в фитобочке / хаммаме</div><div class="sp-pr">20 мин · 1 500 р</div></div>
-        <div class="sp-item"><div class="sp-name">Альгинатная маска лицо</div><div class="sp-pr">20 мин · 1 000 р</div></div>
-        <div class="sp-item"><div class="sp-name">Альгинатная маска лицо + декольте</div><div class="sp-pr">20 мин · 1 400 р</div></div>
-      </div>
-      <div class="spa-note">СПА-массажи доступны только гостям без проблем со здоровьем. Дети до 18 лет — в присутствии родителей.</div>
     </div>
   </div>
 </section>
@@ -441,14 +504,108 @@ footer a{color:var(--gold);text-decoration:none;}
 <!-- АКЦИИ -->
 <section class="s-light" id="aktsii">
   <div class="container">
-    <div class="sec-title">🎁 Акции</div>
+    <div class="sec-title">🎁 Акции и скидки</div>
+    <div style="font-size:13px;color:#888;text-align:center;margin-bottom:24px;">Нажмите на карточку, чтобы узнать подробности</div>
     <div class="ak-grid">
-      <div class="ak-card"><h3>Бодрое утро</h3><p>5 СПА-процедур по 60 минут. Завтрак включён в стоимость.</p><div class="ak-pr">16 000 р</div></div>
-      <div class="ak-card"><h3>Красивое утро</h3><p>5 СПА-процедур по 60 минут. Красота и здоровье каждое утро.</p><div class="ak-pr">15 000 р</div></div>
-      <div class="ak-card"><h3>Красивое лицо</h3><p>Курс на 3 месяца — уход за кожей лица, сияние и молодость.</p><div class="ak-pr">14 000 р</div></div>
-      <div class="ak-card"><h3>Счастливая мама</h3><p>Расслабляющая СПА-процедура для будущих и молодых мам.</p><div class="ak-pr">3 200 р <span class="ak-sub">/ 45 мин</span></div></div>
-      <div class="ak-card"><h3>Счастливая мама + малыш</h3><p>Совместная процедура для мамы и ребёнка. Тепло и забота.</p><div class="ak-pr">5 300 р <span class="ak-sub">/ 45 мин</span></div></div>
-      <div class="ak-card"><h3>Термы + СПА</h3><p>Термы и СПА-процедура в одном пакете. Вход в термы без очереди.</p><div class="ak-pr">от 4 900 р</div></div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>🌅 Ранняя пташка <span class="ak-badge">Будни</span></h3></div>
+        <div class="ak-short">Купание с 9:00 до 12:00 по специальной цене</div>
+        <div class="ak-price"><div class="amt">1 300 р</div><div class="when">Будни · 09:00–12:00<br>Строго до 12:00</div></div>
+        <div class="ak-expand"><div class="ak-detail">Специальный утренний тариф для ранних гостей. Пребывание строго с 9:00 до 12:00. Приобрести можно только в будние дни при входе в утренние часы. Отличный способ начать день бодро!</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>🌙 Ещё не поздно <span class="ak-badge">Будни</span></h3></div>
+        <div class="ak-short">Вечерний тариф после 20:45 — самая низкая цена дня</div>
+        <div class="ak-price"><div class="amt">900 р</div><div class="when">Будни · с 20:45</div></div>
+        <div class="ak-expand"><div class="ak-detail">Самый выгодный тариф! Приобретается в будние дни начиная с 20:45. Отличный вариант для позднего вечернего отдыха после работы.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>☀️ Бодрое утро <span class="ak-badge">Будни</span></h3></div>
+        <div class="ak-short">Термы + завтрак в одном тарифе</div>
+        <div class="ak-price"><div class="amt">1 600 р</div><div class="when">Будни · до 12:00<br>1,5 ч + завтрак</div></div>
+        <div class="ak-expand"><div class="ak-detail">Комплексный утренний тариф: 1,5 часа отдыха в термах + завтрак. Приобрести можно в будние дни до 12:00. Завтрак включён — отличное начало дня!</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>👨‍👩‍👧 Акция Семья <span class="ak-badge">Все дни</span></h3></div>
+        <div class="ak-short">2 взрослых на 3 часа — ребёнок бесплатно</div>
+        <div class="ak-price"><div class="amt">Ребёнок 0 р</div><div class="when">Все дни<br>При покупке 2 взрослых на 3 ч</div></div>
+        <div class="ak-expand"><div class="ak-detail">При покупке двух взрослых билетов на 3 часа общей категории, ребёнок до 12 лет (включительно) купается абсолютно бесплатно! Акция действует каждый день без ограничений.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>🎂 Именинник <span class="ak-badge">Все дни</span></h3></div>
+        <div class="ak-short">Скидка 10% в день рождения и ±2 дня</div>
+        <div class="ak-price"><div class="amt">−10%</div><div class="when">За 2 дня до и после ДР<br>Общая и льготная категория</div></div>
+        <div class="ak-expand"><div class="ak-detail">Скидка 10% на купание в честь дня рождения. Действует за 2 дня до дня рождения и 2 дня после. Распространяется на общую и льготную категории. Не забудьте документ!</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>🎓 Студенческая среда <span class="ak-badge">Среда</span></h3></div>
+        <div class="ak-short">Скидка 20% каждую среду для студентов очного отделения</div>
+        <div class="ak-price"><div class="amt">−20%</div><div class="when">Каждую среду · до 19:00<br>Студ. билет очного</div></div>
+        <div class="ak-expand"><div class="ak-detail">Каждую среду до 19:00 студенты очного отделения получают скидку 20% на тарифы от 2-х часов. Необходимо предъявить студенческий билет при покупке.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>👩‍👦 Мать и дитя <span class="ak-badge">Будни</span></h3></div>
+        <div class="ak-short">Скидка 20% на 1 взрослый + 1 детский билет</div>
+        <div class="ak-price"><div class="amt">−20%</div><div class="when">Будни · покупка до 17:00<br>1 взрослый + ребёнок 4–12 лет</div></div>
+        <div class="ak-expand"><div class="ak-detail">Скидка 20% при покупке 1 взрослого билета (общая категория) и 1 детского (дети 4–12 лет). Покупка должна быть совершена в будние дни до 17:00.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>💑 Романтический вечер <span class="ak-badge">Будни</span></h3></div>
+        <div class="ak-short">Купание + ужин на двоих</div>
+        <div class="ak-price"><div class="amt">4 500 р</div><div class="when">Будни · с 16:00<br>2,5 часа на двоих</div></div>
+        <div class="ak-expand"><div class="ak-detail">Романтический пакет для двоих: 2,5 часа в термах + ужин. Приобретается в будние дни начиная с 16:00. Идеально для пары, которая хочет провести незабываемый вечер.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>🍺 Мальчишник <span class="ak-badge">Любой день</span></h3></div>
+        <div class="ak-short">Корпоративная программа для мужской компании</div>
+        <div class="ak-price"><div class="amt">6 620 р</div><div class="when">4 часа / чел.<br>Мин. 4 · Макс. 24 чел.</div></div>
+        <div class="ak-expand"><div class="ak-detail">Включает: 2 часа купания · Групповое парение «Хмель-чеснок» (15 мин) · Парение «Тайга» (15 мин) · Пивная йога на сапах · Массаж спины «Сила леса» (30 мин) · Дегустационный сет (5 настоек по 20 мл + гренки) · Махровые халаты. Минимум 4 человека.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>👯‍♀️ Девичник <span class="ak-badge">Любой день</span></h3></div>
+        <div class="ak-short">Программа для женской компании с СПА и фото</div>
+        <div class="ak-price"><div class="amt">по запросу</div><div class="when">Любой день<br>Уточняйте у администратора</div></div>
+        <div class="ak-expand"><div class="ak-detail">Включает: 2 часа купания · Групповое ягодное скрабирование · Йога на сапах · СПА-массаж (30 мин) · Групповое парение «Тайга» (20 мин) · Уютные махровые халаты · Фотосопровождение (фотографии приобретаются отдельно).</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>♾️ Безлимитный абонемент <span class="ak-badge">Любой день</span></h3></div>
+        <div class="ak-short">Месячный абонемент на неограниченное количество посещений</div>
+        <div class="ak-price"><div class="amt">по запросу</div><div class="when">Любой день · 1 месяц<br>Именной документ</div></div>
+        <div class="ak-expand"><div class="ak-detail">Безлимитный абонемент на купание сроком 1 месяц с момента активации (первого посещения). Абонемент именной — требуется паспорт или водительское удостоверение. Не передаётся другим лицам.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>💆 Термы + СПА 1+1 <span class="ak-badge">Все дни</span></h3></div>
+        <div class="ak-short">1 час купания + 1 час СПА (скраб + массаж спины)</div>
+        <div class="ak-price"><div class="amt">4 900 р</div><div class="when">Любой день · 120 мин<br>Вход без очереди</div></div>
+        <div class="ak-expand"><div class="ak-detail">Комплексный пакет: 1 час купания в термах + 1 час СПА. В СПА входит: очищение со скрабом всего тела + массаж спины. Вход в термы без очереди — специальная привилегия.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>💆 Термы + СПА 1,5+1,5 <span class="ak-badge">Все дни</span></h3></div>
+        <div class="ak-short">1,5 ч купания + 1,5 ч СПА (скраб + массаж + маска)</div>
+        <div class="ak-price"><div class="amt">6 500 р</div><div class="when">Любой день · 360 мин<br>Вход без очереди</div></div>
+        <div class="ak-expand"><div class="ak-detail">Комплексный пакет: 1,5 часа купания + 1,5 часа СПА. В СПА входит: очищение со скрабом всего тела + массаж спины + альгинатная маска. Вход в термы без очереди.</div></div>
+      </div>
+
+      <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-top"><h3>💆 Термы + СПА 2+2 <span class="ak-badge">Все дни</span></h3></div>
+        <div class="ak-short">2 ч купания + 2 ч СПА (скраб + массаж тела + маска/прессо)</div>
+        <div class="ak-price"><div class="amt">8 000 р</div><div class="when">Любой день · 480 мин<br>Вход без очереди</div></div>
+        <div class="ak-expand"><div class="ak-detail">Максимальный пакет: 2 часа купания + 2 часа СПА. В СПА входит: очищение со скрабом + массаж всего тела + альгинатная маска или прессотерапия на выбор. Вход в термы без очереди.</div></div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -490,11 +647,135 @@ footer a{color:var(--gold);text-decoration:none;}
 </footer>
 
 <script>
+// MENU TABS
 function tab(btn, id) {
   document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('t-' + id).classList.add('on');
+}
+
+// SPA ACCORDION
+function toggleSpa(head) {
+  const body = head.nextElementSibling;
+  const arrow = head.querySelector('.spa-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+// АКЦИИ EXPAND
+function toggleAk(card) {
+  const exp = card.querySelector('.ak-expand');
+  exp.classList.toggle('open');
+}
+
+// КАЛЬКУЛЯТОР
+function calculate() {
+  const day = document.getElementById('c-day').value;
+  const time = document.getElementById('c-time').value;
+  const adults = parseInt(document.getElementById('c-adults').value) || 0;
+  const kids = parseInt(document.getElementById('c-kids').value) || 0;
+  const hours = parseInt(document.getElementById('c-hours').value);
+  const cat = document.getElementById('c-cat').value;
+  const bday = document.getElementById('c-bday').checked;
+  const student = document.getElementById('c-student').checked;
+  const family = document.getElementById('c-family').checked;
+
+  const isWeekday = (day === 'weekday' || day === 'wednesday');
+  const isWed = day === 'wednesday';
+  const isSat = day === 'saturday';
+  const isSun = day === 'sunday';
+
+  let promos = [];
+  let total = 0;
+  let desc = '';
+
+  // Спецтарифы
+  if (isWeekday && time === 'late') {
+    // Ещё не поздно: 900 р/чел
+    total = (adults + kids) * 900;
+    desc = `${adults + kids} гость(ей) × 900 р (тариф «Ещё не поздно»)`;
+    promos.push('🌙 Применена акция «Ещё не поздно» — 900 р/чел после 20:45 в будни');
+  } else if (isWeekday && time === 'morning') {
+    // Ранняя пташка: 1300 р/чел
+    total = (adults + kids) * 1300;
+    desc = `${adults + kids} гость(ей) × 1 300 р (тариф «Ранняя пташка»)`;
+    promos.push('🌅 Применена акция «Ранняя пташка» — 1 300 р/чел (9:00–12:00 в будни)');
+    // Семья: если 2+ взрослых на 3ч — один ребёнок бесплатно
+    if (hours === 3 && adults >= 2 && kids > 0) {
+      const freeKid = 1300;
+      total -= freeKid;
+      promos.push('👨‍👩‍👧 Акция «Семья»: 1 ребёнок бесплатно (−1 300 р)');
+    }
+  } else {
+    // Базовые тарифы
+    const prices = {
+      weekday:   { general: [1500, 1900], lgot: [1400, 1600] },
+      wednesday: { general: [1500, 1900], lgot: [1400, 1600] },
+      saturday:  { general: [2300, 2700], lgot: [1800, 2200] },
+      sunday:    { general: [2100, 2500], lgot: [1600, 2000] },
+    };
+    const p = prices[day][cat];
+    const pricePerPerson = hours === 2 ? p[0] : p[1];
+    const kidsPrice = hours === 2
+      ? prices[day]['lgot'][0]
+      : prices[day]['lgot'][1];
+
+    let adultTotal = adults * pricePerPerson;
+    let kidsTotal = kids * kidsPrice;
+
+    // Семья: 2 взрослых на 3 часа — ребёнок бесплатно
+    let freeKids = 0;
+    if (hours === 3 && adults >= 2 && kids > 0) {
+      freeKids = 1;
+      kidsTotal -= kidsPrice;
+      promos.push(`👨‍👩‍👧 Акция «Семья»: 1 ребёнок бесплатно (−${kidsPrice.toLocaleString('ru')} р)`);
+    }
+
+    // Мать и дитя: будни до 17, скидка 20% на 1 взр + 1 ребёнок
+    if (isWeekday && (time === 'morning' || time === 'day') && adults >= 1 && kids >= 1) {
+      const discount = Math.round((pricePerPerson + kidsPrice) * 0.2);
+      adultTotal -= Math.round(pricePerPerson * 0.2);
+      kidsTotal -= Math.round(kidsPrice * 0.2);
+      promos.push(`👩‍👦 Акция «Мать и дитя»: скидка 20% на 1 взр + 1 реб (−${discount.toLocaleString('ru')} р)`);
+    }
+
+    // Студент среда до 19
+    if (isWed && student && (time === 'morning' || time === 'day' || time === 'evening16') && hours >= 2) {
+      const discount = Math.round(adultTotal * 0.2);
+      adultTotal -= discount;
+      promos.push(`🎓 «Студенческая среда»: скидка 20% на взрослые билеты (−${discount.toLocaleString('ru')} р)`);
+    }
+
+    total = adultTotal + kidsTotal;
+
+    // Именинник: −10%
+    if (bday) {
+      const discount = Math.round(total * 0.1);
+      total -= discount;
+      promos.push(`🎂 Скидка именинника 10% (−${discount.toLocaleString('ru')} р)`);
+    }
+
+    const dayName = {weekday:'будни',wednesday:'среда',saturday:'суббота',sunday:'воскресенье'}[day];
+    desc = `${adults} взросл. × ${pricePerPerson.toLocaleString('ru')} р` +
+           (kids > 0 ? ` + ${kids} детей × ${freeKids > 0 ? '(1 бесплатно)' : kidsPrice.toLocaleString('ru')+' р'}` : '') +
+           ` · ${hours} ч · ${dayName}`;
+  }
+
+  // Показываем результат
+  const res = document.getElementById('calc-result');
+  document.getElementById('res-total').textContent = total.toLocaleString('ru') + ' р';
+  document.getElementById('res-desc').textContent = desc;
+  const promoEl = document.getElementById('res-promo');
+  if (promos.length > 0) {
+    promoEl.innerHTML = '✅ Применённые акции:<br>' + promos.join('<br>');
+    promoEl.style.display = 'block';
+  } else {
+    promoEl.style.display = 'none';
+  }
+  res.classList.add('show');
+  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 </script>
 </body>
