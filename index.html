@@ -114,6 +114,7 @@ nav a:hover{background:var(--surface);color:var(--text);}
   transition:transform .8s ease;
 }
 .gal-main:hover img,.gal-sm:hover img{transform:scale(1.04);}
+.gal-mobile-only{display:none;}
 
 /* ФОТО В СЕКЦИИ */
 .sec-photo{margin-bottom:36px;overflow:hidden;border-radius:var(--radius);}
@@ -445,6 +446,7 @@ footer{
   .gal-main{height:220px;grid-column:span 2;grid-row:auto;}
   .gal-tall{grid-row:auto;height:130px;}
   .gal-sm{height:130px;}
+  .gal-mobile-only{display:block;}
   .tariff-grid,.spa-combo{grid-template-columns:1fr;}
   .t-card{padding:24px 20px;}
   .spc-card{padding:20px;}
@@ -496,6 +498,7 @@ footer{
     <div class="gal-sm gal-tall"><img src="pool-indoor.jpg" alt="Семья в бассейне" style="object-position:center 30%;"></div>
     <div class="gal-sm"><img src="spa-massage.jpg" alt="СПА массаж" style="object-position:center 30%;"></div>
     <div class="gal-sm"><img src="lounge.jpg" alt="Кафе и бар"></div>
+    <div class="gal-sm gal-mobile-only"><img src="kids.jpg" alt="Дети" style="object-position:center center;"></div>
   </div>
 </section>
 
