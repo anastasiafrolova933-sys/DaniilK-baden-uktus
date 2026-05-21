@@ -72,8 +72,8 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
   background:linear-gradient(to bottom,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.72) 100%),
              url('pool-outdoor.jpg') center/cover no-repeat;
   display:flex;flex-direction:column;justify-content:flex-end;
-  padding:0 80px 100px;
-  position:relative;
+  padding:100px 80px 80px;
+  position:relative;overflow:hidden;
 }
 .hero-badge{
   font-size:9px;font-weight:400;letter-spacing:3.5px;text-transform:uppercase;
@@ -83,10 +83,10 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 .hero-badge::before{content:'';display:block;width:28px;height:1px;background:rgba(255,255,255,0.35);}
 .hero h1{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(68px,11vw,152px);
+  font-size:clamp(52px,7.5vw,104px);
   font-weight:300;color:#fff;
-  line-height:0.87;letter-spacing:-4px;
-  margin-bottom:48px;
+  line-height:0.9;letter-spacing:-3px;
+  margin-bottom:36px;
 }
 .hero h1 strong{font-weight:300;font-style:italic;}
 .hero-sub{
@@ -106,7 +106,7 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 }
 @keyframes scrollLine{0%{opacity:0;transform:scaleY(0);}50%{opacity:1;transform:scaleY(1);}100%{opacity:0;transform:scaleY(0);}}
 .hero-stats{
-  display:flex;gap:72px;margin-top:72px;padding-top:44px;
+  display:flex;gap:56px;margin-top:48px;padding-top:32px;
   border-top:1px solid rgba(255,255,255,0.1);
 }
 .hero-stat-num{
@@ -117,7 +117,7 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 
 /* ── ГАЛЕРЕЯ ──────────────────────────────────────────── */
 .gal-mosaic{
-  display:grid;grid-template-columns:2fr 1fr 1fr;
+  display:grid;grid-template-columns:2fr 1fr;
   height:580px;gap:2px;background:var(--dark);
 }
 .gal-main,.gal-sm{overflow:hidden;cursor:pointer;position:relative;}
@@ -435,9 +435,9 @@ footer{
   .spc-card:last-child{border-bottom:none;}
   footer{grid-template-columns:1fr;gap:36px;padding:56px 32px;}
   .gal-mosaic{grid-template-columns:1fr 1fr;height:auto;}
-  .gal-side{grid-template-rows:none;grid-template-columns:1fr 1fr;}
-  .gal-main{grid-column:1/-1;height:320px;}
-  .gal-sm{height:200px;}
+  .gal-side{grid-template-rows:none;grid-template-columns:1fr;}
+  .gal-main{height:360px;}
+  .gal-sm{height:180px;}
 }
 @media(max-width:640px){
   nav{display:none;}
@@ -463,8 +463,8 @@ footer{
   footer{padding:48px 24px;}
   .gal-mosaic{grid-template-columns:1fr;}
   .gal-main{height:260px;}
-  .gal-side{grid-template-columns:1fr;grid-template-rows:none;}
-  .gal-sm{height:200px;}
+  .gal-side{grid-template-columns:1fr 1fr;grid-template-rows:none;}
+  .gal-sm{height:180px;}
   .sec-row{gap:16px;}
   .tariff-grid,.spa-combo{grid-template-columns:1fr;}
   .t-card{padding:28px 24px;}
@@ -511,10 +511,6 @@ footer{
 <section style="padding:0;border-bottom:1px solid var(--border-light);">
   <div class="gal-mosaic">
     <div class="gal-main"><img src="pool-indoor.jpg" alt="Крытые термы"></div>
-    <div class="gal-side">
-      <div class="gal-sm"><img src="sauna.jpg" alt="Сауна"></div>
-      <div class="gal-sm"><img src="bar.jpg" alt="Baden Bar"></div>
-    </div>
     <div class="gal-side">
       <div class="gal-sm"><img src="barnhouse.jpg" alt="БарнХаус"></div>
       <div class="gal-sm"><img src="beach.jpg" alt="Пляж"></div>
