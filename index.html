@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Баден-Баден — Термы Уктус</title>
+<title>Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ вЂ” РўРµСЂРјС‹ РЈРєС‚СѓСЃ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,400;1,6..96,300;1,6..96,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#ffffff;
@@ -25,7 +25,7 @@
 html{scroll-behavior:smooth;}
 body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--white);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
 
-/* ── ШАПКА ────────────────────────────────────────────── */
+/* в”Ђв”Ђ РЁРђРџРљРђ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 header{
   position:fixed;top:0;width:100%;z-index:300;
   display:flex;align-items:center;justify-content:space-between;
@@ -41,7 +41,7 @@ header.scrolled{
   box-shadow:0 1px 32px rgba(0,0,0,0.05);
 }
 .logo{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Bodoni Moda',serif;
   font-size:16px;font-weight:400;letter-spacing:4px;text-transform:uppercase;
   color:#fff;transition:color .5s;line-height:1;
 }
@@ -66,7 +66,7 @@ header.scrolled nav a:hover{color:var(--ink);}
 header.scrolled .header-cta{color:var(--ink);border-color:var(--border);}
 header.scrolled .header-cta:hover{border-color:var(--ink);}
 
-/* ── ГЕРОЙ ────────────────────────────────────────────── */
+/* в”Ђв”Ђ Р“Р•Р РћР™ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .hero{
   margin-top:0;height:100vh;min-height:680px;
   background:linear-gradient(to bottom,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.72) 100%),
@@ -82,11 +82,11 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 }
 .hero-badge::before{content:'';display:block;width:28px;height:1px;background:rgba(255,255,255,0.35);}
 .hero h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,7.5vw,104px);
+  font-family:'Bodoni Moda',serif;
+  font-size:clamp(44px,6vw,88px);
   font-weight:300;color:#fff;
-  line-height:0.9;letter-spacing:-3px;
-  margin-bottom:36px;
+  line-height:0.92;letter-spacing:-2px;
+  margin-bottom:28px;
 }
 .hero h1 strong{font-weight:300;font-style:italic;}
 .hero-sub{
@@ -106,16 +106,16 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 }
 @keyframes scrollLine{0%{opacity:0;transform:scaleY(0);}50%{opacity:1;transform:scaleY(1);}100%{opacity:0;transform:scaleY(0);}}
 .hero-stats{
-  display:flex;gap:56px;margin-top:48px;padding-top:32px;
+  display:flex;gap:44px;margin-top:36px;padding-top:28px;
   border-top:1px solid rgba(255,255,255,0.1);
 }
 .hero-stat-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:52px;font-weight:300;color:#fff;line-height:1;
+  font-family:'Bodoni Moda',serif;
+  font-size:36px;font-weight:300;color:#fff;line-height:1;
 }
-.hero-stat-lbl{font-size:8.5px;color:rgba(255,255,255,0.38);margin-top:10px;letter-spacing:2.5px;text-transform:uppercase;}
+.hero-stat-lbl{font-size:8px;color:rgba(255,255,255,0.38);margin-top:8px;letter-spacing:2px;text-transform:uppercase;}
 
-/* ── ГАЛЕРЕЯ ──────────────────────────────────────────── */
+/* в”Ђв”Ђ Р“РђР›Р•Р Р•РЇ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .gal-mosaic{
   display:grid;grid-template-columns:2fr 1fr;
   height:580px;gap:2px;background:var(--dark);
@@ -128,13 +128,13 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 .gal-main:hover img,.gal-sm:hover img{transform:scale(1.05);filter:brightness(1);}
 .gal-side{display:grid;grid-template-rows:1fr 1fr;gap:2px;}
 
-/* ── ФОТО В СЕКЦИИ ────────────────────────────────────── */
-.sec-photo{margin-bottom:60px;overflow:hidden;}
-.sec-photo img{width:100%;height:420px;object-fit:cover;display:block;
+/* в”Ђв”Ђ Р¤РћРўРћ Р’ РЎР•РљР¦РР в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+.sec-photo{margin-bottom:44px;overflow:hidden;}
+.sec-photo img{width:100%;height:360px;object-fit:cover;display:block;
   transition:transform .9s cubic-bezier(.25,.46,.45,.94);filter:brightness(.96);}
 .sec-photo:hover img{transform:scale(1.03);filter:brightness(1.0);}
 
-/* ── КНОПКИ ───────────────────────────────────────────── */
+/* в”Ђв”Ђ РљРќРћРџРљР в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .btn-primary{
   display:inline-block;background:var(--accent);color:#fff;
   font-size:9.5px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
@@ -160,13 +160,13 @@ header.scrolled .header-cta:hover{border-color:var(--ink);}
 }
 .hero .btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,0.7);}
 
-/* ── СЕКЦИИ ───────────────────────────────────────────── */
-section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
+/* в”Ђв”Ђ РЎР•РљР¦РР в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
+section{padding:80px 80px;border-bottom:1px solid var(--border-light);}
 .alt-bg{background:var(--paper);}
 
 .sec-row{
-  display:grid;grid-template-columns:240px 1fr;
-  gap:88px;align-items:start;
+  display:grid;grid-template-columns:180px 1fr;
+  gap:60px;align-items:start;
 }
 .sec-label-col{
   font-size:9px;color:var(--pale);font-weight:500;
@@ -175,30 +175,30 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 }
 .sec-label-col::before{content:'';display:block;width:24px;height:1px;background:var(--accent);}
 .sec-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(40px,5.5vw,76px);
-  font-weight:300;color:var(--ink);
-  letter-spacing:-2px;margin-bottom:24px;line-height:0.9;
+  font-family:'Bodoni Moda',serif;
+  font-size:clamp(32px,4vw,56px);
+  font-weight:400;color:var(--ink);
+  letter-spacing:-1px;margin-bottom:20px;line-height:1.0;
 }
 .sec-title strong{font-weight:300;font-style:italic;}
 .sec-sub{
-  font-size:13.5px;color:var(--mid);
-  max-width:500px;line-height:1.95;font-weight:300;
-  margin-bottom:52px;
+  font-size:13px;color:var(--mid);
+  max-width:480px;line-height:1.8;font-weight:300;
+  margin-bottom:40px;
 }
 
-/* ── АНИМАЦИИ ПОЯВЛЕНИЯ ───────────────────────────────── */
+/* в”Ђв”Ђ РђРќРРњРђР¦РР РџРћРЇР’Р›Р•РќРРЇ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .fade-up{opacity:0;transform:translateY(36px);transition:opacity .85s ease,transform .85s ease;}
 .fade-up.visible{opacity:1;transform:translateY(0);}
 .fade-up.d1{transition-delay:.12s;}
 .fade-up.d2{transition-delay:.26s;}
 .fade-up.d3{transition-delay:.4s;}
 
-/* ── КАРТА ────────────────────────────────────────────── */
+/* в”Ђв”Ђ РљРђР РўРђ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .map-wrap{border:1px solid var(--border);height:580px;overflow:hidden;}
 .map-wrap iframe{width:100%;height:100%;border:none;display:block;}
 
-/* ── ТАРИФЫ ───────────────────────────────────────────── */
+/* в”Ђв”Ђ РўРђР РР¤Р« в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .tariff-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);}
 .t-card{padding:44px 40px;border-right:1px solid var(--border);}
 .t-card:last-child{border-right:none;}
@@ -213,19 +213,19 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .t-row:last-of-type{border-bottom:none;}
 .t-name{font-size:13px;color:var(--mid);font-weight:300;}
 .t-price{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Bodoni Moda',serif;
   font-size:22px;font-weight:300;color:var(--ink);
 }
 .t-note{font-size:11px;color:var(--pale);margin-top:24px;line-height:1.75;font-weight:300;}
 
-/* Термы+СПА */
+/* РўРµСЂРјС‹+РЎРџРђ */
 .combo-divider{
   margin-top:60px;padding-bottom:20px;
   border-bottom:1px solid var(--border);
   display:flex;align-items:baseline;justify-content:space-between;
 }
 .combo-divider-label{font-size:9px;color:var(--pale);text-transform:uppercase;letter-spacing:3px;}
-.combo-divider-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--ink);}
+.combo-divider-title{font-family:'Bodoni Moda',serif;font-size:26px;font-weight:300;color:var(--ink);}
 .spa-combo{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-top:none;}
 .spc-card{
   padding:36px 40px;border-right:1px solid var(--border);
@@ -235,10 +235,10 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .spc-card:last-child{border-right:none;}
 .spc-card:hover{background:var(--paper);}
 .spc-lbl{font-size:13px;color:var(--mid);line-height:1.75;margin-bottom:24px;font-weight:300;}
-.spc-amt{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--ink);line-height:1;}
+.spc-amt{font-family:'Bodoni Moda',serif;font-size:44px;font-weight:300;color:var(--ink);line-height:1;}
 .spc-sub{font-size:9px;color:var(--pale);margin-top:10px;letter-spacing:2.5px;text-transform:uppercase;}
 
-/* ── КАЛЬКУЛЯТОР ──────────────────────────────────────── */
+/* в”Ђв”Ђ РљРђР›Р¬РљРЈР›РЇРўРћР  в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .calc-outer{max-width:820px;border:1px solid var(--border);padding:56px;background:var(--white);}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
 @media(max-width:560px){.calc-grid{grid-template-columns:1fr;}}
@@ -259,7 +259,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .c-checks input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);flex-shrink:0;}
 .c-result{display:none;margin-top:40px;border-top:1px solid var(--border);padding-top:40px;}
 .c-result.show{display:block;}
-.c-res-main{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--ink);margin-bottom:8px;line-height:1;}
+.c-res-main{font-family:'Bodoni Moda',serif;font-size:60px;font-weight:300;color:var(--ink);margin-bottom:8px;line-height:1;}
 .c-res-desc{font-size:13px;color:var(--mid);line-height:1.9;font-weight:300;}
 .c-res-promo{
   margin-top:20px;padding:16px 20px;
@@ -267,7 +267,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
   font-size:12px;color:var(--mid);line-height:1.8;font-weight:300;
 }
 
-/* ── МЕНЮ ─────────────────────────────────────────────── */
+/* в”Ђв”Ђ РњР•РќР® в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .tab-nav{
   display:flex;flex-wrap:wrap;
   margin-bottom:40px;border-bottom:1px solid var(--border);
@@ -291,7 +291,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .m-name{font-size:13.5px;color:var(--ink);line-height:1.4;font-weight:300;}
 .m-wt{font-size:10.5px;color:var(--pale);margin-top:3px;font-weight:300;}
 .m-pr{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Bodoni Moda',serif;
   color:var(--ink);font-weight:300;font-size:20px;
   white-space:nowrap;min-width:80px;text-align:right;
 }
@@ -314,11 +314,11 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
   display:flex;align-items:center;gap:24px;flex-wrap:wrap;
 }
 .badya .ic2{font-size:26px;}
-.badya h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:4px;}
+.badya h3{font-family:'Bodoni Moda',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:4px;}
 .badya p{font-size:13px;color:var(--mid);line-height:1.7;font-weight:300;}
-.badya .pr2{margin-left:auto;font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ink);white-space:nowrap;}
+.badya .pr2{margin-left:auto;font-family:'Bodoni Moda',serif;font-size:36px;font-weight:300;color:var(--ink);white-space:nowrap;}
 
-/* ── СПА ──────────────────────────────────────────────── */
+/* в”Ђв”Ђ РЎРџРђ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .spa-block{border-bottom:1px solid var(--border);}
 .spa-head{
   padding:22px 0;display:flex;justify-content:space-between;align-items:center;
@@ -341,7 +341,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .sp-pr{color:var(--mid);font-size:13px;white-space:nowrap;text-align:right;line-height:1.9;min-width:180px;font-weight:300;}
 .spa-note{font-size:11px;color:var(--pale);padding:14px 0;line-height:1.75;font-weight:300;}
 
-/* ── АКЦИИ ────────────────────────────────────────────── */
+/* в”Ђв”Ђ РђРљР¦РР в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);}
 .ak-card{background:var(--white);cursor:pointer;transition:background .3s;}
 .ak-card:hover{background:var(--paper);}
@@ -350,13 +350,13 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
   font-size:9px;color:var(--accent);font-weight:500;
   letter-spacing:3px;margin-bottom:14px;text-transform:uppercase;
 }
-.ak-top h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);line-height:1.2;}
+.ak-top h3{font-family:'Bodoni Moda',serif;font-size:22px;font-weight:300;color:var(--ink);line-height:1.2;}
 .ak-short{font-size:13px;color:var(--mid);padding:0 32px 16px;line-height:1.75;font-weight:300;}
 .ak-price{
   padding:16px 32px;border-top:1px solid var(--border-light);
   display:flex;align-items:baseline;justify-content:space-between;
 }
-.ak-amt{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--ink);}
+.ak-amt{font-family:'Bodoni Moda',serif;font-size:30px;font-weight:300;color:var(--ink);}
 .ak-when{font-size:9.5px;color:var(--pale);text-align:right;line-height:1.8;letter-spacing:0.5px;}
 .ak-expand{max-height:0;overflow:hidden;transition:max-height .4s ease;}
 .ak-expand.open{max-height:300px;}
@@ -365,7 +365,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
   line-height:1.85;border-top:1px solid var(--border-light);background:var(--paper);font-weight:300;
 }
 
-/* ── ПРОЖИВАНИЕ ───────────────────────────────────────── */
+/* в”Ђв”Ђ РџР РћР–РР’РђРќРР• в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
 .pr-card{
   background:var(--white);position:relative;overflow:hidden;
@@ -379,7 +379,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 .pr-card:hover .pr-photo img{transform:scale(1.06);filter:brightness(1.02);}
 .pr-body{padding:32px 32px 40px;}
 .pr-card h3{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Bodoni Moda',serif;
   font-size:28px;font-weight:300;color:var(--ink);
   margin-bottom:12px;line-height:1.05;letter-spacing:-0.5px;
 }
@@ -391,7 +391,7 @@ section{padding:120px 80px;border-bottom:1px solid var(--border-light);}
 }
 .pr-cta{text-align:center;margin-top:60px;}
 
-/* ── ФУТЕР ────────────────────────────────────────────── */
+/* в”Ђв”Ђ Р¤РЈРўР•Р  в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 footer{
   background:var(--dark);
   padding:80px 80px;
@@ -399,7 +399,7 @@ footer{
   gap:60px;align-items:start;
 }
 .foot-logo{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Bodoni Moda',serif;
   font-size:20px;font-weight:300;color:#fff;
   letter-spacing:4px;text-transform:uppercase;
 }
@@ -409,13 +409,13 @@ footer{
 .foot-links a:hover{color:rgba(255,255,255,0.8);}
 .foot-copy{font-size:10px;color:rgba(255,255,255,0.18);padding-top:4px;line-height:2;letter-spacing:0.5px;}
 
-/* ── АДАПТИВ ──────────────────────────────────────────── */
+/* в”Ђв”Ђ РђР”РђРџРўРР’ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 @media(max-width:1100px){
   header{padding:0 48px;}
-  section{padding:96px 48px;}
-  .hero{padding:0 48px 80px;}
-  footer{padding:72px 48px;}
-  .sec-row{grid-template-columns:180px 1fr;gap:60px;}
+  section{padding:60px 48px;}
+  .hero{padding:100px 48px 64px;}
+  footer{padding:56px 48px;}
+  .sec-row{grid-template-columns:160px 1fr;gap:48px;}
 }
 @media(max-width:900px){
   header{padding:0 32px;height:72px;}
@@ -474,185 +474,185 @@ footer{
 </head>
 <body>
 
-<!-- ШАПКА -->
+<!-- РЁРђРџРљРђ -->
 <header>
-  <div class="logo">Баден-Баден<span>Термы Уктус · Екатеринбург</span></div>
+  <div class="logo">Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ<span>РўРµСЂРјС‹ РЈРєС‚СѓСЃ В· Р•РєР°С‚РµСЂРёРЅР±СѓСЂРі</span></div>
   <nav>
-    <a href="#karta">Карта</a>
-    <a href="#tarify">Тарифы</a>
-    <a href="#calc">Калькулятор</a>
-    <a href="#menu">Меню</a>
-    <a href="#spa">СПА</a>
-    <a href="#aktsii">Акции</a>
-    <a href="#prozhivanie">Проживание</a>
+    <a href="#karta">РљР°СЂС‚Р°</a>
+    <a href="#tarify">РўР°СЂРёС„С‹</a>
+    <a href="#calc">РљР°Р»СЊРєСѓР»СЏС‚РѕСЂ</a>
+    <a href="#menu">РњРµРЅСЋ</a>
+    <a href="#spa">РЎРџРђ</a>
+    <a href="#aktsii">РђРєС†РёРё</a>
+    <a href="#prozhivanie">РџСЂРѕР¶РёРІР°РЅРёРµ</a>
   </nav>
-  <a class="header-cta" href="https://baden-uktus.ru" target="_blank">Официальный сайт</a>
+  <a class="header-cta" href="https://baden-uktus.ru" target="_blank">РћС„РёС†РёР°Р»СЊРЅС‹Р№ СЃР°Р№С‚</a>
 </header>
 
-<!-- ГЕРОЙ -->
+<!-- Р“Р•Р РћР™ -->
 <section class="hero">
-  <div class="hero-badge">Термальный курорт · Екатеринбург · Уктус</div>
-  <h1><strong>Баден-Баден</strong><br>Термы Уктус</h1>
-  <p class="hero-sub">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
+  <div class="hero-badge">РўРµСЂРјР°Р»СЊРЅС‹Р№ РєСѓСЂРѕСЂС‚ В· Р•РєР°С‚РµСЂРёРЅР±СѓСЂРі В· РЈРєС‚СѓСЃ</div>
+  <h1><strong>Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ</strong><br>РўРµСЂРјС‹ РЈРєС‚СѓСЃ</h1>
+  <p class="hero-sub">РўРµСЂРјС‹, РЎРџРђ Рё РїСЂРѕР¶РёРІР°РЅРёРµ РЅР° РЈРєС‚СѓСЃРµ.<br>РњРµСЃС‚Рѕ, РіРґРµ РІСЂРµРјСЏ&nbsp;РѕСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ.</p>
   <div class="hero-btns">
-    <a class="btn-primary" href="#karta">Схема комплекса</a>
-    <a class="btn-secondary" href="#aktsii">Акции и тарифы</a>
+    <a class="btn-primary" href="#karta">РЎС…РµРјР° РєРѕРјРїР»РµРєСЃР°</a>
+    <a class="btn-secondary" href="#aktsii">РђРєС†РёРё Рё С‚Р°СЂРёС„С‹</a>
   </div>
   <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
   <div class="hero-stats">
-    <div><div class="hero-stat-num">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
-    <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
-    <div><div class="hero-stat-num">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
-    <div><div class="hero-stat-num">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
+    <div><div class="hero-stat-num">49</div><div class="hero-stat-lbl">РћР±СЉРµРєС‚РѕРІ РЅР° РєР°СЂС‚Рµ</div></div>
+    <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">РђРєС†РёР№ Рё СЃРєРёРґРѕРє</div></div>
+    <div><div class="hero-stat-num">5</div><div class="hero-stat-lbl">РЎРџРђ-РїСЂРѕРіСЂР°РјРј</div></div>
+    <div><div class="hero-stat-num">3</div><div class="hero-stat-lbl">Р¤РѕСЂРјР°С‚Р° РїСЂРѕР¶РёРІР°РЅРёСЏ</div></div>
   </div>
 </section>
 
-<!-- ГАЛЕРЕЯ -->
+<!-- Р“РђР›Р•Р Р•РЇ -->
 <section style="padding:0;border-bottom:1px solid var(--border-light);">
   <div class="gal-mosaic">
-    <div class="gal-main"><img src="pool-indoor.jpg" alt="Крытые термы"></div>
+    <div class="gal-main"><img src="pool-indoor.jpg" alt="РљСЂС‹С‚С‹Рµ С‚РµСЂРјС‹"></div>
     <div class="gal-side">
-      <div class="gal-sm"><img src="barnhouse.jpg" alt="БарнХаус"></div>
-      <div class="gal-sm"><img src="beach.jpg" alt="Пляж"></div>
+      <div class="gal-sm"><img src="barnhouse.jpg" alt="Р‘Р°СЂРЅРҐР°СѓСЃ"></div>
+      <div class="gal-sm"><img src="beach.jpg" alt="РџР»СЏР¶"></div>
     </div>
   </div>
 </section>
 
-<!-- КАРТА -->
+<!-- РљРђР РўРђ -->
 <section id="karta">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Навигация</div>
+    <div class="sec-label-col">РќР°РІРёРіР°С†РёСЏ</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Схема</strong> комплекса</h2>
-      <p class="sec-sub">Интерактивная карта всех зон — бассейны, СПА, кафе, проживание, сервисные точки.</p>
+      <h2 class="sec-title"><strong>РЎС…РµРјР°</strong> РєРѕРјРїР»РµРєСЃР°</h2>
+      <p class="sec-sub">РРЅС‚РµСЂР°РєС‚РёРІРЅР°СЏ РєР°СЂС‚Р° РІСЃРµС… Р·РѕРЅ вЂ” Р±Р°СЃСЃРµР№РЅС‹, РЎРџРђ, РєР°С„Рµ, РїСЂРѕР¶РёРІР°РЅРёРµ, СЃРµСЂРІРёСЃРЅС‹Рµ С‚РѕС‡РєРё.</p>
       <div class="map-wrap">
-        <iframe src="map.html" title="Схема Баден-Баден" loading="lazy"></iframe>
+        <iframe src="map.html" title="РЎС…РµРјР° Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ" loading="lazy"></iframe>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ТАРИФЫ -->
+<!-- РўРђР РР¤Р« -->
 <section class="alt-bg" id="tarify">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Цены</div>
+    <div class="sec-label-col">Р¦РµРЅС‹</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Тарифы</strong> — Термы</h2>
-      <p class="sec-sub">Стоимость зависит от дня недели и категории. Льготный тариф: дети 4–12 лет, пенсионеры, ветераны.</p>
+      <h2 class="sec-title"><strong>РўР°СЂРёС„С‹</strong> вЂ” РўРµСЂРјС‹</h2>
+      <p class="sec-sub">РЎС‚РѕРёРјРѕСЃС‚СЊ Р·Р°РІРёСЃРёС‚ РѕС‚ РґРЅСЏ РЅРµРґРµР»Рё Рё РєР°С‚РµРіРѕСЂРёРё. Р›СЊРіРѕС‚РЅС‹Р№ С‚Р°СЂРёС„: РґРµС‚Рё 4вЂ“12 Р»РµС‚, РїРµРЅСЃРёРѕРЅРµСЂС‹, РІРµС‚РµСЂР°РЅС‹.</p>
 
       <div class="tariff-grid">
         <div class="t-card">
-          <div class="t-day">Будни — Пн–Пт</div>
-          <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">1 500 ₽</span></div>
-          <div class="t-row"><span class="t-name">Общий · 3 часа</span><span class="t-price">1 900 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 2 часа</span><span class="t-price">1 400 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 3 часа</span><span class="t-price">1 600 ₽</span></div>
-          <div class="t-note">* Дети 4–12 лет, пенсионеры, инвалиды, ветераны, семьи 3+</div>
+          <div class="t-day">Р‘СѓРґРЅРё вЂ” РџРЅвЂ“РџС‚</div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 2 С‡Р°СЃР°</span><span class="t-price">1 500 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 3 С‡Р°СЃР°</span><span class="t-price">1 900 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 2 С‡Р°СЃР°</span><span class="t-price">1 400 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 3 С‡Р°СЃР°</span><span class="t-price">1 600 в‚Ѕ</span></div>
+          <div class="t-note">* Р”РµС‚Рё 4вЂ“12 Р»РµС‚, РїРµРЅСЃРёРѕРЅРµСЂС‹, РёРЅРІР°Р»РёРґС‹, РІРµС‚РµСЂР°РЅС‹, СЃРµРјСЊРё 3+</div>
         </div>
         <div class="t-card">
-          <div class="t-day">Суббота</div>
-          <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">2 300 ₽</span></div>
-          <div class="t-row"><span class="t-name">Общий · 3 часа</span><span class="t-price">2 700 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 2 часа</span><span class="t-price">1 800 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 3 часа</span><span class="t-price">2 200 ₽</span></div>
-          <div class="t-note">* Дети 4–12 лет, пенсионеры, инвалиды, ветераны, семьи 3+</div>
+          <div class="t-day">РЎСѓР±Р±РѕС‚Р°</div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 2 С‡Р°СЃР°</span><span class="t-price">2 300 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 3 С‡Р°СЃР°</span><span class="t-price">2 700 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 2 С‡Р°СЃР°</span><span class="t-price">1 800 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 3 С‡Р°СЃР°</span><span class="t-price">2 200 в‚Ѕ</span></div>
+          <div class="t-note">* Р”РµС‚Рё 4вЂ“12 Р»РµС‚, РїРµРЅСЃРёРѕРЅРµСЂС‹, РёРЅРІР°Р»РёРґС‹, РІРµС‚РµСЂР°РЅС‹, СЃРµРјСЊРё 3+</div>
         </div>
         <div class="t-card">
-          <div class="t-day">Воскресенье</div>
-          <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">2 100 ₽</span></div>
-          <div class="t-row"><span class="t-name">Общий · 3 часа</span><span class="t-price">2 500 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 2 часа</span><span class="t-price">1 600 ₽</span></div>
-          <div class="t-row"><span class="t-name">Льготный · 3 часа</span><span class="t-price">2 000 ₽</span></div>
-          <div class="t-note">* Дети 4–12 лет, пенсионеры, инвалиды, ветераны, семьи 3+</div>
+          <div class="t-day">Р’РѕСЃРєСЂРµСЃРµРЅСЊРµ</div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 2 С‡Р°СЃР°</span><span class="t-price">2 100 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">РћР±С‰РёР№ В· 3 С‡Р°СЃР°</span><span class="t-price">2 500 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 2 С‡Р°СЃР°</span><span class="t-price">1 600 в‚Ѕ</span></div>
+          <div class="t-row"><span class="t-name">Р›СЊРіРѕС‚РЅС‹Р№ В· 3 С‡Р°СЃР°</span><span class="t-price">2 000 в‚Ѕ</span></div>
+          <div class="t-note">* Р”РµС‚Рё 4вЂ“12 Р»РµС‚, РїРµРЅСЃРёРѕРЅРµСЂС‹, РёРЅРІР°Р»РёРґС‹, РІРµС‚РµСЂР°РЅС‹, СЃРµРјСЊРё 3+</div>
         </div>
       </div>
 
       <div class="combo-divider" style="margin-top:48px;">
-        <span class="combo-divider-label">Комплексные пакеты</span>
-        <span class="combo-divider-title">Термы + СПА — вход без очереди</span>
+        <span class="combo-divider-label">РљРѕРјРїР»РµРєСЃРЅС‹Рµ РїР°РєРµС‚С‹</span>
+        <span class="combo-divider-title">РўРµСЂРјС‹ + РЎРџРђ вЂ” РІС…РѕРґ Р±РµР· РѕС‡РµСЂРµРґРё</span>
       </div>
       <div class="spa-combo">
         <div class="spc-card">
-          <div class="spc-lbl">1 час термы + 1 час СПА<br><span style="opacity:.7">скраб + массаж спины</span></div>
-          <div class="spc-amt">4 900 ₽</div>
-          <div class="spc-sub">120 МИН · 1 ЧЕЛ.</div>
+          <div class="spc-lbl">1 С‡Р°СЃ С‚РµСЂРјС‹ + 1 С‡Р°СЃ РЎРџРђ<br><span style="opacity:.7">СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ СЃРїРёРЅС‹</span></div>
+          <div class="spc-amt">4 900 в‚Ѕ</div>
+          <div class="spc-sub">120 РњРРќ В· 1 Р§Р•Р›.</div>
         </div>
         <div class="spc-card">
-          <div class="spc-lbl">1,5 ч термы + 1,5 ч СПА<br><span style="opacity:.7">скраб + массаж + маска</span></div>
-          <div class="spc-amt">6 500 ₽</div>
-          <div class="spc-sub">360 МИН · 1 ЧЕЛ.</div>
+          <div class="spc-lbl">1,5 С‡ С‚РµСЂРјС‹ + 1,5 С‡ РЎРџРђ<br><span style="opacity:.7">СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ + РјР°СЃРєР°</span></div>
+          <div class="spc-amt">6 500 в‚Ѕ</div>
+          <div class="spc-sub">360 РњРРќ В· 1 Р§Р•Р›.</div>
         </div>
         <div class="spc-card">
-          <div class="spc-lbl">2 ч термы + 2 ч СПА<br><span style="opacity:.7">скраб + массаж тела + маска</span></div>
-          <div class="spc-amt">8 000 ₽</div>
-          <div class="spc-sub">480 МИН · 1 ЧЕЛ.</div>
+          <div class="spc-lbl">2 С‡ С‚РµСЂРјС‹ + 2 С‡ РЎРџРђ<br><span style="opacity:.7">СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ С‚РµР»Р° + РјР°СЃРєР°</span></div>
+          <div class="spc-amt">8 000 в‚Ѕ</div>
+          <div class="spc-sub">480 РњРРќ В· 1 Р§Р•Р›.</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- КАЛЬКУЛЯТОР -->
+<!-- РљРђР›Р¬РљРЈР›РЇРўРћР  -->
 <section id="calc">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Персональный расчёт</div>
+    <div class="sec-label-col">РџРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ СЂР°СЃС‡С‘С‚</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Калькулятор</strong> стоимости</h2>
-      <p class="sec-sub">Рассчитайте точную стоимость с учётом всех действующих акций и скидок.</p>
+      <h2 class="sec-title"><strong>РљР°Р»СЊРєСѓР»СЏС‚РѕСЂ</strong> СЃС‚РѕРёРјРѕСЃС‚Рё</h2>
+      <p class="sec-sub">Р Р°СЃСЃС‡РёС‚Р°Р№С‚Рµ С‚РѕС‡РЅСѓСЋ СЃС‚РѕРёРјРѕСЃС‚СЊ СЃ СѓС‡С‘С‚РѕРј РІСЃРµС… РґРµР№СЃС‚РІСѓСЋС‰РёС… Р°РєС†РёР№ Рё СЃРєРёРґРѕРє.</p>
 
       <div class="calc-outer">
         <div class="calc-grid">
           <div class="c-group">
-            <label>День недели</label>
+            <label>Р”РµРЅСЊ РЅРµРґРµР»Рё</label>
             <select id="c-day">
-              <option value="weekday">Понедельник – пятница</option>
-              <option value="wednesday">Среда</option>
-              <option value="saturday">Суббота</option>
-              <option value="sunday">Воскресенье</option>
+              <option value="weekday">РџРѕРЅРµРґРµР»СЊРЅРёРє вЂ“ РїСЏС‚РЅРёС†Р°</option>
+              <option value="wednesday">РЎСЂРµРґР°</option>
+              <option value="saturday">РЎСѓР±Р±РѕС‚Р°</option>
+              <option value="sunday">Р’РѕСЃРєСЂРµСЃРµРЅСЊРµ</option>
             </select>
           </div>
           <div class="c-group">
-            <label>Время покупки</label>
+            <label>Р’СЂРµРјСЏ РїРѕРєСѓРїРєРё</label>
             <select id="c-time">
-              <option value="morning">09:00 – 12:00 (утро)</option>
-              <option value="day">12:00 – 16:00 (день)</option>
-              <option value="evening16">16:00 – 20:45 (вечер)</option>
-              <option value="late">После 20:45</option>
+              <option value="morning">09:00 вЂ“ 12:00 (СѓС‚СЂРѕ)</option>
+              <option value="day">12:00 вЂ“ 16:00 (РґРµРЅСЊ)</option>
+              <option value="evening16">16:00 вЂ“ 20:45 (РІРµС‡РµСЂ)</option>
+              <option value="late">РџРѕСЃР»Рµ 20:45</option>
             </select>
           </div>
           <div class="c-group">
-            <label>Взрослых</label>
+            <label>Р’Р·СЂРѕСЃР»С‹С…</label>
             <input type="number" id="c-adults" value="2" min="0" max="20">
           </div>
           <div class="c-group">
-            <label>Детей (4–12 лет)</label>
+            <label>Р”РµС‚РµР№ (4вЂ“12 Р»РµС‚)</label>
             <input type="number" id="c-kids" value="0" min="0" max="10">
           </div>
           <div class="c-group">
-            <label>Длительность</label>
+            <label>Р”Р»РёС‚РµР»СЊРЅРѕСЃС‚СЊ</label>
             <select id="c-hours">
-              <option value="2">2 часа</option>
-              <option value="3">3 часа</option>
+              <option value="2">2 С‡Р°СЃР°</option>
+              <option value="3">3 С‡Р°СЃР°</option>
             </select>
           </div>
           <div class="c-group">
-            <label>Категория</label>
+            <label>РљР°С‚РµРіРѕСЂРёСЏ</label>
             <select id="c-cat">
-              <option value="general">Общая</option>
-              <option value="lgot">Льготная (пенсионер / инвалид / ветеран)</option>
+              <option value="general">РћР±С‰Р°СЏ</option>
+              <option value="lgot">Р›СЊРіРѕС‚РЅР°СЏ (РїРµРЅСЃРёРѕРЅРµСЂ / РёРЅРІР°Р»РёРґ / РІРµС‚РµСЂР°РЅ)</option>
             </select>
           </div>
         </div>
         <div style="margin-top:28px;padding-top:28px;border-top:1px solid var(--border-light);">
-          <div style="font-size:12px;color:var(--pale);margin-bottom:14px;font-weight:500;">Дополнительные условия</div>
+          <div style="font-size:12px;color:var(--pale);margin-bottom:14px;font-weight:500;">Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СѓСЃР»РѕРІРёСЏ</div>
           <div class="c-checks">
-            <label><input type="checkbox" id="c-bday"> День рождения (±2 дня) — скидка 10%</label>
-            <label><input type="checkbox" id="c-student"> Студент очного отделения (по средам до 19:00) — скидка 20%</label>
-            <label><input type="checkbox" id="c-family"> Семья 3+ (льготная категория)</label>
+            <label><input type="checkbox" id="c-bday"> Р”РµРЅСЊ СЂРѕР¶РґРµРЅРёСЏ (В±2 РґРЅСЏ) вЂ” СЃРєРёРґРєР° 10%</label>
+            <label><input type="checkbox" id="c-student"> РЎС‚СѓРґРµРЅС‚ РѕС‡РЅРѕРіРѕ РѕС‚РґРµР»РµРЅРёСЏ (РїРѕ СЃСЂРµРґР°Рј РґРѕ 19:00) вЂ” СЃРєРёРґРєР° 20%</label>
+            <label><input type="checkbox" id="c-family"> РЎРµРјСЊСЏ 3+ (Р»СЊРіРѕС‚РЅР°СЏ РєР°С‚РµРіРѕСЂРёСЏ)</label>
           </div>
         </div>
         <div style="margin-top:32px;">
-          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:16px;font-size:13px;">Рассчитать стоимость</button>
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:16px;font-size:13px;">Р Р°СЃСЃС‡РёС‚Р°С‚СЊ СЃС‚РѕРёРјРѕСЃС‚СЊ</button>
         </div>
         <div class="c-result" id="calc-result">
           <div class="c-res-main" id="res-total"></div>
@@ -664,422 +664,422 @@ footer{
   </div>
 </section>
 
-<!-- МЕНЮ -->
+<!-- РњР•РќР® -->
 <section class="alt-bg" id="menu">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Гастрономия</div>
+    <div class="sec-label-col">Р“Р°СЃС‚СЂРѕРЅРѕРјРёСЏ</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Кафе</strong> и немецкий бар</h2>
-      <p class="sec-sub">Авторская кухня, свежая выпечка, горячие блюда, напитки и детское меню.</p>
+      <h2 class="sec-title"><strong>РљР°С„Рµ</strong> Рё РЅРµРјРµС†РєРёР№ Р±Р°СЂ</h2>
+      <p class="sec-sub">РђРІС‚РѕСЂСЃРєР°СЏ РєСѓС…РЅСЏ, СЃРІРµР¶Р°СЏ РІС‹РїРµС‡РєР°, РіРѕСЂСЏС‡РёРµ Р±Р»СЋРґР°, РЅР°РїРёС‚РєРё Рё РґРµС‚СЃРєРѕРµ РјРµРЅСЋ.</p>
 
       <div class="sec-photo">
-        <img src="sauna.jpg" alt="Кафе Баден-Баден">
+        <img src="sauna.jpg" alt="РљР°С„Рµ Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ">
       </div>
 
       <div class="tab-nav">
-        <button class="tb on" onclick="tab(this,'napit')">Напитки</button>
-        <button class="tb" onclick="tab(this,'zakus')">Закуски</button>
-        <button class="tb" onclick="tab(this,'salat')">Салаты / Супы</button>
-        <button class="tb" onclick="tab(this,'gor')">Горячее</button>
-        <button class="tb" onclick="tab(this,'pasta')">Паста</button>
-        <button class="tb" onclick="tab(this,'pizza')">Пицца</button>
-        <button class="tb" onclick="tab(this,'burger')">Бургеры</button>
-        <button class="tb" onclick="tab(this,'zavt')">Завтраки</button>
-        <button class="tb" onclick="tab(this,'kids')">Детское</button>
+        <button class="tb on" onclick="tab(this,'napit')">РќР°РїРёС‚РєРё</button>
+        <button class="tb" onclick="tab(this,'zakus')">Р—Р°РєСѓСЃРєРё</button>
+        <button class="tb" onclick="tab(this,'salat')">РЎР°Р»Р°С‚С‹ / РЎСѓРїС‹</button>
+        <button class="tb" onclick="tab(this,'gor')">Р“РѕСЂСЏС‡РµРµ</button>
+        <button class="tb" onclick="tab(this,'pasta')">РџР°СЃС‚Р°</button>
+        <button class="tb" onclick="tab(this,'pizza')">РџРёС†С†Р°</button>
+        <button class="tb" onclick="tab(this,'burger')">Р‘СѓСЂРіРµСЂС‹</button>
+        <button class="tb" onclick="tab(this,'zavt')">Р—Р°РІС‚СЂР°РєРё</button>
+        <button class="tb" onclick="tab(this,'kids')">Р”РµС‚СЃРєРѕРµ</button>
       </div>
 
       <div class="tc on" id="t-napit"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30/120 мл</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай фирменный Баден-Баден (сосновые шишки)</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай классический (в ассортименте)</div><div class="m-wt">900 мл</div></div><div class="m-pr">370 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский (в чашке)</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Глинтвейн Б/А</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Сбитень ежевичный</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Бабл Ти Черника / Манго</div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Лимонад</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Мохито Б/А</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Газированная вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво светлое / тёмное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво нефильтрованное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Вино Аристов белое / красное</div><div class="m-wt">125 мл</div></div><div class="m-pr">450 ₽</div></div>
+        <div class="m-item"><div><div class="m-name">Р­СЃРїСЂРµСЃСЃРѕ / РђРјРµСЂРёРєР°РЅРѕ</div><div class="m-wt">30/120 РјР»</div></div><div class="m-pr">200 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РљР°РїСѓС‡РёРЅРѕ / Р›Р°С‚С‚Рµ / РљР°РєР°Рѕ</div><div class="m-wt">200 РјР»</div></div><div class="m-pr">250 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р§Р°Р№ С„РёСЂРјРµРЅРЅС‹Р№ Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ (СЃРѕСЃРЅРѕРІС‹Рµ С€РёС€РєРё)</div><div class="m-wt">900 РјР»</div></div><div class="m-pr">400 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р§Р°Р№ Р°РІС‚РѕСЂСЃРєРёР№</div><div class="m-wt">900 РјР»</div></div><div class="m-pr">400 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р§Р°Р№ РєР»Р°СЃСЃРёС‡РµСЃРєРёР№ (РІ Р°СЃСЃРѕСЂС‚РёРјРµРЅС‚Рµ)</div><div class="m-wt">900 РјР»</div></div><div class="m-pr">370 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р§Р°Р№ Р°РІС‚РѕСЂСЃРєРёР№ (РІ С‡Р°С€РєРµ)</div><div class="m-wt">300 РјР»</div></div><div class="m-pr">250 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р“Р»РёРЅС‚РІРµР№РЅ Р‘/Рђ</div><div class="m-wt">200 РјР»</div></div><div class="m-pr">250 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РЎР±РёС‚РµРЅСЊ РµР¶РµРІРёС‡РЅС‹Р№</div><div class="m-wt">200 РјР»</div></div><div class="m-pr">250 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р‘Р°Р±Р» РўРё Р§РµСЂРЅРёРєР° / РњР°РЅРіРѕ</div><div class="m-wt">300 РјР»</div></div><div class="m-pr">400 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р›РёРјРѕРЅР°Рґ</div><div class="m-wt">300 РјР»</div></div><div class="m-pr">300 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РњРѕС…РёС‚Рѕ Р‘/Рђ</div><div class="m-wt">300 РјР»</div></div><div class="m-pr">300 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РњРѕР»РѕС‡РЅС‹Р№ РєРѕРєС‚РµР№Р»СЊ</div><div class="m-wt">300 РјР»</div></div><div class="m-pr">350 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р“Р°Р·РёСЂРѕРІР°РЅРЅР°СЏ РІРѕРґР°</div><div class="m-wt">400 РјР»</div></div><div class="m-pr">200 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџРёРІРѕ СЃРІРµС‚Р»РѕРµ / С‚С‘РјРЅРѕРµ СЂР°Р·Р»РёРІРЅРѕРµ</div><div class="m-wt">500 РјР»</div></div><div class="m-pr">350 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџРёРІРѕ РЅРµС„РёР»СЊС‚СЂРѕРІР°РЅРЅРѕРµ СЂР°Р·Р»РёРІРЅРѕРµ</div><div class="m-wt">500 РјР»</div></div><div class="m-pr">400 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р’РёРЅРѕ РђСЂРёСЃС‚РѕРІ Р±РµР»РѕРµ / РєСЂР°СЃРЅРѕРµ</div><div class="m-wt">125 РјР»</div></div><div class="m-pr">450 в‚Ѕ</div></div>
       </div></div>
 
       <div class="tc" id="t-zakus"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Креветки в панировке с соусом Васаби</div><div class="m-wt">120 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Куриные крылышки</div><div class="m-wt">230 г</div></div><div class="m-pr">450 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Гренки чесночные</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Кольца кальмара с соусом Тар-тар <span class="new">NEW</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Болоньезе <span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Бекон Сыр <span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 ₽</div></div>
+        <div class="m-item"><div><div class="m-name">РљСЂРµРІРµС‚РєРё РІ РїР°РЅРёСЂРѕРІРєРµ СЃ СЃРѕСѓСЃРѕРј Р’Р°СЃР°Р±Рё</div><div class="m-wt">120 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РљСѓСЂРёРЅС‹Рµ РєСЂС‹Р»С‹С€РєРё</div><div class="m-wt">230 Рі</div></div><div class="m-pr">450 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РЎС‹СЂРЅС‹Рµ РїР°Р»РѕС‡РєРё</div><div class="m-wt">150 Рі</div></div><div class="m-pr">390 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р“СЂРµРЅРєРё С‡РµСЃРЅРѕС‡РЅС‹Рµ</div><div class="m-wt">150 Рі</div></div><div class="m-pr">200 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РљРѕР»СЊС†Р° РєР°Р»СЊРјР°СЂР° СЃ СЃРѕСѓСЃРѕРј РўР°СЂ-С‚Р°СЂ <span class="new">NEW</span></div><div class="m-wt">130 Рі</div></div><div class="m-pr">450 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р¤СЂРёС‚ Р‘РѕР»РѕРЅСЊРµР·Рµ <span class="new">NEW</span></div><div class="m-wt">230 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р¤СЂРёС‚ Р‘РµРєРѕРЅ РЎС‹СЂ <span class="new">NEW</span></div><div class="m-wt">230 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
       </div></div>
 
       <div class="tc" id="t-salat">
-        <div class="sub-head">Салаты</div>
+        <div class="sub-head">РЎР°Р»Р°С‚С‹</div>
         <div class="m-grid" style="margin-bottom:8px;">
-          <div class="m-item"><div><div class="m-name">Поке с лососем</div><div class="m-wt">310 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Поке с креветками</div><div class="m-wt">340 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Цезарь с креветками / курицей</div><div class="m-wt">180 г</div></div><div class="m-pr">490/430 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Оливье с говядиной</div><div class="m-wt">230 г</div></div><div class="m-pr">350 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сельдь под шубой</div><div class="m-wt">200 г</div></div><div class="m-pr">290 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Греческий</div><div class="m-wt">180 г</div></div><div class="m-pr">380 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">РџРѕРєРµ СЃ Р»РѕСЃРѕСЃРµРј</div><div class="m-wt">310 Рі</div></div><div class="m-pr">590 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РџРѕРєРµ СЃ РєСЂРµРІРµС‚РєР°РјРё</div><div class="m-wt">340 Рі</div></div><div class="m-pr">590 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">Р¦РµР·Р°СЂСЊ СЃ РєСЂРµРІРµС‚РєР°РјРё / РєСѓСЂРёС†РµР№</div><div class="m-wt">180 Рі</div></div><div class="m-pr">490/430 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РћР»РёРІСЊРµ СЃ РіРѕРІСЏРґРёРЅРѕР№</div><div class="m-wt">230 Рі</div></div><div class="m-pr">350 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎРµР»СЊРґСЊ РїРѕРґ С€СѓР±РѕР№</div><div class="m-wt">200 Рі</div></div><div class="m-pr">290 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">Р“СЂРµС‡РµСЃРєРёР№</div><div class="m-wt">180 Рі</div></div><div class="m-pr">380 в‚Ѕ</div></div>
         </div>
-        <div class="sub-head">Супы</div>
+        <div class="sub-head">РЎСѓРїС‹</div>
         <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Том-Ям с креветками и курицей 🌶</div><div class="m-wt">400 г</div></div><div class="m-pr">620 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Солянка мясная</div><div class="m-wt">350 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сливочный карри-рамен <span class="new">NEW</span></div><div class="m-wt">450 г</div></div><div class="m-pr">550 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Суп-крем грибной</div><div class="m-wt">280 г</div></div><div class="m-pr">450 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">РўРѕРј-РЇРј СЃ РєСЂРµРІРµС‚РєР°РјРё Рё РєСѓСЂРёС†РµР№ рџЊ¶</div><div class="m-wt">400 Рі</div></div><div class="m-pr">620 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎРѕР»СЏРЅРєР° РјСЏСЃРЅР°СЏ</div><div class="m-wt">350 Рі</div></div><div class="m-pr">590 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎР»РёРІРѕС‡РЅС‹Р№ РєР°СЂСЂРё-СЂР°РјРµРЅ <span class="new">NEW</span></div><div class="m-wt">450 Рі</div></div><div class="m-pr">550 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎСѓРї-РєСЂРµРј РіСЂРёР±РЅРѕР№</div><div class="m-wt">280 Рі</div></div><div class="m-pr">450 в‚Ѕ</div></div>
         </div>
       </div>
 
       <div class="tc" id="t-gor">
-        <div class="sub-head">WOK / Горячее</div>
+        <div class="sub-head">WOK / Р“РѕСЂСЏС‡РµРµ</div>
         <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Рис с креветками и овощами 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Удон с креветками 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">690 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Соба с рваной говядиной 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">760 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Яичная лапша с курицей 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Крабовые котлетки с зелёным пюре</div><div class="m-wt">250 г</div></div><div class="m-pr">590 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Р РёСЃ СЃ РєСЂРµРІРµС‚РєР°РјРё Рё РѕРІРѕС‰Р°РјРё рџЊ¶</div><div class="m-wt">340 Рі</div></div><div class="m-pr">630 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЈРґРѕРЅ СЃ РєСЂРµРІРµС‚РєР°РјРё рџЊ¶</div><div class="m-wt">340 Рі</div></div><div class="m-pr">690 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎРѕР±Р° СЃ СЂРІР°РЅРѕР№ РіРѕРІСЏРґРёРЅРѕР№ рџЊ¶</div><div class="m-wt">340 Рі</div></div><div class="m-pr">760 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЇРёС‡РЅР°СЏ Р»Р°РїС€Р° СЃ РєСѓСЂРёС†РµР№ рџЊ¶</div><div class="m-wt">340 Рі</div></div><div class="m-pr">630 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РљСЂР°Р±РѕРІС‹Рµ РєРѕС‚Р»РµС‚РєРё СЃ Р·РµР»С‘РЅС‹Рј РїСЋСЂРµ</div><div class="m-wt">250 Рі</div></div><div class="m-pr">590 в‚Ѕ</div></div>
         </div>
       </div>
 
       <div class="tc" id="t-pasta"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Ньокки с креветками и сливочным песто</div><div class="m-wt">300 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с креветками в сливочно-томатном соусе</div><div class="m-wt">270 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с грибами и трюфельным кремом</div><div class="m-wt">220 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Лазанья мясная</div><div class="m-wt">300 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Паста Карбонара</div><div class="m-wt">270 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с курицей и грибами <span class="new">NEW</span></div><div class="m-wt">310 г</div></div><div class="m-pr">550 ₽</div></div>
+        <div class="m-item"><div><div class="m-name">РќСЊРѕРєРєРё СЃ РєСЂРµРІРµС‚РєР°РјРё Рё СЃР»РёРІРѕС‡РЅС‹Рј РїРµСЃС‚Рѕ</div><div class="m-wt">300 Рі</div></div><div class="m-pr">690 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџРµРЅРЅРµ СЃ РєСЂРµРІРµС‚РєР°РјРё РІ СЃР»РёРІРѕС‡РЅРѕ-С‚РѕРјР°С‚РЅРѕРј СЃРѕСѓСЃРµ</div><div class="m-wt">270 Рі</div></div><div class="m-pr">690 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџРµРЅРЅРµ СЃ РіСЂРёР±Р°РјРё Рё С‚СЂСЋС„РµР»СЊРЅС‹Рј РєСЂРµРјРѕРј</div><div class="m-wt">220 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р›Р°Р·Р°РЅСЊСЏ РјСЏСЃРЅР°СЏ</div><div class="m-wt">300 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџР°СЃС‚Р° РљР°СЂР±РѕРЅР°СЂР°</div><div class="m-wt">270 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РџРµРЅРЅРµ СЃ РєСѓСЂРёС†РµР№ Рё РіСЂРёР±Р°РјРё <span class="new">NEW</span></div><div class="m-wt">310 Рі</div></div><div class="m-pr">550 в‚Ѕ</div></div>
       </div></div>
 
       <div class="tc" id="t-pizza">
-        <div class="sub-head">Целый круг 40 см / Слайс</div>
+        <div class="sub-head">Р¦РµР»С‹Р№ РєСЂСѓРі 40 СЃРј / РЎР»Р°Р№СЃ</div>
         <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">BBQ</div><div class="m-wt">1000 г</div></div><div class="m-pr">1490/210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Кальцоне (полукруг)</div><div class="m-wt">1100 г</div></div><div class="m-pr">1400/370 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пицца с креветками <span class="new">NEW</span></div><div class="m-wt">950 г</div></div><div class="m-pr">1490/210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пепперони</div><div class="m-wt">830 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">4 Сыра</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Ветчина Грибы</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Маргарита</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">BBQ</div><div class="m-wt">1000 Рі</div></div><div class="m-pr">1490/210 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РљР°Р»СЊС†РѕРЅРµ (РїРѕР»СѓРєСЂСѓРі)</div><div class="m-wt">1100 Рі</div></div><div class="m-pr">1400/370 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РџРёС†С†Р° СЃ РєСЂРµРІРµС‚РєР°РјРё <span class="new">NEW</span></div><div class="m-wt">950 Рі</div></div><div class="m-pr">1490/210 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РџРµРїРїРµСЂРѕРЅРё</div><div class="m-wt">830 Рі</div></div><div class="m-pr">1300/180 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">4 РЎС‹СЂР°</div><div class="m-wt">930 Рі</div></div><div class="m-pr">1300/180 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">Р’РµС‚С‡РёРЅР° Р“СЂРёР±С‹</div><div class="m-wt">930 Рі</div></div><div class="m-pr">1300/180 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РњР°СЂРіР°СЂРёС‚Р°</div><div class="m-wt">930 Рі</div></div><div class="m-pr">1300/180 в‚Ѕ</div></div>
         </div>
       </div>
 
       <div class="tc" id="t-burger"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Баден Бургер</div><div class="m-wt">350 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Крабсбургер</div><div class="m-wt">360 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">УФО-бургер с рваной говядиной</div><div class="m-wt">200 г</div></div><div class="m-pr">530 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чикенбургер <span class="new">NEW</span></div><div class="m-wt">260 г</div></div><div class="m-pr">490 ₽</div></div>
+        <div class="m-item"><div><div class="m-name">Р‘Р°РґРµРЅ Р‘СѓСЂРіРµСЂ</div><div class="m-wt">350 Рі</div></div><div class="m-pr">690 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РљСЂР°Р±СЃР±СѓСЂРіРµСЂ</div><div class="m-wt">360 Рі</div></div><div class="m-pr">690 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">РЈР¤Рћ-Р±СѓСЂРіРµСЂ СЃ СЂРІР°РЅРѕР№ РіРѕРІСЏРґРёРЅРѕР№</div><div class="m-wt">200 Рі</div></div><div class="m-pr">530 в‚Ѕ</div></div>
+        <div class="m-item"><div><div class="m-name">Р§РёРєРµРЅР±СѓСЂРіРµСЂ <span class="new">NEW</span></div><div class="m-wt">260 Рі</div></div><div class="m-pr">490 в‚Ѕ</div></div>
       </div></div>
 
       <div class="tc" id="t-zavt">
-        <div class="bfast-banner">Завтрак — <strong>720 ₽</strong> · Ежедневно 09:00–12:00 · Напиток в подарок: чай / капучино / американо</div>
+        <div class="bfast-banner">Р—Р°РІС‚СЂР°Рє вЂ” <strong>720 в‚Ѕ</strong> В· Р•Р¶РµРґРЅРµРІРЅРѕ 09:00вЂ“12:00 В· РќР°РїРёС‚РѕРє РІ РїРѕРґР°СЂРѕРє: С‡Р°Р№ / РєР°РїСѓС‡РёРЅРѕ / Р°РјРµСЂРёРєР°РЅРѕ</div>
         <div class="bfast-grid">
-          <div class="bfast-card"><h4>Завтрак 1</h4><div class="bfast-wt">280 г</div><p>Свежий хрустящий круассан — Омлет с цукини, болгарским перцем и обжаренными креветками в сливочном соусе</p></div>
-          <div class="bfast-card"><h4>Завтрак 2</h4><div class="bfast-wt">390 г</div><p>Картофельные драники с Бюргерской колбаской и фасолью в томатном соусе — Глазунья из 2-х яиц</p></div>
-          <div class="bfast-card"><h4>Завтрак 3</h4><div class="bfast-wt">280 г</div><p>Блинчики с крем-сыром и слабосолёным лососем — Запеканка с изюмом и сливочно-облепиховым кремом</p></div>
-          <div class="bfast-card"><h4>Детский завтрак</h4><div class="bfast-wt">320 г</div><p>Рисовая каша с фруктами и ягодами — Пицца с сосисками и томатами — Йогурт с гранолой</p></div>
+          <div class="bfast-card"><h4>Р—Р°РІС‚СЂР°Рє 1</h4><div class="bfast-wt">280 Рі</div><p>РЎРІРµР¶РёР№ С…СЂСѓСЃС‚СЏС‰РёР№ РєСЂСѓР°СЃСЃР°РЅ вЂ” РћРјР»РµС‚ СЃ С†СѓРєРёРЅРё, Р±РѕР»РіР°СЂСЃРєРёРј РїРµСЂС†РµРј Рё РѕР±Р¶Р°СЂРµРЅРЅС‹РјРё РєСЂРµРІРµС‚РєР°РјРё РІ СЃР»РёРІРѕС‡РЅРѕРј СЃРѕСѓСЃРµ</p></div>
+          <div class="bfast-card"><h4>Р—Р°РІС‚СЂР°Рє 2</h4><div class="bfast-wt">390 Рі</div><p>РљР°СЂС‚РѕС„РµР»СЊРЅС‹Рµ РґСЂР°РЅРёРєРё СЃ Р‘СЋСЂРіРµСЂСЃРєРѕР№ РєРѕР»Р±Р°СЃРєРѕР№ Рё С„Р°СЃРѕР»СЊСЋ РІ С‚РѕРјР°С‚РЅРѕРј СЃРѕСѓСЃРµ вЂ” Р“Р»Р°Р·СѓРЅСЊСЏ РёР· 2-С… СЏРёС†</p></div>
+          <div class="bfast-card"><h4>Р—Р°РІС‚СЂР°Рє 3</h4><div class="bfast-wt">280 Рі</div><p>Р‘Р»РёРЅС‡РёРєРё СЃ РєСЂРµРј-СЃС‹СЂРѕРј Рё СЃР»Р°Р±РѕСЃРѕР»С‘РЅС‹Рј Р»РѕСЃРѕСЃРµРј вЂ” Р—Р°РїРµРєР°РЅРєР° СЃ РёР·СЋРјРѕРј Рё СЃР»РёРІРѕС‡РЅРѕ-РѕР±Р»РµРїРёС…РѕРІС‹Рј РєСЂРµРјРѕРј</p></div>
+          <div class="bfast-card"><h4>Р”РµС‚СЃРєРёР№ Р·Р°РІС‚СЂР°Рє</h4><div class="bfast-wt">320 Рі</div><p>Р РёСЃРѕРІР°СЏ РєР°С€Р° СЃ С„СЂСѓРєС‚Р°РјРё Рё СЏРіРѕРґР°РјРё вЂ” РџРёС†С†Р° СЃ СЃРѕСЃРёСЃРєР°РјРё Рё С‚РѕРјР°С‚Р°РјРё вЂ” Р™РѕРіСѓСЂС‚ СЃ РіСЂР°РЅРѕР»РѕР№</p></div>
         </div>
-        <div style="font-size:11px;color:var(--pale);margin-top:16px;">* Завтраки включены в проживание и в акцию «Бодрое утро»</div>
+        <div style="font-size:11px;color:var(--pale);margin-top:16px;">* Р—Р°РІС‚СЂР°РєРё РІРєР»СЋС‡РµРЅС‹ РІ РїСЂРѕР¶РёРІР°РЅРёРµ Рё РІ Р°РєС†РёСЋ В«Р‘РѕРґСЂРѕРµ СѓС‚СЂРѕВ»</div>
       </div>
 
       <div class="tc" id="t-kids">
         <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Суп куриный с домашней лапшой</div><div class="m-wt">180 г</div></div><div class="m-pr">210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пельмешки</div><div class="m-wt">150 г</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сосиска с макаронами и кетчупом</div><div class="m-wt">60/100/30 г</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Котлета куриная с пюре</div><div class="m-wt">80/90/80 г</div></div><div class="m-pr">350 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Наггетсы куриные</div><div class="m-wt">6 шт</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Картошка фри</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сырники творожные с соусом</div><div class="m-wt">140 г</div></div><div class="m-pr">270 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">РЎСѓРї РєСѓСЂРёРЅС‹Р№ СЃ РґРѕРјР°С€РЅРµР№ Р»Р°РїС€РѕР№</div><div class="m-wt">180 Рі</div></div><div class="m-pr">210 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РџРµР»СЊРјРµС€РєРё</div><div class="m-wt">150 Рі</div></div><div class="m-pr">300 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎРѕСЃРёСЃРєР° СЃ РјР°РєР°СЂРѕРЅР°РјРё Рё РєРµС‚С‡СѓРїРѕРј</div><div class="m-wt">60/100/30 Рі</div></div><div class="m-pr">300 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РљРѕС‚Р»РµС‚Р° РєСѓСЂРёРЅР°СЏ СЃ РїСЋСЂРµ</div><div class="m-wt">80/90/80 Рі</div></div><div class="m-pr">350 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РќР°РіРіРµС‚СЃС‹ РєСѓСЂРёРЅС‹Рµ</div><div class="m-wt">6 С€С‚</div></div><div class="m-pr">300 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РљР°СЂС‚РѕС€РєР° С„СЂРё</div><div class="m-wt">150 Рі</div></div><div class="m-pr">200 в‚Ѕ</div></div>
+          <div class="m-item"><div><div class="m-name">РЎС‹СЂРЅРёРєРё С‚РІРѕСЂРѕР¶РЅС‹Рµ СЃ СЃРѕСѓСЃРѕРј</div><div class="m-wt">140 Рі</div></div><div class="m-pr">270 в‚Ѕ</div></div>
         </div>
         <div class="badya">
-          <div class="ic2">🎁</div>
-          <div><h3>Бадя-Бокс</h3><p>Детский бургер · Картофель фри · Сок · Игрушка</p></div>
-          <div class="pr2">650 ₽</div>
+          <div class="ic2">рџЋЃ</div>
+          <div><h3>Р‘Р°РґСЏ-Р‘РѕРєСЃ</h3><p>Р”РµС‚СЃРєРёР№ Р±СѓСЂРіРµСЂ В· РљР°СЂС‚РѕС„РµР»СЊ С„СЂРё В· РЎРѕРє В· РРіСЂСѓС€РєР°</p></div>
+          <div class="pr2">650 в‚Ѕ</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- СПА -->
+<!-- РЎРџРђ -->
 <section id="spa">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Велнес</div>
+    <div class="sec-label-col">Р’РµР»РЅРµСЃ</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>СПА</strong> — Прайс</h2>
-      <p class="sec-sub">Нажмите на раздел чтобы раскрыть. Хаммам, массажи, обёртывания, детские программы.</p>
+      <h2 class="sec-title"><strong>РЎРџРђ</strong> вЂ” РџСЂР°Р№СЃ</h2>
+      <p class="sec-sub">РќР°Р¶РјРёС‚Рµ РЅР° СЂР°Р·РґРµР» С‡С‚РѕР±С‹ СЂР°СЃРєСЂС‹С‚СЊ. РҐР°РјРјР°Рј, РјР°СЃСЃР°Р¶Рё, РѕР±С‘СЂС‚С‹РІР°РЅРёСЏ, РґРµС‚СЃРєРёРµ РїСЂРѕРіСЂР°РјРјС‹.</p>
 
       <div class="sec-photo">
-        <img src="spa-room.jpg" alt="СПА Баден-Баден">
+        <img src="spa-massage.jpg" alt="СПА Баден-Баден" style="object-position:center 30%;">
       </div>
 
       <div class="spa-block">
         <div class="spa-head" onclick="toggleSpa(this)">
-          <span class="spa-title">Массажи тела и лица</span>
+          <span class="spa-title">РњР°СЃСЃР°Р¶Рё С‚РµР»Р° Рё Р»РёС†Р°</span>
           <span class="spa-arrow">+</span>
         </div>
         <div class="spa-body open">
           <div class="spa-grid">
-            <div class="sp-item"><div class="sp-name">Массаж спины</div><div class="sp-pr">30 мин · 2 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Массаж головы и ШВЗ «Основы разума»</div><div class="sp-pr">30 мин · 2 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Массаж ног</div><div class="sp-pr">30 мин · 2 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Ломи-Ломи» с горящей свечой</div><div class="sp-pr">60 мин · 7 500 ₽<br>90 мин · 8 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Расслабляющий «Нега»</div><div class="sp-pr">60 мин · 3 800 ₽<br>90 мин · 4 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Императорский шелк»</div><div class="sp-pr">60 мин · 4 000 ₽<br>90 мин · 5 700 ₽</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЃСЃР°Р¶ СЃРїРёРЅС‹</div><div class="sp-pr">30 РјРёРЅ В· 2 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЃСЃР°Р¶ РіРѕР»РѕРІС‹ Рё РЁР’Р— В«РћСЃРЅРѕРІС‹ СЂР°Р·СѓРјР°В»</div><div class="sp-pr">30 РјРёРЅ В· 2 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЃСЃР°Р¶ РЅРѕРі</div><div class="sp-pr">30 РјРёРЅ В· 2 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«Р›РѕРјРё-Р›РѕРјРёВ» СЃ РіРѕСЂСЏС‰РµР№ СЃРІРµС‡РѕР№</div><div class="sp-pr">60 РјРёРЅ В· 7 500 в‚Ѕ<br>90 РјРёРЅ В· 8 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р Р°СЃСЃР»Р°Р±Р»СЏСЋС‰РёР№ В«РќРµРіР°В»</div><div class="sp-pr">60 РјРёРЅ В· 3 800 в‚Ѕ<br>90 РјРёРЅ В· 4 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РРјРїРµСЂР°С‚РѕСЂСЃРєРёР№ С€РµР»РєВ»</div><div class="sp-pr">60 РјРёРЅ В· 4 000 в‚Ѕ<br>90 РјРёРЅ В· 5 700 в‚Ѕ</div></div>
           </div>
-          <div class="spa-note">* При добавлении к услуге от 3000 ₽ — стоимость короткого массажа 1 600 ₽</div>
+          <div class="spa-note">* РџСЂРё РґРѕР±Р°РІР»РµРЅРёРё Рє СѓСЃР»СѓРіРµ РѕС‚ 3000 в‚Ѕ вЂ” СЃС‚РѕРёРјРѕСЃС‚СЊ РєРѕСЂРѕС‚РєРѕРіРѕ РјР°СЃСЃР°Р¶Р° 1 600 в‚Ѕ</div>
         </div>
       </div>
 
       <div class="spa-block">
         <div class="spa-head" onclick="toggleSpa(this)">
-          <span class="spa-title">Профилактический массаж</span>
+          <span class="spa-title">РџСЂРѕС„РёР»Р°РєС‚РёС‡РµСЃРєРёР№ РјР°СЃСЃР°Р¶</span>
           <span class="spa-arrow">+</span>
         </div>
         <div class="spa-body">
           <div class="spa-grid">
-            <div class="sp-item"><div class="sp-name">Тайский на кушетке</div><div class="sp-pr">60 мин · 4 200 ₽<br>90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Авторский массаж</div><div class="sp-pr">60 мин · 4 200 ₽<br>90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Оздоровительный классический</div><div class="sp-pr">60 мин · 4 200 ₽<br>90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Лимфодренажный массаж</div><div class="sp-pr">90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Спортивный массаж</div><div class="sp-pr">60 мин · 4 200 ₽<br>90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Русский спа-массаж</div><div class="sp-pr">90 мин · 5 100 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Французский классический массаж лица</div><div class="sp-pr">50 мин · 3 200 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Лимфодренажный массаж лица</div><div class="sp-pr">50 мин · 3 300 ₽</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="spa-block">
-        <div class="spa-head" onclick="toggleSpa(this)">
-          <span class="spa-title">Хаммам</span>
-          <span class="spa-arrow">+</span>
-        </div>
-        <div class="spa-body">
-          <div class="spa-grid">
-            <div class="sp-item"><div class="sp-name">Марроканский хаммам</div><div class="sp-pr">75 мин · 4 300 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Великолепный век Султан и Хюрем</div><div class="sp-pr">165 мин · 10 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Великолепный век (для двоих)</div><div class="sp-pr">195 мин · 20 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Турецкий пенный массаж</div><div class="sp-pr">60 мин · 4 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Возрождение</div><div class="sp-pr">100 мин · 6 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Возрождение (для двоих)</div><div class="sp-pr">125 мин · 12 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Аюрведа</div><div class="sp-pr">105 мин · 7 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Аюрведа (для двоих)</div><div class="sp-pr">150 мин · 14 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">САНДАЛ</div><div class="sp-pr">150 мин · 8 000 ₽</div></div>
+            <div class="sp-item"><div class="sp-name">РўР°Р№СЃРєРёР№ РЅР° РєСѓС€РµС‚РєРµ</div><div class="sp-pr">60 РјРёРЅ В· 4 200 в‚Ѕ<br>90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђРІС‚РѕСЂСЃРєРёР№ РјР°СЃСЃР°Р¶</div><div class="sp-pr">60 РјРёРЅ В· 4 200 в‚Ѕ<br>90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РћР·РґРѕСЂРѕРІРёС‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃРёС‡РµСЃРєРёР№</div><div class="sp-pr">60 РјРёРЅ В· 4 200 в‚Ѕ<br>90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р›РёРјС„РѕРґСЂРµРЅР°Р¶РЅС‹Р№ РјР°СЃСЃР°Р¶</div><div class="sp-pr">90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РЎРїРѕСЂС‚РёРІРЅС‹Р№ РјР°СЃСЃР°Р¶</div><div class="sp-pr">60 РјРёРЅ В· 4 200 в‚Ѕ<br>90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р СѓСЃСЃРєРёР№ СЃРїР°-РјР°СЃСЃР°Р¶</div><div class="sp-pr">90 РјРёРЅ В· 5 100 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р¤СЂР°РЅС†СѓР·СЃРєРёР№ РєР»Р°СЃСЃРёС‡РµСЃРєРёР№ РјР°СЃСЃР°Р¶ Р»РёС†Р°</div><div class="sp-pr">50 РјРёРЅ В· 3 200 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р›РёРјС„РѕРґСЂРµРЅР°Р¶РЅС‹Р№ РјР°СЃСЃР°Р¶ Р»РёС†Р°</div><div class="sp-pr">50 РјРёРЅ В· 3 300 в‚Ѕ</div></div>
           </div>
         </div>
       </div>
 
       <div class="spa-block">
         <div class="spa-head" onclick="toggleSpa(this)">
-          <span class="spa-title">Обёртывания и СПА-программы</span>
+          <span class="spa-title">РҐР°РјРјР°Рј</span>
           <span class="spa-arrow">+</span>
         </div>
         <div class="spa-body">
           <div class="spa-grid">
-            <div class="sp-item"><div class="sp-name">Морской бриз</div><div class="sp-pr">60 мин · 5 500 ₽<br>90 мин · 5 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Тропический коктейль</div><div class="sp-pr">60 мин · 5 500 ₽<br>90 мин · 5 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Каннабис</div><div class="sp-pr">60 мин · 5 500 ₽<br>90 мин · 5 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Шоколадные страсти</div><div class="sp-pr">60 мин · 5 500 ₽<br>90 мин · 5 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Тропический коктейль (двое)</div><div class="sp-pr">60 мин · 9 000 ₽<br>90 мин · 11 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Шоколадные страсти (двое)</div><div class="sp-pr">60 мин · 9 000 ₽<br>90 мин · 11 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Сила леса» (один)</div><div class="sp-pr">120 мин · 6 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Сила леса» (двое)</div><div class="sp-pr">150 мин · 12 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Сила океана» (двое)</div><div class="sp-pr">180 мин · 14 500 ₽</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЂСЂРѕРєР°РЅСЃРєРёР№ С…Р°РјРјР°Рј</div><div class="sp-pr">75 РјРёРЅ В· 4 300 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р’РµР»РёРєРѕР»РµРїРЅС‹Р№ РІРµРє РЎСѓР»С‚Р°РЅ Рё РҐСЋСЂРµРј</div><div class="sp-pr">165 РјРёРЅ В· 10 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р’РµР»РёРєРѕР»РµРїРЅС‹Р№ РІРµРє (РґР»СЏ РґРІРѕРёС…)</div><div class="sp-pr">195 РјРёРЅ В· 20 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РўСѓСЂРµС†РєРёР№ РїРµРЅРЅС‹Р№ РјР°СЃСЃР°Р¶</div><div class="sp-pr">60 РјРёРЅ В· 4 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р’РѕР·СЂРѕР¶РґРµРЅРёРµ</div><div class="sp-pr">100 РјРёРЅ В· 6 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">Р’РѕР·СЂРѕР¶РґРµРЅРёРµ (РґР»СЏ РґРІРѕРёС…)</div><div class="sp-pr">125 РјРёРЅ В· 12 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђСЋСЂРІРµРґР°</div><div class="sp-pr">105 РјРёРЅ В· 7 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђСЋСЂРІРµРґР° (РґР»СЏ РґРІРѕРёС…)</div><div class="sp-pr">150 РјРёРЅ В· 14 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РЎРђРќР”РђР›</div><div class="sp-pr">150 РјРёРЅ В· 8 000 в‚Ѕ</div></div>
           </div>
         </div>
       </div>
 
       <div class="spa-block">
         <div class="spa-head" onclick="toggleSpa(this)">
-          <span class="spa-title">Детский массаж и дополнительные услуги</span>
+          <span class="spa-title">РћР±С‘СЂС‚С‹РІР°РЅРёСЏ Рё РЎРџРђ-РїСЂРѕРіСЂР°РјРјС‹</span>
           <span class="spa-arrow">+</span>
         </div>
         <div class="spa-body">
           <div class="spa-grid">
-            <div class="sp-item"><div class="sp-name">До 8 лет</div><div class="sp-pr">40 мин · 2 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">От 9 до 13 лет</div><div class="sp-pr">60 мин · 2 700 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Полезный шоколад»</div><div class="sp-pr">45 мин · 1 800 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">«Приключения мыльных пузырей»</div><div class="sp-pr">45 мин · 2 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Маска альгинатная на лицо</div><div class="sp-pr">от 1 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Маска кремовая</div><div class="sp-pr">900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Аппаратная прессотерапия ног</div><div class="sp-pr">от 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Прессотерапия</div><div class="sp-pr">20 мин · 900 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Прогревание в фитобочке / хаммаме</div><div class="sp-pr">20 мин · 1 500 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Альгинатная маска лицо</div><div class="sp-pr">20 мин · 1 000 ₽</div></div>
-            <div class="sp-item"><div class="sp-name">Альгинатная маска лицо + декольте</div><div class="sp-pr">20 мин · 1 400 ₽</div></div>
+            <div class="sp-item"><div class="sp-name">РњРѕСЂСЃРєРѕР№ Р±СЂРёР·</div><div class="sp-pr">60 РјРёРЅ В· 5 500 в‚Ѕ<br>90 РјРёРЅ В· 5 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РўСЂРѕРїРёС‡РµСЃРєРёР№ РєРѕРєС‚РµР№Р»СЊ</div><div class="sp-pr">60 РјРёРЅ В· 5 500 в‚Ѕ<br>90 РјРёРЅ В· 5 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РљР°РЅРЅР°Р±РёСЃ</div><div class="sp-pr">60 РјРёРЅ В· 5 500 в‚Ѕ<br>90 РјРёРЅ В· 5 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РЁРѕРєРѕР»Р°РґРЅС‹Рµ СЃС‚СЂР°СЃС‚Рё</div><div class="sp-pr">60 РјРёРЅ В· 5 500 в‚Ѕ<br>90 РјРёРЅ В· 5 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РўСЂРѕРїРёС‡РµСЃРєРёР№ РєРѕРєС‚РµР№Р»СЊ (РґРІРѕРµ)</div><div class="sp-pr">60 РјРёРЅ В· 9 000 в‚Ѕ<br>90 РјРёРЅ В· 11 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РЁРѕРєРѕР»Р°РґРЅС‹Рµ СЃС‚СЂР°СЃС‚Рё (РґРІРѕРµ)</div><div class="sp-pr">60 РјРёРЅ В· 9 000 в‚Ѕ<br>90 РјРёРЅ В· 11 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РЎРёР»Р° Р»РµСЃР°В» (РѕРґРёРЅ)</div><div class="sp-pr">120 РјРёРЅ В· 6 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РЎРёР»Р° Р»РµСЃР°В» (РґРІРѕРµ)</div><div class="sp-pr">150 РјРёРЅ В· 12 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РЎРёР»Р° РѕРєРµР°РЅР°В» (РґРІРѕРµ)</div><div class="sp-pr">180 РјРёРЅ В· 14 500 в‚Ѕ</div></div>
           </div>
-          <div class="spa-note">СПА-массажи доступны только гостям без проблем со здоровьем. Дети до 18 лет — в присутствии родителей.</div>
+        </div>
+      </div>
+
+      <div class="spa-block">
+        <div class="spa-head" onclick="toggleSpa(this)">
+          <span class="spa-title">Р”РµС‚СЃРєРёР№ РјР°СЃСЃР°Р¶ Рё РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СѓСЃР»СѓРіРё</span>
+          <span class="spa-arrow">+</span>
+        </div>
+        <div class="spa-body">
+          <div class="spa-grid">
+            <div class="sp-item"><div class="sp-name">Р”Рѕ 8 Р»РµС‚</div><div class="sp-pr">40 РјРёРЅ В· 2 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РћС‚ 9 РґРѕ 13 Р»РµС‚</div><div class="sp-pr">60 РјРёРЅ В· 2 700 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РџРѕР»РµР·РЅС‹Р№ С€РѕРєРѕР»Р°РґВ»</div><div class="sp-pr">45 РјРёРЅ В· 1 800 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">В«РџСЂРёРєР»СЋС‡РµРЅРёСЏ РјС‹Р»СЊРЅС‹С… РїСѓР·С‹СЂРµР№В»</div><div class="sp-pr">45 РјРёРЅ В· 2 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЃРєР° Р°Р»СЊРіРёРЅР°С‚РЅР°СЏ РЅР° Р»РёС†Рѕ</div><div class="sp-pr">РѕС‚ 1 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РњР°СЃРєР° РєСЂРµРјРѕРІР°СЏ</div><div class="sp-pr">900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђРїРїР°СЂР°С‚РЅР°СЏ РїСЂРµСЃСЃРѕС‚РµСЂР°РїРёСЏ РЅРѕРі</div><div class="sp-pr">РѕС‚ 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РџСЂРµСЃСЃРѕС‚РµСЂР°РїРёСЏ</div><div class="sp-pr">20 РјРёРЅ В· 900 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РџСЂРѕРіСЂРµРІР°РЅРёРµ РІ С„РёС‚РѕР±РѕС‡РєРµ / С…Р°РјРјР°РјРµ</div><div class="sp-pr">20 РјРёРЅ В· 1 500 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђР»СЊРіРёРЅР°С‚РЅР°СЏ РјР°СЃРєР° Р»РёС†Рѕ</div><div class="sp-pr">20 РјРёРЅ В· 1 000 в‚Ѕ</div></div>
+            <div class="sp-item"><div class="sp-name">РђР»СЊРіРёРЅР°С‚РЅР°СЏ РјР°СЃРєР° Р»РёС†Рѕ + РґРµРєРѕР»СЊС‚Рµ</div><div class="sp-pr">20 РјРёРЅ В· 1 400 в‚Ѕ</div></div>
+          </div>
+          <div class="spa-note">РЎРџРђ-РјР°СЃСЃР°Р¶Рё РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РіРѕСЃС‚СЏРј Р±РµР· РїСЂРѕР±Р»РµРј СЃРѕ Р·РґРѕСЂРѕРІСЊРµРј. Р”РµС‚Рё РґРѕ 18 Р»РµС‚ вЂ” РІ РїСЂРёСЃСѓС‚СЃС‚РІРёРё СЂРѕРґРёС‚РµР»РµР№.</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- АКЦИИ -->
+<!-- РђРљР¦РР -->
 <section class="alt-bg" id="aktsii">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Специальные предложения</div>
+    <div class="sec-label-col">РЎРїРµС†РёР°Р»СЊРЅС‹Рµ РїСЂРµРґР»РѕР¶РµРЅРёСЏ</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Акции</strong> и скидки</h2>
-      <p class="sec-sub">Нажмите на карточку, чтобы узнать подробности. Акции не суммируются.</p>
+      <h2 class="sec-title"><strong>РђРєС†РёРё</strong> Рё СЃРєРёРґРєРё</h2>
+      <p class="sec-sub">РќР°Р¶РјРёС‚Рµ РЅР° РєР°СЂС‚РѕС‡РєСѓ, С‡С‚РѕР±С‹ СѓР·РЅР°С‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё. РђРєС†РёРё РЅРµ СЃСѓРјРјРёСЂСѓСЋС‚СЃСЏ.</p>
 
       <div class="ak-grid">
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Будни</div><h3>Ранняя пташка</h3></div>
-          <div class="ak-short">Купание с 9:00 до 12:00 по специальной цене</div>
-          <div class="ak-price"><div class="ak-amt">1 300 ₽</div><div class="ak-when">Будни · 09:00–12:00<br>Строго до 12:00</div></div>
-          <div class="ak-expand"><div class="ak-detail">Специальный утренний тариф для ранних гостей. Пребывание строго с 9:00 до 12:00. Приобрести можно только в будние дни при входе в утренние часы.</div></div>
+          <div class="ak-top"><div class="ak-day">Р‘СѓРґРЅРё</div><h3>Р Р°РЅРЅСЏСЏ РїС‚Р°С€РєР°</h3></div>
+          <div class="ak-short">РљСѓРїР°РЅРёРµ СЃ 9:00 РґРѕ 12:00 РїРѕ СЃРїРµС†РёР°Р»СЊРЅРѕР№ С†РµРЅРµ</div>
+          <div class="ak-price"><div class="ak-amt">1 300 в‚Ѕ</div><div class="ak-when">Р‘СѓРґРЅРё В· 09:00вЂ“12:00<br>РЎС‚СЂРѕРіРѕ РґРѕ 12:00</div></div>
+          <div class="ak-expand"><div class="ak-detail">РЎРїРµС†РёР°Р»СЊРЅС‹Р№ СѓС‚СЂРµРЅРЅРёР№ С‚Р°СЂРёС„ РґР»СЏ СЂР°РЅРЅРёС… РіРѕСЃС‚РµР№. РџСЂРµР±С‹РІР°РЅРёРµ СЃС‚СЂРѕРіРѕ СЃ 9:00 РґРѕ 12:00. РџСЂРёРѕР±СЂРµСЃС‚Рё РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РІ Р±СѓРґРЅРёРµ РґРЅРё РїСЂРё РІС…РѕРґРµ РІ СѓС‚СЂРµРЅРЅРёРµ С‡Р°СЃС‹.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Будни</div><h3>Ещё не поздно</h3></div>
-          <div class="ak-short">Вечерний тариф после 20:45 — самая низкая цена дня</div>
-          <div class="ak-price"><div class="ak-amt">900 ₽</div><div class="ak-when">Будни · с 20:45</div></div>
-          <div class="ak-expand"><div class="ak-detail">Самый выгодный тариф! Приобретается в будние дни начиная с 20:45. Отличный вариант для позднего вечернего отдыха после работы.</div></div>
+          <div class="ak-top"><div class="ak-day">Р‘СѓРґРЅРё</div><h3>Р•С‰С‘ РЅРµ РїРѕР·РґРЅРѕ</h3></div>
+          <div class="ak-short">Р’РµС‡РµСЂРЅРёР№ С‚Р°СЂРёС„ РїРѕСЃР»Рµ 20:45 вЂ” СЃР°РјР°СЏ РЅРёР·РєР°СЏ С†РµРЅР° РґРЅСЏ</div>
+          <div class="ak-price"><div class="ak-amt">900 в‚Ѕ</div><div class="ak-when">Р‘СѓРґРЅРё В· СЃ 20:45</div></div>
+          <div class="ak-expand"><div class="ak-detail">РЎР°РјС‹Р№ РІС‹РіРѕРґРЅС‹Р№ С‚Р°СЂРёС„! РџСЂРёРѕР±СЂРµС‚Р°РµС‚СЃСЏ РІ Р±СѓРґРЅРёРµ РґРЅРё РЅР°С‡РёРЅР°СЏ СЃ 20:45. РћС‚Р»РёС‡РЅС‹Р№ РІР°СЂРёР°РЅС‚ РґР»СЏ РїРѕР·РґРЅРµРіРѕ РІРµС‡РµСЂРЅРµРіРѕ РѕС‚РґС‹С…Р° РїРѕСЃР»Рµ СЂР°Р±РѕС‚С‹.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Будни</div><h3>Бодрое утро</h3></div>
-          <div class="ak-short">Термы + завтрак в одном тарифе</div>
-          <div class="ak-price"><div class="ak-amt">1 600 ₽</div><div class="ak-when">Будни · до 12:00<br>1,5 ч + завтрак</div></div>
-          <div class="ak-expand"><div class="ak-detail">Комплексный утренний тариф: 1,5 часа в термах + завтрак. Приобрести можно в будние дни до 12:00.</div></div>
+          <div class="ak-top"><div class="ak-day">Р‘СѓРґРЅРё</div><h3>Р‘РѕРґСЂРѕРµ СѓС‚СЂРѕ</h3></div>
+          <div class="ak-short">РўРµСЂРјС‹ + Р·Р°РІС‚СЂР°Рє РІ РѕРґРЅРѕРј С‚Р°СЂРёС„Рµ</div>
+          <div class="ak-price"><div class="ak-amt">1 600 в‚Ѕ</div><div class="ak-when">Р‘СѓРґРЅРё В· РґРѕ 12:00<br>1,5 С‡ + Р·Р°РІС‚СЂР°Рє</div></div>
+          <div class="ak-expand"><div class="ak-detail">РљРѕРјРїР»РµРєСЃРЅС‹Р№ СѓС‚СЂРµРЅРЅРёР№ С‚Р°СЂРёС„: 1,5 С‡Р°СЃР° РІ С‚РµСЂРјР°С… + Р·Р°РІС‚СЂР°Рє. РџСЂРёРѕР±СЂРµСЃС‚Рё РјРѕР¶РЅРѕ РІ Р±СѓРґРЅРёРµ РґРЅРё РґРѕ 12:00.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Все дни</div><h3>Акция Семья</h3></div>
-          <div class="ak-short">2 взрослых на 3 часа — ребёнок бесплатно</div>
-          <div class="ak-price"><div class="ak-amt">Ребёнок 0 ₽</div><div class="ak-when">Все дни<br>2 взрослых на 3 ч</div></div>
-          <div class="ak-expand"><div class="ak-detail">При покупке двух взрослых билетов на 3 часа общей категории, ребёнок до 12 лет купается абсолютно бесплатно.</div></div>
+          <div class="ak-top"><div class="ak-day">Р’СЃРµ РґРЅРё</div><h3>РђРєС†РёСЏ РЎРµРјСЊСЏ</h3></div>
+          <div class="ak-short">2 РІР·СЂРѕСЃР»С‹С… РЅР° 3 С‡Р°СЃР° вЂ” СЂРµР±С‘РЅРѕРє Р±РµСЃРїР»Р°С‚РЅРѕ</div>
+          <div class="ak-price"><div class="ak-amt">Р РµР±С‘РЅРѕРє 0 в‚Ѕ</div><div class="ak-when">Р’СЃРµ РґРЅРё<br>2 РІР·СЂРѕСЃР»С‹С… РЅР° 3 С‡</div></div>
+          <div class="ak-expand"><div class="ak-detail">РџСЂРё РїРѕРєСѓРїРєРµ РґРІСѓС… РІР·СЂРѕСЃР»С‹С… Р±РёР»РµС‚РѕРІ РЅР° 3 С‡Р°СЃР° РѕР±С‰РµР№ РєР°С‚РµРіРѕСЂРёРё, СЂРµР±С‘РЅРѕРє РґРѕ 12 Р»РµС‚ РєСѓРїР°РµС‚СЃСЏ Р°Р±СЃРѕР»СЋС‚РЅРѕ Р±РµСЃРїР»Р°С‚РЅРѕ.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Все дни</div><h3>Именинник</h3></div>
-          <div class="ak-short">Скидка 10% в день рождения и ±2 дня</div>
-          <div class="ak-price"><div class="ak-amt">−10%</div><div class="ak-when">±2 дня от ДР<br>Нужен документ</div></div>
-          <div class="ak-expand"><div class="ak-detail">Скидка 10% на купание в честь дня рождения. Действует за 2 дня до и 2 дня после. Предъявите документ, подтверждающий дату рождения.</div></div>
+          <div class="ak-top"><div class="ak-day">Р’СЃРµ РґРЅРё</div><h3>РРјРµРЅРёРЅРЅРёРє</h3></div>
+          <div class="ak-short">РЎРєРёРґРєР° 10% РІ РґРµРЅСЊ СЂРѕР¶РґРµРЅРёСЏ Рё В±2 РґРЅСЏ</div>
+          <div class="ak-price"><div class="ak-amt">в€’10%</div><div class="ak-when">В±2 РґРЅСЏ РѕС‚ Р”Р <br>РќСѓР¶РµРЅ РґРѕРєСѓРјРµРЅС‚</div></div>
+          <div class="ak-expand"><div class="ak-detail">РЎРєРёРґРєР° 10% РЅР° РєСѓРїР°РЅРёРµ РІ С‡РµСЃС‚СЊ РґРЅСЏ СЂРѕР¶РґРµРЅРёСЏ. Р”РµР№СЃС‚РІСѓРµС‚ Р·Р° 2 РґРЅСЏ РґРѕ Рё 2 РґРЅСЏ РїРѕСЃР»Рµ. РџСЂРµРґСЉСЏРІРёС‚Рµ РґРѕРєСѓРјРµРЅС‚, РїРѕРґС‚РІРµСЂР¶РґР°СЋС‰РёР№ РґР°С‚Сѓ СЂРѕР¶РґРµРЅРёСЏ.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Среда</div><h3>Студенческая среда</h3></div>
-          <div class="ak-short">Скидка 20% каждую среду для студентов очного</div>
-          <div class="ak-price"><div class="ak-amt">−20%</div><div class="ak-when">Среда · до 19:00<br>Студ. билет очного</div></div>
-          <div class="ak-expand"><div class="ak-detail">Каждую среду до 19:00 студенты очного отделения получают скидку 20% на тарифы от 2-х часов. Необходим студенческий билет.</div></div>
+          <div class="ak-top"><div class="ak-day">РЎСЂРµРґР°</div><h3>РЎС‚СѓРґРµРЅС‡РµСЃРєР°СЏ СЃСЂРµРґР°</h3></div>
+          <div class="ak-short">РЎРєРёРґРєР° 20% РєР°Р¶РґСѓСЋ СЃСЂРµРґСѓ РґР»СЏ СЃС‚СѓРґРµРЅС‚РѕРІ РѕС‡РЅРѕРіРѕ</div>
+          <div class="ak-price"><div class="ak-amt">в€’20%</div><div class="ak-when">РЎСЂРµРґР° В· РґРѕ 19:00<br>РЎС‚СѓРґ. Р±РёР»РµС‚ РѕС‡РЅРѕРіРѕ</div></div>
+          <div class="ak-expand"><div class="ak-detail">РљР°Р¶РґСѓСЋ СЃСЂРµРґСѓ РґРѕ 19:00 СЃС‚СѓРґРµРЅС‚С‹ РѕС‡РЅРѕРіРѕ РѕС‚РґРµР»РµРЅРёСЏ РїРѕР»СѓС‡Р°СЋС‚ СЃРєРёРґРєСѓ 20% РЅР° С‚Р°СЂРёС„С‹ РѕС‚ 2-С… С‡Р°СЃРѕРІ. РќРµРѕР±С…РѕРґРёРј СЃС‚СѓРґРµРЅС‡РµСЃРєРёР№ Р±РёР»РµС‚.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Будни</div><h3>Мать и дитя</h3></div>
-          <div class="ak-short">Скидка 20% на 1 взрослый + 1 детский билет</div>
-          <div class="ak-price"><div class="ak-amt">−20%</div><div class="ak-when">Будни · до 17:00<br>Взрослый + реб. 4–12</div></div>
-          <div class="ak-expand"><div class="ak-detail">Скидка 20% при покупке 1 взрослого и 1 детского билета. Только в будние дни до 17:00.</div></div>
+          <div class="ak-top"><div class="ak-day">Р‘СѓРґРЅРё</div><h3>РњР°С‚СЊ Рё РґРёС‚СЏ</h3></div>
+          <div class="ak-short">РЎРєРёРґРєР° 20% РЅР° 1 РІР·СЂРѕСЃР»С‹Р№ + 1 РґРµС‚СЃРєРёР№ Р±РёР»РµС‚</div>
+          <div class="ak-price"><div class="ak-amt">в€’20%</div><div class="ak-when">Р‘СѓРґРЅРё В· РґРѕ 17:00<br>Р’Р·СЂРѕСЃР»С‹Р№ + СЂРµР±. 4вЂ“12</div></div>
+          <div class="ak-expand"><div class="ak-detail">РЎРєРёРґРєР° 20% РїСЂРё РїРѕРєСѓРїРєРµ 1 РІР·СЂРѕСЃР»РѕРіРѕ Рё 1 РґРµС‚СЃРєРѕРіРѕ Р±РёР»РµС‚Р°. РўРѕР»СЊРєРѕ РІ Р±СѓРґРЅРёРµ РґРЅРё РґРѕ 17:00.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Будни</div><h3>Романтический вечер</h3></div>
-          <div class="ak-short">Купание + ужин для двоих</div>
-          <div class="ak-price"><div class="ak-amt">4 500 ₽</div><div class="ak-when">Будни · с 16:00<br>2,5 часа на двоих</div></div>
-          <div class="ak-expand"><div class="ak-detail">Романтический пакет для двоих: 2,5 часа в термах + ужин. Приобретается в будние дни начиная с 16:00.</div></div>
+          <div class="ak-top"><div class="ak-day">Р‘СѓРґРЅРё</div><h3>Р РѕРјР°РЅС‚РёС‡РµСЃРєРёР№ РІРµС‡РµСЂ</h3></div>
+          <div class="ak-short">РљСѓРїР°РЅРёРµ + СѓР¶РёРЅ РґР»СЏ РґРІРѕРёС…</div>
+          <div class="ak-price"><div class="ak-amt">4 500 в‚Ѕ</div><div class="ak-when">Р‘СѓРґРЅРё В· СЃ 16:00<br>2,5 С‡Р°СЃР° РЅР° РґРІРѕРёС…</div></div>
+          <div class="ak-expand"><div class="ak-detail">Р РѕРјР°РЅС‚РёС‡РµСЃРєРёР№ РїР°РєРµС‚ РґР»СЏ РґРІРѕРёС…: 2,5 С‡Р°СЃР° РІ С‚РµСЂРјР°С… + СѓР¶РёРЅ. РџСЂРёРѕР±СЂРµС‚Р°РµС‚СЃСЏ РІ Р±СѓРґРЅРёРµ РґРЅРё РЅР°С‡РёРЅР°СЏ СЃ 16:00.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Любой день</div><h3>Мальчишник</h3></div>
-          <div class="ak-short">Корпоративная программа для мужской компании</div>
-          <div class="ak-price"><div class="ak-amt">6 620 ₽</div><div class="ak-when">4 часа / чел.<br>4–24 человека</div></div>
-          <div class="ak-expand"><div class="ak-detail">Включает: 2 часа купания · Парение «Хмель-чеснок» и «Тайга» · Пивная йога на сапах · Массаж спины «Сила леса» (30 мин) · Дегустационный сет · Халаты.</div></div>
+          <div class="ak-top"><div class="ak-day">Р›СЋР±РѕР№ РґРµРЅСЊ</div><h3>РњР°Р»СЊС‡РёС€РЅРёРє</h3></div>
+          <div class="ak-short">РљРѕСЂРїРѕСЂР°С‚РёРІРЅР°СЏ РїСЂРѕРіСЂР°РјРјР° РґР»СЏ РјСѓР¶СЃРєРѕР№ РєРѕРјРїР°РЅРёРё</div>
+          <div class="ak-price"><div class="ak-amt">6 620 в‚Ѕ</div><div class="ak-when">4 С‡Р°СЃР° / С‡РµР».<br>4вЂ“24 С‡РµР»РѕРІРµРєР°</div></div>
+          <div class="ak-expand"><div class="ak-detail">Р’РєР»СЋС‡Р°РµС‚: 2 С‡Р°СЃР° РєСѓРїР°РЅРёСЏ В· РџР°СЂРµРЅРёРµ В«РҐРјРµР»СЊ-С‡РµСЃРЅРѕРєВ» Рё В«РўР°Р№РіР°В» В· РџРёРІРЅР°СЏ Р№РѕРіР° РЅР° СЃР°РїР°С… В· РњР°СЃСЃР°Р¶ СЃРїРёРЅС‹ В«РЎРёР»Р° Р»РµСЃР°В» (30 РјРёРЅ) В· Р”РµРіСѓСЃС‚Р°С†РёРѕРЅРЅС‹Р№ СЃРµС‚ В· РҐР°Р»Р°С‚С‹.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Любой день</div><h3>Девичник</h3></div>
-          <div class="ak-short">Программа для женской компании с СПА и фото</div>
-          <div class="ak-price"><div class="ak-amt">по запросу</div><div class="ak-when">Уточняйте<br>у администратора</div></div>
-          <div class="ak-expand"><div class="ak-detail">Включает: 2 часа купания · Групповое ягодное скрабирование · Йога на сапах · СПА-массаж (30 мин) · Парение «Тайга» · Халаты · Фотосопровождение.</div></div>
+          <div class="ak-top"><div class="ak-day">Р›СЋР±РѕР№ РґРµРЅСЊ</div><h3>Р”РµРІРёС‡РЅРёРє</h3></div>
+          <div class="ak-short">РџСЂРѕРіСЂР°РјРјР° РґР»СЏ Р¶РµРЅСЃРєРѕР№ РєРѕРјРїР°РЅРёРё СЃ РЎРџРђ Рё С„РѕС‚Рѕ</div>
+          <div class="ak-price"><div class="ak-amt">РїРѕ Р·Р°РїСЂРѕСЃСѓ</div><div class="ak-when">РЈС‚РѕС‡РЅСЏР№С‚Рµ<br>Сѓ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°</div></div>
+          <div class="ak-expand"><div class="ak-detail">Р’РєР»СЋС‡Р°РµС‚: 2 С‡Р°СЃР° РєСѓРїР°РЅРёСЏ В· Р“СЂСѓРїРїРѕРІРѕРµ СЏРіРѕРґРЅРѕРµ СЃРєСЂР°Р±РёСЂРѕРІР°РЅРёРµ В· Р™РѕРіР° РЅР° СЃР°РїР°С… В· РЎРџРђ-РјР°СЃСЃР°Р¶ (30 РјРёРЅ) В· РџР°СЂРµРЅРёРµ В«РўР°Р№РіР°В» В· РҐР°Р»Р°С‚С‹ В· Р¤РѕС‚РѕСЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Любой день</div><h3>Безлимитный абонемент</h3></div>
-          <div class="ak-short">Месячный абонемент на неограниченное количество посещений</div>
-          <div class="ak-price"><div class="ak-amt">по запросу</div><div class="ak-when">1 месяц · Именной</div></div>
-          <div class="ak-expand"><div class="ak-detail">Безлимитный абонемент на купание сроком 1 месяц. Именной — нужен паспорт. Не передаётся другим лицам.</div></div>
+          <div class="ak-top"><div class="ak-day">Р›СЋР±РѕР№ РґРµРЅСЊ</div><h3>Р‘РµР·Р»РёРјРёС‚РЅС‹Р№ Р°Р±РѕРЅРµРјРµРЅС‚</h3></div>
+          <div class="ak-short">РњРµСЃСЏС‡РЅС‹Р№ Р°Р±РѕРЅРµРјРµРЅС‚ РЅР° РЅРµРѕРіСЂР°РЅРёС‡РµРЅРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕСЃРµС‰РµРЅРёР№</div>
+          <div class="ak-price"><div class="ak-amt">РїРѕ Р·Р°РїСЂРѕСЃСѓ</div><div class="ak-when">1 РјРµСЃСЏС† В· РРјРµРЅРЅРѕР№</div></div>
+          <div class="ak-expand"><div class="ak-detail">Р‘РµР·Р»РёРјРёС‚РЅС‹Р№ Р°Р±РѕРЅРµРјРµРЅС‚ РЅР° РєСѓРїР°РЅРёРµ СЃСЂРѕРєРѕРј 1 РјРµСЃСЏС†. РРјРµРЅРЅРѕР№ вЂ” РЅСѓР¶РµРЅ РїР°СЃРїРѕСЂС‚. РќРµ РїРµСЂРµРґР°С‘С‚СЃСЏ РґСЂСѓРіРёРј Р»РёС†Р°Рј.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Все дни</div><h3>Термы + СПА 1+1</h3></div>
-          <div class="ak-short">1 час купания + 1 час СПА (скраб + массаж спины)</div>
-          <div class="ak-price"><div class="ak-amt">4 900 ₽</div><div class="ak-when">120 мин · Вход без очереди</div></div>
-          <div class="ak-expand"><div class="ak-detail">1 час купания + скраб всего тела + массаж спины. Вход в термы без очереди.</div></div>
+          <div class="ak-top"><div class="ak-day">Р’СЃРµ РґРЅРё</div><h3>РўРµСЂРјС‹ + РЎРџРђ 1+1</h3></div>
+          <div class="ak-short">1 С‡Р°СЃ РєСѓРїР°РЅРёСЏ + 1 С‡Р°СЃ РЎРџРђ (СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ СЃРїРёРЅС‹)</div>
+          <div class="ak-price"><div class="ak-amt">4 900 в‚Ѕ</div><div class="ak-when">120 РјРёРЅ В· Р’С…РѕРґ Р±РµР· РѕС‡РµСЂРµРґРё</div></div>
+          <div class="ak-expand"><div class="ak-detail">1 С‡Р°СЃ РєСѓРїР°РЅРёСЏ + СЃРєСЂР°Р± РІСЃРµРіРѕ С‚РµР»Р° + РјР°СЃСЃР°Р¶ СЃРїРёРЅС‹. Р’С…РѕРґ РІ С‚РµСЂРјС‹ Р±РµР· РѕС‡РµСЂРµРґРё.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Все дни</div><h3>Термы + СПА 1,5+1,5</h3></div>
-          <div class="ak-short">1,5 ч купания + 1,5 ч СПА (скраб + массаж + маска)</div>
-          <div class="ak-price"><div class="ak-amt">6 500 ₽</div><div class="ak-when">360 мин · Вход без очереди</div></div>
-          <div class="ak-expand"><div class="ak-detail">1,5 часа купания + скраб + массаж спины + альгинатная маска. Вход в термы без очереди.</div></div>
+          <div class="ak-top"><div class="ak-day">Р’СЃРµ РґРЅРё</div><h3>РўРµСЂРјС‹ + РЎРџРђ 1,5+1,5</h3></div>
+          <div class="ak-short">1,5 С‡ РєСѓРїР°РЅРёСЏ + 1,5 С‡ РЎРџРђ (СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ + РјР°СЃРєР°)</div>
+          <div class="ak-price"><div class="ak-amt">6 500 в‚Ѕ</div><div class="ak-when">360 РјРёРЅ В· Р’С…РѕРґ Р±РµР· РѕС‡РµСЂРµРґРё</div></div>
+          <div class="ak-expand"><div class="ak-detail">1,5 С‡Р°СЃР° РєСѓРїР°РЅРёСЏ + СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ СЃРїРёРЅС‹ + Р°Р»СЊРіРёРЅР°С‚РЅР°СЏ РјР°СЃРєР°. Р’С…РѕРґ РІ С‚РµСЂРјС‹ Р±РµР· РѕС‡РµСЂРµРґРё.</div></div>
         </div>
         <div class="ak-card" onclick="toggleAk(this)">
-          <div class="ak-top"><div class="ak-day">Все дни</div><h3>Термы + СПА 2+2</h3></div>
-          <div class="ak-short">2 ч купания + 2 ч СПА (скраб + массаж тела + маска)</div>
-          <div class="ak-price"><div class="ak-amt">8 000 ₽</div><div class="ak-when">480 мин · Вход без очереди</div></div>
-          <div class="ak-expand"><div class="ak-detail">2 часа купания + скраб + массаж тела + альгинатная маска или прессотерапия. Вход без очереди.</div></div>
+          <div class="ak-top"><div class="ak-day">Р’СЃРµ РґРЅРё</div><h3>РўРµСЂРјС‹ + РЎРџРђ 2+2</h3></div>
+          <div class="ak-short">2 С‡ РєСѓРїР°РЅРёСЏ + 2 С‡ РЎРџРђ (СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ С‚РµР»Р° + РјР°СЃРєР°)</div>
+          <div class="ak-price"><div class="ak-amt">8 000 в‚Ѕ</div><div class="ak-when">480 РјРёРЅ В· Р’С…РѕРґ Р±РµР· РѕС‡РµСЂРµРґРё</div></div>
+          <div class="ak-expand"><div class="ak-detail">2 С‡Р°СЃР° РєСѓРїР°РЅРёСЏ + СЃРєСЂР°Р± + РјР°СЃСЃР°Р¶ С‚РµР»Р° + Р°Р»СЊРіРёРЅР°С‚РЅР°СЏ РјР°СЃРєР° РёР»Рё РїСЂРµСЃСЃРѕС‚РµСЂР°РїРёСЏ. Р’С…РѕРґ Р±РµР· РѕС‡РµСЂРµРґРё.</div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ПРОЖИВАНИЕ -->
+<!-- РџР РћР–РР’РђРќРР• -->
 <section id="prozhivanie">
   <div class="sec-row fade-up">
-    <div class="sec-label-col">Размещение</div>
+    <div class="sec-label-col">Р Р°Р·РјРµС‰РµРЅРёРµ</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Проживание</strong></h2>
-      <p class="sec-sub">Завтрак включён во все форматы проживания. Ранний выход в термы — как привилегия гостей.</p>
+      <h2 class="sec-title"><strong>РџСЂРѕР¶РёРІР°РЅРёРµ</strong></h2>
+      <p class="sec-sub">Р—Р°РІС‚СЂР°Рє РІРєР»СЋС‡С‘РЅ РІРѕ РІСЃРµ С„РѕСЂРјР°С‚С‹ РїСЂРѕР¶РёРІР°РЅРёСЏ. Р Р°РЅРЅРёР№ РІС‹С…РѕРґ РІ С‚РµСЂРјС‹ вЂ” РєР°Рє РїСЂРёРІРёР»РµРіРёСЏ РіРѕСЃС‚РµР№.</p>
 
       <div class="pr-grid">
         <div class="pr-card">
-          <div class="pr-photo"><img src="barnhouse.jpg" alt="БарнХаус снаружи"></div>
+          <div class="pr-photo"><img src="barnhouse.jpg" alt="Р‘Р°СЂРЅРҐР°СѓСЃ СЃРЅР°СЂСѓР¶Рё"></div>
           <div class="pr-body">
-            <h3>БарнХаус</h3>
-            <p>12 уютных домиков в скандинавском стиле с видом на бассейн. Камин, терраса, всё необходимое для комфортного отдыха.</p>
-            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+            <h3>Р‘Р°СЂРЅРҐР°СѓСЃ</h3>
+            <p>12 СѓСЋС‚РЅС‹С… РґРѕРјРёРєРѕРІ РІ СЃРєР°РЅРґРёРЅР°РІСЃРєРѕРј СЃС‚РёР»Рµ СЃ РІРёРґРѕРј РЅР° Р±Р°СЃСЃРµР№РЅ. РљР°РјРёРЅ, С‚РµСЂСЂР°СЃР°, РІСЃС‘ РЅРµРѕР±С…РѕРґРёРјРѕРµ РґР»СЏ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РѕС‚РґС‹С…Р°.</p>
+            <div class="pr-badge">Р—Р°РІС‚СЂР°Рє РІРєР»СЋС‡С‘РЅ В· Р Р°РЅРЅРёР№ РІС‹С…РѕРґ РІ С‚РµСЂРјС‹</div>
           </div>
         </div>
         <div class="pr-card">
-          <div class="pr-photo"><img src="cottage.jpg" alt="Коттедж"></div>
+          <div class="pr-photo"><img src="cottage.jpg" alt="РљРѕС‚С‚РµРґР¶"></div>
           <div class="pr-body">
-            <h3>Коттедж</h3>
-            <p>Просторный коттедж для большой компании или семьи. Полная приватность и отдельная территория.</p>
-            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+            <h3>РљРѕС‚С‚РµРґР¶</h3>
+            <p>РџСЂРѕСЃС‚РѕСЂРЅС‹Р№ РєРѕС‚С‚РµРґР¶ РґР»СЏ Р±РѕР»СЊС€РѕР№ РєРѕРјРїР°РЅРёРё РёР»Рё СЃРµРјСЊРё. РџРѕР»РЅР°СЏ РїСЂРёРІР°С‚РЅРѕСЃС‚СЊ Рё РѕС‚РґРµР»СЊРЅР°СЏ С‚РµСЂСЂРёС‚РѕСЂРёСЏ.</p>
+            <div class="pr-badge">Р—Р°РІС‚СЂР°Рє РІРєР»СЋС‡С‘РЅ В· Р Р°РЅРЅРёР№ РІС‹С…РѕРґ РІ С‚РµСЂРјС‹</div>
           </div>
         </div>
         <div class="pr-card">
-          <div class="pr-photo"><img src="container.webp" alt="Дом-Контейнер"></div>
+          <div class="pr-photo"><img src="container.webp" alt="Р”РѕРј-РљРѕРЅС‚РµР№РЅРµСЂ"></div>
           <div class="pr-body">
-            <h3>Дом-Контейнер</h3>
-            <p>Стильное современное жильё в минималистичном формате. Всё необходимое для комфортного отдыха.</p>
-            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+            <h3>Р”РѕРј-РљРѕРЅС‚РµР№РЅРµСЂ</h3>
+            <p>РЎС‚РёР»СЊРЅРѕРµ СЃРѕРІСЂРµРјРµРЅРЅРѕРµ Р¶РёР»СЊС‘ РІ РјРёРЅРёРјР°Р»РёСЃС‚РёС‡РЅРѕРј С„РѕСЂРјР°С‚Рµ. Р’СЃС‘ РЅРµРѕР±С…РѕРґРёРјРѕРµ РґР»СЏ РєРѕРјС„РѕСЂС‚РЅРѕРіРѕ РѕС‚РґС‹С…Р°.</p>
+            <div class="pr-badge">Р—Р°РІС‚СЂР°Рє РІРєР»СЋС‡С‘РЅ В· Р Р°РЅРЅРёР№ РІС‹С…РѕРґ РІ С‚РµСЂРјС‹</div>
           </div>
         </div>
       </div>
 
       <div class="pr-cta">
-        <a href="https://baden-uktus.ru" target="_blank" class="btn-primary">Забронировать на официальном сайте</a>
+        <a href="https://baden-uktus.ru" target="_blank" class="btn-primary">Р—Р°Р±СЂРѕРЅРёСЂРѕРІР°С‚СЊ РЅР° РѕС„РёС†РёР°Р»СЊРЅРѕРј СЃР°Р№С‚Рµ</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ФУТЕР -->
+<!-- Р¤РЈРўР•Р  -->
 <footer>
   <div>
-    <div class="foot-logo">Баден-Баден</div>
-    <div class="foot-sub">Термы Уктус · Екатеринбург</div>
+    <div class="foot-logo">Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ</div>
+    <div class="foot-sub">РўРµСЂРјС‹ РЈРєС‚СѓСЃ В· Р•РєР°С‚РµСЂРёРЅР±СѓСЂРі</div>
   </div>
   <div class="foot-links">
-    <a href="#karta">Карта комплекса</a>
-    <a href="#tarify">Тарифы</a>
-    <a href="#spa">СПА</a>
-    <a href="#aktsii">Акции</a>
-    <a href="https://baden-uktus.ru" target="_blank">Официальный сайт</a>
+    <a href="#karta">РљР°СЂС‚Р° РєРѕРјРїР»РµРєСЃР°</a>
+    <a href="#tarify">РўР°СЂРёС„С‹</a>
+    <a href="#spa">РЎРџРђ</a>
+    <a href="#aktsii">РђРєС†РёРё</a>
+    <a href="https://baden-uktus.ru" target="_blank">РћС„РёС†РёР°Р»СЊРЅС‹Р№ СЃР°Р№С‚</a>
   </div>
-  <div class="foot-copy">© 2026 Баден-Баден<br>Термы Уктус</div>
+  <div class="foot-copy">В© 2026 Р‘Р°РґРµРЅ-Р‘Р°РґРµРЅ<br>РўРµСЂРјС‹ РЈРєС‚СѓСЃ</div>
 </footer>
 
 <script>
-/* ── Шапка: прозрачная → белая при скролле ── */
+/* в”Ђв”Ђ РЁР°РїРєР°: РїСЂРѕР·СЂР°С‡РЅР°СЏ в†’ Р±РµР»Р°СЏ РїСЂРё СЃРєСЂРѕР»Р»Рµ в”Ђв”Ђ */
 (function(){
   const hdr = document.querySelector('header');
   function onScroll(){
@@ -1090,7 +1090,7 @@ footer{
   onScroll();
 })();
 
-/* ── Fade-up анимации при скролле ── */
+/* в”Ђв”Ђ Fade-up Р°РЅРёРјР°С†РёРё РїСЂРё СЃРєСЂРѕР»Р»Рµ в”Ђв”Ђ */
 (function(){
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
@@ -1113,7 +1113,7 @@ function toggleSpa(head) {
   document.querySelectorAll('.spa-arrow').forEach(a => a.textContent = '+');
   if (!isOpen) {
     body.classList.add('open');
-    arrow.textContent = '−';
+    arrow.textContent = 'в€’';
   }
 }
 
@@ -1139,12 +1139,12 @@ function calculate() {
 
   if (isWeekday && time === 'late') {
     total = (adults + kids) * 900;
-    desc = `${adults + kids} гость(ей) × 900 ₽ (тариф «Ещё не поздно»)`;
-    promos.push('Применена акция «Ещё не поздно» — 900 ₽/чел после 20:45 в будни');
+    desc = `${adults + kids} РіРѕСЃС‚СЊ(РµР№) Г— 900 в‚Ѕ (С‚Р°СЂРёС„ В«Р•С‰С‘ РЅРµ РїРѕР·РґРЅРѕВ»)`;
+    promos.push('РџСЂРёРјРµРЅРµРЅР° Р°РєС†РёСЏ В«Р•С‰С‘ РЅРµ РїРѕР·РґРЅРѕВ» вЂ” 900 в‚Ѕ/С‡РµР» РїРѕСЃР»Рµ 20:45 РІ Р±СѓРґРЅРё');
   } else if (isWeekday && time === 'morning' && hours === 2) {
     total = adults * 1300 + kids * 1300;
-    desc = `${adults + kids} гость(ей) × 1 300 ₽ (тариф «Ранняя пташка»)`;
-    promos.push('Применена акция «Ранняя пташка» — 1 300 ₽/чел до 12:00 в будни');
+    desc = `${adults + kids} РіРѕСЃС‚СЊ(РµР№) Г— 1 300 в‚Ѕ (С‚Р°СЂРёС„ В«Р Р°РЅРЅСЏСЏ РїС‚Р°С€РєР°В»)`;
+    promos.push('РџСЂРёРјРµРЅРµРЅР° Р°РєС†РёСЏ В«Р Р°РЅРЅСЏСЏ РїС‚Р°С€РєР°В» вЂ” 1 300 в‚Ѕ/С‡РµР» РґРѕ 12:00 РІ Р±СѓРґРЅРё');
   } else {
     const prices = {
       weekday:   { general: [1500, 1900], lgot: [1400, 1600] },
@@ -1160,35 +1160,35 @@ function calculate() {
 
     if (family && adults >= 2 && hours === 3 && cat === 'general' && kids > 0) {
       kidTotal = 0;
-      promos.push('Акция «Семья» — ребёнок бесплатно при 2 взрослых на 3 ч');
+      promos.push('РђРєС†РёСЏ В«РЎРµРјСЊСЏВ» вЂ” СЂРµР±С‘РЅРѕРє Р±РµСЃРїР»Р°С‚РЅРѕ РїСЂРё 2 РІР·СЂРѕСЃР»С‹С… РЅР° 3 С‡');
     }
     let baseTotal = adultTotal + kidTotal;
     let discount = 0, discName = '';
 
-    if (bday)    { discount = Math.max(discount, 0.10); discName = 'Именинник −10%'; }
+    if (bday)    { discount = Math.max(discount, 0.10); discName = 'РРјРµРЅРёРЅРЅРёРє в€’10%'; }
     if (student && isWed && time !== 'evening16' && time !== 'late') {
-      discount = Math.max(discount, 0.20); discName = 'Студенческая среда −20%';
+      discount = Math.max(discount, 0.20); discName = 'РЎС‚СѓРґРµРЅС‡РµСЃРєР°СЏ СЃСЂРµРґР° в€’20%';
     }
     if (family && adults === 1 && kids === 1 && isWeekday && time === 'morning') {
-      discount = Math.max(discount, 0.20); discName = 'Мать и дитя −20%';
+      discount = Math.max(discount, 0.20); discName = 'РњР°С‚СЊ Рё РґРёС‚СЏ в€’20%';
     }
     if (discount > 0) {
       const saved = Math.round(baseTotal * discount);
       baseTotal -= saved;
-      promos.push(`${discName} — сэкономлено ${saved.toLocaleString('ru')} ₽`);
+      promos.push(`${discName} вЂ” СЃСЌРєРѕРЅРѕРјР»РµРЅРѕ ${saved.toLocaleString('ru')} в‚Ѕ`);
     }
     total = baseTotal;
-    const dayNames = { weekday:'Будни', wednesday:'Среда', saturday:'Суббота', sunday:'Воскресенье' };
-    const catName  = cat === 'general' ? 'Общий' : 'Льготный';
-    desc = `${dayNames[day]} · ${catName} · ${hours} ч`;
-    if (adults > 0) desc += ` · ${adults} взр. × ${adultPrice.toLocaleString('ru')} ₽`;
+    const dayNames = { weekday:'Р‘СѓРґРЅРё', wednesday:'РЎСЂРµРґР°', saturday:'РЎСѓР±Р±РѕС‚Р°', sunday:'Р’РѕСЃРєСЂРµСЃРµРЅСЊРµ' };
+    const catName  = cat === 'general' ? 'РћР±С‰РёР№' : 'Р›СЊРіРѕС‚РЅС‹Р№';
+    desc = `${dayNames[day]} В· ${catName} В· ${hours} С‡`;
+    if (adults > 0) desc += ` В· ${adults} РІР·СЂ. Г— ${adultPrice.toLocaleString('ru')} в‚Ѕ`;
     if (kids > 0) {
-      const kStr = kidTotal === 0 ? 'бесплатно' : `${kids} дет. × ${kidPrice.toLocaleString('ru')} ₽`;
-      desc += ` · ${kStr}`;
+      const kStr = kidTotal === 0 ? 'Р±РµСЃРїР»Р°С‚РЅРѕ' : `${kids} РґРµС‚. Г— ${kidPrice.toLocaleString('ru')} в‚Ѕ`;
+      desc += ` В· ${kStr}`;
     }
   }
 
-  document.getElementById('res-total').textContent = total.toLocaleString('ru') + ' ₽';
+  document.getElementById('res-total').textContent = total.toLocaleString('ru') + ' в‚Ѕ';
   document.getElementById('res-desc').textContent = desc;
   const promoEl = document.getElementById('res-promo');
   if (promos.length) {
@@ -1202,3 +1202,4 @@ function calculate() {
 </script>
 </body>
 </html>
+
