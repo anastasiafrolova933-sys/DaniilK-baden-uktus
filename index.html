@@ -49,39 +49,67 @@ nav a:hover{color:var(--dark);}
 .hero{
   margin-top:68px;
   min-height:88vh;
-  background:var(--light);
+  background:linear-gradient(to bottom,rgba(10,18,12,0.52) 0%,rgba(8,14,9,0.35) 100%),
+             url('pool-outdoor.jpg') center/cover no-repeat;
   display:flex;flex-direction:column;justify-content:center;
   padding:80px 60px;
   position:relative;overflow:hidden;
 }
-.hero::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:var(--border);
-}
 .hero-badge{
   display:inline-block;
-  background:var(--dark);color:var(--white);
+  background:rgba(255,255,255,0.15);color:#fff;
+  border:1px solid rgba(255,255,255,0.3);
   font-size:11px;padding:5px 14px;font-weight:500;
-  letter-spacing:0.5px;margin-bottom:32px;
+  letter-spacing:0.5px;margin-bottom:32px;backdrop-filter:blur(4px);
 }
 .hero h1{
   font-size:clamp(38px,6.5vw,80px);
-  font-weight:300;color:var(--dark);
+  font-weight:300;color:#ffffff;
   line-height:1.05;letter-spacing:-1.5px;
   margin-bottom:20px;max-width:680px;
 }
 .hero h1 strong{font-weight:600;}
 .hero-sub{
-  font-size:16px;color:var(--mid);max-width:420px;
+  font-size:16px;color:rgba(255,255,255,0.82);max-width:420px;
   line-height:1.75;margin-bottom:48px;
 }
 .hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
 .hero-stats{
   display:flex;gap:64px;margin-top:80px;padding-top:40px;
-  border-top:1px solid var(--border);
+  border-top:1px solid rgba(255,255,255,0.2);
 }
-.hero-stat-num{font-size:28px;font-weight:300;color:var(--dark);}
-.hero-stat-lbl{font-size:11px;color:var(--pale);margin-top:4px;}
+.hero-stat-num{font-size:28px;font-weight:300;color:#ffffff;}
+.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;}
+
+/* ── ГАЛЕРЕЯ ──────────────────────────────────────────── */
+.gal-mosaic{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  height:500px;gap:3px;
+  background:var(--border-light);
+}
+.gal-main,.gal-sm{overflow:hidden;cursor:pointer;}
+.gal-main img,.gal-sm img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s ease;
+}
+.gal-main:hover img,.gal-sm:hover img{transform:scale(1.04);}
+.gal-side{display:grid;grid-template-rows:1fr 1fr;gap:3px;}
+@media(max-width:900px){
+  .gal-mosaic{grid-template-columns:1fr 1fr;height:auto;}
+  .gal-side{grid-template-rows:none;grid-template-columns:1fr 1fr;}
+  .gal-main{grid-column:1/-1;height:300px;}
+  .gal-sm{height:200px;}
+}
+@media(max-width:640px){
+  .gal-mosaic{grid-template-columns:1fr;}
+  .gal-main{height:240px;}
+  .gal-side{grid-template-columns:1fr;grid-template-rows:none;}
+}
+
+/* ── ФОТО В СЕКЦИИ ────────────────────────────────────── */
+.sec-photo{margin-bottom:48px;overflow:hidden;}
+.sec-photo img{width:100%;height:320px;object-fit:cover;display:block;}
 
 /* ── КНОПКИ ───────────────────────────────────────────── */
 .btn-primary{
@@ -223,15 +251,21 @@ section{padding:96px 60px;border-bottom:1px solid var(--border-light);}
 .tb.on{color:var(--accent);border-bottom-color:var(--accent);}
 .tc{display:none;}.tc.on{display:block;}
 
-.m-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+.m-grid{display:grid;grid-template-columns:1fr;}
 .m-item{
-  padding:13px 0;display:flex;justify-content:space-between;
-  align-items:center;gap:12px;
+  padding:14px 16px;display:flex;justify-content:space-between;
+  align-items:center;gap:16px;
   border-bottom:1px solid var(--border-light);
+  transition:background .15s;
 }
-.m-name{font-size:13px;color:var(--dark);line-height:1.4;}
+.m-item:nth-child(even){background:var(--light);}
+.m-item:hover{background:#eeeae5;}
+.m-name{font-size:14px;color:var(--dark);line-height:1.4;}
 .m-wt{font-size:11px;color:var(--pale);margin-top:2px;}
-.m-pr{color:var(--accent);font-weight:600;font-size:14px;white-space:nowrap;}
+.m-pr{
+  color:var(--accent);font-weight:600;font-size:15px;
+  white-space:nowrap;min-width:80px;text-align:right;
+}
 .new{background:var(--accent);color:#fff;font-size:8px;padding:2px 5px;font-weight:700;vertical-align:middle;margin-left:4px;}
 .sub-head{font-size:11px;color:var(--pale);text-transform:uppercase;letter-spacing:1px;margin:28px 0 12px;font-weight:600;}
 
@@ -267,14 +301,17 @@ section{padding:96px 60px;border-bottom:1px solid var(--border-light);}
 .spa-arrow{color:var(--accent);font-size:20px;transition:transform .3s;line-height:1;}
 .spa-body{display:none;}
 .spa-body.open{display:block;padding-bottom:16px;}
-.spa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+.spa-grid{display:grid;grid-template-columns:1fr;}
 .sp-item{
-  padding:11px 0;display:flex;justify-content:space-between;
-  align-items:center;gap:12px;
+  padding:13px 16px;display:flex;justify-content:space-between;
+  align-items:center;gap:16px;
   border-bottom:1px solid var(--border-light);
+  transition:background .15s;
 }
-.sp-name{font-size:13px;color:var(--dark);flex:1;line-height:1.4;}
-.sp-pr{color:var(--mid);font-size:12px;white-space:nowrap;text-align:right;line-height:1.8;}
+.sp-item:nth-child(even){background:var(--light);}
+.sp-item:hover{background:#eeeae5;}
+.sp-name{font-size:14px;color:var(--dark);flex:1;line-height:1.4;}
+.sp-pr{color:var(--mid);font-size:13px;white-space:nowrap;text-align:right;line-height:1.8;min-width:160px;}
 .spa-note{font-size:11px;color:var(--pale);padding:12px 0;line-height:1.6;}
 
 /* ── АКЦИИ ────────────────────────────────────────────── */
@@ -304,15 +341,18 @@ section{padding:96px 60px;border-bottom:1px solid var(--border-light);}
 /* ── ПРОЖИВАНИЕ ───────────────────────────────────────── */
 .pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .pr-card{
-  border:1px solid var(--border);padding:40px 32px;
-  position:relative;transition:border-color .2s;
+  border:1px solid var(--border);
+  position:relative;transition:border-color .2s;overflow:hidden;
 }
 .pr-card:hover{border-color:var(--accent);}
 .pr-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--accent);
+  background:var(--accent);z-index:2;
 }
-.pr-ic{font-size:32px;margin-bottom:20px;display:block;}
+.pr-photo{height:220px;overflow:hidden;}
+.pr-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.pr-card:hover .pr-photo img{transform:scale(1.04);}
+.pr-body{padding:32px;}
 .pr-card h3{font-size:18px;font-weight:600;color:var(--dark);margin-bottom:12px;}
 .pr-card p{font-size:13px;color:var(--mid);line-height:1.8;}
 .pr-badge{margin-top:20px;font-size:11px;color:var(--accent);font-weight:500;}
@@ -390,6 +430,21 @@ footer{
     <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
     <div><div class="hero-stat-num">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
     <div><div class="hero-stat-num">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
+  </div>
+</section>
+
+<!-- ГАЛЕРЕЯ -->
+<section style="padding:0;border-bottom:1px solid var(--border-light);">
+  <div class="gal-mosaic">
+    <div class="gal-main"><img src="pool-indoor.jpg" alt="Крытые термы"></div>
+    <div class="gal-side">
+      <div class="gal-sm"><img src="sauna.jpg" alt="Сауна"></div>
+      <div class="gal-sm"><img src="bar.jpg" alt="Baden Bar"></div>
+    </div>
+    <div class="gal-side">
+      <div class="gal-sm"><img src="barnhouse.jpg" alt="БарнХаус"></div>
+      <div class="gal-sm"><img src="beach.jpg" alt="Пляж"></div>
+    </div>
   </div>
 </section>
 
@@ -547,6 +602,10 @@ footer{
       <h2 class="sec-title"><strong>Кафе</strong> и немецкий бар</h2>
       <p class="sec-sub">Авторская кухня, свежая выпечка, горячие блюда, напитки и детское меню.</p>
 
+      <div class="sec-photo">
+        <img src="cafe.jpg" alt="Кафе Баден-Баден">
+      </div>
+
       <div class="tab-nav">
         <button class="tb on" onclick="tab(this,'napit')">Напитки</button>
         <button class="tb" onclick="tab(this,'zakus')">Закуски</button>
@@ -685,6 +744,10 @@ footer{
     <div class="sec-content">
       <h2 class="sec-title"><strong>СПА</strong> — Прайс</h2>
       <p class="sec-sub">Нажмите на раздел чтобы раскрыть. Хаммам, массажи, обёртывания, детские программы.</p>
+
+      <div class="sec-photo">
+        <img src="sauna.jpg" alt="Сауна Баден-Баден">
+      </div>
 
       <div class="spa-block">
         <div class="spa-head" onclick="toggleSpa(this)">
@@ -897,22 +960,28 @@ footer{
 
       <div class="pr-grid">
         <div class="pr-card">
-          <span class="pr-ic">🌾</span>
-          <h3>БарнХаус</h3>
-          <p>12 уютных домиков в скандинавском стиле с видом на бассейн. Камин, терраса, всё необходимое для комфортного отдыха.</p>
-          <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          <div class="pr-photo"><img src="barnhouse.jpg" alt="БарнХаус снаружи"></div>
+          <div class="pr-body">
+            <h3>БарнХаус</h3>
+            <p>12 уютных домиков в скандинавском стиле с видом на бассейн. Камин, терраса, всё необходимое для комфортного отдыха.</p>
+            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          </div>
         </div>
         <div class="pr-card">
-          <span class="pr-ic">🏡</span>
-          <h3>Коттедж</h3>
-          <p>Просторный коттедж для большой компании или семьи. Полная приватность и отдельная территория.</p>
-          <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          <div class="pr-photo"><img src="barnhouse-inside.jpg" alt="Интерьер БарнХауса"></div>
+          <div class="pr-body">
+            <h3>Коттедж</h3>
+            <p>Просторный коттедж для большой компании или семьи. Полная приватность и отдельная территория.</p>
+            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          </div>
         </div>
         <div class="pr-card">
-          <span class="pr-ic">📦</span>
-          <h3>Дом-Контейнер</h3>
-          <p>Стильное современное жильё в минималистичном формате. Всё необходимое для комфортного отдыха.</p>
-          <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          <div class="pr-photo"><img src="lounge.jpg" alt="Зона отдыха"></div>
+          <div class="pr-body">
+            <h3>Дом-Контейнер</h3>
+            <p>Стильное современное жильё в минималистичном формате. Всё необходимое для комфортного отдыха.</p>
+            <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
+          </div>
         </div>
       </div>
 
