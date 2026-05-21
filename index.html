@@ -93,7 +93,7 @@ nav a:hover{background:var(--surface);color:var(--text);}
 
 /* ГАЛЕРЕЯ */
 .gal-mosaic{
-  display:grid;grid-template-columns:2fr 1fr;
+  display:grid;grid-template-columns:2fr 1fr 1fr;
   height:560px;gap:4px;background:var(--border);
   border-radius:var(--radius);overflow:hidden;margin:0 64px;
 }
@@ -109,6 +109,33 @@ nav a:hover{background:var(--surface);color:var(--text);}
 .sec-photo{margin-bottom:36px;overflow:hidden;border-radius:var(--radius);}
 .sec-photo img{width:100%;height:360px;object-fit:cover;display:block;transition:transform .8s ease;}
 .sec-photo:hover img{transform:scale(1.03);}
+
+/* СПА БАННЕР (вместо фото) */
+.spa-intro-banner{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-bottom:32px;border-radius:var(--radius);overflow:hidden;
+  box-shadow:0 0 0 1px var(--border-light),0 4px 18px rgba(0,0,0,0.06);
+}
+.spa-intro-item{
+  background:var(--text);padding:32px 28px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.spa-intro-item:nth-child(2){background:#2a2a2a;}
+.spa-intro-item:nth-child(3){background:#1a1a1a;}
+.spa-intro-num{font-size:48px;font-weight:700;color:#fff;line-height:1;letter-spacing:-2px;margin-bottom:8px;}
+.spa-intro-lbl{font-size:12px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;font-weight:500;}
+
+/* КАФЕ БАННЕР (вместо фото) */
+.cafe-intro-banner{
+  display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;
+}
+.cafe-feat{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border-radius:980px;
+  padding:12px 20px;font-size:14px;font-weight:500;color:var(--text);
+  box-shadow:0 0 0 1px var(--border-light);
+}
+.cafe-feat-icon{font-size:18px;}
 
 /* КНОПКИ */
 .btn-primary{
@@ -130,11 +157,11 @@ nav a:hover{background:var(--surface);color:var(--text);}
 /* СЕКЦИИ */
 section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .alt-bg{background:var(--surface);}
-.sec-row{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.sec-row{display:block;}
 .sec-label-col{
   font-size:11px;color:var(--accent);font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;padding-top:8px;
-  display:flex;flex-direction:column;gap:12px;
+  letter-spacing:1px;text-transform:uppercase;
+  display:block;margin-bottom:14px;
 }
 .sec-label-col::before{display:none;}
 .sec-title{
@@ -143,7 +170,7 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 }
 .sec-title strong{font-weight:700;font-style:normal;}
 .sec-sub{
-  font-size:17px;color:var(--text-2);max-width:480px;
+  font-size:17px;color:var(--text-2);max-width:600px;
   line-height:1.6;font-weight:400;margin-bottom:32px;
 }
 
@@ -155,7 +182,7 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .fade-up.d3{transition-delay:.24s;}
 
 /* КАРТА */
-.map-wrap{border:1px solid var(--border);height:560px;overflow:hidden;border-radius:var(--radius);}
+.map-wrap{border:1px solid var(--border);height:700px;overflow:hidden;border-radius:var(--radius);}
 .map-wrap iframe{width:100%;height:100%;border:none;display:block;}
 
 /* ТАРИФЫ */
@@ -368,7 +395,6 @@ footer{
   section{padding:80px 40px;}
   .hero{padding:80px 40px 60px;}
   footer{padding:56px 40px;}
-  .sec-row{gap:48px;}
   .gal-mosaic{margin:0 40px;}
 }
 @media(max-width:900px){
@@ -378,17 +404,15 @@ footer{
   .hero h1{font-size:clamp(48px,10vw,72px);letter-spacing:-2px;}
   .hero-stats{gap:32px;}
   .hero-scroll{display:none;}
-  .sec-row{grid-template-columns:1fr;gap:24px;}
-  .sec-label-col{flex-direction:row;align-items:center;padding-top:0;}
   .tariff-grid,.spa-combo{grid-template-columns:1fr;}
   .pr-grid{grid-template-columns:1fr 1fr;gap:12px;}
   footer{grid-template-columns:1fr;gap:32px;padding:48px 24px;}
   .gal-mosaic{margin:0 24px;grid-template-columns:1fr 1fr;height:auto;}
   .gal-side{grid-template-rows:none;grid-template-columns:1fr;}
-  .gal-main{height:320px;}
-  .gal-sm{height:160px;}
-  .t-card{border-right:none;border-bottom:none;}
-  .spc-card{border-right:none;border-bottom:none;}
+  .gal-main{height:320px;grid-column:span 2;}
+  .gal-sm{height:180px;}
+  .spa-intro-banner{grid-template-columns:1fr;}
+  .map-wrap{height:480px;}
 }
 @media(max-width:640px){
   nav{display:none;}
@@ -407,17 +431,17 @@ footer{
   .pr-grid{grid-template-columns:1fr;gap:12px;}
   .header-cta{display:none;}
   footer{padding:40px 20px;}
-  .gal-mosaic{margin:0 20px;grid-template-columns:1fr;}
-  .gal-main{height:240px;}
-  .gal-side{grid-template-columns:1fr 1fr;grid-template-rows:none;}
-  .gal-sm{height:160px;}
-  .sec-row{gap:16px;}
+  .gal-mosaic{margin:0 20px;grid-template-columns:1fr 1fr;height:auto;}
+  .gal-main{height:220px;grid-column:span 2;}
+  .gal-side{grid-template-rows:none;grid-template-columns:1fr 1fr;}
+  .gal-sm{height:140px;}
   .tariff-grid,.spa-combo{grid-template-columns:1fr;}
   .t-card{padding:24px 20px;}
   .spc-card{padding:20px;}
   .tariff-grid{gap:10px;}
   .spa-combo{gap:10px;}
   .ak-grid{grid-template-columns:1fr;}
+  .map-wrap{height:360px;}
 }</style>
 </head>
 <body>
@@ -458,10 +482,14 @@ footer{
 <!-- ГАЛЕРЕЯ -->
 <section style="padding:0;border-bottom:1px solid var(--border-light);">
   <div class="gal-mosaic">
-    <div class="gal-main"><img src="barnhouse.jpg" alt="БарнХаус" style="object-position:center center;"></div>
+    <div class="gal-main"><img src="barnhouse.jpg" alt="БарнХаус"></div>
     <div class="gal-side">
       <div class="gal-sm"><img src="pool-indoor.jpg" alt="Семья в бассейне" style="object-position:center 30%;"></div>
-      <div class="gal-sm"><img src="hero-night.jpg" alt="Термы вечером" style="object-position:center center;"></div>
+      <div class="gal-sm"><img src="hero-night.jpg" alt="Термы вечером"></div>
+    </div>
+    <div class="gal-side">
+      <div class="gal-sm"><img src="spa-massage.jpg" alt="СПА массаж" style="object-position:center 30%;"></div>
+      <div class="gal-sm"><img src="lounge.jpg" alt="Кафе и бар"></div>
     </div>
   </div>
 </section>
@@ -626,8 +654,12 @@ footer{
       <h2 class="sec-title"><strong>Кафе</strong> и немецкий бар</h2>
       <p class="sec-sub">Авторская кухня, свежая выпечка, горячие блюда, напитки и детское меню.</p>
 
-      <div class="sec-photo">
-        <img src="sauna.jpg" alt="Кафе Баден-Баден">
+      <div class="cafe-intro-banner">
+        <div class="cafe-feat"><span class="cafe-feat-icon">☕</span>Напитки и кофе</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🍳</span>Завтраки с 09:00</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🍕</span>Авторская кухня</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🍺</span>Немецкий бар</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">👶</span>Детское меню</div>
       </div>
 
       <div class="tab-nav">
@@ -769,8 +801,19 @@ footer{
       <h2 class="sec-title"><strong>СПА</strong> — Прайс</h2>
       <p class="sec-sub">Нажмите на раздел чтобы раскрыть. Хаммам, массажи, обёртывания, детские программы.</p>
 
-      <div class="sec-photo">
-        <img src="spa-massage.jpg" alt="СПА Баден-Баден" style="object-position:center 30%;">
+      <div class="spa-intro-banner">
+        <div class="spa-intro-item">
+          <div class="spa-intro-num">15+</div>
+          <div class="spa-intro-lbl">Видов массажа</div>
+        </div>
+        <div class="spa-intro-item">
+          <div class="spa-intro-num">Хаммам</div>
+          <div class="spa-intro-lbl">Настоящий паровой</div>
+        </div>
+        <div class="spa-intro-item">
+          <div class="spa-intro-num">60–90</div>
+          <div class="spa-intro-lbl">Минут блаженства</div>
+        </div>
       </div>
 
       <div class="spa-block">
