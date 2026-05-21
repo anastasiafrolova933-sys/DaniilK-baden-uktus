@@ -157,7 +157,7 @@ let OBJ = [
 ];
 
 let activeId = null;
-let hiddenCats = new Set();
+let hiddenCats = new Set(Object.keys(CATS));
 let editMode = false;
 let dragging = null;
 let dragObj = null;
@@ -179,7 +179,7 @@ function buildFilterPills() {
   for (var key in CATS) {
     var cat = CATS[key];
     var pill = document.createElement('button');
-    pill.className = 'cat-pill active';
+    pill.className = 'cat-pill';
     pill.dataset.cat = key;
     pill.innerHTML = '<span class="dot" style="background:' + cat.color + '"></span>' + cat.icon + ' ' + cat.name;
     pill.addEventListener('click', (function(k){ return function(){ toggleCat(k); }; })(key));
@@ -206,7 +206,7 @@ function buildMarkers() {
   OBJ.forEach(function(obj) {
     var cat = CATS[obj.cat];
     var el = document.createElement('div');
-    el.className = 'mk';
+    el.className = 'mk'; el.style.display = 'none';
     el.dataset.id = obj.id;
     el.style.left  = obj.x + '%';
     el.style.top   = obj.y + '%';
