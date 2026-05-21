@@ -55,41 +55,48 @@ nav a:hover{background:var(--surface);color:var(--text);}
 
 /* ГЕРОЙ */
 .hero{
-  margin-top:0;height:100vh;min-height:680px;
-  background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.52) 60%,rgba(0,0,0,0.72) 100%),
-             url('pool-outdoor.jpg') center/cover no-repeat;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  padding:80px 64px 72px;position:relative;overflow:hidden;
+  margin-top:60px;
+  min-height:calc(100vh - 60px);
+  background:var(--white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 64px;text-align:center;
+  position:relative;border-bottom:1px solid var(--border-light);
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 110%, rgba(61,107,90,0.07) 0%, transparent 70%);
+  pointer-events:none;
 }
 .hero-badge{
-  font-size:13px;font-weight:400;letter-spacing:0.2px;
-  color:rgba(255,255,255,0.55);margin-bottom:18px;
+  font-size:11px;font-weight:600;letter-spacing:1px;
+  color:var(--accent);margin-bottom:28px;
+  background:var(--accent-bg);
+  padding:6px 18px;border-radius:980px;
+  display:inline-block;text-transform:uppercase;
 }
 .hero h1{
-  font-size:clamp(48px,7vw,96px);
-  font-weight:700;color:#fff;
-  line-height:1.0;letter-spacing:-3px;margin-bottom:18px;
+  font-size:clamp(56px,8vw,112px);
+  font-weight:700;color:var(--text);
+  line-height:0.95;letter-spacing:-4px;margin-bottom:24px;
 }
 .hero h1 strong{font-weight:700;font-style:normal;}
 .hero-sub{
-  font-size:17px;color:rgba(255,255,255,0.65);
-  max-width:380px;line-height:1.6;font-weight:400;margin-bottom:36px;
+  font-size:18px;color:var(--text-2);
+  max-width:460px;line-height:1.55;font-weight:400;margin:0 auto 40px;
 }
-.hero-btns{display:flex;gap:12px;align-items:center;}
-.hero .btn-primary{background:#fff;color:var(--text);}
-.hero .btn-primary:hover{background:rgba(255,255,255,0.9);transform:translateY(-1px);}
-.hero .btn-secondary{
-  background:rgba(255,255,255,0.14);color:#fff;
-  border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px);
-}
-.hero .btn-secondary:hover{background:rgba(255,255,255,0.24);transform:translateY(-1px);}
+.hero-btns{display:flex;gap:12px;align-items:center;justify-content:center;}
+.hero .btn-primary{background:var(--text);color:#fff;}
+.hero .btn-primary:hover{opacity:0.82;transform:translateY(-1px);}
+.hero .btn-secondary{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.hero .btn-secondary:hover{border-color:var(--text);transform:translateY(-1px);}
 .hero-scroll{display:none;}
 .hero-stats{
-  display:flex;gap:48px;margin-top:44px;padding-top:28px;
-  border-top:1px solid rgba(255,255,255,0.12);
+  display:flex;gap:64px;margin-top:64px;padding-top:40px;
+  border-top:1px solid var(--border-light);justify-content:center;
 }
-.hero-stat-num{font-size:40px;font-weight:700;color:#fff;line-height:1;letter-spacing:-1.5px;}
-.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.45);margin-top:6px;letter-spacing:0.3px;}
+.hero-stat-num{font-size:44px;font-weight:700;color:var(--text);line-height:1;letter-spacing:-2px;}
+.hero-stat-lbl{font-size:11px;color:var(--text-3);margin-top:6px;letter-spacing:0.3px;}
 
 /* ГАЛЕРЕЯ */
 .gal-mosaic{
