@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Баден-Баден — Термы Уктус</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#ffffff;
@@ -19,67 +22,95 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--white);color:var(--dark);line-height:1.5;}
+body{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--white);color:var(--dark);line-height:1.5;}
 
 /* ── ШАПКА ────────────────────────────────────────────── */
 header{
   position:fixed;top:0;width:100%;z-index:300;
-  background:rgba(255,255,255,0.97);
-  backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0);
+  backdrop-filter:blur(0px);
+  border-bottom:1px solid rgba(255,255,255,0);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 60px;height:68px;
+  padding:0 60px;height:72px;
+  transition:background .4s ease, backdrop-filter .4s ease, border-color .4s ease, box-shadow .4s ease;
 }
-.logo{font-size:15px;font-weight:600;color:var(--dark);letter-spacing:0.3px;line-height:1.1;}
-.logo span{display:block;font-size:11px;color:var(--pale);font-weight:400;margin-top:2px;}
+header.scrolled{
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 24px rgba(0,0,0,0.06);
+}
+.logo{font-size:15px;font-weight:600;color:#fff;letter-spacing:0.3px;line-height:1.1;transition:color .4s;}
+header.scrolled .logo{color:var(--dark);}
+.logo span{display:block;font-size:10px;color:rgba(255,255,255,0.65);font-weight:400;margin-top:2px;letter-spacing:0.8px;text-transform:uppercase;transition:color .4s;}
+header.scrolled .logo span{color:var(--pale);}
 nav{display:flex;gap:0;align-items:center;}
 nav a{
-  color:var(--mid);text-decoration:none;font-size:13px;
-  padding:8px 16px;transition:color .2s;white-space:nowrap;
+  color:rgba(255,255,255,0.8);text-decoration:none;font-size:12.5px;
+  padding:8px 14px;transition:color .2s;white-space:nowrap;letter-spacing:0.2px;
 }
-nav a:hover{color:var(--dark);}
+nav a:hover{color:#fff;}
+header.scrolled nav a{color:var(--mid);}
+header.scrolled nav a:hover{color:var(--dark);}
 .header-cta{
-  font-size:13px;color:var(--white);background:var(--accent);
-  padding:9px 20px;text-decoration:none;font-weight:500;
-  transition:background .2s;white-space:nowrap;
+  font-size:12px;color:var(--white);background:var(--accent);
+  padding:9px 22px;text-decoration:none;font-weight:500;
+  transition:background .2s,box-shadow .2s;white-space:nowrap;letter-spacing:0.3px;
+  border-radius:2px;
 }
-.header-cta:hover{background:var(--accent-dark);}
+.header-cta:hover{background:var(--accent-dark);box-shadow:0 4px 16px rgba(61,107,90,0.3);}
 
 /* ── ГЕРОЙ ────────────────────────────────────────────── */
 .hero{
-  margin-top:68px;
-  min-height:88vh;
-  background:linear-gradient(to bottom,rgba(10,18,12,0.52) 0%,rgba(8,14,9,0.35) 100%),
+  margin-top:0;
+  min-height:100vh;
+  background:linear-gradient(160deg,rgba(8,16,10,0.58) 0%,rgba(6,12,7,0.28) 60%,rgba(4,10,5,0.5) 100%),
              url('lounge.jpg') center/cover no-repeat;
-  display:flex;flex-direction:column;justify-content:center;
+  display:flex;flex-direction:column;justify-content:flex-end;
   padding:80px 60px;
   position:relative;overflow:hidden;
 }
 .hero-badge{
-  display:inline-block;
-  background:rgba(255,255,255,0.15);color:#fff;
-  border:1px solid rgba(255,255,255,0.3);
-  font-size:11px;padding:5px 14px;font-weight:500;
-  letter-spacing:0.5px;margin-bottom:32px;backdrop-filter:blur(4px);
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:10.5px;padding:6px 16px;font-weight:400;
+  letter-spacing:1.2px;margin-bottom:28px;backdrop-filter:blur(8px);
+  text-transform:uppercase;width:fit-content;border-radius:2px;
 }
 .hero h1{
-  font-size:clamp(38px,6.5vw,80px);
+  font-family:'Cormorant Garamond','Georgia',serif;
+  font-size:clamp(52px,8vw,108px);
   font-weight:300;color:#ffffff;
-  line-height:1.05;letter-spacing:-1.5px;
-  margin-bottom:20px;max-width:680px;
+  line-height:0.95;letter-spacing:-2px;
+  margin-bottom:24px;max-width:760px;
 }
-.hero h1 strong{font-weight:600;}
+.hero h1 strong{font-weight:600;font-style:italic;}
 .hero-sub{
-  font-size:16px;color:rgba(255,255,255,0.82);max-width:420px;
-  line-height:1.75;margin-bottom:48px;
+  font-size:15px;color:rgba(255,255,255,0.75);max-width:400px;
+  line-height:1.8;margin-bottom:44px;font-weight:300;letter-spacing:0.1px;
 }
-.hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.hero-scroll{
+  position:absolute;bottom:36px;right:60px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.45);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+}
+.hero-scroll-line{
+  width:1px;height:48px;background:rgba(255,255,255,0.3);
+  animation:scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top;opacity:0;}
+  50%{transform:scaleY(1);opacity:1;}100%{transform:scaleY(0);transform-origin:bottom;opacity:0;}}
 .hero-stats{
-  display:flex;gap:64px;margin-top:80px;padding-top:40px;
-  border-top:1px solid rgba(255,255,255,0.2);
+  display:flex;gap:56px;margin-top:64px;padding-top:36px;
+  border-top:1px solid rgba(255,255,255,0.15);
 }
-.hero-stat-num{font-size:28px;font-weight:300;color:#ffffff;}
-.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;}
+.hero-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:300;color:#ffffff;line-height:1;
+}
+.hero-stat-lbl{font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;letter-spacing:0.8px;text-transform:uppercase;}
 
 /* ── ГАЛЕРЕЯ ──────────────────────────────────────────── */
 .gal-mosaic{
@@ -108,45 +139,73 @@ nav a:hover{color:var(--dark);}
 }
 
 /* ── ФОТО В СЕКЦИИ ────────────────────────────────────── */
-.sec-photo{margin-bottom:48px;overflow:hidden;}
-.sec-photo img{width:100%;height:320px;object-fit:cover;display:block;}
+.sec-photo{margin-bottom:52px;overflow:hidden;border-radius:2px;}
+.sec-photo img{width:100%;height:380px;object-fit:cover;display:block;
+  transition:transform .7s ease;}
+.sec-photo:hover img{transform:scale(1.02);}
 
 /* ── КНОПКИ ───────────────────────────────────────────── */
 .btn-primary{
   display:inline-block;background:var(--accent);color:var(--white);
-  padding:14px 32px;font-size:13px;font-weight:500;
-  text-decoration:none;transition:background .2s;cursor:pointer;border:none;
+  padding:14px 34px;font-size:12.5px;font-weight:500;letter-spacing:0.4px;
+  text-decoration:none;transition:background .25s, box-shadow .25s, transform .25s;
+  cursor:pointer;border:none;border-radius:2px;
 }
-.btn-primary:hover{background:var(--accent-dark);}
+.btn-primary:hover{
+  background:var(--accent-dark);
+  box-shadow:0 8px 28px rgba(61,107,90,0.28);
+  transform:translateY(-1px);
+}
 .btn-secondary{
   display:inline-block;background:transparent;color:var(--dark);
-  padding:14px 32px;font-size:13px;font-weight:500;
-  text-decoration:none;border:1px solid var(--border);
-  transition:border-color .2s,color .2s;cursor:pointer;
+  padding:14px 34px;font-size:12.5px;font-weight:500;letter-spacing:0.4px;
+  text-decoration:none;border:1px solid rgba(28,28,28,0.25);
+  transition:border-color .25s, color .25s, transform .25s;
+  cursor:pointer;border-radius:2px;
 }
-.btn-secondary:hover{border-color:var(--dark);}
+.btn-secondary:hover{border-color:var(--dark);transform:translateY(-1px);}
+/* Призрачная кнопка для тёмного фона */
+.hero .btn-secondary{
+  color:rgba(255,255,255,0.9);
+  border-color:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(4px);
+}
+.hero .btn-secondary:hover{
+  color:#fff;border-color:rgba(255,255,255,0.85);
+  background:rgba(255,255,255,0.12);
+}
 
 /* ── СЕКЦИИ ───────────────────────────────────────────── */
-section{padding:96px 60px;border-bottom:1px solid var(--border-light);}
+section{padding:104px 60px;border-bottom:1px solid var(--border-light);}
 .alt-bg{background:var(--light);}
 
 .sec-row{
   display:grid;grid-template-columns:200px 1fr;
-  gap:60px;align-items:start;
+  gap:72px;align-items:start;
 }
 .sec-label-col{
-  font-size:12px;color:var(--pale);font-weight:500;padding-top:8px;
+  font-size:10.5px;color:var(--pale);font-weight:500;padding-top:12px;
+  letter-spacing:1.2px;text-transform:uppercase;
 }
 .sec-title{
-  font-size:clamp(24px,3.5vw,42px);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,4vw,56px);
   font-weight:300;color:var(--dark);
-  letter-spacing:-0.5px;margin-bottom:16px;line-height:1.1;
+  letter-spacing:-0.5px;margin-bottom:18px;line-height:1.0;
 }
-.sec-title strong{font-weight:600;}
+.sec-title strong{font-weight:600;font-style:italic;}
 .sec-sub{
   font-size:14px;color:var(--mid);
-  max-width:560px;line-height:1.75;margin-bottom:48px;
+  max-width:540px;line-height:1.85;margin-bottom:48px;font-weight:300;
 }
+
+/* ── АНИМАЦИИ ПОЯВЛЕНИЯ ───────────────────────────────── */
+.fade-up{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+.fade-up.d1{transition-delay:.1s;}
+.fade-up.d2{transition-delay:.2s;}
+.fade-up.d3{transition-delay:.3s;}
 
 /* ── КАРТА ────────────────────────────────────────────── */
 .map-wrap{
@@ -339,59 +398,72 @@ section{padding:96px 60px;border-bottom:1px solid var(--border-light);}
 }
 
 /* ── ПРОЖИВАНИЕ ───────────────────────────────────────── */
-.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.pr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .pr-card{
   border:1px solid var(--border);
-  position:relative;transition:border-color .2s;overflow:hidden;
+  position:relative;transition:border-color .3s, box-shadow .3s, transform .3s;
+  overflow:hidden;border-radius:2px;
 }
-.pr-card:hover{border-color:var(--accent);}
-.pr-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--accent);z-index:2;
+.pr-card:hover{border-color:rgba(61,107,90,0.4);box-shadow:0 16px 48px rgba(0,0,0,0.1);transform:translateY(-3px);}
+.pr-photo{height:240px;overflow:hidden;position:relative;}
+.pr-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.18) 0%,transparent 50%);
 }
-.pr-photo{height:220px;overflow:hidden;}
-.pr-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
-.pr-card:hover .pr-photo img{transform:scale(1.04);}
-.pr-body{padding:32px;}
-.pr-card h3{font-size:18px;font-weight:600;color:var(--dark);margin-bottom:12px;}
-.pr-card p{font-size:13px;color:var(--mid);line-height:1.8;}
-.pr-badge{margin-top:20px;font-size:11px;color:var(--accent);font-weight:500;}
-.pr-cta{text-align:center;margin-top:48px;}
+.pr-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease;}
+.pr-card:hover .pr-photo img{transform:scale(1.06);}
+.pr-body{padding:28px 28px 32px;}
+.pr-card h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:400;color:var(--dark);margin-bottom:10px;letter-spacing:-0.2px;
+}
+.pr-card p{font-size:13px;color:var(--mid);line-height:1.85;font-weight:300;}
+.pr-badge{
+  display:inline-block;margin-top:20px;font-size:10px;color:var(--accent);
+  font-weight:500;letter-spacing:0.6px;text-transform:uppercase;
+  border-top:1px solid var(--border-light);padding-top:14px;width:100%;
+}
+.pr-cta{text-align:center;margin-top:52px;}
 
 /* ── ФУТЕР ────────────────────────────────────────────── */
 footer{
-  background:var(--light);border-top:1px solid var(--border);
-  padding:60px 60px;
+  background:var(--dark);
+  padding:64px 60px;
   display:grid;grid-template-columns:1fr auto auto;
   gap:48px;align-items:start;
 }
-.foot-logo{font-size:16px;font-weight:600;color:var(--dark);}
-.foot-sub{font-size:12px;color:var(--pale);margin-top:4px;}
-.foot-links{display:flex;flex-direction:column;gap:10px;}
-.foot-links a{font-size:13px;color:var(--mid);text-decoration:none;transition:color .2s;}
-.foot-links a:hover{color:var(--accent);}
-.foot-copy{font-size:11px;color:var(--pale);padding-top:6px;}
+.foot-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;color:#fff;letter-spacing:-0.3px;
+}
+.foot-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+.foot-links{display:flex;flex-direction:column;gap:12px;}
+.foot-links a{font-size:12.5px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color .2s;letter-spacing:0.2px;}
+.foot-links a:hover{color:rgba(255,255,255,0.85);}
+.foot-copy{font-size:10.5px;color:rgba(255,255,255,0.25);padding-top:6px;line-height:1.8;}
 
 /* ── АДАПТИВ ──────────────────────────────────────────── */
 @media(max-width:900px){
-  section{padding:64px 32px;}
-  header{padding:0 24px;}
-  .hero{padding:60px 32px;min-height:70vh;}
-  .hero h1{font-size:36px;}
-  .hero-stats{gap:40px;}
+  section{padding:72px 32px;}
+  header{padding:0 24px;height:64px;}
+  .hero{padding:60px 32px;min-height:100svh;}
+  .hero h1{font-size:clamp(42px,9vw,72px);}
+  .hero-stats{gap:36px;}
+  .hero-scroll{display:none;}
   .sec-row{grid-template-columns:1fr;gap:20px;}
   .tariff-grid,.pr-grid,.spa-combo{grid-template-columns:1fr;}
   .t-card{border-right:none;border-bottom:1px solid var(--border);}
   .t-card:last-child{border-bottom:none;}
   .spc-card{border-right:none;border-bottom:1px solid var(--border);}
   .spc-card:last-child{border-bottom:none;}
-  footer{grid-template-columns:1fr;gap:32px;padding:40px 32px;}
+  footer{grid-template-columns:1fr;gap:32px;padding:48px 32px;}
 }
 @media(max-width:640px){
   nav{display:none;}
-  .hero h1{font-size:28px;letter-spacing:-0.5px;}
+  .hero{padding:48px 24px;}
+  .hero h1{font-size:clamp(38px,10vw,56px);letter-spacing:-1px;}
   .hero-stats{flex-wrap:wrap;gap:28px;}
-  section{padding:48px 20px;}
+  section{padding:56px 20px;}
   header{padding:0 20px;}
   .calc-outer{padding:24px 20px;}
   .pr-grid{grid-template-columns:1fr;}
@@ -420,11 +492,12 @@ footer{
 <section class="hero">
   <div class="hero-badge">Термальный курорт · Екатеринбург · Уктус</div>
   <h1><strong>Баден-Баден</strong><br>Термы Уктус</h1>
-  <p class="hero-sub">Термы, СПА и проживание на Уктусе.<br>Место, где время останавливается.</p>
+  <p class="hero-sub">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="#karta">Схема комплекса</a>
     <a class="btn-secondary" href="#aktsii">Акции и тарифы</a>
   </div>
+  <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
   <div class="hero-stats">
     <div><div class="hero-stat-num">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
     <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
@@ -450,7 +523,7 @@ footer{
 
 <!-- КАРТА -->
 <section id="karta">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Навигация</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Схема</strong> комплекса</h2>
@@ -464,7 +537,7 @@ footer{
 
 <!-- ТАРИФЫ -->
 <section class="alt-bg" id="tarify">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Цены</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Тарифы</strong> — Термы</h2>
@@ -524,7 +597,7 @@ footer{
 
 <!-- КАЛЬКУЛЯТОР -->
 <section id="calc">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Персональный расчёт</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Калькулятор</strong> стоимости</h2>
@@ -596,7 +669,7 @@ footer{
 
 <!-- МЕНЮ -->
 <section class="alt-bg" id="menu">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Гастрономия</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Кафе</strong> и немецкий бар</h2>
@@ -739,7 +812,7 @@ footer{
 
 <!-- СПА -->
 <section id="spa">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Велнес</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>СПА</strong> — Прайс</h2>
@@ -854,7 +927,7 @@ footer{
 
 <!-- АКЦИИ -->
 <section class="alt-bg" id="aktsii">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Специальные предложения</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Акции</strong> и скидки</h2>
@@ -952,7 +1025,7 @@ footer{
 
 <!-- ПРОЖИВАНИЕ -->
 <section id="prozhivanie">
-  <div class="sec-row">
+  <div class="sec-row fade-up">
     <div class="sec-label-col">Размещение</div>
     <div class="sec-content">
       <h2 class="sec-title"><strong>Проживание</strong></h2>
@@ -1009,6 +1082,25 @@ footer{
 </footer>
 
 <script>
+/* ── Шапка: прозрачная → белая при скролле ── */
+(function(){
+  const hdr = document.querySelector('header');
+  function onScroll(){
+    if(window.scrollY > 60) hdr.classList.add('scrolled');
+    else hdr.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+
+/* ── Fade-up анимации при скролле ── */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.12});
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+})();
+
 function tab(btn, id) {
   document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
