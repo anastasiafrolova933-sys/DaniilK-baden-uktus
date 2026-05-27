@@ -156,6 +156,7 @@ nav a:hover{background:var(--surface);color:var(--text);}
   transition:opacity .2s,transform .2s;cursor:pointer;border:none;
 }
 .btn-primary:hover{opacity:0.82;transform:translateY(-1px);}
+.btn-primary:active{transform:scale(0.97) translateY(0);}
 .btn-secondary{
   display:inline-block;background:transparent;
   font-size:15px;font-weight:500;
@@ -164,6 +165,7 @@ nav a:hover{background:var(--surface);color:var(--text);}
   transition:border-color .2s,transform .2s;cursor:pointer;
 }
 .btn-secondary:hover{border-color:var(--text);transform:translateY(-1px);}
+.btn-secondary:active{transform:scale(0.97) translateY(0);}
 
 /* СЕКЦИИ */
 section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
@@ -186,11 +188,14 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 }
 
 /* АНИМАЦИИ */
-.fade-up{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .75s cubic-bezier(0.22,1,0.36,1),transform .75s cubic-bezier(0.22,1,0.36,1);}
 .fade-up.visible{opacity:1;transform:translateY(0);}
-.fade-up.d1{transition-delay:.08s;}
-.fade-up.d2{transition-delay:.16s;}
-.fade-up.d3{transition-delay:.24s;}
+.fade-up.d1{transition-delay:.06s;}
+.fade-up.d2{transition-delay:.14s;}
+.fade-up.d3{transition-delay:.22s;}
+.fade-up.d4{transition-delay:.30s;}
+.fade-up.d5{transition-delay:.40s;}
+.fade-up.d6{transition-delay:.52s;}
 
 /* КАРТА */
 .map-wrap{border:1px solid var(--border);height:700px;overflow:hidden;border-radius:var(--radius);}
@@ -324,9 +329,9 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .spa-head:hover{background:var(--surface);}
 .spa-head:hover .spa-title{color:var(--accent);}
 .spa-title{font-size:15px;color:var(--text);transition:color .2s;font-weight:600;}
-.spa-arrow{color:var(--text-3);font-size:20px;transition:transform .3s;line-height:1;}
-.spa-body{display:none;}
-.spa-body.open{display:block;border-top:1px solid var(--border-light);padding:0 24px 20px;}
+.spa-arrow{color:var(--text-3);font-size:20px;transition:transform .35s cubic-bezier(0.22,1,0.36,1);line-height:1;}
+.spa-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(0.22,1,0.36,1);}
+.spa-body.open{max-height:2000px;border-top:1px solid var(--border-light);padding:0 24px 20px;}
 .spa-grid{display:grid;grid-template-columns:1fr;}
 .sp-item{padding:13px 4px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-bottom:1px solid var(--border-light);transition:all .15s;}
 .sp-item:last-child{border-bottom:none;}
@@ -454,7 +459,20 @@ footer{
   .spa-combo{gap:10px;}
   .ak-grid{grid-template-columns:1fr;}
   .map-wrap{height:360px;}
-}</style>
+}
+
+/* Калькулятор — анимация результата */
+@keyframes result-pop{from{opacity:0;transform:scale(0.88) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.c-result.show .c-res-main{animation:result-pop .5s cubic-bezier(0.22,1,0.36,1) both;}
+
+/* Переключение вкладок — плавное появление */
+@keyframes tabFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.tc.on{animation:tabFade .3s cubic-bezier(0.22,1,0.36,1) both;}
+
+/* Стрелка аккордеона — поворот */
+.spa-block .spa-arrow{display:inline-block;}
+.spa-body.open~*,.spa-head:has(+.spa-body.open) .spa-arrow{transform:rotate(45deg);}
+</style>
 </head>
 <body>
 
@@ -475,19 +493,19 @@ footer{
 
 <!-- ГЕРОЙ -->
 <section class="hero">
-  <div class="hero-badge">Термальный курорт · Екатеринбург · Уктус</div>
-  <h1><strong>Баден-Баден</strong><br>Термы Уктус</h1>
-  <p class="hero-sub">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
-  <div class="hero-btns">
+  <div class="hero-badge fade-up d1">Термальный курорт · Екатеринбург · Уктус</div>
+  <h1 class="fade-up d2"><strong>Баден-Баден</strong><br>Термы Уктус</h1>
+  <p class="hero-sub fade-up d3">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
+  <div class="hero-btns fade-up d4">
     <a class="btn-primary" href="#karta">Схема комплекса</a>
     <a class="btn-secondary" href="#aktsii">Акции и тарифы</a>
   </div>
   <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
-  <div class="hero-stats">
-    <div><div class="hero-stat-num">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
-    <div><div class="hero-stat-num">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
-    <div><div class="hero-stat-num">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
-    <div><div class="hero-stat-num">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
+  <div class="hero-stats fade-up d5">
+    <div><div class="hero-stat-num" data-count="49">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
+    <div><div class="hero-stat-num" data-count="14">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
+    <div><div class="hero-stat-num" data-count="5">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
+    <div><div class="hero-stat-num" data-count="3">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
   </div>
 </section>
 
@@ -525,7 +543,7 @@ footer{
       <p class="sec-sub">Стоимость зависит от дня недели и категории. Льготный тариф: дети 4–12 лет, пенсионеры, ветераны.</p>
 
       <div class="tariff-grid">
-        <div class="t-card">
+        <div class="t-card fade-up d1">
           <div class="t-day">Будни — Пн–Пт</div>
           <div class="t-rows">
             <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">1 500 ₽</span></div>
@@ -535,7 +553,7 @@ footer{
           </div>
           <div class="t-note">* Дети 4–12 лет, пенсионеры, инвалиды, ветераны, семьи 3+</div>
         </div>
-        <div class="t-card">
+        <div class="t-card fade-up d2">
           <div class="t-day">Суббота</div>
           <div class="t-rows">
             <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">2 300 ₽</span></div>
@@ -545,7 +563,7 @@ footer{
           </div>
           <div class="t-note">* Дети 4–12 лет, пенсионеры, инвалиды, ветераны, семьи 3+</div>
         </div>
-        <div class="t-card">
+        <div class="t-card fade-up d3">
           <div class="t-day">Воскресенье</div>
           <div class="t-rows">
             <div class="t-row"><span class="t-name">Общий · 2 часа</span><span class="t-price">2 100 ₽</span></div>
@@ -936,37 +954,37 @@ footer{
       <p class="sec-sub">Нажмите на карточку, чтобы узнать подробности. Акции не суммируются.</p>
 
       <div class="ak-grid">
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d1" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Будни</div><h3>Ранняя пташка</h3></div>
           <div class="ak-short">Купание с 9:00 до 12:00 по специальной цене</div>
           <div class="ak-price"><div class="ak-amt">1 300 ₽</div><div class="ak-when">Будни · 09:00–12:00<br>Строго до 12:00</div></div>
           <div class="ak-expand"><div class="ak-detail">Специальный утренний тариф для ранних гостей. Пребывание строго с 9:00 до 12:00. Приобрести можно только в будние дни при входе в утренние часы.</div></div>
         </div>
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d2" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Будни</div><h3>Ещё не поздно</h3></div>
           <div class="ak-short">Вечерний тариф после 20:45 — самая низкая цена дня</div>
           <div class="ak-price"><div class="ak-amt">900 ₽</div><div class="ak-when">Будни · с 20:45</div></div>
           <div class="ak-expand"><div class="ak-detail">Самый выгодный тариф! Приобретается в будние дни начиная с 20:45. Отличный вариант для позднего вечернего отдыха после работы.</div></div>
         </div>
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d3" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Будни</div><h3>Бодрое утро</h3></div>
           <div class="ak-short">Термы + завтрак в одном тарифе</div>
           <div class="ak-price"><div class="ak-amt">1 600 ₽</div><div class="ak-when">Будни · до 12:00<br>1,5 ч + завтрак</div></div>
           <div class="ak-expand"><div class="ak-detail">Комплексный утренний тариф: 1,5 часа в термах + завтрак. Приобрести можно в будние дни до 12:00.</div></div>
         </div>
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d4" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Все дни</div><h3>Акция Семья</h3></div>
           <div class="ak-short">2 взрослых на 3 часа — ребёнок бесплатно</div>
           <div class="ak-price"><div class="ak-amt">Ребёнок 0 ₽</div><div class="ak-when">Все дни<br>2 взрослых на 3 ч</div></div>
           <div class="ak-expand"><div class="ak-detail">При покупке двух взрослых билетов на 3 часа общей категории, ребёнок до 12 лет купается абсолютно бесплатно.</div></div>
         </div>
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d5" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Все дни</div><h3>Именинник</h3></div>
           <div class="ak-short">Скидка 10% в день рождения и ±2 дня</div>
           <div class="ak-price"><div class="ak-amt">−10%</div><div class="ak-when">±2 дня от ДР<br>Нужен документ</div></div>
           <div class="ak-expand"><div class="ak-detail">Скидка 10% на купание в честь дня рождения. Действует за 2 дня до и 2 дня после. Предъявите документ, подтверждающий дату рождения.</div></div>
         </div>
-        <div class="ak-card" onclick="toggleAk(this)">
+        <div class="ak-card fade-up d6" onclick="toggleAk(this)">
           <div class="ak-top"><div class="ak-day">Среда</div><h3>Студенческая среда</h3></div>
           <div class="ak-short">Скидка 20% каждую среду для студентов очного</div>
           <div class="ak-price"><div class="ak-amt">−20%</div><div class="ak-when">Среда · до 19:00<br>Студ. билет очного</div></div>
@@ -1034,7 +1052,7 @@ footer{
       <p class="sec-sub">Завтрак включён во все форматы проживания. Ранний выход в термы — как привилегия гостей.</p>
 
       <div class="pr-grid">
-        <div class="pr-card">
+        <div class="pr-card fade-up d1">
           <div class="pr-photo"><img src="barnhouse.jpg" alt="БарнХаус снаружи"></div>
           <div class="pr-body">
             <h3>БарнХаус</h3>
@@ -1042,7 +1060,7 @@ footer{
             <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
           </div>
         </div>
-        <div class="pr-card">
+        <div class="pr-card fade-up d2">
           <div class="pr-photo"><img src="cottage.jpg" alt="Коттедж"></div>
           <div class="pr-body">
             <h3>Коттедж</h3>
@@ -1050,7 +1068,7 @@ footer{
             <div class="pr-badge">Завтрак включён · Ранний выход в термы</div>
           </div>
         </div>
-        <div class="pr-card">
+        <div class="pr-card fade-up d3">
           <div class="pr-photo"><img src="container.webp" alt="Дом-Контейнер"></div>
           <div class="pr-body">
             <h3>Дом-Контейнер</h3>
@@ -1099,8 +1117,42 @@ footer{
 (function(){
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-  }, {threshold:0.12});
+  }, {threshold:0.08});
   document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+})();
+
+/* ── Count-up анимация ── */
+function countUp(el, target, duration, suffix) {
+  const startTime = performance.now();
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    el.textContent = (suffix === ' ₽') ? current.toLocaleString('ru') + suffix : current + (suffix || '');
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = (suffix === ' ₽') ? target.toLocaleString('ru') + suffix : target + (suffix || '');
+  }
+  requestAnimationFrame(update);
+}
+
+/* ── Count-up для статистики героя ── */
+(function(){
+  const statsEl = document.querySelector('.hero-stats');
+  if (!statsEl) return;
+  let fired = false;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !fired) {
+        fired = true;
+        e.target.querySelectorAll('.hero-stat-num[data-count]').forEach((el, i) => {
+          setTimeout(() => countUp(el, parseInt(el.dataset.count), 900), i * 80);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.3});
+  io.observe(statsEl);
 })();
 
 function tab(btn, id) {
@@ -1115,10 +1167,11 @@ function toggleSpa(head) {
   const arrow = head.querySelector('.spa-arrow');
   const isOpen = body.classList.contains('open');
   document.querySelectorAll('.spa-body').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.spa-arrow').forEach(a => a.textContent = '+');
+  document.querySelectorAll('.spa-arrow').forEach(a => { a.textContent = '+'; a.style.transform = ''; });
   if (!isOpen) {
     body.classList.add('open');
     arrow.textContent = '−';
+    arrow.style.transform = 'rotate(45deg)';
   }
 }
 
@@ -1193,7 +1246,17 @@ function calculate() {
     }
   }
 
-  document.getElementById('res-total').textContent = total.toLocaleString('ru') + ' ₽';
+  const resultEl = document.getElementById('calc-result');
+  const wasShown = resultEl.classList.contains('show');
+  resultEl.classList.remove('show');
+  void resultEl.offsetWidth; // reflow to restart animation
+  resultEl.classList.add('show');
+  const resTotalEl = document.getElementById('res-total');
+  if (wasShown) {
+    resTotalEl.textContent = total.toLocaleString('ru') + ' ₽';
+  } else {
+    countUp(resTotalEl, total, 700, ' ₽');
+  }
   document.getElementById('res-desc').textContent = desc;
   const promoEl = document.getElementById('res-promo');
   if (promos.length) {
@@ -1202,7 +1265,6 @@ function calculate() {
   } else {
     promoEl.style.display = 'none';
   }
-  document.getElementById('calc-result').classList.add('show');
 }
 </script>
 </body>
