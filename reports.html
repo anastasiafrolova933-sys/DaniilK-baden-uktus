@@ -217,10 +217,71 @@
     padding: 4px 10px;
   }
 
+  /* ── AI block ── */
+  .ai-block {
+    margin-bottom: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3d6b5a, #5a6e9e, #7a6b4a);
+    border-radius: 20px 20px 0 0;
+  }
+  .ai-block-top {
+    display: flex; align-items: flex-start; gap: 16px; margin-bottom: 18px;
+  }
+  .ai-icon {
+    width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(61,107,90,0.25), rgba(58,80,128,0.25));
+    border: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .ai-heading { font-size: 17px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.2px; }
+  .ai-sub { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+  .ai-chips {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+  }
+  .ai-chip {
+    font-size: 12px; color: var(--text-2);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+  .ai-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #229ED9;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    padding: 13px 22px;
+    font-size: 15px; font-weight: 600;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(34,158,217,0.3);
+  }
+  .ai-btn:hover {
+    background: #1a8fc4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(34,158,217,0.4);
+  }
+  .ai-btn:active { transform: translateY(0); }
+  .ai-btn-icon { font-size: 20px; line-height: 1; }
+
   @media (max-width: 480px) {
     .cards { grid-template-columns: 1fr; }
     header { margin-bottom: 32px; }
     .auth-box { padding: 28px 20px; }
+    .ai-block { padding: 22px 18px 20px; }
+    .ai-btn { width: 100%; justify-content: center; }
   }
 </style>
 </head>
@@ -284,6 +345,29 @@
         <div class="card-desc">Ежедневный прогноз посещаемости и выручки на текущий период</div>
       </div>
       <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="section-label">ИИ-аналитик</div>
+
+  <div class="ai-block">
+    <div class="ai-block-top">
+      <div class="ai-icon">🤖</div>
+      <div>
+        <div class="ai-heading">Задайте любой вопрос по данным</div>
+        <div class="ai-sub">Аналитический ассистент на базе Claude AI — отвечает на вопросы о бизнесе комплекса, анализирует данные и помогает принимать решения.</div>
+      </div>
+    </div>
+    <div class="ai-chips">
+      <span class="ai-chip">📊 Посещаемость и выручка</span>
+      <span class="ai-chip">💰 БДДС и расходы</span>
+      <span class="ai-chip">📈 Прогнозы</span>
+      <span class="ai-chip">🏆 Конкуренты УФО</span>
+      <span class="ai-chip">💡 Маркетинговые стратегии</span>
+    </div>
+    <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank">
+      <span class="ai-btn-icon">✈️</span>
+      Открыть в Telegram
     </a>
   </div>
 
