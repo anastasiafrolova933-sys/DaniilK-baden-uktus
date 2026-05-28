@@ -145,18 +145,18 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   margin-bottom:48px;
 }
 .features-grid{
-  max-width:1100px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  max-width:1280px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
   border-left:1px solid var(--border);
 }
 .feat{
-  padding:40px 32px;text-align:center;
+  padding:40px 24px;text-align:center;
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;align-items:center;
 }
 .feat-num{
   font-family:'Cormorant',Georgia,serif;
-  font-size:72px;font-weight:300;font-style:italic;
+  font-size:68px;font-weight:300;font-style:italic;
   color:var(--text);line-height:1;letter-spacing:-2px;
   margin-bottom:14px;
 }
@@ -166,11 +166,12 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   margin-bottom:14px;
 }
 .feat-desc{
-  font-size:13px;color:var(--text-2);
+  font-size:12px;color:var(--text-2);
   line-height:1.55;font-weight:400;max-width:200px;
 }
-@media(max-width:900px){.features{padding:80px 32px;}.features-grid{grid-template-columns:1fr 1fr;}.feat-num{font-size:60px;}.feat:nth-child(2){border-right:none;}.feat:nth-child(1),.feat:nth-child(2){border-bottom:1px solid var(--border);}}
-@media(max-width:560px){.features-grid{grid-template-columns:1fr;border-left:none;border-top:1px solid var(--border);}.feat{border-right:none;border-bottom:1px solid var(--border);}.feat:last-child{border-bottom:none;}}
+@media(max-width:1100px){.features-grid{grid-template-columns:repeat(3,1fr);}.feat:nth-child(3){border-right:none;}.feat:nth-child(1),.feat:nth-child(2),.feat:nth-child(3){border-bottom:1px solid var(--border);}}
+@media(max-width:760px){.features{padding:80px 24px;}.features-grid{grid-template-columns:1fr 1fr;}.feat{border-bottom:1px solid var(--border)!important;}.feat:nth-child(2n){border-right:none;}.feat:nth-child(odd):last-child{grid-column:span 2;border-right:none;}.feat-num{font-size:56px;}}
+@media(max-width:480px){.features-grid{grid-template-columns:1fr;border-left:none;border-top:1px solid var(--border);}.feat{border-right:none!important;}.feat:last-child{border-bottom:none!important;}.feat:nth-child(odd):last-child{grid-column:auto;}}
 .hero-badge{
   font-size:10px;font-weight:500;letter-spacing:0.22em;
   color:rgba(255,255,255,0.5);margin-bottom:36px;
@@ -770,16 +771,21 @@ footer{
       <div class="feat-desc">Открытый, закрытый, детский, СПА и контрастный</div>
     </div>
     <div class="feat fade-up d2">
-      <div class="feat-num">12</div>
+      <div class="feat-num">11</div>
       <div class="feat-lbl">Саун и парных</div>
-      <div class="feat-desc">Финские, инфракрасные, паровые и хаммам</div>
+      <div class="feat-desc">Цитрусовая, кофейная, травяная, булочная, гималайская, панорамная, киносауна, сауна-автобус и 3 хаммама</div>
     </div>
     <div class="feat fade-up d3">
+      <div class="feat-num">20</div>
+      <div class="feat-lbl">Ауфгуссов в день</div>
+      <div class="feat-desc">Бесплатные групповые аромапарения по расписанию</div>
+    </div>
+    <div class="feat fade-up d4">
       <div class="feat-num">43</div>
       <div class="feat-lbl">СПА-услуги</div>
       <div class="feat-desc">5 направлений: массаж, хаммам, обёртывания</div>
     </div>
-    <div class="feat fade-up d4">
+    <div class="feat fade-up d5">
       <div class="feat-num">3</div>
       <div class="feat-lbl">Формата проживания</div>
       <div class="feat-desc">БарнХаус, Коттедж и Дом-Контейнер</div>
@@ -1398,15 +1404,15 @@ footer{
   <div class="cont-row">
     <div class="cont-col fade-up">
       <div class="cont-label">Адрес</div>
-      <div class="cont-val">Екатеринбург<br>ул. Зимняя, 27/2</div>
+      <div class="cont-val">Екатеринбург<br>ул. Зимняя, 23</div>
     </div>
     <div class="cont-col fade-up d1">
       <div class="cont-label">Телефон</div>
-      <div class="cont-val"><a href="tel:+73433855555">+7 (343) 385-55-55</a></div>
+      <div class="cont-val"><a href="tel:+73433633333">+7 (343) 363-33-33</a></div>
     </div>
     <div class="cont-col fade-up d2">
       <div class="cont-label">Режим работы</div>
-      <div class="cont-val">Ежедневно<br>10:00 — 24:00</div>
+      <div class="cont-val">Вс — Чт · 09:00 — 23:00<br>Пт, Сб · 09:00 — 00:00</div>
       <div class="cont-status" id="cont-status">—</div>
     </div>
     <div class="cont-col fade-up d3">
@@ -1466,15 +1472,26 @@ footer{
   if(!el) return;
   function update(){
     const now = new Date();
-    // Получаем время в Екатеринбурге (UTC+5)
-    const ekbHour = (now.getUTCHours() + 5) % 24;
-    const open = ekbHour >= 10 && ekbHour < 24;
+    // Время в Екатеринбурге (UTC+5)
+    const utcMs = now.getTime() + now.getTimezoneOffset()*60000;
+    const ekb = new Date(utcMs + 5*3600*1000);
+    const hour = ekb.getHours();
+    const minute = ekb.getMinutes();
+    const day = ekb.getDay(); // 0=Вс, 5=Пт, 6=Сб
+    // Пт, Сб: 09:00–00:00 (открыто весь день после 9)
+    // Остальные: 09:00–23:00
+    const isExtended = (day === 5 || day === 6);
+    const openHour = 9;
+    const closeHour = isExtended ? 24 : 23;
+    const currentTimeMin = hour * 60 + minute;
+    const open = currentTimeMin >= openHour*60 && currentTimeMin < closeHour*60;
     if(open){
-      el.textContent = '● Открыто сейчас';
+      const closeStr = isExtended ? '00:00' : '23:00';
+      el.textContent = '● Открыто · до ' + closeStr;
       el.classList.add('open');
       el.classList.remove('closed');
     } else {
-      el.textContent = '● Закрыто';
+      el.textContent = '● Закрыто · откроется в 09:00';
       el.classList.add('closed');
       el.classList.remove('open');
     }
