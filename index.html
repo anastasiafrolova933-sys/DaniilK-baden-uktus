@@ -41,8 +41,12 @@ header.scrolled{
   border-bottom-color:var(--border-light);
   box-shadow:0 1px 32px rgba(24,22,15,0.10);
 }
-.logo{font-family:'Cormorant',Georgia,serif;font-size:22px;font-weight:400;font-style:italic;letter-spacing:-0.5px;color:#fff;line-height:1;transition:color .4s;}
-header.scrolled .logo{color:var(--text);}
+.logo{display:flex;align-items:center;height:100%;line-height:1;}
+.logo-img-white,.logo-img-dark{height:38px;width:auto;display:block;transition:opacity .4s;}
+.logo-img-dark{position:absolute;opacity:0;pointer-events:none;}
+header.scrolled .logo-img-white{opacity:0;}
+header.scrolled .logo-img-dark{opacity:1;}
+.logo-wrap{position:relative;display:inline-flex;align-items:center;}
 .logo span{display:none;}
 nav{display:flex;align-items:center;gap:2px;}
 nav a{
@@ -73,15 +77,49 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   position:relative;border-bottom:none;
   overflow:hidden;
 }
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('pool-outdoor.jpg');
+  background-size:cover;background-position:center;
+  opacity:0.32;filter:blur(2px) saturate(0.7);
+  transform:scale(1.05);
+}
 .hero::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 55% at 50% 105%, rgba(168,134,95,0.22) 0%, transparent 65%);
-  pointer-events:none;
+  background:linear-gradient(180deg, rgba(12,12,12,0.5) 0%, rgba(12,12,12,0.75) 60%, rgba(12,12,12,0.95) 100%);
+  pointer-events:none;z-index:1;
 }
 .hero::after{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 40% 30% at 20% 20%, rgba(255,255,255,0.03) 0%, transparent 60%);
-  pointer-events:none;
+  background:radial-gradient(ellipse 70% 55% at 50% 105%, rgba(168,134,95,0.18) 0%, transparent 65%);
+  pointer-events:none;z-index:1;
+}
+.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;}
+.hero-logo{margin-bottom:32px;}
+.hero-logo img{height:200px;width:auto;opacity:0.97;}
+
+/* ФИЛОСОФИЯ */
+.philosophy{
+  padding:120px 64px;background:var(--white);text-align:center;
+  border-bottom:1px solid var(--border-light);
+}
+.philosophy-mark{
+  color:var(--accent);font-size:24px;letter-spacing:0.4em;
+  margin-bottom:36px;font-weight:300;
+}
+.philosophy-quote{
+  font-family:'Cormorant',Georgia,serif;
+  font-size:clamp(28px,3.5vw,42px);
+  font-weight:300;font-style:italic;
+  line-height:1.4;color:var(--text);
+  letter-spacing:-0.5px;
+  max-width:780px;margin:0 auto;
+}
+.philosophy-quote em{color:var(--accent);font-weight:400;}
+.philosophy-meta{
+  margin-top:40px;
+  font-size:10px;color:var(--text-3);
+  letter-spacing:0.25em;text-transform:uppercase;font-weight:500;
 }
 .hero-badge{
   font-size:10px;font-weight:500;letter-spacing:0.22em;
@@ -445,7 +483,7 @@ footer{
   display:grid;grid-template-columns:1fr auto auto;
   gap:48px;align-items:start;border-top:1px solid var(--border);
 }
-.foot-logo{font-family:'Cormorant',Georgia,serif;font-size:24px;font-weight:400;font-style:italic;color:var(--text);letter-spacing:-0.3px;}
+.foot-logo-img{height:48px;width:auto;margin-bottom:10px;display:block;}
 .foot-sub{font-size:12px;color:var(--text-3);margin-top:8px;letter-spacing:0.3px;}
 .foot-links{display:flex;flex-direction:column;gap:12px;}
 .foot-links a{font-size:13px;color:var(--text-2);text-decoration:none;transition:color .2s;font-weight:400;}
@@ -465,6 +503,8 @@ footer{
   section{padding:64px 24px;}
   .hero{padding:0 24px 64px;min-height:100svh;}
   .hero h1{font-size:clamp(48px,10vw,72px);letter-spacing:-2px;}
+  .hero-logo img{height:140px;}
+  .philosophy{padding:80px 40px;}
   .hero-stats{gap:32px;}
   .hero-scroll{display:none;}
   .tariff-grid,.spa-combo{grid-template-columns:1fr;}
@@ -483,6 +523,10 @@ footer{
   .hero{padding:0 20px 48px;min-height:100svh;}
   .hero-badge{font-size:12px;letter-spacing:0;}
   .hero h1{font-size:clamp(40px,11vw,54px);letter-spacing:-1.5px;margin-bottom:16px;}
+  .hero-logo img{height:100px;}
+  .hero-logo{margin-bottom:24px;}
+  .philosophy{padding:60px 20px;}
+  .philosophy-quote{font-size:24px;}
   .hero-sub{font-size:15px;margin-bottom:28px;}
   .hero-btns{flex-direction:column;gap:10px;}
   .hero-btns .btn-primary,.hero-btns .btn-secondary{width:100%;text-align:center;padding:16px 24px;font-size:15px;}
@@ -525,7 +569,7 @@ footer{
 
 <!-- ШАПКА -->
 <header>
-  <div class="logo">Баден-Баден<span>Термы Уктус · Екатеринбург</span></div>
+  <a class="logo" href="#"><span class="logo-wrap"><img class="logo-img-white" src="logo.png" alt="Баден-Баден"><img class="logo-img-dark" src="logo-dark.png" alt=""></span></a>
   <nav>
     <a href="#karta">Карта</a>
     <a href="#tarify">Тарифы</a>
@@ -540,20 +584,29 @@ footer{
 
 <!-- ГЕРОЙ -->
 <section class="hero">
-  <div class="hero-badge fade-up d1">Термальный курорт · Екатеринбург · Уктус</div>
-  <h1 class="fade-up d2"><strong>Баден-Баден</strong><br>Термы Уктус</h1>
-  <p class="hero-sub fade-up d3">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
-  <div class="hero-btns fade-up d4">
-    <a class="btn-primary" href="#karta">Схема комплекса</a>
-    <a class="btn-secondary" href="#aktsii">Акции и тарифы</a>
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge fade-up d1">Термальный курорт · Екатеринбург · Уктус</div>
+    <div class="hero-logo fade-up d2"><img src="logo.png" alt="Баден-Баден"></div>
+    <p class="hero-sub fade-up d3">Термы, СПА и проживание на Уктусе.<br>Место, где время&nbsp;останавливается.</p>
+    <div class="hero-btns fade-up d4">
+      <a class="btn-primary" href="#karta">Схема комплекса</a>
+      <a class="btn-secondary" href="#aktsii">Акции и тарифы</a>
+    </div>
+    <div class="hero-stats fade-up d5">
+      <div><div class="hero-stat-num" data-count="49">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
+      <div><div class="hero-stat-num" data-count="14">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
+      <div><div class="hero-stat-num" data-count="5">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
+      <div><div class="hero-stat-num" data-count="3">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
+    </div>
   </div>
-  <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll</div>
-  <div class="hero-stats fade-up d5">
-    <div><div class="hero-stat-num" data-count="49">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
-    <div><div class="hero-stat-num" data-count="14">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
-    <div><div class="hero-stat-num" data-count="5">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
-    <div><div class="hero-stat-num" data-count="3">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
-  </div>
+</section>
+
+<!-- ФИЛОСОФИЯ -->
+<section class="philosophy">
+  <div class="philosophy-mark">—</div>
+  <p class="philosophy-quote">«Термальные воды — это не просто отдых.<br>Это <em>возвращение к себе</em>.»</p>
+  <div class="philosophy-meta">Термы Уктус · с 2014 года</div>
 </section>
 
 <!-- ГАЛЕРЕЯ -->
@@ -1135,7 +1188,7 @@ footer{
 <!-- ФУТЕР -->
 <footer>
   <div>
-    <div class="foot-logo">Баден-Баден</div>
+    <img class="foot-logo-img" src="logo-dark.png" alt="Баден-Баден">
     <div class="foot-sub">Термы Уктус · Екатеринбург</div>
   </div>
   <div class="foot-links">
@@ -1145,7 +1198,7 @@ footer{
     <a href="#aktsii">Акции</a>
     <a href="https://baden-uktus.ru" target="_blank">Официальный сайт</a>
   </div>
-  <div class="foot-copy">© 2026 Баден-Баден<br>Термы Уктус</div>
+  <div class="foot-copy">© 2026 Баден-Баден<br>Термы Уктус · Екатеринбург</div>
 </footer>
 
 <script>
