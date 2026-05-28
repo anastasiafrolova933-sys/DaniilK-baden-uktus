@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baden Loyalty — Дашборд</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --surface: #1a1a2e;
+    --surface2: #16213e;
+    --accent: #00b4d8;
+    --accent2: #0077b6;
+    --accent3: #48cae4;
+    --text: #e0e0e0;
+    --text2: #a0a0b0;
+    --border: #2a2a4a;
+    --green: #2ecc71;
+    --yellow: #f1c40f;
+    --red: #e74c3c;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  header span { color: var(--text2); font-size: 0.85rem; }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+  .btn-small {
+    background: var(--border);
+    border: 1px solid #3a3a5a;
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: background 0.15s;
+  }
+  .btn-small:hover { background: #2a2a4a; }
+
+  /* ── Upload zone ── */
+  #upload-zone {
+    margin: 24px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+    background: var(--surface);
+  }
+  #upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,180,216,0.06);
+  }
+  #upload-zone .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  #upload-zone p { color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+  #upload-zone p strong { color: var(--text); }
+  .upload-pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .upload-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .upload-pill.loaded { border-color: var(--green); color: var(--green); }
+  .upload-pill.loaded::before { content: '✓ '; }
+  #file-input { display: none; }
+  .btn-upload {
+    margin-top: 16px;
+    background: var(--accent2);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+  }
+  .btn-upload:hover { background: var(--accent); }
+
+  /* ── Main layout ── */
+  #dashboard { display: none; }
+  .container { padding: 0 24px 24px; }
+
+  /* ── Stat cards ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+  }
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.yellow::before { background: var(--yellow); }
+  .stat-card.red::before { background: var(--red); }
+  .stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card.green .stat-val { color: var(--green); }
+  .stat-card.yellow .stat-val { color: var(--yellow); }
+  .stat-card.red .stat-val { color: var(--red); }
+  .stat-label { color: var(--text2); font-size: 0.78rem; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 0.88rem;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Panel ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text2); }
+  select.filter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .count-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: auto;
+    max-height: 520px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+  thead { position: sticky; top: 0; z-index: 10; }
+  th {
+    background: var(--surface2);
+    color: var(--text2);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { color: var(--accent); }
+  th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+  th.sorted-asc .sort-arrow::after { content: '↑'; opacity: 1; color: var(--accent); }
+  th.sorted-desc .sort-arrow::after { content: '↓'; opacity: 1; color: var(--accent); }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,180,216,0.04); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+  .badge-green { background: rgba(46,204,113,0.15); color: var(--green); }
+  .badge-blue { background: rgba(0,180,216,0.15); color: var(--accent); }
+  .badge-yellow { background: rgba(241,196,15,0.15); color: var(--yellow); }
+  .badge-red { background: rgba(231,76,60,0.15); color: var(--red); }
+  .no-data {
+    text-align: center;
+    color: var(--text2);
+    padding: 48px;
+    font-size: 0.9rem;
+  }
+
+  /* ── Analytics panel ── */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+  .chart-card h3 {
+    font-size: 0.88rem;
+    color: var(--text2);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Bar chart (CSS) */
+  .bar-list { display: flex; flex-direction: column; gap: 8px; }
+  .bar-item { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 0.8rem; color: var(--text2); width: 110px; text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { flex: 1; background: var(--border); border-radius: 4px; height: 18px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent3)); transition: width 0.4s ease; }
+  .bar-val { font-size: 0.8rem; color: var(--text); width: 32px; text-align: right; flex-shrink: 0; }
+
+  /* Rating stars */
+  .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .rating-label { font-size: 0.8rem; color: var(--text2); width: 130px; flex-shrink: 0; }
+  .stars { color: var(--yellow); font-size: 0.85rem; letter-spacing: 1px; }
+  .rating-num { font-size: 0.82rem; color: var(--text2); margin-left: 4px; }
+
+  /* ── Reviews tab ── */
+  .review-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .review-meta { font-size: 0.78rem; color: var(--text2); margin-bottom: 6px; }
+  .review-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; font-style: italic; }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .page-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: background 0.15s;
+  }
+  .page-btn:hover { background: var(--border); color: var(--text); }
+  .page-btn.active { background: var(--accent2); border-color: var(--accent2); color: white; }
+  .page-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3a5a; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1rem; }
+    .container { padding: 0 12px 12px; }
+    #upload-zone { margin: 12px; padding: 24px 16px; }
+  }
+
+  /* ── Auth overlay ── */
+  #auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999;
+  }
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 100%; max-width: 340px;
+    display: flex; flex-direction: column; gap: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+  .auth-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .auth-logo-icon { font-size: 28px; }
+  .auth-logo-title { font-size: 16px; font-weight: 700; color: var(--accent); }
+  .auth-logo-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .auth-label { font-size: 13px; color: var(--text2); }
+  .auth-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 11px 14px;
+    color: var(--text); font-size: 15px; width: 100%; outline: none;
+    transition: border-color 0.2s;
+  }
+  .auth-input:focus { border-color: var(--accent); }
+  .auth-btn-submit {
+    background: var(--accent2); color: #fff; border: none;
+    border-radius: 8px; padding: 12px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .auth-btn-submit:hover { background: var(--accent); }
+  .auth-error { font-size: 13px; color: var(--red); display: none; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- Auth overlay -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🌊</div>
+      <div>
+        <div class="auth-logo-title">Baden Loyalty</div>
+        <div class="auth-logo-sub">Дашборд программы лояльности</div>
+      </div>
+    </div>
+    <label class="auth-label">Пароль</label>
+    <input type="password" id="auth-pwd" class="auth-input" placeholder="Введите пароль" autocomplete="current-password">
+    <div class="auth-error" id="auth-error">Неверный пароль</div>
+    <button class="auth-btn-submit" id="auth-submit">Войти</button>
+  </div>
+</div>
+
+<div id="app-wrapper" style="display:none">
+
+<header>
+  <div>🌊</div>
+  <div>
+    <h1>Baden Loyalty Dashboard</h1>
+    <span id="last-updated">Файлы не загружены</span>
+  </div>
+  <div class="header-right">
+    <button class="btn-small" onclick="resetDashboard()">↺ Сбросить</button>
+  </div>
+</header>
+
+<!-- Upload Zone -->
+<div id="upload-zone" onclick="document.getElementById('file-input').click()">
+  <div class="icon">📂</div>
+  <p>
+    Перетащите CSV-файлы сюда или нажмите для выбора<br>
+    <strong>guests.csv · visits.csv · surveys.csv</strong><br>
+    <span style="font-size:0.8rem">Файлы обрабатываются локально — никуда не отправляются</span>
+  </p>
+  <div class="upload-pills">
+    <div class="upload-pill" id="pill-guests">guests.csv</div>
+    <div class="upload-pill" id="pill-visits">visits.csv</div>
+    <div class="upload-pill" id="pill-surveys">surveys.csv</div>
+  </div>
+  <br>
+  <button class="btn-upload" onclick="event.stopPropagation(); document.getElementById('file-input').click()">Выбрать файлы</button>
+  <input type="file" id="file-input" accept=".csv" multiple>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('guests')">👥 Гости</div>
+      <div class="tab" onclick="showTab('visits')">🎫 Визиты</div>
+      <div class="tab" onclick="showTab('surveys')">📋 Опросы</div>
+      <div class="tab" onclick="showTab('analytics')">📊 Аналитика</div>
+      <div class="tab" onclick="showTab('reviews')">💬 Отзывы</div>
+    </div>
+
+    <!-- Guests Panel -->
+    <div class="panel active" id="panel-guests">
+      <div class="toolbar">
+        <input class="search-box" type="text" placeholder="🔍 Поиск по имени или телефону..." oninput="filterGuests()">
+        <select class="filter" id="city-filter" onchange="filterGuests()"><option value="">Все города</option></select>
+        <span class="count-badge" id="guests-count">0 записей</span>
+      </div>
+      <div class="table-wrap">
+        <table id="guests-table">
+          <thead><tr>
+            <th onclick="sortTable('guests',0)">ID<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',1)">Имя<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',2)">Телефон<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',3)">Дата рождения<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',4)">Город<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',7)">Дата регистрации<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('guests',8)">Статус<span class="sort-arrow"></span></th>
+          </tr></thead>
+          <tbody id="guests-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="guests-pages"></div>
+    </div>
+
+    <!-- Visits Panel -->
+    <div class="panel" id="panel-visits">
+      <div class="toolbar">
+        <input class="search-box" type="text" placeholder="🔍 Поиск по имени или телефону..." oninput="filterVisits()">
+        <select class="filter" id="visit-how-filter" onchange="filterVisits()">
+          <option value="">Все способы</option>
+          <option value="QR">QR-код</option>
+          <option value="Телефон">Телефон</option>
+        </select>
+        <select class="filter" id="visit-month-filter" onchange="filterVisits()"><option value="">Все месяцы</option></select>
+        <span class="count-badge" id="visits-count">0 записей</span>
+      </div>
+      <div class="table-wrap">
+        <table id="visits-table">
+          <thead><tr>
+            <th onclick="sortTable('visits',0)">ID<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',2)">Имя<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',3)">Телефон<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',4)">Дата визита<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',5)">Скидка %<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',7)">Способ<span class="sort-arrow"></span></th>
+          </tr></thead>
+          <tbody id="visits-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="visits-pages"></div>
+    </div>
+
+    <!-- Surveys Panel -->
+    <div class="panel" id="panel-surveys">
+      <div class="toolbar">
+        <input class="search-box" type="text" placeholder="🔍 Поиск по имени или телефону..." oninput="filterSurveys()">
+        <select class="filter" id="survey-month-filter" onchange="filterSurveys()"><option value="">Все месяцы</option></select>
+        <span class="count-badge" id="surveys-count">0 записей</span>
+      </div>
+      <div class="table-wrap">
+        <table id="surveys-table">
+          <thead><tr>
+            <th onclick="sortTable('surveys',0)">ID<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',2)">Имя<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',3)">Телефон<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',5)">Дата<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',6)">Ресепшн<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',7)">Скорость<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',8)">Персонал<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',9)">Раздевалки<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',10)">Бассейны<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',11)">Зоны отдыха<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',12)">Вода<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',13)">Температура<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('surveys',14)">Общая<span class="sort-arrow"></span></th>
+            <th>Отзыв</th>
+          </tr></thead>
+          <tbody id="surveys-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="surveys-pages"></div>
+    </div>
+
+    <!-- Analytics Panel -->
+    <div class="panel" id="panel-analytics">
+      <div class="analytics-grid" id="analytics-grid"></div>
+    </div>
+
+    <!-- Reviews Panel -->
+    <div class="panel" id="panel-reviews">
+      <div class="toolbar">
+        <input class="search-box" type="text" placeholder="🔍 Поиск в отзывах..." oninput="filterReviews()">
+        <span class="count-badge" id="reviews-count">0 отзывов</span>
+      </div>
+      <div id="reviews-list"></div>
+      <div class="pagination" id="reviews-pages"></div>
+    </div>
+  </div>
+</div>
+</div> <!-- /app-wrapper -->
+
+<script>
+// ── Pre-loaded data (injected by publish script) ──────────────────────────────
+window.__preloaded = {
+  updatedAt: '28.05.2026 09:30',
+  guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
+1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
+4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
+5,Baden Claud,89961789876,,,8794105763,1STR7XUY,2026-05-25 13:48:38,Да
+7,Римма,+79505615693,1986-10-27,Екатеринбург,1892146223,V8NW0ACZ,2026-05-25 14:25:16,Да
+8,Женя Питерцева,+79658652772,,Екатеринбург,584454150,3UZIS7Q8,2026-05-25 14:36:32,Да
+9,Басаргина Зоя,9068283458,2004-10-07,Екатеринбург,,4FAL0URK,2026-05-25 15:07:32,Да
+`,
+  visits:  `ID визита,ID гостя,Имя,Телефон,Дата визита,Скидка %,Кассир ID,Примечание
+3,1,Klimenko Daniil,89047298610,2026-05-25 11:16:08,5,15,
+5,1,Klimenko Daniil,89047298610,2026-05-25 13:50:10,10,15,by_phone
+6,1,Klimenko Daniil,89047298610,2026-05-26 17:59:47,15,15,by_qr
+`,
+  surveys: `ID,ID гостя,Имя,Телефон,ID визита,Дата,Q1 Ресепшн,Q2 Скорость,Q3 Персонал,Q4 Раздевалки,Q5 Бассейны/сауны,Q6 Зоны отдыха,Q7 Качество воды,Q8 Температура,Q9 Общая оценка,Q10 Отзыв
+1,1,Klimenko Daniil,89047298610,5,2026-05-25 14:33:59,5,4,Да,4,5,5,5,5,5,Круто 
+2,1,Klimenko Daniil,89047298610,6,2026-05-26 18:00:30,5,5,Да,5,5,5,5,5,5,Все круто 👍 
+`
+};
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+(function(){
+  var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
+  var KEY  = 'bbt_ok';
+  function sha256(str) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
+      .then(function(ab){ return Array.from(new Uint8Array(ab)).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); });
+  }
+  function showApp() {
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('app-wrapper').style.display = '';
+  }
+  if (localStorage.getItem(KEY) === HASH) { showApp(); return; }
+  document.getElementById('auth-submit').addEventListener('click', function(){
+    var pwd = document.getElementById('auth-pwd').value;
+    if (!pwd) return;
+    sha256(pwd).then(function(h){
+      if (h === HASH) { localStorage.setItem(KEY, HASH); showApp(); }
+      else { document.getElementById('auth-error').style.display = 'block'; document.getElementById('auth-pwd').value = ''; document.getElementById('auth-pwd').focus(); }
+    });
+  });
+  document.getElementById('auth-pwd').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('auth-submit').click(); });
+})();
+
+// ── Data storage ──────────────────────────────────────────────────────────────
+const data = { guests: [], visits: [], surveys: [] };
+const sortState = { guests: {col:-1,asc:true}, visits: {col:-1,asc:true}, surveys: {col:-1,asc:true} };
+const pageState = { guests: 1, visits: 1, surveys: 1, reviews: 1 };
+const PAGE_SIZE = 50;
+
+// ── CSV Parser ────────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  // Handle BOM
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const rows = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const row = [];
+    let inQ = false, cur = '';
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (c === ',' && !inQ) {
+        row.push(cur); cur = '';
+      } else cur += c;
+    }
+    row.push(cur);
+    rows.push(row);
+  }
+  return rows;
+}
+
+// ── File loading ──────────────────────────────────────────────────────────────
+function loadFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve({ name: file.name.toLowerCase(), content: e.target.result });
+    reader.readAsText(file, 'utf-8');
+  });
+}
+
+async function handleFiles(files) {
+  for (const file of files) {
+    const { name, content } = await loadFile(file);
+    const rows = parseCSV(content);
+    if (rows.length < 2) continue;
+    const headers = rows[0];
+    const body = rows.slice(1);
+
+    if (name.includes('guest')) {
+      data.guests = body;
+      document.getElementById('pill-guests').classList.add('loaded');
+      document.getElementById('pill-guests').textContent = `guests.csv (${body.length})`;
+    } else if (name.includes('visit')) {
+      data.visits = body;
+      document.getElementById('pill-visits').classList.add('loaded');
+      document.getElementById('pill-visits').textContent = `visits.csv (${body.length})`;
+    } else if (name.includes('survey')) {
+      data.surveys = body;
+      document.getElementById('pill-surveys').classList.add('loaded');
+      document.getElementById('pill-surveys').textContent = `surveys.csv (${body.length})`;
+    }
+  }
+  if (data.guests.length || data.visits.length || data.surveys.length) {
+    buildDashboard();
+  }
+}
+
+// ── Drag & Drop ───────────────────────────────────────────────────────────────
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  handleFiles([...e.dataTransfer.files]);
+});
+document.getElementById('file-input').addEventListener('change', e => handleFiles([...e.target.files]));
+
+// ── Build dashboard ───────────────────────────────────────────────────────────
+function buildDashboard() {
+  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('last-updated').textContent = 'Обновлено: ' + new Date().toLocaleString('ru');
+
+  buildStats();
+  buildCityFilter();
+  buildMonthFilter('visits', 'visit-month-filter', 4);
+  buildMonthFilter('surveys', 'survey-month-filter', 5);
+  filterGuests();
+  filterVisits();
+  filterSurveys();
+  buildAnalytics();
+  filterReviews();
+}
+
+function resetDashboard() {
+  data.guests = []; data.visits = []; data.surveys = [];
+  ['guests','visits','surveys'].forEach(t => {
+    document.getElementById(`pill-${t}`).classList.remove('loaded');
+  });
+  document.getElementById('pill-guests').textContent = 'guests.csv';
+  document.getElementById('pill-visits').textContent = 'visits.csv';
+  document.getElementById('pill-surveys').textContent = 'surveys.csv';
+  document.getElementById('upload-zone').style.display = '';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('file-input').value = '';
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+function buildStats() {
+  const today = new Date().toISOString().slice(0,10);
+  const monthKey = today.slice(0,7);
+
+  const totalGuests = data.guests.length;
+  const activeGuests = data.guests.filter(r => r[8] === 'Да').length;
+
+  const todayVisits = data.visits.filter(r => r[4] && r[4].slice(0,10) === today).length;
+  const monthVisits = data.visits.filter(r => r[4] && r[4].slice(0,7) === monthKey).length;
+  const totalVisits = data.visits.length;
+
+  const qrVisits = data.visits.filter(r => r[7] === 'by_qr').length;
+  const phoneVisits = data.visits.filter(r => r[7] === 'by_phone').length;
+
+  const totalSurveys = data.surveys.length;
+
+  // Avg rating
+  let ratingSum = 0, ratingCount = 0;
+  data.surveys.forEach(r => {
+    const v = parseFloat(r[14]);
+    if (!isNaN(v)) { ratingSum += v; ratingCount++; }
+  });
+  const avgRating = ratingCount ? (ratingSum / ratingCount).toFixed(1) : '—';
+
+  const cards = [
+    { val: totalGuests, label: 'Гостей всего', cls: '' },
+    { val: activeGuests, label: 'Активных гостей', cls: '' },
+    { val: todayVisits, label: 'Визитов сегодня', cls: 'green' },
+    { val: monthVisits, label: 'Визитов в месяц', cls: 'yellow' },
+    { val: totalVisits, label: 'Визитов всего', cls: '' },
+    { val: qrVisits, label: 'Через QR', cls: '' },
+    { val: phoneVisits, label: 'Через телефон', cls: '' },
+    { val: totalSurveys, label: 'Опросов заполнено', cls: '' },
+    { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка', cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
+  ];
+
+  document.getElementById('stats-grid').innerHTML = cards.map(c => `
+    <div class="stat-card ${c.cls}">
+      <div class="stat-val">${c.val}</div>
+      <div class="stat-label">${c.label}</div>
+    </div>
+  `).join('');
+}
+
+// ── City filter ───────────────────────────────────────────────────────────────
+function buildCityFilter() {
+  const cities = [...new Set(data.guests.map(r => r[4]).filter(Boolean))].sort();
+  const sel = document.getElementById('city-filter');
+  sel.innerHTML = '<option value="">Все города</option>' + cities.map(c => `<option>${c}</option>`).join('');
+}
+
+function buildMonthFilter(type, id, colIdx) {
+  const arr = data[type];
+  const months = [...new Set(arr.map(r => r[colIdx] ? r[colIdx].slice(0,7) : '').filter(Boolean))].sort().reverse();
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="">Все месяцы</option>' + months.map(m => `<option>${m}</option>`).join('');
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const tabs = ['guests','visits','surveys','analytics','reviews'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+function sortTable(type, col) {
+  const s = sortState[type];
+  if (s.col === col) s.asc = !s.asc;
+  else { s.col = col; s.asc = true; }
+
+  // Update header indicators
+  const tableId = type + '-table';
+  document.querySelectorAll('#' + tableId + ' th').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+  });
+  const ths = document.querySelectorAll('#' + tableId + ' th');
+  // Map visible col index to data col index is complex; just set style on clicked th
+  // We store the col in data attrs for simplicity
+  event.currentTarget.classList.add(s.asc ? 'sorted-asc' : 'sorted-desc');
+
+  data[type].sort((a, b) => {
+    const va = a[col] || '', vb = b[col] || '';
+    const na = parseFloat(va), nb = parseFloat(vb);
+    let cmp;
+    if (!isNaN(na) && !isNaN(nb)) cmp = na - nb;
+    else cmp = va.localeCompare(vb, 'ru');
+    return s.asc ? cmp : -cmp;
+  });
+
+  if (type === 'guests') { pageState.guests = 1; filterGuests(); }
+  if (type === 'visits') { pageState.visits = 1; filterVisits(); }
+  if (type === 'surveys') { pageState.surveys = 1; filterSurveys(); }
+}
+
+// ── Guests table ──────────────────────────────────────────────────────────────
+function filterGuests() {
+  const q = document.querySelector('#panel-guests .search-box').value.toLowerCase();
+  const city = document.getElementById('city-filter').value;
+  const filtered = data.guests.filter(r => {
+    const text = (r[1]||'') + (r[2]||'');
+    const matchQ = !q || text.toLowerCase().includes(q);
+    const matchCity = !city || r[4] === city;
+    return matchQ && matchCity;
+  });
+  document.getElementById('guests-count').textContent = filtered.length + ' записей';
+  renderPaged('guests', filtered, renderGuestRow, 'guests-body', 'guests-pages');
+}
+
+function renderGuestRow(r) {
+  const active = r[8] === 'Да';
+  return `<tr>
+    <td>${r[0]||''}</td>
+    <td><strong>${esc(r[1]||'')}</strong></td>
+    <td>${esc(r[2]||'')}</td>
+    <td>${r[3]||'—'}</td>
+    <td>${esc(r[4]||'—')}</td>
+    <td>${(r[7]||'').slice(0,10)}</td>
+    <td><span class="badge ${active ? 'badge-green' : 'badge-red'}">${active ? 'Активен' : 'Неактивен'}</span></td>
+  </tr>`;
+}
+
+// ── Visits table ──────────────────────────────────────────────────────────────
+function filterVisits() {
+  const q = document.querySelector('#panel-visits .search-box').value.toLowerCase();
+  const how = document.getElementById('visit-how-filter').value;
+  const month = document.getElementById('visit-month-filter').value;
+  const filtered = data.visits.filter(r => {
+    const text = (r[2]||'') + (r[3]||'');
+    const matchQ = !q || text.toLowerCase().includes(q);
+    const noteHow = r[7] === 'by_qr' ? 'QR' : r[7] === 'by_phone' ? 'Телефон' : '';
+    const matchHow = !how || noteHow === how;
+    const matchMonth = !month || (r[4]||'').slice(0,7) === month;
+    return matchQ && matchHow && matchMonth;
+  });
+  document.getElementById('visits-count').textContent = filtered.length + ' записей';
+  renderPaged('visits', filtered, renderVisitRow, 'visits-body', 'visits-pages');
+}
+
+function renderVisitRow(r) {
+  const how = r[7] === 'by_qr' ? '<span class="badge badge-blue">QR</span>' : r[7] === 'by_phone' ? '<span class="badge badge-yellow">Телефон</span>' : '—';
+  const disc = parseInt(r[5]||0);
+  const discBadge = disc > 0 ? `<span class="badge badge-green">${disc}%</span>` : `<span class="badge">${disc}%</span>`;
+  return `<tr>
+    <td>${r[0]||''}</td>
+    <td><strong>${esc(r[2]||'')}</strong></td>
+    <td>${esc(r[3]||'')}</td>
+    <td>${(r[4]||'').slice(0,16)}</td>
+    <td>${discBadge}</td>
+    <td>${how}</td>
+  </tr>`;
+}
+
+// ── Surveys table ─────────────────────────────────────────────────────────────
+function filterSurveys() {
+  const q = document.querySelector('#panel-surveys .search-box').value.toLowerCase();
+  const month = document.getElementById('survey-month-filter').value;
+  const filtered = data.surveys.filter(r => {
+    const text = (r[2]||'') + (r[3]||'');
+    const matchQ = !q || text.toLowerCase().includes(q);
+    const matchMonth = !month || (r[5]||'').slice(0,7) === month;
+    return matchQ && matchMonth;
+  });
+  document.getElementById('surveys-count').textContent = filtered.length + ' записей';
+  renderPaged('surveys', filtered, renderSurveyRow, 'surveys-body', 'surveys-pages');
+}
+
+function renderSurveyRow(r) {
+  const cols = [6,7,8,9,10,11,12,13,14];
+  const ratings = cols.map(i => {
+    const v = r[i];
+    if (v === null || v === undefined || v === '') return '<td>—</td>';
+    if (i === 8) { // Q3 yes/no
+      return `<td>${v === 'Да' || v === '1' ? '✅' : v === 'Нет' || v === '0' ? '❌' : esc(v)}</td>`;
+    }
+    const n = parseFloat(v);
+    const color = n >= 4 ? 'var(--green)' : n >= 3 ? 'var(--yellow)' : 'var(--red)';
+    return `<td style="color:${color};font-weight:600">${v}</td>`;
+  });
+  const comment = esc(r[15]||'');
+  return `<tr>
+    <td>${r[0]||''}</td>
+    <td><strong>${esc(r[2]||'')}</strong></td>
+    <td>${esc(r[3]||'')}</td>
+    <td>${(r[5]||'').slice(0,10)}</td>
+    ${ratings.join('')}
+    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${comment}">${comment||'—'}</td>
+  </tr>`;
+}
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+function buildAnalytics() {
+  let html = '';
+
+  // Visits by month
+  if (data.visits.length) {
+    const byMonth = {};
+    data.visits.forEach(r => {
+      const m = (r[4]||'').slice(0,7);
+      if (m) byMonth[m] = (byMonth[m]||0) + 1;
+    });
+    const months = Object.keys(byMonth).sort();
+    const maxV = Math.max(...Object.values(byMonth));
+    html += `<div class="chart-card">
+      <h3>Визиты по месяцам</h3>
+      <div class="bar-list">` +
+      months.map(m => `
+        <div class="bar-item">
+          <span class="bar-label">${formatMonth(m)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(byMonth[m]/maxV*100).toFixed(0)}%"></div></div>
+          <span class="bar-val">${byMonth[m]}</span>
+        </div>`).join('') +
+      `</div></div>`;
+
+    // By method
+    const qr = data.visits.filter(r => r[7]==='by_qr').length;
+    const ph = data.visits.filter(r => r[7]==='by_phone').length;
+    const tot = data.visits.length;
+    html += `<div class="chart-card">
+      <h3>Способ подтверждения</h3>
+      <div class="bar-list">
+        <div class="bar-item">
+          <span class="bar-label">QR-код</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${tot?(qr/tot*100).toFixed(0):0}%"></div></div>
+          <span class="bar-val">${qr}</span>
+        </div>
+        <div class="bar-item">
+          <span class="bar-label">Телефон</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${tot?(ph/tot*100).toFixed(0):0}%"></div></div>
+          <span class="bar-val">${ph}</span>
+        </div>
+      </div>
+    </div>`;
+
+    // Discount distribution
+    const byDisc = {};
+    data.visits.forEach(r => { const d = r[5]||'0'; byDisc[d] = (byDisc[d]||0)+1; });
+    const discKeys = Object.keys(byDisc).sort((a,b)=>parseInt(a)-parseInt(b));
+    const maxD = Math.max(...Object.values(byDisc));
+    html += `<div class="chart-card">
+      <h3>Распределение скидок</h3>
+      <div class="bar-list">` +
+      discKeys.map(d => `
+        <div class="bar-item">
+          <span class="bar-label">Скидка ${d}%</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(byDisc[d]/maxD*100).toFixed(0)}%"></div></div>
+          <span class="bar-val">${byDisc[d]}</span>
+        </div>`).join('') +
+      `</div></div>`;
+  }
+
+  // Guests by city
+  if (data.guests.length) {
+    const byCity = {};
+    data.guests.forEach(r => {
+      const c = r[4]||'Не указан';
+      byCity[c] = (byCity[c]||0)+1;
+    });
+    const cities = Object.entries(byCity).sort((a,b) => b[1]-a[1]);
+    const maxC = cities[0]?.[1] || 1;
+    html += `<div class="chart-card">
+      <h3>Гости по городам</h3>
+      <div class="bar-list">` +
+      cities.map(([c,n]) => `
+        <div class="bar-item">
+          <span class="bar-label">${esc(c)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(n/maxC*100).toFixed(0)}%"></div></div>
+          <span class="bar-val">${n}</span>
+        </div>`).join('') +
+      `</div></div>`;
+
+    // Registrations by month
+    const byRegMonth = {};
+    data.guests.forEach(r => {
+      const m = (r[7]||'').slice(0,7);
+      if (m) byRegMonth[m] = (byRegMonth[m]||0)+1;
+    });
+    const regMonths = Object.keys(byRegMonth).sort();
+    if (regMonths.length) {
+      const maxR = Math.max(...Object.values(byRegMonth));
+      html += `<div class="chart-card">
+        <h3>Регистрации по месяцам</h3>
+        <div class="bar-list">` +
+        regMonths.map(m => `
+          <div class="bar-item">
+            <span class="bar-label">${formatMonth(m)}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${(byRegMonth[m]/maxR*100).toFixed(0)}%"></div></div>
+            <span class="bar-val">${byRegMonth[m]}</span>
+          </div>`).join('') +
+        `</div></div>`;
+    }
+  }
+
+  // Survey ratings
+  if (data.surveys.length) {
+    const qLabels = ['Ресепшн','Скорость','Раздевалки','Бассейны/сауны','Зоны отдыха','Качество воды','Температура','Общая оценка'];
+    const qCols   = [6,7,9,10,11,12,13,14];
+    const avgs = qCols.map((col, i) => {
+      let sum = 0, cnt = 0;
+      data.surveys.forEach(r => {
+        const v = parseFloat(r[col]);
+        if (!isNaN(v)) { sum += v; cnt++; }
+      });
+      return { label: qLabels[i], avg: cnt ? sum/cnt : null };
+    }).filter(x => x.avg !== null);
+
+    if (avgs.length) {
+      html += `<div class="chart-card">
+        <h3>Средние оценки (из 5)</h3>
+        <div class="bar-list">` +
+        avgs.map(({label, avg}) => {
+          const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg));
+          const color = avg >= 4 ? 'var(--green)' : avg >= 3 ? 'var(--yellow)' : 'var(--red)';
+          return `
+            <div class="bar-item">
+              <span class="bar-label">${label}</span>
+              <div class="bar-track"><div class="bar-fill" style="width:${(avg/5*100).toFixed(0)}%;background:${color}"></div></div>
+              <span class="bar-val" style="color:${color}">${avg.toFixed(1)}</span>
+            </div>`;
+        }).join('') +
+        `</div></div>`;
+    }
+
+    // Q3 — персонал (yes/no)
+    const yesCount = data.surveys.filter(r => r[8]==='Да' || r[8]==='1').length;
+    const noCount = data.surveys.filter(r => r[8]==='Нет' || r[8]==='0').length;
+    const q3total = yesCount + noCount;
+    if (q3total > 0) {
+      html += `<div class="chart-card">
+        <h3>Q3: Персонал был вежлив?</h3>
+        <div class="bar-list">
+          <div class="bar-item">
+            <span class="bar-label">Да</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${(yesCount/q3total*100).toFixed(0)}%;background:var(--green)"></div></div>
+            <span class="bar-val" style="color:var(--green)">${yesCount}</span>
+          </div>
+          <div class="bar-item">
+            <span class="bar-label">Нет</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${(noCount/q3total*100).toFixed(0)}%;background:var(--red)"></div></div>
+            <span class="bar-val" style="color:var(--red)">${noCount}</span>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  if (!html) html = '<div class="no-data" style="grid-column:1/-1">Загрузите CSV-файлы для отображения аналитики</div>';
+  document.getElementById('analytics-grid').innerHTML = html;
+}
+
+// ── Reviews ───────────────────────────────────────────────────────────────────
+function filterReviews() {
+  const q = document.querySelector('#panel-reviews .search-box').value.toLowerCase();
+  const reviews = data.surveys.filter(r => {
+    const text = (r[15]||'').trim();
+    return text && (!q || text.toLowerCase().includes(q) || (r[2]||'').toLowerCase().includes(q));
+  }).reverse();
+  document.getElementById('reviews-count').textContent = reviews.length + ' отзывов';
+  renderPagedReviews(reviews);
+}
+
+function renderPagedReviews(reviews) {
+  const page = pageState.reviews;
+  const total = Math.ceil(reviews.length / PAGE_SIZE) || 1;
+  const slice = reviews.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const container = document.getElementById('reviews-list');
+
+  if (!slice.length) {
+    container.innerHTML = '<div class="no-data">Отзывы отсутствуют</div>';
+    document.getElementById('reviews-pages').innerHTML = '';
+    return;
+  }
+  container.innerHTML = slice.map(r => {
+    const rating = r[14] ? `⭐ ${r[14]} / 5 · ` : '';
+    return `<div class="review-card">
+      <div class="review-meta">${esc(r[2]||'')} · ${(r[5]||'').slice(0,10)} · ${rating}${esc(r[3]||'')}</div>
+      <div class="review-text">"${esc(r[15]||'')}"</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('reviews-pages').innerHTML = buildPagination(page, total, p => {
+    pageState.reviews = p;
+    const q = document.querySelector('#panel-reviews .search-box').value.toLowerCase();
+    const allReviews = data.surveys.filter(r => {
+      const text = (r[15]||'').trim();
+      return text && (!q || text.toLowerCase().includes(q) || (r[2]||'').toLowerCase().includes(q));
+    }).reverse();
+    renderPagedReviews(allReviews);
+  });
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+function renderPaged(type, filtered, rowFn, bodyId, pagesId) {
+  const page = pageState[type];
+  const total = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const slice = filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+
+  document.getElementById(bodyId).innerHTML = slice.length
+    ? slice.map(rowFn).join('')
+    : `<tr><td colspan="20" class="no-data">Нет данных</td></tr>`;
+
+  document.getElementById(pagesId).innerHTML = buildPagination(page, total, p => {
+    pageState[type] = p;
+    if (type==='guests') filterGuests();
+    if (type==='visits') filterVisits();
+    if (type==='surveys') filterSurveys();
+  });
+}
+
+function buildPagination(current, total, onClick) {
+  if (total <= 1) return '';
+  let html = '';
+  const show = p => `<button class="page-btn ${p===current?'active':''}" onclick="(${onClick.toString()})(${p})">${p}</button>`;
+  html += `<button class="page-btn" ${current<=1?'disabled':''} onclick="(${onClick.toString()})(${current-1})">‹</button>`;
+  if (total <= 7) {
+    for (let p=1; p<=total; p++) html += show(p);
+  } else {
+    html += show(1);
+    if (current > 3) html += '<span style="color:var(--text2);padding:0 4px">…</span>';
+    for (let p=Math.max(2,current-1); p<=Math.min(total-1,current+1); p++) html += show(p);
+    if (current < total-2) html += '<span style="color:var(--text2);padding:0 4px">…</span>';
+    html += show(total);
+  }
+  html += `<button class="page-btn" ${current>=total?'disabled':''} onclick="(${onClick.toString()})(${current+1})">›</button>`;
+  return html;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatMonth(m) {
+  if (!m) return '';
+  const [y, mo] = m.split('-');
+  const names = ['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  return `${names[parseInt(mo)]} ${y}`;
+}
+
+// ── Auto-init from pre-loaded data ────────────────────────────────────────────
+(function(){
+  if (!window.__preloaded) return;
+  const p = window.__preloaded;
+  function load(csv, key, pillId) {
+    if (!csv) return;
+    const rows = parseCSV(csv);
+    if (rows.length < 2) return;
+    data[key] = rows.slice(1);
+    const pill = document.getElementById('pill-' + pillId);
+    pill.classList.add('loaded');
+    pill.textContent = pillId + '.csv (' + data[key].length + ')';
+  }
+  load(p.guests,  'guests',  'guests');
+  load(p.visits,  'visits',  'visits');
+  load(p.surveys, 'surveys', 'surveys');
+  if (p.updatedAt) {
+    document.getElementById('last-updated').textContent = 'Обновлено: ' + p.updatedAt;
+  }
+  if (data.guests.length || data.visits.length || data.surveys.length) {
+    buildDashboard();
+  }
+})();
+</script>
+</body>
+</html>
