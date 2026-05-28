@@ -181,29 +181,62 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   border:1px solid rgba(255,255,255,0.08);
   padding:32px;border-radius:0;
 }
-.auf-schedule-head{
-  font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--accent);font-weight:500;margin-bottom:24px;
+.auf-tabs{
+  display:flex;gap:4px;margin-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:0;
 }
-.auf-schedule-list{
-  display:flex;flex-direction:column;
+.auf-tab{
+  background:transparent;border:none;color:rgba(255,255,255,0.5);
+  padding:10px 16px;font-size:11px;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;
+  cursor:pointer;font-family:inherit;
+  border-bottom:1px solid transparent;
+  transition:color .2s,border-color .2s;
+  margin-bottom:-1px;
 }
+.auf-tab:hover{color:#fff;}
+.auf-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
+
+.auf-next{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(168,134,95,0.12);border:1px solid rgba(168,134,95,0.25);
+  padding:8px 14px;margin:18px 0 20px;
+  font-size:12px;color:#fff;font-weight:400;
+}
+.auf-next-dot{color:var(--accent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.auf-next-text strong{color:var(--accent);font-weight:500;}
+
+.auf-list{display:none;flex-direction:column;max-height:520px;overflow-y:auto;}
+.auf-list.on{display:flex;}
+.auf-list::-webkit-scrollbar{width:4px;}
+.auf-list::-webkit-scrollbar-track{background:rgba(255,255,255,0.03);}
+.auf-list::-webkit-scrollbar-thumb{background:rgba(168,134,95,0.4);}
 .auf-row{
   display:grid;grid-template-columns:60px 1fr auto;gap:16px;
-  align-items:baseline;padding:14px 0;
+  align-items:baseline;padding:12px 4px;
   border-bottom:1px solid rgba(255,255,255,0.06);
   transition:background .2s;
 }
 .auf-row:last-child{border-bottom:none;}
-.auf-row:hover{background:rgba(255,255,255,0.02);}
+.auf-row:hover{background:rgba(255,255,255,0.03);padding-left:10px;}
+.auf-row-author{background:rgba(168,134,95,0.05);padding-left:8px;padding-right:8px;border-left:2px solid var(--accent);}
+.auf-row-author:hover{background:rgba(168,134,95,0.10);padding-left:14px;}
 .auf-time{
   font-family:'Cormorant',Georgia,serif;font-style:italic;
   font-size:20px;color:var(--accent);font-weight:400;
 }
-.auf-name{font-size:15px;color:#fff;font-weight:400;}
+.auf-name{font-size:14px;color:#fff;font-weight:400;line-height:1.4;}
+.auf-tag{
+  display:inline-block;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;
+  background:rgba(168,134,95,0.12);padding:2px 8px;
+  margin-left:8px;vertical-align:middle;
+}
 .auf-sauna{
   font-size:10px;color:rgba(255,255,255,0.45);
-  letter-spacing:0.15em;text-transform:uppercase;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:500;
+  text-align:right;line-height:1.4;
 }
 .auf-schedule-note{
   margin-top:20px;padding-top:16px;
@@ -221,10 +254,13 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   .aufguss{padding:48px 20px;}
   .auf-schedule{padding:24px 20px;}
   .auf-row{grid-template-columns:50px 1fr;gap:12px;}
-  .auf-sauna{grid-column:2;font-size:9px;margin-top:-8px;}
+  .auf-sauna{grid-column:2;font-size:9px;margin-top:-4px;text-align:left;}
   .auf-stats{grid-template-columns:1fr;gap:20px;padding-top:24px;}
   .auf-stat{display:flex;align-items:baseline;gap:16px;}
   .auf-stat-num{font-size:32px;margin-bottom:0;}
+  .auf-tabs{flex-direction:column;border-bottom:none;}
+  .auf-tab{text-align:left;border:1px solid rgba(255,255,255,0.08);margin-bottom:4px;}
+  .auf-tab.on{border-color:var(--accent);}
 }
 
 /* ФИЛОСОФИЯ */
@@ -1014,7 +1050,7 @@ footer{
     <div class="auf-content fade-up">
       <div class="auf-label">Ауфгусс · Бесплатно</div>
       <h2 class="auf-title"><strong>20 ауфгуссов</strong> ежедневно<br>по расписанию</h2>
-      <p class="auf-sub">Групповые аромапарения с эфирными маслами в исполнении парильщика. Каждые 30 минут — новый аромат, новое настроение. Включено в стоимость любого посещения.</p>
+      <p class="auf-sub">Групповые аромапарения с эфирными маслами в исполнении парильщика. Каждые 30 минут — новый аромат, новое настроение. Включено в стоимость любого посещения.<br><br><span style="color:var(--accent);">★ По субботам</span> и в особые даты — расширенная программа авторских парений: «Инь & Ян», «Травяное путешествие», «Чеснок и Пиво», «Aufgussparty».</p>
       <div class="auf-stats">
         <div class="auf-stat">
           <div class="auf-stat-num" data-count="20">20</div>
@@ -1031,18 +1067,64 @@ footer{
       </div>
     </div>
     <div class="auf-schedule fade-up d2">
-      <div class="auf-schedule-head">Сегодня в расписании</div>
-      <div class="auf-schedule-list">
-        <div class="auf-row"><span class="auf-time">11:30</span><span class="auf-name">Цитрусовая лагуна</span><span class="auf-sauna">Цитрусовая</span></div>
-        <div class="auf-row"><span class="auf-time">12:30</span><span class="auf-name">Утренний кофе</span><span class="auf-sauna">Кофейная</span></div>
-        <div class="auf-row"><span class="auf-time">13:30</span><span class="auf-name">Альпийские травы</span><span class="auf-sauna">Травяная</span></div>
-        <div class="auf-row"><span class="auf-time">14:30</span><span class="auf-name">Хмель и чеснок</span><span class="auf-sauna">Булочная</span></div>
-        <div class="auf-row"><span class="auf-time">15:30</span><span class="auf-name">Тайга</span><span class="auf-sauna">Гималайская</span></div>
-        <div class="auf-row"><span class="auf-time">16:30</span><span class="auf-name">Эвкалипт + Мята</span><span class="auf-sauna">Панорамная</span></div>
-        <div class="auf-row"><span class="auf-time">17:30</span><span class="auf-name">Шоколадная фантазия</span><span class="auf-sauna">Кофейная</span></div>
-        <div class="auf-row"><span class="auf-time">18:30</span><span class="auf-name">Вечерний релакс</span><span class="auf-sauna">Травяная</span></div>
+      <div class="auf-tabs">
+        <button class="auf-tab on" data-tab="daily" onclick="aufTab(this,'daily')">Каждый день</button>
+        <button class="auf-tab" data-tab="signature" onclick="aufTab(this,'signature')">Авторский день · Сб</button>
       </div>
-      <div class="auf-schedule-note">Расписание уточняйте у администратора</div>
+
+      <div class="auf-next">
+        <span class="auf-next-dot">●</span>
+        <span class="auf-next-text">Ближайший авторский день — <strong>7 июня (вс)</strong></span>
+      </div>
+
+      <!-- Каждый день -->
+      <div class="auf-list auf-list-daily on">
+        <div class="auf-row"><span class="auf-time">10:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">11:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row"><span class="auf-time">11:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Цитрусовая</span></div>
+        <div class="auf-row"><span class="auf-time">12:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row"><span class="auf-time">12:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">13:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">13:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">14:00</span><span class="auf-name">«Травяное путешествие» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">15:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row"><span class="auf-time">16:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Цитрусовая</span></div>
+        <div class="auf-row"><span class="auf-time">17:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">17:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row"><span class="auf-time">18:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">18:30</span><span class="auf-name">«Чеснок и Пиво» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">19:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Цитрусовая</span></div>
+        <div class="auf-row"><span class="auf-time">19:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">20:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row"><span class="auf-time">20:30</span><span class="auf-name">Парение</span><span class="auf-sauna">Цитрусовая</span></div>
+        <div class="auf-row"><span class="auf-time">21:00</span><span class="auf-name">Парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">21:30</span><span class="auf-name">«Aufgussparty» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+      </div>
+
+      <!-- Авторский день -->
+      <div class="auf-list auf-list-signature">
+        <div class="auf-row"><span class="auf-time">10:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">11:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row"><span class="auf-time">12:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">13:00</span><span class="auf-name">«Инь» & «Ян» — для неё и для него <span class="auf-tag">авторское</span></span><span class="auf-sauna">Кофейная / Цитрусовая</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">13:30</span><span class="auf-name">«Травяное путешествие» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">14:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">15:00</span><span class="auf-name">«Инь» & «Ян» — для неё и для него <span class="auf-tag">авторское</span></span><span class="auf-sauna">Кофейная / Цитрусовая</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">15:30</span><span class="auf-name">«Чеснок и Пиво» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">16:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">17:00</span><span class="auf-name">«Инь» & «Ян» — для неё и для него <span class="auf-tag">авторское</span></span><span class="auf-sauna">Кофейная / Цитрусовая</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">17:30</span><span class="auf-name">«Aufgussparty» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">18:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">18:30</span><span class="auf-name">«Инь» & «Ян» — для неё и для него <span class="auf-tag">авторское</span></span><span class="auf-sauna">Кофейная / Цитрусовая</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">19:00</span><span class="auf-name">Авторское парение</span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">19:30</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">20:00</span><span class="auf-name">«Травяное путешествие» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Кофейная / Цитрусовая</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">20:30</span><span class="auf-name">«Инь» & «Ян» — для неё и для него <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">21:00</span><span class="auf-name">Классическое парение</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row auf-row-author"><span class="auf-time">21:30</span><span class="auf-name">«Чеснок и Пиво» / «Aufgussparty» <span class="auf-tag">авторское</span></span><span class="auf-sauna">Травяная</span></div>
+      </div>
+
+      <div class="auf-schedule-note">Расписание может меняться — уточняйте на ресепшен · +7 (343) 363-33-33</div>
     </div>
   </div>
 </section>
@@ -1752,6 +1834,13 @@ function tab(btn, id) {
   document.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById('t-' + id).classList.add('on');
+}
+
+function aufTab(btn, name) {
+  document.querySelectorAll('.auf-tab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.auf-list').forEach(l => l.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelector('.auf-list-' + name).classList.add('on');
 }
 
 function toggleSpa(head) {
