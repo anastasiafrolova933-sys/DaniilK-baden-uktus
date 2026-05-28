@@ -8,23 +8,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Отчеты Baden Uktus">
-<meta name="theme-color" content="#0c0c0c">
+<meta name="theme-color" content="#080808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0c0c;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --border: rgba(255,255,255,0.08);
-    --border-hover: rgba(255,255,255,0.18);
-    --accent: #3d6b5a;
-    --accent-light: #4d8a72;
-    --text: #ffffff;
-    --text-2: rgba(255,255,255,0.55);
-    --text-3: rgba(255,255,255,0.3);
-    --finance: #4a7c6f;
-    --sales: #5a6e9e;
-    --forecast: #7a6b4a;
-    --loyalty: #6b4a7a;
+    --bg: #080808;
+    --surface: #111111;
+    --border: rgba(255,255,255,0.07);
+    --border-h: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text-2: rgba(240,237,232,0.45);
+    --text-3: rgba(240,237,232,0.22);
+    --accent: #c8a97e;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,338 +29,289 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: 'DM Sans', -apple-system, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 32px 24px;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Auth overlay ── */
+  /* ── Auth ── */
   #auth-overlay {
     position: fixed; inset: 0;
     background: var(--bg);
     display: flex; align-items: center; justify-content: center;
     z-index: 100;
-    flex-direction: column;
-    gap: 24px;
     padding: 24px;
   }
-  #auth-overlay h2 {
-    font-size: 22px; font-weight: 600; color: var(--text);
-    letter-spacing: -0.3px;
-  }
-  #auth-overlay p { font-size: 14px; color: var(--text-2); }
   .auth-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 36px;
-    width: 100%; max-width: 360px;
-    display: flex; flex-direction: column; gap: 16px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    width: 100%; max-width: 320px;
+    display: flex; flex-direction: column; gap: 0;
   }
   .auth-logo {
-    display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 4px;
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 40px;
   }
-  .auth-logo img { height: 56px; width: auto; }
-  .auth-logo-text { font-size: 16px; font-weight: 600; }
-  .auth-logo-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
-  .auth-box label { font-size: 13px; color: var(--text-2); font-weight: 500; }
-  .auth-box input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 15px;
+  .auth-logo img { height: 72px; width: auto; }
+  .auth-logo-sub {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-3); margin-top: 16px; font-weight: 400;
+  }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label {
+    display: block; font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-3);
+    font-weight: 500; margin-bottom: 8px;
+  }
+  .auth-field input {
     width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-h);
+    padding: 10px 0;
+    color: var(--text);
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 300;
     outline: none;
     transition: border-color 0.2s;
   }
-  .auth-box input:focus { border-color: var(--accent-light); }
-  .auth-btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 13px;
-    font-size: 15px; font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    width: 100%;
-  }
-  .auth-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
-  .auth-btn:active { transform: translateY(0); }
+  .auth-field input:focus { border-color: var(--accent); }
   .auth-error {
-    font-size: 13px; color: #f87171;
-    text-align: center; display: none;
+    font-size: 12px; color: #e07070;
+    display: none; margin-bottom: 12px; text-align: center;
   }
+  .auth-btn {
+    width: 100%; margin-top: 28px;
+    background: transparent;
+    border: 1px solid var(--border-h);
+    border-radius: 0;
+    color: var(--text);
+    padding: 14px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .auth-btn:hover { border-color: var(--accent); background: rgba(200,169,126,0.06); }
 
-  /* ── Main content ── */
-  #main { display: none; width: 100%; max-width: 860px; }
+  /* ── Main ── */
+  #main { display: none; width: 100%; max-width: 900px; }
 
   header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+    margin-bottom: 64px;
   }
-  .logo-row { display: flex; align-items: center; gap: 14px; }
-  .logo-img {
-    height: 48px;
-    width: auto;
-    display: block;
-  }
-  .logo-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-  .logo-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+  .logo-img { height: 36px; width: auto; opacity: 0.9; }
   .logout-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-2);
-    padding: 8px 14px;
-    font-size: 13px; cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
+    background: transparent; border: none;
+    color: var(--text-3); font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer; font-family: inherit; font-weight: 500;
+    transition: color 0.2s; padding: 0;
   }
-  .logout-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .logout-btn:hover { color: var(--text-2); }
 
-  .page-title {
-    display: flex;
-    justify-content: center;
-    margin: -16px 0 24px;
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 80px;
   }
-  .page-title img {
-    height: 210px;
-    width: auto;
-    opacity: 0.92;
+  .hero img {
+    height: 200px; width: auto;
+    opacity: 0.95;
+  }
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-3);
+    font-weight: 400;
   }
 
+  /* ── Section label ── */
   .section-label {
-    font-size: 11px; font-weight: 600; letter-spacing: 2px;
-    color: var(--text-3); text-transform: uppercase;
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 20px;
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-3);
+    font-weight: 500; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 14px;
   }
-  .section-label::before {
-    content: ''; display: block;
-    width: 20px; height: 1px; background: var(--accent); flex-shrink: 0;
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--border);
   }
 
+  /* ── Cards ── */
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 64px;
   }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px 24px;
+    background: var(--bg);
+    padding: 32px 28px;
     text-decoration: none;
     color: inherit;
-    display: flex; flex-direction: column; gap: 20px;
-    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-    position: relative; overflow: hidden;
-    cursor: pointer;
+    display: flex; flex-direction: column;
+    gap: 0;
+    transition: background 0.2s;
+    position: relative;
+    min-height: 180px;
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    border-radius: 16px 16px 0 0;
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
-  .card:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-  }
-  .card:hover::before { opacity: 1; }
+  .card:hover { background: var(--surface); }
 
-  .card-finance::before { background: linear-gradient(90deg, #3d6b5a, #4d8a72); }
-  .card-sales::before   { background: linear-gradient(90deg, #3a5080, #5a6e9e); }
-  .card-forecast::before { background: linear-gradient(90deg, #7a6b4a, #a08b5e); }
-  .card-loyalty::before  { background: linear-gradient(90deg, #6b4a7a, #9a6db0); }
-
-  .card-icon {
-    width: 48px; height: 48px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
+  .card-num {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 13px; font-weight: 300;
+    color: var(--text-3);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+    font-style: italic;
   }
-  .card-finance .card-icon  { background: rgba(61,107,90,0.2); }
-  .card-sales .card-icon    { background: rgba(58,80,128,0.2); }
-  .card-forecast .card-icon { background: rgba(122,107,74,0.2); }
-  .card-loyalty  .card-icon { background: rgba(107,74,122,0.2); }
-
-  .card-body { flex: 1; }
   .card-title {
-    font-size: 17px; font-weight: 600; margin-bottom: 6px;
-    letter-spacing: -0.2px;
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    line-height: 1.3;
   }
-  .card-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-
+  .card-desc {
+    font-size: 12px; color: var(--text-2);
+    line-height: 1.6; font-weight: 300;
+    flex: 1;
+  }
   .card-arrow {
-    color: var(--text-3); font-size: 18px;
+    margin-top: 24px;
+    font-size: 16px; color: var(--text-3);
     transition: color 0.2s, transform 0.2s;
-    align-self: flex-end;
+    align-self: flex-start;
   }
-  .card:hover .card-arrow { color: var(--text); transform: translateX(3px); }
+  .card:hover .card-arrow { color: var(--accent); transform: translateX(4px); }
 
+  /* ── AI block ── */
+  .ai-block {
+    border: 1px solid var(--border);
+    padding: 36px;
+    margin-bottom: 48px;
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 32px;
+    flex-wrap: wrap;
+  }
+  .ai-left { flex: 1; min-width: 220px; }
+  .ai-label {
+    font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent);
+    font-weight: 500; margin-bottom: 16px;
+  }
+  .ai-heading {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 26px; font-weight: 300;
+    line-height: 1.25; margin-bottom: 12px;
+    font-style: italic;
+  }
+  .ai-sub {
+    font-size: 13px; color: var(--text-2);
+    line-height: 1.65; font-weight: 300;
+  }
+  .ai-right { display: flex; align-items: center; }
+  .ai-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px solid var(--border-h);
+    color: var(--text);
+    text-decoration: none;
+    padding: 13px 24px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .ai-btn:hover { border-color: var(--accent); background: rgba(200,169,126,0.06); }
+
+  /* ── Footer ── */
   .footer {
     border-top: 1px solid var(--border);
     padding-top: 20px;
     display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 8px;
   }
-  .footer-text { font-size: 12px; color: var(--text-3); }
-  .update-badge {
-    font-size: 11px; color: var(--text-3);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 10px;
-  }
+  .footer-text { font-size: 11px; color: var(--text-3); letter-spacing: 0.04em; }
 
-  /* ── AI block ── */
-  .ai-block {
-    margin-bottom: 32px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 28px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .ai-block::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #3d6b5a, #5a6e9e, #7a6b4a);
-    border-radius: 20px 20px 0 0;
-  }
-  .ai-block-top {
-    display: flex; align-items: flex-start; gap: 16px; margin-bottom: 18px;
-  }
-  .ai-icon {
-    width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(61,107,90,0.25), rgba(58,80,128,0.25));
-    border: 1px solid rgba(255,255,255,0.07);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-  }
-  .ai-heading { font-size: 17px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.2px; }
-  .ai-sub { font-size: 13px; color: var(--text-2); line-height: 1.55; }
-  .ai-chips {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
-  }
-  .ai-chip {
-    font-size: 12px; color: var(--text-2);
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-  }
-  .ai-btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: #229ED9;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 12px;
-    padding: 13px 22px;
-    font-size: 15px; font-weight: 600;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(34,158,217,0.3);
-  }
-  .ai-btn:hover {
-    background: #1a8fc4;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(34,158,217,0.4);
-  }
-  .ai-btn:active { transform: translateY(0); }
-  .ai-btn-icon { font-size: 20px; line-height: 1; }
-
-  @media (max-width: 480px) {
+  @media (max-width: 600px) {
     .cards { grid-template-columns: 1fr; }
-    header { margin-bottom: 32px; }
-    .auth-box { padding: 28px 20px; }
-    .ai-block { padding: 22px 18px 20px; }
+    .hero img { height: 150px; }
+    .hero { margin-bottom: 56px; }
+    header { margin-bottom: 48px; }
+    .ai-block { padding: 24px; flex-direction: column; }
     .ai-btn { width: 100%; justify-content: center; }
+    .card { min-height: auto; padding: 24px 20px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Auth overlay -->
+<!-- Auth -->
 <div id="auth-overlay">
   <div class="auth-box">
     <div class="auth-logo">
       <img src="logo.png" alt="Baden Uktus">
       <div class="auth-logo-sub">Портал внутренних отчётов</div>
     </div>
-    <label for="pwd-input">Пароль</label>
-    <input type="password" id="pwd-input" placeholder="Введите пароль" autocomplete="current-password">
+    <div class="auth-field">
+      <label for="pwd-input">Пароль</label>
+      <input type="password" id="pwd-input" placeholder="••••••••" autocomplete="current-password">
+    </div>
     <div class="auth-error" id="auth-error">Неверный пароль</div>
     <button class="auth-btn" id="auth-btn">Войти</button>
   </div>
 </div>
 
-<!-- Main content -->
+<!-- Main -->
 <div id="main">
   <header>
-    <div class="logo-row">
-      <img class="logo-img" src="logo.png" alt="Baden Uktus">
-      <div>
-        <div class="logo-sub">Портал внутренних отчётов</div>
-      </div>
-    </div>
+    <img class="logo-img" src="logo.png" alt="Baden Uktus">
     <button class="logout-btn" onclick="logout()">Выйти</button>
   </header>
 
-  <div class="page-title"><img src="logo.png" alt="Baden Uktus"></div>
+  <div class="hero">
+    <img src="logo.png" alt="Baden Uktus">
+    <div class="hero-sub">Термальный комплекс · Екатеринбург</div>
+  </div>
 
   <div class="section-label">Отчёты</div>
 
   <div class="cards">
-    <a class="card card-finance" href="finance.html">
-      <div class="card-icon">📊</div>
-      <div class="card-body">
-        <div class="card-title">БДДС</div>
-        <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам</div>
-      </div>
+    <a class="card" href="finance.html">
+      <div class="card-num">01</div>
+      <div class="card-title">БДДС</div>
+      <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам</div>
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card card-sales" href="sales.html">
-      <div class="card-icon">💹</div>
-      <div class="card-body">
-        <div class="card-title">Продажи</div>
-        <div class="card-desc">Выручка, средний чек, динамика продаж по услугам и периодам</div>
-      </div>
+    <a class="card" href="sales.html">
+      <div class="card-num">02</div>
+      <div class="card-title">Продажи</div>
+      <div class="card-desc">Выручка, средний чек, динамика продаж по услугам и периодам</div>
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card card-forecast" href="forecast.html">
-      <div class="card-icon">📈</div>
-      <div class="card-body">
-        <div class="card-title">Прогноз</div>
-        <div class="card-desc">Ежедневный прогноз посещаемости и выручки на текущий период</div>
-      </div>
+    <a class="card" href="forecast.html">
+      <div class="card-num">03</div>
+      <div class="card-title">Прогноз</div>
+      <div class="card-desc">Ежедневный прогноз посещаемости и выручки на текущий период</div>
       <div class="card-arrow">→</div>
     </a>
 
-    <a class="card card-loyalty" href="loyalty.html">
-      <div class="card-icon">🎁</div>
-      <div class="card-body">
-        <div class="card-title">Программа лояльности</div>
-        <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot, обновляется каждый час</div>
-      </div>
+    <a class="card" href="loyalty.html">
+      <div class="card-num">04</div>
+      <div class="card-title">Лояльность</div>
+      <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot, обновляется каждый час</div>
       <div class="card-arrow">→</div>
     </a>
   </div>
@@ -371,29 +319,21 @@
   <div class="section-label">ИИ-аналитик</div>
 
   <div class="ai-block">
-    <div class="ai-block-top">
-      <div class="ai-icon">🤖</div>
-      <div>
-        <div class="ai-heading">Задайте любой вопрос по данным</div>
-        <div class="ai-sub">Аналитический ассистент на базе Claude AI — отвечает на вопросы о бизнесе комплекса, анализирует данные и помогает принимать решения.</div>
-      </div>
+    <div class="ai-left">
+      <div class="ai-label">Claude AI · @BBTUktus_bot</div>
+      <div class="ai-heading">Задайте любой вопрос<br>по данным комплекса</div>
+      <div class="ai-sub">Аналитический ассистент анализирует выручку, посещаемость, прогнозы и помогает принимать управленческие решения.</div>
     </div>
-    <div class="ai-chips">
-      <span class="ai-chip">📊 Посещаемость и выручка</span>
-      <span class="ai-chip">💰 БДДС и расходы</span>
-      <span class="ai-chip">📈 Прогнозы</span>
-      <span class="ai-chip">🏆 Конкуренты УФО</span>
-      <span class="ai-chip">💡 Маркетинговые стратегии</span>
+    <div class="ai-right">
+      <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank">
+        Открыть в Telegram →
+      </a>
     </div>
-    <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank">
-      <span class="ai-btn-icon">✈️</span>
-      Открыть в Telegram
-    </a>
   </div>
 
   <div class="footer">
     <span class="footer-text">Отчёты обновляются в 10:00 и 18:00 · Лояльность — каждый час</span>
-    <span class="update-badge" id="last-update">—</span>
+    <span class="footer-text" id="last-update"></span>
   </div>
 </div>
 
@@ -403,25 +343,21 @@
   var KEY  = 'bbt_ok';
 
   function sha256(str) {
-    var buf = new TextEncoder().encode(str);
-    return crypto.subtle.digest('SHA-256', buf).then(function (ab) {
-      return Array.from(new Uint8Array(ab))
-        .map(function (b) { return b.toString(16).padStart(2, '0'); })
-        .join('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function(ab) {
+      return Array.from(new Uint8Array(ab)).map(b => b.toString(16).padStart(2,'0')).join('');
     });
   }
 
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
-    // Show last update time
-    var el = document.getElementById('last-update');
     var now = new Date();
-    el.textContent = 'Данные от ' + now.toLocaleDateString('ru', {day:'2-digit',month:'2-digit',year:'numeric'});
+    document.getElementById('last-update').textContent =
+      now.toLocaleDateString('ru', {day:'2-digit', month:'long', year:'numeric'});
   }
 
   function tryAuth(pwd) {
-    sha256(pwd).then(function (h) {
+    sha256(pwd).then(function(h) {
       if (h === HASH) {
         localStorage.setItem(KEY, HASH);
         showMain();
@@ -433,27 +369,16 @@
     });
   }
 
-  window.logout = function () {
-    localStorage.removeItem(KEY);
-    location.reload();
-  };
+  window.logout = function() { localStorage.removeItem(KEY); location.reload(); };
 
-  // Check saved auth
-  if (localStorage.getItem(KEY) === HASH) {
-    showMain();
-    return;
-  }
+  if (localStorage.getItem(KEY) === HASH) { showMain(); return; }
 
-  // Wire up login form
-  document.getElementById('auth-btn').addEventListener('click', function () {
+  document.getElementById('auth-btn').addEventListener('click', function() {
     var pwd = document.getElementById('pwd-input').value;
     if (pwd) tryAuth(pwd);
   });
-  document.getElementById('pwd-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      var pwd = this.value;
-      if (pwd) tryAuth(pwd);
-    }
+  document.getElementById('pwd-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && this.value) tryAuth(this.value);
   });
 })();
 </script>
