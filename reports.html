@@ -148,35 +148,43 @@
   .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    gap: 12px;
     margin-bottom: 64px;
   }
 
   .card {
-    background: var(--bg);
-    padding: 32px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
     text-decoration: none;
     color: inherit;
     display: flex; flex-direction: column;
     gap: 0;
-    transition: background 0.2s;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
     position: relative;
     min-height: 180px;
+    cursor: pointer;
   }
-  .card:hover { background: var(--surface); }
+  .card:hover {
+    background: #181818;
+    border-color: var(--border-h);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .card:active { transform: translateY(-1px); }
 
   .card-num {
     font-family: 'Cormorant', Georgia, serif;
     font-size: 13px; font-weight: 300;
-    color: var(--text-3);
-    margin-bottom: 20px;
+    color: var(--accent);
+    margin-bottom: 16px;
     letter-spacing: 0.05em;
     font-style: italic;
+    opacity: 0.7;
   }
   .card-title {
-    font-size: 17px; font-weight: 400;
+    font-size: 17px; font-weight: 500;
     letter-spacing: -0.01em;
     margin-bottom: 10px;
     line-height: 1.3;
@@ -188,7 +196,7 @@
   }
   .card-arrow {
     margin-top: 24px;
-    font-size: 16px; color: var(--text-3);
+    font-size: 15px; color: var(--text-3);
     transition: color 0.2s, transform 0.2s;
     align-self: flex-start;
   }
@@ -281,7 +289,7 @@
 
   <div class="hero">
     <img src="logo.png" alt="Baden Uktus">
-    <div class="hero-sub">Термальный комплекс · Екатеринбург</div>
+    <div class="hero-sub">Термы Уктус · Термальный комплекс · Екатеринбург</div>
   </div>
 
   <div class="section-label">Отчёты</div>
