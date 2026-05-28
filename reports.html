@@ -19,6 +19,7 @@
     --finance: #4a7c6f;
     --sales: #5a6e9e;
     --forecast: #7a6b4a;
+    --loyalty: #6b4a7a;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -178,6 +179,7 @@
   .card-finance::before { background: linear-gradient(90deg, #3d6b5a, #4d8a72); }
   .card-sales::before   { background: linear-gradient(90deg, #3a5080, #5a6e9e); }
   .card-forecast::before { background: linear-gradient(90deg, #7a6b4a, #a08b5e); }
+  .card-loyalty::before  { background: linear-gradient(90deg, #6b4a7a, #9a6db0); }
 
   .card-icon {
     width: 48px; height: 48px; border-radius: 12px;
@@ -187,6 +189,7 @@
   .card-finance .card-icon  { background: rgba(61,107,90,0.2); }
   .card-sales .card-icon    { background: rgba(58,80,128,0.2); }
   .card-forecast .card-icon { background: rgba(122,107,74,0.2); }
+  .card-loyalty  .card-icon { background: rgba(107,74,122,0.2); }
 
   .card-body { flex: 1; }
   .card-title {
@@ -346,6 +349,15 @@
       </div>
       <div class="card-arrow">→</div>
     </a>
+
+    <a class="card card-loyalty" href="loyalty.html">
+      <div class="card-icon">🎁</div>
+      <div class="card-body">
+        <div class="card-title">Программа лояльности</div>
+        <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot, обновляется каждый час</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
   </div>
 
   <div class="section-label">ИИ-аналитик</div>
@@ -372,7 +384,7 @@
   </div>
 
   <div class="footer">
-    <span class="footer-text">Обновляется автоматически в 10:00 и 18:00</span>
+    <span class="footer-text">Отчёты обновляются в 10:00 и 18:00 · Лояльность — каждый час</span>
     <span class="update-badge" id="last-update">—</span>
   </div>
 </div>
