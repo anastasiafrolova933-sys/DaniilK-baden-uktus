@@ -214,8 +214,17 @@
   .ai-left { flex: 1; min-width: 220px; }
   .ai-label {
     font-size: 10px; letter-spacing: 0.22em;
-    text-transform: uppercase; color: var(--accent);
-    font-weight: 500; margin-bottom: 16px;
+    text-transform: uppercase; font-weight: 500; margin-bottom: 16px;
+    background: linear-gradient(90deg, #f4a261, #e9c46a, #90be6d, #43aa8b, #4d9de0, #b57bee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradient-shift 4s linear infinite;
+  }
+  @keyframes gradient-shift {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
   }
   .ai-heading {
     font-family: 'Cormorant', Georgia, serif;
@@ -328,7 +337,7 @@
 
   <div class="ai-block">
     <div class="ai-left">
-      <div class="ai-label">Claude AI · @BBTUktus_bot</div>
+      <div class="ai-label">AI · @BBTUktus_bot</div>
       <div class="ai-heading">Задайте любой вопрос<br>по данным комплекса</div>
       <div class="ai-sub">Аналитический ассистент анализирует выручку, посещаемость, прогнозы и помогает принимать управленческие решения.</div>
     </div>
