@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчёты — Baden Uktus</title>
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --accent: #3d6b5a;
+    --accent-light: #4d8a72;
+    --text: #ffffff;
+    --text-2: rgba(255,255,255,0.55);
+    --text-3: rgba(255,255,255,0.3);
+    --finance: #4a7c6f;
+    --sales: #5a6e9e;
+    --forecast: #7a6b4a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* ── Auth overlay ── */
+  #auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+  }
+  #auth-overlay h2 {
+    font-size: 22px; font-weight: 600; color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  #auth-overlay p { font-size: 14px; color: var(--text-2); }
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; gap: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  }
+  .auth-logo {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+  }
+  .auth-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .auth-logo-text { font-size: 16px; font-weight: 600; }
+  .auth-logo-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+  .auth-box label { font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .auth-box input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .auth-box input:focus { border-color: var(--accent-light); }
+  .auth-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+  }
+  .auth-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  .auth-btn:active { transform: translateY(0); }
+  .auth-error {
+    font-size: 13px; color: #f87171;
+    text-align: center; display: none;
+  }
+
+  /* ── Main content ── */
+  #main { display: none; width: 100%; max-width: 860px; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+  }
+  .logo-row { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .logo-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-2);
+    padding: 8px 14px;
+    font-size: 13px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .logout-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    color: var(--text-3); text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .section-label::before {
+    content: ''; display: block;
+    width: 20px; height: 1px; background: var(--accent); flex-shrink: 0;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column; gap: 20px;
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 16px 16px 0 0;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-finance::before { background: linear-gradient(90deg, #3d6b5a, #4d8a72); }
+  .card-sales::before   { background: linear-gradient(90deg, #3a5080, #5a6e9e); }
+  .card-forecast::before { background: linear-gradient(90deg, #7a6b4a, #a08b5e); }
+
+  .card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .card-finance .card-icon  { background: rgba(61,107,90,0.2); }
+  .card-sales .card-icon    { background: rgba(58,80,128,0.2); }
+  .card-forecast .card-icon { background: rgba(122,107,74,0.2); }
+
+  .card-body { flex: 1; }
+  .card-title {
+    font-size: 17px; font-weight: 600; margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .card-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+  .card-arrow {
+    color: var(--text-3); font-size: 18px;
+    transition: color 0.2s, transform 0.2s;
+    align-self: flex-end;
+  }
+  .card:hover .card-arrow { color: var(--text); transform: translateX(3px); }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .footer-text { font-size: 12px; color: var(--text-3); }
+  .update-badge {
+    font-size: 11px; color: var(--text-3);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
+    header { margin-bottom: 32px; }
+    .auth-box { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Auth overlay -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🏊</div>
+      <div>
+        <div class="auth-logo-text">Baden Uktus</div>
+        <div class="auth-logo-sub">Портал отчётов</div>
+      </div>
+    </div>
+    <label for="pwd-input">Пароль</label>
+    <input type="password" id="pwd-input" placeholder="Введите пароль" autocomplete="current-password">
+    <div class="auth-error" id="auth-error">Неверный пароль</div>
+    <button class="auth-btn" id="auth-btn">Войти</button>
+  </div>
+</div>
+
+<!-- Main content -->
+<div id="main">
+  <header>
+    <div class="logo-row">
+      <div class="logo-icon">🏊</div>
+      <div>
+        <div class="logo-title">Baden Uktus</div>
+        <div class="logo-sub">Портал внутренних отчётов</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Выйти</button>
+  </header>
+
+  <div class="section-label">Отчёты</div>
+
+  <div class="cards">
+    <a class="card card-finance" href="finance.html">
+      <div class="card-icon">📊</div>
+      <div class="card-body">
+        <div class="card-title">БДДС</div>
+        <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="card card-sales" href="sales.html">
+      <div class="card-icon">💹</div>
+      <div class="card-body">
+        <div class="card-title">Продажи</div>
+        <div class="card-desc">Выручка, средний чек, динамика продаж по услугам и периодам</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="card card-forecast" href="forecast.html">
+      <div class="card-icon">📈</div>
+      <div class="card-body">
+        <div class="card-title">Прогноз</div>
+        <div class="card-desc">Ежедневный прогноз посещаемости и выручки на текущий период</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <span class="footer-text">Обновляется автоматически в 10:00 и 18:00</span>
+    <span class="update-badge" id="last-update">—</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
+  var KEY  = 'bbt_ok';
+
+  function sha256(str) {
+    var buf = new TextEncoder().encode(str);
+    return crypto.subtle.digest('SHA-256', buf).then(function (ab) {
+      return Array.from(new Uint8Array(ab))
+        .map(function (b) { return b.toString(16).padStart(2, '0'); })
+        .join('');
+    });
+  }
+
+  function showMain() {
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    // Show last update time
+    var el = document.getElementById('last-update');
+    var now = new Date();
+    el.textContent = 'Данные от ' + now.toLocaleDateString('ru', {day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+
+  function tryAuth(pwd) {
+    sha256(pwd).then(function (h) {
+      if (h === HASH) {
+        localStorage.setItem(KEY, HASH);
+        showMain();
+      } else {
+        document.getElementById('auth-error').style.display = 'block';
+        document.getElementById('pwd-input').value = '';
+        document.getElementById('pwd-input').focus();
+      }
+    });
+  }
+
+  window.logout = function () {
+    localStorage.removeItem(KEY);
+    location.reload();
+  };
+
+  // Check saved auth
+  if (localStorage.getItem(KEY) === HASH) {
+    showMain();
+    return;
+  }
+
+  // Wire up login form
+  document.getElementById('auth-btn').addEventListener('click', function () {
+    var pwd = document.getElementById('pwd-input').value;
+    if (pwd) tryAuth(pwd);
+  });
+  document.getElementById('pwd-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var pwd = this.value;
+      if (pwd) tryAuth(pwd);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
