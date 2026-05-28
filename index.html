@@ -97,6 +97,18 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
 .hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;}
 .hero-logo{margin-bottom:32px;}
 .hero-logo img{height:200px;width:auto;opacity:0.97;}
+.hero-scroll-indicator{
+  margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  color:rgba(255,255,255,0.4);text-decoration:none;font-size:18px;
+  transition:color .25s;
+}
+.hero-scroll-indicator:hover{color:var(--accent);}
+.hsi-line{
+  width:1px;height:48px;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.5));
+}
+.hsi-arrow{font-size:14px;line-height:1;animation:bounce 2.2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:0.5;}50%{transform:translateY(6px);opacity:1;}}
 
 /* ФИЛОСОФИЯ */
 .philosophy{
@@ -121,6 +133,44 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   font-size:10px;color:var(--text-3);
   letter-spacing:0.25em;text-transform:uppercase;font-weight:500;
 }
+
+/* ПРЕИМУЩЕСТВА */
+.features{
+  padding:120px 64px;background:var(--surface);
+  border-bottom:1px solid var(--border-light);
+}
+.features-label{
+  text-align:center;font-size:10px;color:var(--accent);
+  letter-spacing:0.22em;text-transform:uppercase;font-weight:500;
+  margin-bottom:48px;
+}
+.features-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border-left:1px solid var(--border);
+}
+.feat{
+  padding:40px 32px;text-align:center;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;
+}
+.feat-num{
+  font-family:'Cormorant',Georgia,serif;
+  font-size:72px;font-weight:300;font-style:italic;
+  color:var(--text);line-height:1;letter-spacing:-2px;
+  margin-bottom:14px;
+}
+.feat-lbl{
+  font-size:11px;color:var(--accent);
+  letter-spacing:0.22em;text-transform:uppercase;font-weight:500;
+  margin-bottom:14px;
+}
+.feat-desc{
+  font-size:13px;color:var(--text-2);
+  line-height:1.55;font-weight:400;max-width:200px;
+}
+@media(max-width:900px){.features{padding:80px 32px;}.features-grid{grid-template-columns:1fr 1fr;}.feat-num{font-size:60px;}.feat:nth-child(2){border-right:none;}.feat:nth-child(1),.feat:nth-child(2){border-bottom:1px solid var(--border);}}
+@media(max-width:560px){.features-grid{grid-template-columns:1fr;border-left:none;border-top:1px solid var(--border);}.feat{border-right:none;border-bottom:1px solid var(--border);}.feat:last-child{border-bottom:none;}}
 .hero-badge{
   font-size:10px;font-weight:500;letter-spacing:0.22em;
   color:rgba(255,255,255,0.5);margin-bottom:36px;
@@ -477,18 +527,115 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .pr-badge{display:block;margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light);font-size:11px;color:var(--text-3);letter-spacing:0.5px;text-transform:uppercase;font-weight:600;}
 .pr-cta{text-align:center;margin-top:48px;}
 
+/* ОТЗЫВЫ */
+.reviews{
+  padding:120px 64px;background:var(--white);
+  border-bottom:1px solid var(--border-light);
+}
+.rev-label{
+  text-align:center;font-size:10px;color:var(--accent);
+  letter-spacing:0.22em;text-transform:uppercase;font-weight:500;
+  margin-bottom:20px;
+}
+.rev-title{
+  text-align:center;
+  font-size:clamp(28px,4vw,42px);font-weight:400;color:var(--text);
+  letter-spacing:-1px;line-height:1.15;margin-bottom:64px;
+}
+.rev-title strong{
+  font-family:'Cormorant',Georgia,serif;
+  font-weight:400;font-style:italic;letter-spacing:-0.5px;
+}
+.rev-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.rev-card{
+  padding:36px 32px;border:1px solid var(--border-light);
+  border-radius:var(--radius);background:var(--white);
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.rev-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(168,134,95,0.10);}
+.rev-quote{
+  font-family:'Cormorant',Georgia,serif;
+  font-size:19px;font-weight:400;font-style:italic;
+  line-height:1.55;color:var(--text);
+  margin-bottom:28px;letter-spacing:-0.2px;
+}
+.rev-author{padding-top:20px;border-top:1px solid var(--border-light);}
+.rev-name{font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;}
+.rev-meta{font-size:11px;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;}
+
+/* КОНТАКТЫ */
+.contacts{
+  padding:96px 64px;background:var(--surface);
+  border-bottom:1px solid var(--border-light);
+}
+.cont-row{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:48px;
+}
+.cont-label{
+  font-size:10px;color:var(--accent);
+  letter-spacing:0.22em;text-transform:uppercase;font-weight:500;
+  margin-bottom:14px;
+}
+.cont-val{font-size:16px;color:var(--text);font-weight:400;line-height:1.5;}
+.cont-val a{color:var(--text);text-decoration:none;transition:color .2s;}
+.cont-val a:hover{color:var(--accent);}
+.cont-socials{display:flex;flex-direction:column;gap:8px;}
+.cont-socials a{font-size:14px;}
+.cont-status{
+  display:inline-block;margin-top:10px;
+  font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+  padding:4px 10px;border:1px solid var(--border);border-radius:0;
+  color:var(--text-2);
+}
+.cont-status.open{color:#3d6b5a;border-color:#3d6b5a;}
+.cont-status.closed{color:#a85959;border-color:#a85959;}
+
+/* STICKY КНОПКА */
+.sticky-book{
+  position:fixed;bottom:32px;right:32px;z-index:200;
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--text);color:#fff;
+  font-size:12px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  padding:16px 24px;text-decoration:none;border-radius:0;border:1px solid var(--text);
+  box-shadow:0 8px 32px rgba(24,22,15,0.18);
+  transition:background .25s,border-color .25s,transform .2s,box-shadow .2s;
+  opacity:0;transform:translateY(20px);pointer-events:none;
+}
+.sticky-book.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+.sticky-book:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 12px 40px rgba(168,134,95,0.4);}
+.sb-arrow{font-size:14px;line-height:1;transition:transform .2s;}
+.sticky-book:hover .sb-arrow{transform:translateX(3px);}
+
+@media(max-width:900px){
+  .rev-grid{grid-template-columns:1fr;gap:16px;}
+  .reviews{padding:80px 32px;}
+  .contacts{padding:64px 32px;}
+  .cont-row{grid-template-columns:1fr 1fr;gap:32px;}
+  .sticky-book{bottom:16px;right:16px;padding:14px 20px;font-size:11px;}
+}
+@media(max-width:560px){
+  .cont-row{grid-template-columns:1fr;gap:28px;}
+  .sticky-book{left:16px;right:16px;justify-content:center;}
+  .reviews{padding:60px 20px;}
+  .rev-card{padding:28px 24px;}
+}
+
 /* ФУТЕР */
 footer{
-  background:var(--surface);padding:64px 64px;
+  background:var(--text);padding:64px 64px;color:#a8a39a;
   display:grid;grid-template-columns:1fr auto auto;
   gap:48px;align-items:start;border-top:1px solid var(--border);
 }
-.foot-logo-img{height:48px;width:auto;margin-bottom:10px;display:block;}
-.foot-sub{font-size:12px;color:var(--text-3);margin-top:8px;letter-spacing:0.3px;}
+.foot-logo-img{height:48px;width:auto;margin-bottom:10px;display:block;opacity:0.95;}
+.foot-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;letter-spacing:0.15em;text-transform:uppercase;}
 .foot-links{display:flex;flex-direction:column;gap:12px;}
-.foot-links a{font-size:13px;color:var(--text-2);text-decoration:none;transition:color .2s;font-weight:400;}
-.foot-links a:hover{color:var(--text);}
-.foot-copy{font-size:12px;color:var(--text-3);padding-top:2px;line-height:2;}
+.foot-links a{font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color .2s;font-weight:400;}
+.foot-links a:hover{color:#fff;}
+.foot-copy{font-size:11px;color:rgba(255,255,255,0.35);padding-top:2px;line-height:2;letter-spacing:0.08em;}
 
 /* АДАПТИВ */
 @media(max-width:1100px){
@@ -596,9 +743,13 @@ footer{
     <div class="hero-stats fade-up d5">
       <div><div class="hero-stat-num" data-count="49">49</div><div class="hero-stat-lbl">Объектов на карте</div></div>
       <div><div class="hero-stat-num" data-count="14">14</div><div class="hero-stat-lbl">Акций и скидок</div></div>
-      <div><div class="hero-stat-num" data-count="5">5</div><div class="hero-stat-lbl">СПА-программ</div></div>
+      <div><div class="hero-stat-num" data-count="43">43</div><div class="hero-stat-lbl">СПА-услуги</div></div>
       <div><div class="hero-stat-num" data-count="3">3</div><div class="hero-stat-lbl">Формата проживания</div></div>
     </div>
+    <a class="hero-scroll-indicator fade-up d6" href="#karta" aria-label="Прокрутить вниз">
+      <span class="hsi-line"></span>
+      <span class="hsi-arrow">↓</span>
+    </a>
   </div>
 </section>
 
@@ -607,6 +758,33 @@ footer{
   <div class="philosophy-mark">—</div>
   <p class="philosophy-quote">«Термальные воды — это не просто отдых.<br>Это <em>возвращение к себе</em>.»</p>
   <div class="philosophy-meta">Термы Уктус · с 2014 года</div>
+</section>
+
+<!-- ПРЕИМУЩЕСТВА -->
+<section class="features">
+  <div class="features-label fade-up">Что у нас есть</div>
+  <div class="features-grid">
+    <div class="feat fade-up d1">
+      <div class="feat-num">5</div>
+      <div class="feat-lbl">Бассейнов</div>
+      <div class="feat-desc">Открытый, закрытый, детский, СПА и контрастный</div>
+    </div>
+    <div class="feat fade-up d2">
+      <div class="feat-num">12</div>
+      <div class="feat-lbl">Саун и парных</div>
+      <div class="feat-desc">Финские, инфракрасные, паровые и хаммам</div>
+    </div>
+    <div class="feat fade-up d3">
+      <div class="feat-num">43</div>
+      <div class="feat-lbl">СПА-услуги</div>
+      <div class="feat-desc">5 направлений: массаж, хаммам, обёртывания</div>
+    </div>
+    <div class="feat fade-up d4">
+      <div class="feat-num">3</div>
+      <div class="feat-lbl">Формата проживания</div>
+      <div class="feat-desc">БарнХаус, Коттедж и Дом-Контейнер</div>
+    </div>
+  </div>
 </section>
 
 <!-- ГАЛЕРЕЯ -->
@@ -1185,10 +1363,73 @@ footer{
   </div>
 </section>
 
+<!-- ОТЗЫВЫ -->
+<section class="reviews">
+  <div class="rev-label fade-up">Отзывы гостей</div>
+  <h2 class="rev-title fade-up"><strong>Что говорят</strong> наши гости</h2>
+
+  <div class="rev-grid">
+    <div class="rev-card fade-up d1">
+      <div class="rev-quote">«Идеальное место для семейного отдыха. Дети были в восторге от детского бассейна, мы с мужем расслабились в хаммаме. Вернёмся обязательно.»</div>
+      <div class="rev-author">
+        <div class="rev-name">Анна К.</div>
+        <div class="rev-meta">Янв 2026 · ★★★★★</div>
+      </div>
+    </div>
+    <div class="rev-card fade-up d2">
+      <div class="rev-quote">«Лучший термальный комплекс на Урале. Чистота, сервис, разнообразие саун — всё на высшем уровне. Снимали БарнХаус — атмосфера невероятная.»</div>
+      <div class="rev-author">
+        <div class="rev-name">Дмитрий М.</div>
+        <div class="rev-meta">Дек 2025 · ★★★★★</div>
+      </div>
+    </div>
+    <div class="rev-card fade-up d3">
+      <div class="rev-quote">«Брали романтический вечер — превзошло ожидания. Тихо, уютно, очень красиво ночью с подсветкой. Массаж "Ломи-Ломи" просто волшебство.»</div>
+      <div class="rev-author">
+        <div class="rev-name">Елена С.</div>
+        <div class="rev-meta">Фев 2026 · ★★★★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="contacts">
+  <div class="cont-row">
+    <div class="cont-col fade-up">
+      <div class="cont-label">Адрес</div>
+      <div class="cont-val">Екатеринбург<br>ул. Зимняя, 27/2</div>
+    </div>
+    <div class="cont-col fade-up d1">
+      <div class="cont-label">Телефон</div>
+      <div class="cont-val"><a href="tel:+73433855555">+7 (343) 385-55-55</a></div>
+    </div>
+    <div class="cont-col fade-up d2">
+      <div class="cont-label">Режим работы</div>
+      <div class="cont-val">Ежедневно<br>10:00 — 24:00</div>
+      <div class="cont-status" id="cont-status">—</div>
+    </div>
+    <div class="cont-col fade-up d3">
+      <div class="cont-label">Социальные сети</div>
+      <div class="cont-val cont-socials">
+        <a href="https://baden-uktus.ru" target="_blank">Сайт</a>
+        <a href="https://2gis.ru" target="_blank">2GIS</a>
+        <a href="https://yandex.ru/maps" target="_blank">Яндекс.Карты</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY КНОПКА БРОНИРОВАНИЯ -->
+<a class="sticky-book" href="https://baden-uktus.ru" target="_blank">
+  <span class="sb-text">Забронировать</span>
+  <span class="sb-arrow">→</span>
+</a>
+
 <!-- ФУТЕР -->
 <footer>
   <div>
-    <img class="foot-logo-img" src="logo-dark.png" alt="Баден-Баден">
+    <img class="foot-logo-img" src="logo.png" alt="Баден-Баден">
     <div class="foot-sub">Термы Уктус · Екатеринбург</div>
   </div>
   <div class="foot-links">
@@ -1205,12 +1446,41 @@ footer{
 /* ── Шапка: прозрачная → белая при скролле ── */
 (function(){
   const hdr = document.querySelector('header');
+  const stickyBook = document.querySelector('.sticky-book');
   function onScroll(){
     if(window.scrollY > 60) hdr.classList.add('scrolled');
     else hdr.classList.remove('scrolled');
+    // sticky кнопка появляется после прокрутки на 1.2 экрана
+    if(stickyBook){
+      if(window.scrollY > window.innerHeight * 1.2) stickyBook.classList.add('visible');
+      else stickyBook.classList.remove('visible');
+    }
   }
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
+})();
+
+/* ── Статус "Открыто сейчас / Закрыто" ── */
+(function(){
+  const el = document.getElementById('cont-status');
+  if(!el) return;
+  function update(){
+    const now = new Date();
+    // Получаем время в Екатеринбурге (UTC+5)
+    const ekbHour = (now.getUTCHours() + 5) % 24;
+    const open = ekbHour >= 10 && ekbHour < 24;
+    if(open){
+      el.textContent = '● Открыто сейчас';
+      el.classList.add('open');
+      el.classList.remove('closed');
+    } else {
+      el.textContent = '● Закрыто';
+      el.classList.add('closed');
+      el.classList.remove('open');
+    }
+  }
+  update();
+  setInterval(update, 60000);
 })();
 
 /* ── Fade-up анимации при скролле ── */
