@@ -78,11 +78,16 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
   overflow:hidden;
 }
 .hero-bg{
-  position:absolute;inset:0;
+  position:absolute;inset:-5%;
   background-image:url('pool-outdoor.jpg');
   background-size:cover;background-position:center;
-  opacity:0.32;filter:blur(2px) saturate(0.7);
+  opacity:0.32;filter:blur(2px) saturate(0.75);
   transform:scale(1.05);
+  animation:kenburns 32s ease-in-out infinite alternate;
+}
+@keyframes kenburns{
+  0%{transform:scale(1.05) translate(0,0);}
+  100%{transform:scale(1.2) translate(-2%,1%);}
 }
 .hero::before{
   content:'';position:absolute;inset:0;
@@ -109,6 +114,118 @@ header.scrolled .header-cta:hover{background:var(--text);color:#fff;border-color
 }
 .hsi-arrow{font-size:14px;line-height:1;animation:bounce 2.2s ease-in-out infinite;}
 @keyframes bounce{0%,100%{transform:translateY(0);opacity:0.5;}50%{transform:translateY(6px);opacity:1;}}
+
+/* ── Декоративный разделитель между секциями ── */
+.divider{
+  display:flex;align-items:center;justify-content:center;gap:18px;
+  padding:0 64px;background:var(--white);
+  border-bottom:1px solid var(--border-light);
+}
+.divider-line{
+  flex:1;max-width:140px;height:1px;background:var(--border);
+}
+.divider-mark{
+  font-family:'Cormorant',Georgia,serif;font-style:italic;
+  color:var(--accent);font-size:18px;letter-spacing:0.3em;
+  padding:36px 0;
+}
+.divider.alt{background:var(--surface);}
+@media(max-width:600px){.divider{padding:0 24px;}.divider-line{max-width:60px;}.divider-mark{font-size:14px;padding:28px 0;letter-spacing:0.25em;}}
+
+/* АУФГУССЫ */
+.aufguss{
+  padding:96px 64px;
+  background:linear-gradient(180deg,#1a1814 0%,#0c0c0c 100%);
+  color:#fff;border-bottom:none;
+}
+.auf-hero{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1.1fr 1fr;gap:80px;
+  align-items:start;
+}
+.auf-content{position:relative;}
+.auf-label{
+  font-size:10px;color:var(--accent);
+  letter-spacing:0.22em;text-transform:uppercase;font-weight:500;
+  margin-bottom:24px;display:inline-flex;align-items:center;gap:12px;
+}
+.auf-label::before{content:'';display:block;width:24px;height:1px;background:var(--accent);}
+.auf-title{
+  font-size:clamp(36px,5vw,56px);font-weight:300;
+  line-height:1.05;letter-spacing:-1.5px;color:#fff;
+  margin-bottom:28px;
+}
+.auf-title strong{
+  font-family:'Cormorant',Georgia,serif;font-weight:400;font-style:italic;
+  color:var(--accent);letter-spacing:-1px;
+}
+.auf-sub{
+  font-size:16px;color:rgba(255,255,255,0.65);
+  line-height:1.7;font-weight:300;margin-bottom:40px;max-width:480px;
+}
+.auf-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:32px;
+  border-top:1px solid rgba(255,255,255,0.1);padding-top:32px;
+}
+.auf-stat-num{
+  font-family:'Cormorant',Georgia,serif;
+  font-size:48px;font-weight:300;font-style:italic;
+  color:#fff;line-height:1;letter-spacing:-1.5px;margin-bottom:10px;
+}
+.auf-stat-lbl{
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);font-weight:500;
+}
+.auf-schedule{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:32px;border-radius:0;
+}
+.auf-schedule-head{
+  font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:500;margin-bottom:24px;
+}
+.auf-schedule-list{
+  display:flex;flex-direction:column;
+}
+.auf-row{
+  display:grid;grid-template-columns:60px 1fr auto;gap:16px;
+  align-items:baseline;padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  transition:background .2s;
+}
+.auf-row:last-child{border-bottom:none;}
+.auf-row:hover{background:rgba(255,255,255,0.02);}
+.auf-time{
+  font-family:'Cormorant',Georgia,serif;font-style:italic;
+  font-size:20px;color:var(--accent);font-weight:400;
+}
+.auf-name{font-size:15px;color:#fff;font-weight:400;}
+.auf-sauna{
+  font-size:10px;color:rgba(255,255,255,0.45);
+  letter-spacing:0.15em;text-transform:uppercase;font-weight:500;
+}
+.auf-schedule-note{
+  margin-top:20px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  font-size:11px;color:rgba(255,255,255,0.35);
+  letter-spacing:0.1em;
+}
+@media(max-width:900px){
+  .aufguss{padding:64px 32px;}
+  .auf-hero{grid-template-columns:1fr;gap:48px;}
+  .auf-stats{gap:16px;}
+  .auf-stat-num{font-size:40px;}
+}
+@media(max-width:560px){
+  .aufguss{padding:48px 20px;}
+  .auf-schedule{padding:24px 20px;}
+  .auf-row{grid-template-columns:50px 1fr;gap:12px;}
+  .auf-sauna{grid-column:2;font-size:9px;margin-top:-8px;}
+  .auf-stats{grid-template-columns:1fr;gap:20px;padding-top:24px;}
+  .auf-stat{display:flex;align-items:baseline;gap:16px;}
+  .auf-stat-num{font-size:32px;margin-bottom:0;}
+}
 
 /* ФИЛОСОФИЯ */
 .philosophy{
@@ -724,6 +841,7 @@ footer{
     <a href="#calc">Калькулятор</a>
     <a href="#menu">Меню</a>
     <a href="#spa">СПА</a>
+    <a href="#aufguss">Ауфгуссы</a>
     <a href="#aktsii">Акции</a>
     <a href="#prozhivanie">Проживание</a>
   </nav>
@@ -766,32 +884,35 @@ footer{
   <div class="features-label fade-up">Что у нас есть</div>
   <div class="features-grid">
     <div class="feat fade-up d1">
-      <div class="feat-num">5</div>
+      <div class="feat-num" data-count="5">5</div>
       <div class="feat-lbl">Бассейнов</div>
       <div class="feat-desc">Открытый, закрытый, детский, СПА и контрастный</div>
     </div>
     <div class="feat fade-up d2">
-      <div class="feat-num">11</div>
+      <div class="feat-num" data-count="11">11</div>
       <div class="feat-lbl">Саун и парных</div>
       <div class="feat-desc">Цитрусовая, кофейная, травяная, булочная, гималайская, панорамная, киносауна, сауна-автобус и 3 хаммама</div>
     </div>
     <div class="feat fade-up d3">
-      <div class="feat-num">20</div>
+      <div class="feat-num" data-count="20">20</div>
       <div class="feat-lbl">Ауфгуссов в день</div>
       <div class="feat-desc">Бесплатные групповые аромапарения по расписанию</div>
     </div>
     <div class="feat fade-up d4">
-      <div class="feat-num">43</div>
+      <div class="feat-num" data-count="43">43</div>
       <div class="feat-lbl">СПА-услуги</div>
       <div class="feat-desc">5 направлений: массаж, хаммам, обёртывания</div>
     </div>
     <div class="feat fade-up d5">
-      <div class="feat-num">3</div>
+      <div class="feat-num" data-count="3">3</div>
       <div class="feat-lbl">Формата проживания</div>
       <div class="feat-desc">БарнХаус, Коттедж и Дом-Контейнер</div>
     </div>
   </div>
 </section>
+
+<!-- ДЕКОРАТИВНЫЙ РАЗДЕЛИТЕЛЬ -->
+<div class="divider"><span class="divider-line"></span><span class="divider-mark">атмосфера комплекса</span><span class="divider-line"></span></div>
 
 <!-- ГАЛЕРЕЯ -->
 <section style="padding:0;border-bottom:1px solid var(--border-light);background:var(--white);">
@@ -880,6 +1001,48 @@ footer{
           <div class="spc-sub">480 МИН · 1 ЧЕЛ.</div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ДЕКОРАТИВНЫЙ РАЗДЕЛИТЕЛЬ -->
+<div class="divider alt"><span class="divider-line"></span><span class="divider-mark">бесплатно для всех гостей</span><span class="divider-line"></span></div>
+
+<!-- АУФГУССЫ -->
+<section class="aufguss" id="aufguss">
+  <div class="auf-hero">
+    <div class="auf-content fade-up">
+      <div class="auf-label">Ауфгусс · Бесплатно</div>
+      <h2 class="auf-title"><strong>20 ауфгуссов</strong> ежедневно<br>по расписанию</h2>
+      <p class="auf-sub">Групповые аромапарения с эфирными маслами в исполнении парильщика. Каждые 30 минут — новый аромат, новое настроение. Включено в стоимость любого посещения.</p>
+      <div class="auf-stats">
+        <div class="auf-stat">
+          <div class="auf-stat-num" data-count="20">20</div>
+          <div class="auf-stat-lbl">Сеансов в день</div>
+        </div>
+        <div class="auf-stat">
+          <div class="auf-stat-num" data-count="15">15</div>
+          <div class="auf-stat-lbl">Минут каждый</div>
+        </div>
+        <div class="auf-stat">
+          <div class="auf-stat-num" data-count="10">10</div>
+          <div class="auf-stat-lbl">+ ароматов на выбор</div>
+        </div>
+      </div>
+    </div>
+    <div class="auf-schedule fade-up d2">
+      <div class="auf-schedule-head">Сегодня в расписании</div>
+      <div class="auf-schedule-list">
+        <div class="auf-row"><span class="auf-time">11:30</span><span class="auf-name">Цитрусовая лагуна</span><span class="auf-sauna">Цитрусовая</span></div>
+        <div class="auf-row"><span class="auf-time">12:30</span><span class="auf-name">Утренний кофе</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">13:30</span><span class="auf-name">Альпийские травы</span><span class="auf-sauna">Травяная</span></div>
+        <div class="auf-row"><span class="auf-time">14:30</span><span class="auf-name">Хмель и чеснок</span><span class="auf-sauna">Булочная</span></div>
+        <div class="auf-row"><span class="auf-time">15:30</span><span class="auf-name">Тайга</span><span class="auf-sauna">Гималайская</span></div>
+        <div class="auf-row"><span class="auf-time">16:30</span><span class="auf-name">Эвкалипт + Мята</span><span class="auf-sauna">Панорамная</span></div>
+        <div class="auf-row"><span class="auf-time">17:30</span><span class="auf-name">Шоколадная фантазия</span><span class="auf-sauna">Кофейная</span></div>
+        <div class="auf-row"><span class="auf-time">18:30</span><span class="auf-name">Вечерний релакс</span><span class="auf-sauna">Травяная</span></div>
+      </div>
+      <div class="auf-schedule-note">Расписание уточняйте у администратора</div>
     </div>
   </div>
 </section>
@@ -1229,6 +1392,9 @@ footer{
   </div>
 </section>
 
+<!-- ДЕКОРАТИВНЫЙ РАЗДЕЛИТЕЛЬ -->
+<div class="divider alt"><span class="divider-line"></span><span class="divider-mark">выгодные предложения</span><span class="divider-line"></span></div>
+
 <!-- АКЦИИ -->
 <section class="alt-bg" id="aktsii">
   <div class="sec-row fade-up">
@@ -1540,6 +1706,45 @@ function countUp(el, target, duration, suffix) {
     });
   }, {threshold: 0.3});
   io.observe(statsEl);
+})();
+
+/* ── Count-up для блока преимуществ (features) ── */
+(function(){
+  const featGrid = document.querySelector('.features-grid');
+  if (!featGrid) return;
+  let fired = false;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !fired) {
+        fired = true;
+        e.target.querySelectorAll('.feat-num[data-count]').forEach((el, i) => {
+          setTimeout(() => countUp(el, parseInt(el.dataset.count), 1400), i * 120);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.25});
+  io.observe(featGrid);
+})();
+
+/* ── Count-up для ауфгуссов ── */
+(function(){
+  const auf = document.querySelector('.auf-stats');
+  if (!auf) return;
+  let fired = false;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !fired) {
+        fired = true;
+        e.target.querySelectorAll('.auf-stat-num[data-count]').forEach((el, i) => {
+          const suffix = (el.dataset.count === '10') ? '+' : '';
+          setTimeout(() => countUp(el, parseInt(el.dataset.count), 1200, suffix), i * 150);
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.3});
+  io.observe(auf);
 })();
 
 function tab(btn, id) {
