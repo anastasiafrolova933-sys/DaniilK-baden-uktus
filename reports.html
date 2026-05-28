@@ -61,14 +61,9 @@
     box-shadow: 0 24px 64px rgba(0,0,0,0.5);
   }
   .auth-logo {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 4px;
   }
-  .auth-logo-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
+  .auth-logo img { height: 56px; width: auto; }
   .auth-logo-text { font-size: 16px; font-weight: 600; }
   .auth-logo-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
   .auth-box label { font-size: 13px; color: var(--text-2); font-weight: 500; }
@@ -109,12 +104,11 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
   }
-  .logo-row { display: flex; align-items: center; gap: 12px; }
-  .logo-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
+  .logo-row { display: flex; align-items: center; gap: 14px; }
+  .logo-img {
+    height: 48px;
+    width: auto;
+    display: block;
   }
   .logo-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
   .logo-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
@@ -294,11 +288,8 @@
 <div id="auth-overlay">
   <div class="auth-box">
     <div class="auth-logo">
-      <div class="auth-logo-icon">🏊</div>
-      <div>
-        <div class="auth-logo-text">Baden Uktus</div>
-        <div class="auth-logo-sub">Портал отчётов</div>
-      </div>
+      <img src="logo.png" alt="Baden Uktus">
+      <div class="auth-logo-sub">Портал внутренних отчётов</div>
     </div>
     <label for="pwd-input">Пароль</label>
     <input type="password" id="pwd-input" placeholder="Введите пароль" autocomplete="current-password">
@@ -311,9 +302,8 @@
 <div id="main">
   <header>
     <div class="logo-row">
-      <div class="logo-icon">🏊</div>
+      <img class="logo-img" src="logo.png" alt="Baden Uktus">
       <div>
-        <div class="logo-title">Baden Uktus</div>
         <div class="logo-sub">Портал внутренних отчётов</div>
       </div>
     </div>
