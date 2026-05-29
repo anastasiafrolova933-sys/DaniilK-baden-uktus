@@ -560,6 +560,23 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .tb{padding:10px 18px;font-size:11px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid var(--border-light);cursor:pointer;border-radius:0;transition:all .2s;letter-spacing:0.12em;text-transform:uppercase;font-family:inherit;}
 .tb:hover{border-color:var(--accent);color:var(--accent);}
 .tb.on{color:#0c0c0c;background:var(--accent);border-color:var(--accent);}
+
+/* Переключатель площадок меню */
+.venue-nav{display:flex;gap:0;margin-bottom:28px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.vb{
+  padding:14px 28px;font-size:11px;font-weight:600;
+  color:var(--text-2);background:transparent;border:none;
+  cursor:pointer;font-family:inherit;
+  letter-spacing:0.18em;text-transform:uppercase;
+  transition:color .2s,border-color .2s;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.vb:hover{color:var(--text);}
+.vb.on{color:var(--accent);border-bottom-color:var(--accent);}
+.vc{display:none;}
+.vc.on{display:block;animation:tabFade .3s cubic-bezier(0.22,1,0.36,1) both;}
+
+@media(max-width:640px){.vb{padding:10px 14px;font-size:10px;letter-spacing:0.14em;}}
 .tc{display:none;}
 .tc.on{
   display:block;
@@ -574,6 +591,7 @@ section{padding:96px 64px;border-bottom:1px solid var(--border-light);}
 .m-item:hover{background:var(--surface2);padding-left:12px;padding-right:12px;border-radius:10px;border-bottom-color:transparent;}
 .m-name{font-size:15px;color:var(--text);line-height:1.4;font-weight:400;}
 .m-wt{font-size:12px;color:var(--text-3);margin-top:2px;font-weight:400;}
+.m-sub{font-size:12px;color:var(--text-3);font-weight:400;font-style:italic;}
 .m-pr{color:var(--text);font-weight:400;font-size:20px;white-space:nowrap;min-width:80px;text-align:right;letter-spacing:-0.5px;font-family:'Cormorant',Georgia,serif;font-style:italic;}
 .new{background:var(--accent);color:#fff;font-size:9px;padding:3px 8px;font-weight:700;vertical-align:middle;margin-left:8px;letter-spacing:0.5px;border-radius:980px;}
 .sub-head{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin:24px 0 12px;font-weight:600;}
@@ -1209,144 +1227,277 @@ footer{
   <div class="sec-row fade-up">
     <div class="sec-label-col">Гастрономия</div>
     <div class="sec-content">
-      <h2 class="sec-title"><strong>Кафе</strong> и немецкий бар</h2>
-      <p class="sec-sub">Авторская кухня, свежая выпечка, горячие блюда, напитки и детское меню.</p>
+      <h2 class="sec-title">Кафе, <strong>Грильбар</strong> и Пулбар</h2>
+      <p class="sec-sub">Авторская кухня основного кафе, закуски и коктейли в Грильбаре, освежающие напитки в Пулбаре у бассейна.</p>
 
       <div class="cafe-intro-banner">
-        <div class="cafe-feat"><span class="cafe-feat-icon">☕</span>Напитки и кофе</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">🍳</span>Завтраки с 09:00</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">🍕</span>Авторская кухня</div>
-        <div class="cafe-feat"><span class="cafe-feat-icon">🍺</span>Немецкий бар</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🔥</span>Грильбар</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🍹</span>Пулбар</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">👶</span>Детское меню</div>
       </div>
 
-      <div class="tab-nav">
-        <button class="tb on" onclick="tab(this,'napit')">Напитки</button>
-        <button class="tb" onclick="tab(this,'zakus')">Закуски</button>
-        <button class="tb" onclick="tab(this,'salat')">Салаты / Супы</button>
-        <button class="tb" onclick="tab(this,'gor')">Горячее</button>
-        <button class="tb" onclick="tab(this,'pasta')">Паста</button>
-        <button class="tb" onclick="tab(this,'pizza')">Пицца</button>
-        <button class="tb" onclick="tab(this,'burger')">Бургеры</button>
-        <button class="tb" onclick="tab(this,'zavt')">Завтраки</button>
-        <button class="tb" onclick="tab(this,'kids')">Детское</button>
+      <!-- Переключатель площадок -->
+      <div class="venue-nav">
+        <button class="vb on" onclick="venue(this,'cafe')">Основное кафе</button>
+        <button class="vb" onclick="venue(this,'grill')">Грильбар</button>
+        <button class="vb" onclick="venue(this,'pool')">Пулбар</button>
       </div>
 
-      <div class="tc on" id="t-napit"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30/120 мл</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай фирменный Баден-Баден (сосновые шишки)</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай классический (в ассортименте)</div><div class="m-wt">900 мл</div></div><div class="m-pr">370 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чай авторский (в чашке)</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Глинтвейн Б/А</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Сбитень ежевичный</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Бабл Ти Черника / Манго</div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Лимонад</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Мохито Б/А</div><div class="m-wt">300 мл</div></div><div class="m-pr">300 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Газированная вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво светлое / тёмное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пиво нефильтрованное разливное</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Вино Аристов белое / красное</div><div class="m-wt">125 мл</div></div><div class="m-pr">450 ₽</div></div>
-      </div></div>
-
-      <div class="tc" id="t-zakus"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Креветки в панировке с соусом Васаби</div><div class="m-wt">120 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Куриные крылышки</div><div class="m-wt">230 г</div></div><div class="m-pr">450 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Гренки чесночные</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Кольца кальмара с соусом Тар-тар <span class="new">NEW</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Болоньезе <span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Фрит Бекон Сыр <span class="new">NEW</span></div><div class="m-wt">230 г</div></div><div class="m-pr">490 ₽</div></div>
-      </div></div>
-
-      <div class="tc" id="t-salat">
-        <div class="sub-head">Салаты</div>
-        <div class="m-grid" style="margin-bottom:8px;">
-          <div class="m-item"><div><div class="m-name">Поке с лососем</div><div class="m-wt">310 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Поке с креветками</div><div class="m-wt">340 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Цезарь с креветками / курицей</div><div class="m-wt">180 г</div></div><div class="m-pr">490/430 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Оливье с говядиной</div><div class="m-wt">230 г</div></div><div class="m-pr">350 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сельдь под шубой</div><div class="m-wt">200 г</div></div><div class="m-pr">290 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Греческий</div><div class="m-wt">180 г</div></div><div class="m-pr">380 ₽</div></div>
+      <!-- ════════ ОСНОВНОЕ КАФЕ ════════ -->
+      <div class="vc on" id="v-cafe">
+        <div class="tab-nav">
+          <button class="tb on" onclick="tab(this,'napit')">Напитки</button>
+          <button class="tb" onclick="tab(this,'zakus')">Закуски</button>
+          <button class="tb" onclick="tab(this,'salat')">Салаты / Супы</button>
+          <button class="tb" onclick="tab(this,'gor')">Вок / Горячее</button>
+          <button class="tb" onclick="tab(this,'pasta')">Паста</button>
+          <button class="tb" onclick="tab(this,'pizza')">Пицца</button>
+          <button class="tb" onclick="tab(this,'burger')">Бургеры</button>
+          <button class="tb" onclick="tab(this,'zavt')">Завтраки</button>
+          <button class="tb" onclick="tab(this,'kids')">Детское</button>
         </div>
-        <div class="sub-head">Супы</div>
-        <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Том-Ям с креветками и курицей 🌶</div><div class="m-wt">400 г</div></div><div class="m-pr">620 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Солянка мясная</div><div class="m-wt">350 г</div></div><div class="m-pr">590 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сливочный карри-рамен <span class="new">NEW</span></div><div class="m-wt">450 г</div></div><div class="m-pr">550 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Суп-крем грибной</div><div class="m-wt">280 г</div></div><div class="m-pr">450 ₽</div></div>
-        </div>
-      </div>
 
-      <div class="tc" id="t-gor">
-        <div class="sub-head">WOK / Горячее</div>
-        <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Рис с креветками и овощами 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 ₽</div></div>
+        <!-- Напитки -->
+        <div class="tc on" id="t-napit"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30/120 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чай фирменный Баден-Баден <span class="m-sub">с вареньем из сосновых шишек</span></div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чай авторский</div><div class="m-wt">900 мл</div></div><div class="m-pr">400 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чай классический <span class="m-sub">в ассортименте</span></div><div class="m-wt">900 мл</div></div><div class="m-pr">370 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чай авторский <span class="m-sub">в чашке</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Глинтвейн б/а</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сбитень ежевичный</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Бабл Ти <span class="m-sub">черника / манго</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Лимонад</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Мохито б/а</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Квас</div><div class="m-wt">500 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Газ. вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Пиво светлое / тёмное <span class="m-sub">разливное</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Пиво нефильтрованное <span class="m-sub">разливное</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">400 ₽</div></div>
+        </div></div>
+
+        <!-- Закуски -->
+        <div class="tc" id="t-zakus"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Мини-чебуреки <span class="m-sub">с говядиной и томатной сальсой</span></div><div class="m-wt">100/50 г</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Хачапури</div><div class="m-wt">360 г</div></div><div class="m-pr">390 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Креветки в панировке 🌶 <span class="m-sub">с соусом Васаби</span></div><div class="m-wt">120 г</div></div><div class="m-pr">490 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Куриные крылышки</div><div class="m-wt">230 г</div></div><div class="m-pr">450 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Гренки чесночные</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Кольца кальмара <span class="m-sub">с соусом Тар-тар</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 ₽</div></div>
+        </div></div>
+
+        <!-- Салаты / Супы -->
+        <div class="tc" id="t-salat">
+          <div class="sub-head">Салаты</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Окрошка с говядиной <span class="m-sub">на квасе</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">450 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Салат Мимоза <span class="m-sub">с копчёной скумбрией</span></div><div class="m-wt">200 г</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Поке с лососем 🌶</div><div class="m-wt">310 г</div></div><div class="m-pr">590 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Сельдь под шубой</div><div class="m-wt">200 г</div></div><div class="m-pr">290 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Салат Полянка <span class="m-sub">с копчёной курицей</span></div><div class="m-wt">200 г</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Цезарь с креветками / курицей</div><div class="m-wt">180 г</div></div><div class="m-pr">490/390 ₽</div></div>
+          </div>
+          <div class="sub-head">Супы</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Том-Ям с креветками и курицей 🌶</div><div class="m-wt">400 г</div></div><div class="m-pr">620 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Солянка мясная</div><div class="m-wt">350 г</div></div><div class="m-pr">590 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Сливочный карри-рамен 🌶</div><div class="m-wt">450 г</div></div><div class="m-pr">550 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Суп-крем грибной</div><div class="m-wt">280 г</div></div><div class="m-pr">450 ₽</div></div>
+          </div>
+        </div>
+
+        <!-- Вок / Горячее -->
+        <div class="tc" id="t-gor"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Пад Тай с креветками 🌶</div><div class="m-wt">350 г</div></div><div class="m-pr">590 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Рис с креветками и овощами</div><div class="m-wt">340 г</div></div><div class="m-pr">590 ₽</div></div>
           <div class="m-item"><div><div class="m-name">Удон с креветками 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">690 ₽</div></div>
           <div class="m-item"><div><div class="m-name">Соба с рваной говядиной 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">760 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Яичная лапша с курицей 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">630 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Крабовые котлетки с зелёным пюре</div><div class="m-wt">250 г</div></div><div class="m-pr">590 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Яичная лапша с курицей 🌶</div><div class="m-wt">340 г</div></div><div class="m-pr">590 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Крабовые котлетки <span class="m-sub">с зелёным пюре</span></div><div class="m-wt">250 г</div></div><div class="m-pr">590 ₽</div></div>
+        </div></div>
+
+        <!-- Паста -->
+        <div class="tc" id="t-pasta"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Ньокки с креветками <span class="m-sub">и сливочным Песто</span></div><div class="m-wt">300 г</div></div><div class="m-pr">690 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Паста с креветками <span class="m-sub">в сливочно-томатном соусе</span></div><div class="m-wt">270 г</div></div><div class="m-pr">690 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Паста с грибами <span class="m-sub">с трюфельным кремом</span></div><div class="m-wt">220 г</div></div><div class="m-pr">490 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Лазанья мясная</div><div class="m-wt">300 г</div></div><div class="m-pr">490 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Паста Карбонара</div><div class="m-wt">270 г</div></div><div class="m-pr">490 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Пенне с курицей и грибами</div><div class="m-wt">310 г</div></div><div class="m-pr">550 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Спагетти Болоньезе</div><div class="m-wt">300 г</div></div><div class="m-pr">490 ₽</div></div>
+        </div></div>
+
+        <!-- Пицца -->
+        <div class="tc" id="t-pizza">
+          <div class="sub-head">Целый круг 40 см / Слайс</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Барбекю</div><div class="m-wt">1000 г</div></div><div class="m-pr">1490/210 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Кальцоне <span class="m-sub">полукруг</span></div><div class="m-wt">1100 г</div></div><div class="m-pr">1400/370 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Пицца с креветками</div><div class="m-wt">950 г</div></div><div class="m-pr">1490/210 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Пепперони</div><div class="m-wt">830 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">4 Сыра</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ветчина · Грибы</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Маргарита</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+          </div>
+        </div>
+
+        <!-- Бургеры -->
+        <div class="tc" id="t-burger"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Баден Бургер</div><div class="m-wt">350 г</div></div><div class="m-pr">690 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Крабсбургер</div><div class="m-wt">360 г</div></div><div class="m-pr">690 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">УФО — бургер с рваной говядиной</div><div class="m-wt">200 г</div></div><div class="m-pr">530 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чикенбургер</div><div class="m-wt">260 г</div></div><div class="m-pr">490 ₽</div></div>
+        </div></div>
+
+        <!-- Завтраки -->
+        <div class="tc" id="t-zavt">
+          <div class="bfast-banner">Стоимость завтрака — <strong>720 ₽</strong> · Ежедневно 09:00 — 12:00 · Напиток на выбор: чай / капучино / американо</div>
+          <div class="bfast-grid">
+            <div class="bfast-card"><h4>Завтрак 1</h4><div class="bfast-wt">460 г</div><p>Свежий хрустящий круассан — Омлет необычной формы с лентами из цукини, болгарским перцем и обжаренными креветками в лёгком сливочном соусе</p></div>
+            <div class="bfast-card"><h4>Завтрак 2</h4><div class="bfast-wt">460 г</div><p>Картофельные драники с Бюргерской колбаской и фасолью в томатном соусе — Глазунья из 2-х яиц</p></div>
+            <div class="bfast-card"><h4>Завтрак 3</h4><div class="bfast-wt">340 г</div><p>Блинчики с крем-сыром и слабосолёным лососем — Нежная творожная запеканка с изюмом и сливочно-облепиховым кремом</p></div>
+            <div class="bfast-card"><h4>Детский завтрак</h4><div class="bfast-wt">450 г</div><p>Рисовая каша на молоке с фруктами и ягодами — Пицца с сосисками и томатами — Йогурт с гранолой</p></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:18px;letter-spacing:0.04em;">* Завтраки уже включены в стоимость проживания в Резиденции и в акцию «Бодрое утро»</div>
+        </div>
+
+        <!-- Детское -->
+        <div class="tc" id="t-kids">
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Суп куриный с домашней лапшой</div><div class="m-wt">180 г</div></div><div class="m-pr">210 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Пельмешки</div><div class="m-wt">150 г</div></div><div class="m-pr">300 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Сосиска с макаронами и кетчупом</div><div class="m-wt">60/100/30 г</div></div><div class="m-pr">300 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Котлета куриная с пюре</div><div class="m-wt">80/90/80 г</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Наггетсы куриные</div><div class="m-wt">6 шт</div></div><div class="m-pr">300 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Картошка фри</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Сырники творожные <span class="m-sub">с соусом</span></div><div class="m-wt">140 г</div></div><div class="m-pr">270 ₽</div></div>
+          </div>
+          <div class="badya">
+            <div class="ic2">🎁</div>
+            <div><h3>Бадя-Бокс</h3><p>Детский бургер с куриной котлеткой · Картофель фри · Сок · Игрушка</p></div>
+            <div class="pr2">690 ₽</div>
+          </div>
         </div>
       </div>
 
-      <div class="tc" id="t-pasta"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Ньокки с креветками и сливочным песто</div><div class="m-wt">300 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с креветками в сливочно-томатном соусе</div><div class="m-wt">270 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с грибами и трюфельным кремом</div><div class="m-wt">220 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Лазанья мясная</div><div class="m-wt">300 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Паста Карбонара</div><div class="m-wt">270 г</div></div><div class="m-pr">490 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Пенне с курицей и грибами <span class="new">NEW</span></div><div class="m-wt">310 г</div></div><div class="m-pr">550 ₽</div></div>
-      </div></div>
+      <!-- ════════ ГРИЛЬБАР ════════ -->
+      <div class="vc" id="v-grill">
+        <div class="tab-nav">
+          <button class="tb on" onclick="tab(this,'gkokt')">Коктейли</button>
+          <button class="tb" onclick="tab(this,'gpivo')">Вино и пиво</button>
+          <button class="tb" onclick="tab(this,'gkr')">Крепкий алкоголь</button>
+          <button class="tb" onclick="tab(this,'gba')">Б/А напитки</button>
+          <button class="tb" onclick="tab(this,'gkof')">Кофе / Чай</button>
+          <button class="tb" onclick="tab(this,'gzak')">Закуски</button>
+        </div>
 
-      <div class="tc" id="t-pizza">
-        <div class="sub-head">Целый круг 40 см / Слайс</div>
-        <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">BBQ</div><div class="m-wt">1000 г</div></div><div class="m-pr">1490/210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Кальцоне (полукруг)</div><div class="m-wt">1100 г</div></div><div class="m-pr">1400/370 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пицца с креветками <span class="new">NEW</span></div><div class="m-wt">950 г</div></div><div class="m-pr">1490/210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пепперони</div><div class="m-wt">830 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">4 Сыра</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Ветчина Грибы</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Маргарита</div><div class="m-wt">930 г</div></div><div class="m-pr">1300/180 ₽</div></div>
+        <div class="tc on" id="t-gkokt">
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Мохито <span class="m-sub">ром, содовая, лайм, мята, сироп сахара</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Апероль Спритц <span class="m-sub">апероль, игристое, содовая</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Корона Санрайз <span class="m-sub">пиво «Корона», текила, гренадин, сок апельсина, лайм</span></div><div class="m-wt">355 мл</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Коллинз ежевичный <span class="m-sub">джин, тоник, сироп ежевика</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Лонг Айленд <span class="m-sub">ром, текила, трипл сек, джин, водка, кола, лимонный сок, сироп сахара</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">700 ₽</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:14px;letter-spacing:0.04em;">* Выход коктейлей указан с учётом льда</div>
+        </div>
+
+        <div class="tc" id="t-gpivo">
+          <div class="sub-head">Игристое вино в банках</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Ля Петит Перье белое <span class="m-sub">брют / полусладкое 11,5%</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">540 ₽</div></div>
+          </div>
+          <div class="sub-head">Пиво разливное</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Светлое 4,7% / Тёмное 4,6%</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Нефильтрованное 4,5%</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 ₽</div></div>
+          </div>
+          <div class="sub-head">Пиво бутылочное</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Аббе 6,5%-6,6%</div><div class="m-wt">330 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Корона Экстра <span class="m-sub">светлое 4,5%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">490 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Корона Экстра <span class="m-sub">безалкогольное 0,0%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">390 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-gkr"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Виски Джек Дениелс</div><div class="m-wt">40 мл</div></div><div class="m-pr">540 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Водка Белуга</div><div class="m-wt">40 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Ликёр Ягермейстер</div><div class="m-wt">40 мл</div></div><div class="m-pr">390 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Настойки <span class="m-sub">в ассортименте</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сэт настоек</div><div class="m-wt">100 мл</div></div><div class="m-pr">700 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-gba"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Лимонад <span class="m-sub">в ассортименте</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Мохито безалкогольный</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Квас живого брожения</div><div class="m-wt">500 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Вода <span class="m-sub">газ / негаз</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">170 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Газ. вода Evervess <span class="m-sub">кола / тоник, ж/б</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">220 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сок <span class="m-sub">в ассортименте</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Red Bull <span class="m-sub">энергетический напиток</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">350 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-gkof"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">50/150 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Капучино / Латте / Какао</div><div class="m-wt">200 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Чай в чашке <span class="m-sub">в ассортименте</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-gzak">
+          <div class="m-grid" style="margin-bottom:14px;">
+            <div class="m-item"><div><div class="m-name">Кольца кальмара <span class="m-sub">с соусом Тар-тар</span></div><div class="m-wt">130 г</div></div><div class="m-pr">450 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Креветки в панировке <span class="m-sub">с соусом Васаби</span></div><div class="m-wt">120 г</div></div><div class="m-pr">490 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Мини-чебуреки <span class="m-sub">с томатной сальсой</span></div><div class="m-wt">100/50 г</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Сырные палочки</div><div class="m-wt">150 г</div></div><div class="m-pr">390 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Картофель фри</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Чесночные гренки</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Наггетсы</div><div class="m-wt">6 шт</div></div><div class="m-pr">300 ₽</div></div>
+          </div>
+          <div class="sub-head">Соусы</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Томатный острый / Тартар / Сырный</div><div class="m-wt">40 г</div></div><div class="m-pr">50 ₽</div></div>
+          </div>
         </div>
       </div>
 
-      <div class="tc" id="t-burger"><div class="m-grid">
-        <div class="m-item"><div><div class="m-name">Баден Бургер</div><div class="m-wt">350 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Крабсбургер</div><div class="m-wt">360 г</div></div><div class="m-pr">690 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">УФО-бургер с рваной говядиной</div><div class="m-wt">200 г</div></div><div class="m-pr">530 ₽</div></div>
-        <div class="m-item"><div><div class="m-name">Чикенбургер <span class="new">NEW</span></div><div class="m-wt">260 г</div></div><div class="m-pr">490 ₽</div></div>
-      </div></div>
-
-      <div class="tc" id="t-zavt">
-        <div class="bfast-banner">Завтрак — <strong>720 ₽</strong> · Ежедневно 09:00–12:00 · Напиток в подарок: чай / капучино / американо</div>
-        <div class="bfast-grid">
-          <div class="bfast-card"><h4>Завтрак 1</h4><div class="bfast-wt">280 г</div><p>Свежий хрустящий круассан — Омлет с цукини, болгарским перцем и обжаренными креветками в сливочном соусе</p></div>
-          <div class="bfast-card"><h4>Завтрак 2</h4><div class="bfast-wt">390 г</div><p>Картофельные драники с Бюргерской колбаской и фасолью в томатном соусе — Глазунья из 2-х яиц</p></div>
-          <div class="bfast-card"><h4>Завтрак 3</h4><div class="bfast-wt">280 г</div><p>Блинчики с крем-сыром и слабосолёным лососем — Запеканка с изюмом и сливочно-облепиховым кремом</p></div>
-          <div class="bfast-card"><h4>Детский завтрак</h4><div class="bfast-wt">320 г</div><p>Рисовая каша с фруктами и ягодами — Пицца с сосисками и томатами — Йогурт с гранолой</p></div>
+      <!-- ════════ ПУЛБАР ════════ -->
+      <div class="vc" id="v-pool">
+        <div class="tab-nav">
+          <button class="tb on" onclick="tab(this,'pkokt')">Коктейли</button>
+          <button class="tb" onclick="tab(this,'pvino')">Игристое вино</button>
+          <button class="tb" onclick="tab(this,'pba')">Б/А напитки</button>
         </div>
-        <div style="font-size:11px;color:var(--pale);margin-top:16px;">* Завтраки включены в проживание и в акцию «Бодрое утро»</div>
+
+        <div class="tc on" id="t-pkokt">
+          <div class="bfast-banner">Все коктейли — <strong>600 ₽</strong> · Апероль Спритц — <strong>700 ₽</strong></div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Мохито</div><div class="m-wt">Освежающий классический коктейль с яркой мятной прохладой, лаймовой кислинкой и лёгкой сладостью</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Клубника в шоколаде</div><div class="m-wt">Нежный коктейль со вкусом какао, сладостью белого шоколада и лёгким клубничным акцентом</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Апельсиновый бриз</div><div class="m-wt">Тонкий, деликатный вкус апельсина, свежий и цитрусовый</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ягодный взрыв</div><div class="m-wt">Сочный микс спелой малины, джина и цитрусовой свежести. Ягодный вкус с лёгкой кислинкой</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Базилик Смэш</div><div class="m-wt">Джин, базилик и лимон. Яркий, ароматный, освежающий с яркой цитрусовой ноткой</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Голубые Гаваи</div><div class="m-wt">Тропический вкус рома и ананаса с яркой цитрусовой ноткой и атмосферой морского бриза</div></div><div class="m-pr">600 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Апероль Спритц</div><div class="m-wt">Классический итальянский аперитив</div></div><div class="m-pr">700 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-pvino"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Ля Петит Перле БРЮТ <span class="m-sub">белое брют, 11,5%</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">540 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Ля Петит Перле УАЙТ <span class="m-sub">белое полусладкое, 11,5%</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">540 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-pba"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Вода Мевер</div><div class="m-wt"></div></div><div class="m-pr">170 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Evervess <span class="m-sub">кола / тоник</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">220 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Red Bull</div><div class="m-wt"></div></div><div class="m-pr">350 ₽</div></div>
+        </div></div>
       </div>
 
-      <div class="tc" id="t-kids">
-        <div class="m-grid">
-          <div class="m-item"><div><div class="m-name">Суп куриный с домашней лапшой</div><div class="m-wt">180 г</div></div><div class="m-pr">210 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Пельмешки</div><div class="m-wt">150 г</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сосиска с макаронами и кетчупом</div><div class="m-wt">60/100/30 г</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Котлета куриная с пюре</div><div class="m-wt">80/90/80 г</div></div><div class="m-pr">350 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Наггетсы куриные</div><div class="m-wt">6 шт</div></div><div class="m-pr">300 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Картошка фри</div><div class="m-wt">150 г</div></div><div class="m-pr">200 ₽</div></div>
-          <div class="m-item"><div><div class="m-name">Сырники творожные с соусом</div><div class="m-wt">140 г</div></div><div class="m-pr">270 ₽</div></div>
-        </div>
-        <div class="badya">
-          <div class="ic2">🎁</div>
-          <div><h3>Бадя-Бокс</h3><p>Детский бургер · Картофель фри · Сок · Игрушка</p></div>
-          <div class="pr2">650 ₽</div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -1833,10 +1984,21 @@ function countUp(el, target, duration, suffix) {
 })();
 
 function tab(btn, id) {
-  document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
-  document.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
+  // Скоупим вкладки внутри активной площадки (.vc), чтобы вкладки разных
+  // площадок не сбрасывали друг друга
+  const scope = btn.closest('.vc') || document;
+  scope.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+  scope.querySelectorAll('.tc').forEach(c => c.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('t-' + id).classList.add('on');
+  const target = scope.querySelector('#t-' + id);
+  if (target) target.classList.add('on');
+}
+
+function venue(btn, id) {
+  document.querySelectorAll('.vb').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.vc').forEach(c => c.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('v-' + id).classList.add('on');
 }
 
 function aufTab(btn, name) {
