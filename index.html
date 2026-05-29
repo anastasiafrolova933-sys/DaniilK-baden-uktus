@@ -391,18 +391,34 @@ nav a:hover{background:rgba(200,169,126,0.10);color:var(--accent);}
 
 /* СПА БАННЕР (вместо фото) */
 .spa-intro-banner{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
-  margin-bottom:32px;border-radius:var(--radius);overflow:hidden;
-  box-shadow:0 0 0 1px var(--border-light),0 4px 18px rgba(0,0,0,0.06);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  margin-bottom:32px;
 }
 .spa-intro-item{
-  background:var(--text);padding:32px 28px;
+  background:var(--surface);padding:32px 28px;
+  border:1px solid var(--border-light);
+  border-radius:var(--radius);
   display:flex;flex-direction:column;justify-content:flex-end;
+  transition:border-color .25s,background .25s,transform .25s,box-shadow .25s;
 }
-.spa-intro-item:nth-child(2){background:#2a2a2a;}
-.spa-intro-item:nth-child(3){background:#1a1a1a;}
-.spa-intro-num{font-size:48px;font-weight:700;color:#fff;line-height:1;letter-spacing:-2px;margin-bottom:8px;}
-.spa-intro-lbl{font-size:12px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;font-weight:500;}
+.spa-intro-item:hover{
+  border-color:var(--accent);transform:translateY(-3px);
+  box-shadow:0 12px 32px rgba(0,0,0,0.4);
+}
+.spa-intro-item:nth-child(1){
+  background:linear-gradient(135deg, rgba(200,169,126,0.10), var(--surface));
+  border-color:rgba(200,169,126,0.30);
+}
+.spa-intro-num{
+  font-family:'Cormorant',Georgia,serif;
+  font-size:56px;font-weight:300;font-style:italic;
+  color:var(--text);line-height:1;letter-spacing:-2px;margin-bottom:10px;
+}
+.spa-intro-item:nth-child(1) .spa-intro-num{color:var(--accent);}
+.spa-intro-lbl{
+  font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:0.18em;font-weight:500;
+}
 
 /* КАФЕ БАННЕР (вместо фото) */
 .cafe-intro-banner{
