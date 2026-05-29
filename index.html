@@ -1227,22 +1227,26 @@ footer{
   <div class="sec-row fade-up">
     <div class="sec-label-col">Гастрономия</div>
     <div class="sec-content">
-      <h2 class="sec-title">Кафе, <strong>Грильбар</strong> и Пулбар</h2>
-      <p class="sec-sub">Авторская кухня основного кафе, закуски и коктейли в Грильбаре, освежающие напитки в Пулбаре у бассейна.</p>
+      <h2 class="sec-title">Кафе, <strong>Грильбар</strong>, Пулбар, Немецкий и Пляжный</h2>
+      <p class="sec-sub">Авторская кухня основного кафе, авторские настойки в Немецком баре, шашлык и коктейли в Грильбаре, прохлада у бассейна в Пулбаре, лето на Пляжном баре.</p>
 
       <div class="cafe-intro-banner">
         <div class="cafe-feat"><span class="cafe-feat-icon">🍳</span>Завтраки с 09:00</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">🍕</span>Авторская кухня</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🍺</span>Немецкий бар</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">🔥</span>Грильбар</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">🍹</span>Пулбар</div>
+        <div class="cafe-feat"><span class="cafe-feat-icon">🏖</span>Пляжный бар</div>
         <div class="cafe-feat"><span class="cafe-feat-icon">👶</span>Детское меню</div>
       </div>
 
       <!-- Переключатель площадок -->
       <div class="venue-nav">
         <button class="vb on" onclick="venue(this,'cafe')">Основное кафе</button>
+        <button class="vb" onclick="venue(this,'german')">Немецкий бар</button>
         <button class="vb" onclick="venue(this,'grill')">Грильбар</button>
         <button class="vb" onclick="venue(this,'pool')">Пулбар</button>
+        <button class="vb" onclick="venue(this,'beach')">Пляжный бар</button>
       </div>
 
       <!-- ════════ ОСНОВНОЕ КАФЕ ════════ -->
@@ -1496,6 +1500,219 @@ footer{
           <div class="m-item"><div><div class="m-name">Evervess <span class="m-sub">кола / тоник</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">220 ₽</div></div>
           <div class="m-item"><div><div class="m-name">Red Bull</div><div class="m-wt"></div></div><div class="m-pr">350 ₽</div></div>
         </div></div>
+      </div>
+
+      <!-- ════════ НЕМЕЦКИЙ БАР ════════ -->
+      <div class="vc" id="v-german">
+        <div class="tab-nav">
+          <button class="tb on" onclick="tab(this,'nsobst')">Напитки собственного приготовления</button>
+          <button class="tb" onclick="tab(this,'nalk')">Алкоголь, настойки</button>
+          <button class="tb" onclick="tab(this,'nba')">Б/А напитки</button>
+          <button class="tb" onclick="tab(this,'npivo')">Пиво и вино</button>
+          <button class="tb" onclick="tab(this,'nkrep')">Крепкий алкоголь</button>
+          <button class="tb" onclick="tab(this,'nkof')">Кофе / Чай</button>
+          <button class="tb" onclick="tab(this,'nzak')">Закуски</button>
+        </div>
+
+        <div class="tc on" id="t-nsobst">
+          <div class="sub-head">Лимонады</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Эспрессо-Тоник</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Киви-Яблоко</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Малина-Маракуйя</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Манго-Маракуйя</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ежевика</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Бабл Ти Манго-Маракуйя <span class="m-sub">с молоком на чёрном чае</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Бабл Ти Черника-Яблоко <span class="m-sub">с молоком на зелёном чае</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
+          </div>
+          <div class="sub-head">Свежевыжатые соки</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Морковь <span class="m-sub">рекомендуем добавить сливки</span></div><div class="m-wt">200 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Апельсин</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Грейпфрут</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Яблоко</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Морковь-Апельсин</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Яблоко-Груша</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Апельсин-Грейпфрут</div><div class="m-wt">200 мл</div></div><div class="m-pr">400 ₽</div></div>
+          </div>
+          <div class="sub-head">Смузи</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Смузи Банан-Яблоко <span class="m-sub">с овсянкой</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Смузи Манго</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Смузи Клубника-Банан</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-nalk">
+          <div class="sub-head">Согревающие</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Глинтвейн 🔥</div><div class="m-wt">200 мл</div></div><div class="m-pr">450 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Грог 🔥</div><div class="m-wt">200 мл</div></div><div class="m-pr">450 ₽</div></div>
+          </div>
+          <div class="sub-head">Настойки</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Лимончелла</div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ежевика</div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Клубника-Базилик</div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Малина-Мята</div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Облепиха</div><div class="m-wt">40 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Дегустационный сэт</div><div class="m-wt">5 по 20 мл</div></div><div class="m-pr">700 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-nba"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Вода Мевер <span class="m-sub">без газа</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">170 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Боржоми <span class="m-sub">ж/б</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Евервесс <span class="m-sub">кола / тоник</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">220 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сок J7</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Ред Булл <span class="m-sub">энергетический напиток</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">350 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-npivo">
+          <div class="sub-head">Пиво разливное</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Шпатен <span class="m-sub">лагер светлый, Россия, 5,2%</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">470 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Хугарден <span class="m-sub">светлое нефильтрованное, Россия, 4,9%</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">490 ₽</div></div>
+          </div>
+          <div class="sub-head">Пиво бутылочное</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Корона Экстра <span class="m-sub">светлое, Мексика, 4,5%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">490 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Аббе <span class="m-sub">Россия, 6,5%-6,6%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Корона Зеро <span class="m-sub">безалкогольное, Мексика, 0%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">390 ₽</div></div>
+          </div>
+          <div class="sub-head">Вино белое</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Поместье Голубицкое Рислинг <span class="m-sub">сухое, Россия, 12,2%</span></div><div class="m-wt">125 мл</div></div><div class="m-pr">540 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Мариа Ду Казал Винью Верде <span class="m-sub">полусухое, Португалия, 9,5%</span></div><div class="m-wt">125 мл</div></div><div class="m-pr">540 ₽</div></div>
+          </div>
+          <div class="sub-head">Вино розовое</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Африка Парк Розе <span class="m-sub">сухое, ЮАР, 11,5%</span></div><div class="m-wt">125 мл</div></div><div class="m-pr">540 ₽</div></div>
+          </div>
+          <div class="sub-head">Вино красное</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Африка Парк Пинотаж <span class="m-sub">сухое, ЮАР, 14%</span></div><div class="m-wt">125 мл</div></div><div class="m-pr">540 ₽</div></div>
+          </div>
+          <div class="sub-head">Вино игристое</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Кава Нувиана <span class="m-sub">белое, брют/полусладкое, 11,5%</span></div><div class="m-wt">750 мл</div></div><div class="m-pr">2900 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ля Петит Перле Брют <span class="m-sub">белое, полусладкое/брют, Португалия, 11,5%</span> <span class="m-pillgold">по бокалам</span></div><div class="m-wt">250 мл</div></div><div class="m-pr">540 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-nkrep">
+          <div class="sub-head">Коньяк</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Рулле VS <span class="m-sub">Франция, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">790 ₽</div></div>
+          </div>
+          <div class="sub-head">Виски</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Синглтон 12 лет <span class="m-sub">односолодовый, Шотландия, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">840 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Джек Дениелс <span class="m-sub">Теннесси, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">540 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Джемесон <span class="m-sub">Ирландия, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">540 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Баллантайнс Файнест <span class="m-sub">купажированный, Шотландия, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">490 ₽</div></div>
+          </div>
+          <div class="sub-head">Ром</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Барсело Империал <span class="m-sub">Доминиканская Республика, 37,5%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">590 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Гавана Клуб Аньехо 3 года <span class="m-sub">Куба, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">390 ₽</div></div>
+          </div>
+          <div class="sub-head">Текила и водка</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Ольмека Сильвер <span class="m-sub">текила, Мексика, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">450 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Белуга Нобл <span class="m-sub">водка, Россия, 40%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">350 ₽</div></div>
+          </div>
+          <div class="sub-head">Аперитивы</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Мартини Бьянко <span class="m-sub">Италия, Пьемонт, 15%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">200 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Ягермейстер <span class="m-sub">Германия, 35%</span></div><div class="m-wt">40 мл</div></div><div class="m-pr">390 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-nkof">
+          <div class="sub-head">Кофе</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Эспрессо / Американо</div><div class="m-wt">30/120 мл</div></div><div class="m-pr">200 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Капучино / Латте / Флэт Уайт</div><div class="m-wt">230 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Раф Ванильный</div><div class="m-wt">230 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Какао</div><div class="m-wt">230 мл</div></div><div class="m-pr">250 ₽</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-bottom:14px;letter-spacing:0.04em;">* Вы можете заказать кофе на альтернативном молоке</div>
+          <div class="sub-head">Чай в чайнике</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Фирменный Баден-Баден <span class="m-sub">с вареньем из сосновых шишек</span></div><div class="m-wt">1000 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Авторский <span class="m-sub">в ассортименте</span></div><div class="m-wt">1000 мл</div></div><div class="m-pr">400 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Классический</div><div class="m-wt">1000 мл</div></div><div class="m-pr">370 ₽</div></div>
+          </div>
+          <div class="sub-head">Чай в чашке</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">В ассортименте</div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Имбирный пунш 🔥</div><div class="m-wt">200 мл</div></div><div class="m-pr">350 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-nzak"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Микс орехов</div><div class="m-wt">60 г</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Брецель с солью</div><div class="m-wt">90 г</div></div><div class="m-pr">150 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сэндвич с курицей / с ветчиной</div><div class="m-wt">190 г</div></div><div class="m-pr">280 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Донат <span class="m-sub">в ассортименте</span></div><div class="m-wt">60 г</div></div><div class="m-pr">130 ₽</div></div>
+        </div></div>
+      </div>
+
+      <!-- ════════ ПЛЯЖНЫЙ БАР ════════ -->
+      <div class="vc" id="v-beach">
+        <div class="tab-nav">
+          <button class="tb on" onclick="tab(this,'bkoktal')">Коктейли алкогольные</button>
+          <button class="tb" onclick="tab(this,'bkoktba')">Коктейли б/а</button>
+          <button class="tb" onclick="tab(this,'bba')">Б/А напитки</button>
+          <button class="tb" onclick="tab(this,'bpivo')">Пиво</button>
+          <button class="tb" onclick="tab(this,'bice')">Мороженое</button>
+        </div>
+
+        <div class="tc on" id="t-bkoktal"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Сингапурский Слинг</div><div class="m-wt">Освежающий тропический. Классика с нежной сладостью и ароматом джина · 300 мл</div></div><div class="m-pr">600 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Мохито</div><div class="m-wt">Освежающий классический коктейль с яркой мятной прохладой, лаймовой кислинкой и лёгкой сладостью · 300 мл</div></div><div class="m-pr">600 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Апероль</div><div class="m-wt">Лёгкий игристый аперитив с мягкой горчинкой и свежими цитрусовыми оттенками · 300 мл</div></div><div class="m-pr">600 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Линчбургский Лимонад</div><div class="m-wt">Коктейль с насыщенным вкусом виски и сладкими тропическими оттенками маракуйи · 300 мл</div></div><div class="m-pr">600 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Яблочный Фреш Микс</div><div class="m-wt">Свежий и лёгкий напиток с натуральной яблочной сладостью и освежающей цитрусовой ноткой лайма · 300 мл</div></div><div class="m-pr">600 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Лонг Айленд</div><div class="m-wt">Насыщенный и мощный коктейль с гармоничным сочетанием нескольких видов алкоголя · 300 мл</div></div><div class="m-pr">700 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-bkoktba"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Пряная Ежевика</div><div class="m-wt">Мята, ароматный коктейль с сочной ежевикой и лёгкой пряностью корицы · 300 мл</div></div><div class="m-pr">300 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Тропический</div><div class="m-wt">Нежный экзотический микс с ананасом и кокосом · 300 мл</div></div><div class="m-pr">300 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Клубничный Физз</div><div class="m-wt">Яркий ягодный напиток с сочной клубникой и освежающей кислинкой лайма · 300 мл</div></div><div class="m-pr">300 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Мохито</div><div class="m-wt">Освежающий классический коктейль с яркой мятной прохладой, лаймовой кислинкой и лёгкой сладостью · 300 мл</div></div><div class="m-pr">350 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-bba"><div class="m-grid">
+          <div class="m-item"><div><div class="m-name">Квас <span class="m-sub">живого брожения</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Лимонад <span class="m-sub">в ассортименте</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Бабл Ти <span class="m-sub">черника / манго</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">400 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Молочный коктейль</div><div class="m-wt">300 мл</div></div><div class="m-pr">350 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Газ. вода</div><div class="m-wt">400 мл</div></div><div class="m-pr">200 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Вода <span class="m-sub">газ / негаз</span></div><div class="m-wt">500 мл</div></div><div class="m-pr">170 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Сок <span class="m-sub">в ассортименте</span></div><div class="m-wt">300 мл</div></div><div class="m-pr">250 ₽</div></div>
+          <div class="m-item"><div><div class="m-name">Ред Булл</div><div class="m-wt">250 мл</div></div><div class="m-pr">350 ₽</div></div>
+        </div></div>
+
+        <div class="tc" id="t-bpivo">
+          <div class="sub-head">Бутылочное</div>
+          <div class="m-grid" style="margin-bottom:8px;">
+            <div class="m-item"><div><div class="m-name">Корона Экстра <span class="m-sub">светлое 4,5%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">490 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Аббе <span class="m-sub">светлое/тёмное 6,5%-6,6%</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Корона Экстра <span class="m-sub">безалкогольное светлое</span></div><div class="m-wt">330 мл</div></div><div class="m-pr">390 ₽</div></div>
+          </div>
+          <div class="sub-head">Разливное</div>
+          <div class="m-grid">
+            <div class="m-item"><div><div class="m-name">Светлое</div><div class="m-wt">500 мл</div></div><div class="m-pr">350 ₽</div></div>
+            <div class="m-item"><div><div class="m-name">Нефильтрованное</div><div class="m-wt">500 мл</div></div><div class="m-pr">400 ₽</div></div>
+          </div>
+        </div>
+
+        <div class="tc" id="t-bice">
+          <div class="bfast-banner">Мягкое мороженое <strong>в ассортименте</strong> — 250 ₽</div>
+        </div>
       </div>
 
     </div>
