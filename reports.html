@@ -202,6 +202,20 @@
   }
   .card:hover .card-arrow { color: var(--accent); transform: translateX(4px); }
 
+  /* Карточка проекта (внешний сайт) — лёгкий золотой акцент */
+  .card-project {
+    background: linear-gradient(135deg, rgba(200,169,126,0.06), var(--surface));
+    border-color: rgba(200,169,126,0.20);
+  }
+  .card-project:hover {
+    background: linear-gradient(135deg, rgba(200,169,126,0.12), #181818);
+    border-color: var(--accent);
+    box-shadow: 0 16px 48px rgba(200,169,126,0.18);
+  }
+  .card-project .card-num { color: var(--accent); opacity: 1; }
+  .card-project .card-arrow { color: var(--accent); }
+  .card-project:hover .card-arrow { transform: translate(3px, -3px); }
+
   /* ── AI block ── */
   .ai-block {
     border: 1px solid var(--border);
@@ -346,6 +360,17 @@
         Открыть в Telegram →
       </a>
     </div>
+  </div>
+
+  <div class="section-label">Проекты</div>
+
+  <div class="cards">
+    <a class="card card-project" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener">
+      <div class="card-num">01</div>
+      <div class="card-title">Baden-Baden · Главный сайт</div>
+      <div class="card-desc">Премиум-лендинг термального комплекса: тарифы, СПА, ауфгуссы, меню 5 площадок, проживание, акции, контакты</div>
+      <div class="card-arrow">↗</div>
+    </a>
   </div>
 
   <div class="footer">
