@@ -494,6 +494,7 @@
             <th onclick="sortTable('visits',3)">Телефон<span class="sort-arrow"></span></th>
             <th onclick="sortTable('visits',4)">Дата визита<span class="sort-arrow"></span></th>
             <th onclick="sortTable('visits',5)">Скидка %<span class="sort-arrow"></span></th>
+            <th onclick="sortTable('visits',8)">👶 Дети<span class="sort-arrow"></span></th>
             <th onclick="sortTable('visits',7)">Способ<span class="sort-arrow"></span></th>
           </tr></thead>
           <tbody id="visits-body"></tbody>
@@ -554,7 +555,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '31.05.2026 11:32',
+  updatedAt: '31.05.2026 12:01',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -569,25 +570,26 @@ window.__preloaded = {
 15,Кристина Свалова,89022759502,2002-07-31,Екатеринбург,1269809533,CP6ETVNF,2026-05-31 09:42:39,Да
 16,Кудрявцева Юлия Максимовна,89538227777,2002-05-21,Екатеринбург,,WDCJ1Q4I,2026-05-31 09:43:38,Да
 `,
-  visits:  `ID визита,ID гостя,Имя,Телефон,Дата визита,Скидка %,Кассир ID,Примечание
-3,1,Klimenko Daniil,89047298610,2026-05-25 11:16:08,5,15,
-5,1,Klimenko Daniil,89047298610,2026-05-25 13:50:10,10,15,by_phone
-6,1,Klimenko Daniil,89047298610,2026-05-26 17:59:47,15,15,by_qr
-7,1,Klimenko Daniil,89047298610,2026-05-28 09:44:56,20,15,by_phone
-8,10,Пунигова Татьяна,89122503427,2026-05-28 15:23:15,5,15,by_phone
-9,10,Пунигова Татьяна,89122503427,2026-05-28 15:24:06,10,15,by_phone
-10,10,Пунигова Татьяна,89122503427,2026-05-28 15:24:23,15,15,by_phone
-14,1,Klimenko Daniil,89047298610,2026-05-28 15:25:31,20,15,by_phone
-15,1,Klimenko Daniil,89047298610,2026-05-28 15:26:05,20,15,by_phone
-21,1,Klimenko Daniil,89047298610,2026-05-28 15:33:32,20,4,by_phone
-22,10,Пунигова Татьяна,89122503427,2026-05-28 15:35:32,20,3,by_phone
-23,10,Пунигова Татьяна,89122503427,2026-05-28 15:36:09,20,3,by_phone
-24,11,Артём Коробков,89122054005,2026-05-28 15:43:05,5,3,by_phone
-25,1,Klimenko Daniil,89047298610,2026-05-29 08:35:55,20,4,by_phone
-26,10,Пунигова Татьяна,89122503427,2026-05-31 09:22:33,20,11,by_phone
-27,14,Черкашина Мария,89126592531,2026-05-31 09:24:26,5,11,by_phone
-28,15,Кристина Свалова,89022759502,2026-05-31 09:46:54,5,10,by_phone
-29,16,Кудрявцева Юлия Максимовна,89538227777,2026-05-31 09:51:29,5,9,by_phone
+  visits:  `ID визита,ID гостя,Имя,Телефон,Дата визита,Скидка %,Кассир ID,Примечание,Дети
+3,1,Klimenko Daniil,89047298610,2026-05-25 11:16:08,5,15,,0
+5,1,Klimenko Daniil,89047298610,2026-05-25 13:50:10,10,15,by_phone,0
+6,1,Klimenko Daniil,89047298610,2026-05-26 17:59:47,15,15,by_qr,0
+7,1,Klimenko Daniil,89047298610,2026-05-28 09:44:56,20,15,by_phone,0
+8,10,Пунигова Татьяна,89122503427,2026-05-28 15:23:15,5,15,by_phone,0
+9,10,Пунигова Татьяна,89122503427,2026-05-28 15:24:06,10,15,by_phone,0
+10,10,Пунигова Татьяна,89122503427,2026-05-28 15:24:23,15,15,by_phone,0
+14,1,Klimenko Daniil,89047298610,2026-05-28 15:25:31,20,15,by_phone,0
+15,1,Klimenko Daniil,89047298610,2026-05-28 15:26:05,20,15,by_phone,0
+21,1,Klimenko Daniil,89047298610,2026-05-28 15:33:32,20,4,by_phone,0
+22,10,Пунигова Татьяна,89122503427,2026-05-28 15:35:32,20,3,by_phone,0
+23,10,Пунигова Татьяна,89122503427,2026-05-28 15:36:09,20,3,by_phone,0
+24,11,Артём Коробков,89122054005,2026-05-28 15:43:05,5,3,by_phone,0
+25,1,Klimenko Daniil,89047298610,2026-05-29 08:35:55,20,4,by_phone,0
+26,10,Пунигова Татьяна,89122503427,2026-05-31 09:22:33,20,11,by_phone,0
+27,14,Черкашина Мария,89126592531,2026-05-31 09:24:26,5,11,by_phone,0
+28,15,Кристина Свалова,89022759502,2026-05-31 09:46:54,5,10,by_phone,0
+29,16,Кудрявцева Юлия Максимовна,89538227777,2026-05-31 09:51:29,5,9,by_phone,0
+30,1,Klimenko Daniil,89047298610,2026-05-31 12:00:47,20,4,by_phone,2
 `,
   surveys: `ID,ID гостя,Имя,Телефон,ID визита,Дата,Q1 Ресепшн,Q2 Скорость,Q3 Персонал,Q4 Раздевалки,Q5 Бассейны/сауны,Q6 Зоны отдыха,Q7 Качество воды,Q8 Температура,Q9 Общая оценка,Q10 Отзыв
 1,1,Klimenko Daniil,89047298610,5,2026-05-25 14:33:59,5,4,Да,4,5,5,5,5,5,Круто 
@@ -742,6 +744,11 @@ function buildStats() {
   const qrVisits = data.visits.filter(r => r[7] === 'by_qr').length;
   const phoneVisits = data.visits.filter(r => r[7] === 'by_phone').length;
 
+  // Дети: визитов с детьми + общее число детей со скидкой
+  const visitsWithKids = data.visits.filter(r => parseInt(r[8]||0) > 0).length;
+  const totalKids = data.visits.reduce((s, r) => s + parseInt(r[8]||0), 0);
+  const exceptions = data.visits.filter(r => parseInt(r[8]||0) > 1).length;
+
   const totalSurveys = data.surveys.length;
 
   // Avg rating
@@ -760,6 +767,8 @@ function buildStats() {
     { val: totalVisits, label: 'Визитов всего', cls: '' },
     { val: qrVisits, label: 'Через QR', cls: '' },
     { val: phoneVisits, label: 'Через телефон', cls: '' },
+    { val: visitsWithKids, label: '👶 Визитов с детьми', cls: '' },
+    { val: totalKids + (exceptions ? ` (искл: ${exceptions})` : ''), label: 'Детей со скидкой', cls: exceptions > 0 ? 'yellow' : '' },
     { val: totalSurveys, label: 'Опросов заполнено', cls: '' },
     { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка', cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
   ];
@@ -873,12 +882,19 @@ function renderVisitRow(r) {
   const how = r[7] === 'by_qr' ? '<span class="badge badge-blue">QR</span>' : r[7] === 'by_phone' ? '<span class="badge badge-yellow">Телефон</span>' : '—';
   const disc = parseInt(r[5]||0);
   const discBadge = disc > 0 ? `<span class="badge badge-green">${disc}%</span>` : `<span class="badge">${disc}%</span>`;
+  const kids = parseInt(r[8]||0);
+  const kidsBadge = kids > 0
+    ? (kids > 1
+        ? `<span class="badge badge-yellow" title="Исключение из правил">👶 ${kids}</span>`
+        : `<span class="badge badge-blue">👶 ${kids}</span>`)
+    : '—';
   return `<tr>
     <td>${r[0]||''}</td>
     <td><strong>${esc(r[2]||'')}</strong></td>
     <td>${esc(r[3]||'')}</td>
     <td>${(r[4]||'').slice(0,16)}</td>
     <td>${discBadge}</td>
+    <td>${kidsBadge}</td>
     <td>${how}</td>
   </tr>`;
 }
@@ -1195,6 +1211,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202605311132" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202605311201" data-report="loyalty"></script>
 </body>
 </html>
