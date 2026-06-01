@@ -389,7 +389,7 @@ document.getElementById('btnReset').addEventListener('click',resetFilters);
 document.addEventListener('click',function(e){if(!e.target.classList.contains('tab-btn'))return;document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});e.target.classList.add('active');document.getElementById(e.target.dataset.tab).classList.add('active')});
 
 var currentMonth='';var filters={dept:'',entity:'',sources:['kassa','cards','accounts'],expType:['постоянные','переменные','непредвиденные']};
-function populateFilters(){var months=new Set();[FILES.kassa,FILES.accounts].forEach(function(a){a.forEach(function(r){var m=monthKey(r['Дата']);if(m)months.add(m)})});var sorted=Array.from(months).sort();var sel=document.getElementById('filterMonth');sel.innerHTML='';var curM=todayObj().getFullYear()+'-'+String(todayObj().getMonth()+1).padStart(2,'0');sorted.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;if(m===curM)o.selected=true;sel.appendChild(o)});currentMonth=sel.value||sorted[sorted.length-1]||'';var depts=new Set();FILES.plan.forEach(function(r){if(r['Подразделение'])depts.add(r['Подразделение'])});var sd=document.getElementById('filterDept');sd.innerHTML='<option value="">Все</option>';Array.from(depts).sort().forEach(function(d){var o=document.createElement('option');o.value=d;o.textContent=d;sd.appendChild(o)});var ents=new Set();[FILES.kassa,FILES.cards,FILES.accounts].forEach(function(a){a.forEach(function(r){if(r['Юр. лицо'])ents.add(r['Юр. лицо'])})});var se=document.getElementById('filterEntity');se.innerHTML='<option value="">Все</option>';Array.from(ents).sort().forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;se.appendChild(o)});readFilters()}
+function populateFilters(){var months=new Set();[FILES.kassa,FILES.accounts].forEach(function(a){a.forEach(function(r){var m=monthKey(r['Дата']);if(m)months.add(m)})});var curM=todayObj().getFullYear()+'-'+String(todayObj().getMonth()+1).padStart(2,'0');months.add(curM);/* текущий месяц должен быть в списке даже если ещё нет проводок */ var sorted=Array.from(months).sort();var sel=document.getElementById('filterMonth');sel.innerHTML='';sorted.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;if(m===curM)o.selected=true;sel.appendChild(o)});currentMonth=curM;sel.value=curM;var depts=new Set();FILES.plan.forEach(function(r){if(r['Подразделение'])depts.add(r['Подразделение'])});var sd=document.getElementById('filterDept');sd.innerHTML='<option value="">Все</option>';Array.from(depts).sort().forEach(function(d){var o=document.createElement('option');o.value=d;o.textContent=d;sd.appendChild(o)});var ents=new Set();[FILES.kassa,FILES.cards,FILES.accounts].forEach(function(a){a.forEach(function(r){if(r['Юр. лицо'])ents.add(r['Юр. лицо'])})});var se=document.getElementById('filterEntity');se.innerHTML='<option value="">Все</option>';Array.from(ents).sort().forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;se.appendChild(o)});readFilters()}
 function readFilters(){currentMonth=document.getElementById('filterMonth').value;filters.dept=document.getElementById('filterDept').value;filters.entity=document.getElementById('filterEntity').value;filters.sources=Array.from(document.querySelectorAll('#cbSources input:checked')).map(function(i){return i.value});filters.expType=Array.from(document.querySelectorAll('#cbExpType input:checked')).map(function(i){return i.value})}
 function resetFilters(){document.getElementById('filterDept').value='';document.getElementById('filterEntity').value='';document.querySelectorAll('#cbSources input,#cbExpType input').forEach(function(i){i.checked=true});readFilters();render()}
 ['filterMonth','filterDept','filterEntity'].forEach(function(id){document.getElementById(id).addEventListener('change',function(){readFilters();render()})});
@@ -420,7 +420,10 @@ function renderKPI(){
   /* 1. ДОХОДЫ — без изменений */
   var planInc=plan.filter(function(r){return(r['Вид операции']||'').toLowerCase().includes('доход')}).reduce(function(s,r){return s+parseNum(r['ИТОГО'])},0);
   var factInc=kassa.reduce(function(s,r){return s+parseNum(r['Доход'])},0)+acc.reduce(function(s,r){return s+parseNum(r['Доход'])},0);
-  var ofdFut=ofd.filter(function(r){return parseDate(r['Дата поступления на р/сч'])>=todayStr()}).reduce(function(s,r){return s+parseNum(r['Сумма'])},0);
+  /* Прогноз доходов: учитываем только текущий выбранный месяц.
+     Для закрытого прошлого месяца — прогноз = факт (без накруток).
+     Для будущего — экстраполяция по среднему за 7 последних факт-дней. */
+  var ofdFut=ofd.filter(function(r){var dt=r['Дата поступления на р/сч'];return monthKey(dt)===currentMonth&&parseDate(dt)>=todayStr()}).reduce(function(s,r){return s+parseNum(r['Сумма'])},0);
   var a7=getLast7(),rm=getRemDays();var fcInc=factInc+ofdFut+(a7.wd*rm.wd+a7.we*rm.we);
 
   /* 2. РАСХОДЫ — план разбит на План/КЗ/План+КЗ [1] */
@@ -470,7 +473,7 @@ function renderKPI(){
     '<div class="kpi-card"><div class="title">Реестр оплат</div><div class="value negative">'+fmt(unpaidSum)+'</div><div class="sub">'+unpaidCnt+' счетов<div class="divider"></div><span class="lbl">в том числе КЗ:</span> <span class="vr">'+fmt(kzSum)+'</span></div></div>'}
 
 function getLast7(){var byDay={};(FILES.kassa||[]).concat(FILES.accounts||[]).forEach(function(r){if(monthKey(r['Дата'])!==currentMonth)return;var d=parseDate(r['Дата']),inc=parseNum(r['Доход']);if(inc>0){if(!byDay[d])byDay[d]={t:0,we:isWeekend(d)};byDay[d].t+=inc}});var days=Object.values(byDay);var wd=days.filter(function(d){return!d.we}),we=days.filter(function(d){return d.we});return{wd:wd.length?wd.reduce(function(s,d){return s+d.t},0)/wd.length:0,we:we.length?we.reduce(function(s,d){return s+d.t},0)/we.length:0}}
-function getRemDays(){var total=daysInMonth(currentMonth),td=todayObj().getDate(),wd=0,we=0;for(var d=td+1;d<=total;d++){var dt=new Date(currentMonth+'-'+String(d).padStart(2,'0'));if(isWeekend(dt))we++;else wd++}return{wd:wd,we:we}}
+function getRemDays(){if(!currentMonth)return{wd:0,we:0};var total=daysInMonth(currentMonth);var t=todayObj();var curYM=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0');/* Закрытый прошлый месяц — нет остатка дней */ if(currentMonth<curYM)return{wd:0,we:0};/* Будущий месяц — все дни как «оставшиеся» */ var startD=(currentMonth>curYM)?1:t.getDate()+1;var wd=0,we=0;for(var d=startD;d<=total;d++){var dt=new Date(currentMonth+'-'+String(d).padStart(2,'0'));if(isWeekend(dt))we++;else wd++}return{wd:wd,we:we}}
 
 /* DYNAMICS */
 function renderDynamics(){var totalDays=daysInMonth(currentMonth);var labels=[];for(var i=0;i<totalDays;i++)labels.push(i+1);var todayD=todayObj().getDate(),td=todayStr();var dI=new Array(totalDays).fill(0),dEE=new Array(totalDays).fill(0),dEO=new Array(totalDays).fill(0);fKassa().concat(fAccounts()).forEach(function(r){var d=dayOfMonth(r['Дата'])-1;if(d>=0&&d<totalDays)dI[d]+=parseNum(r['Доход'])});fKassa().concat(fCards()).concat(fAccounts()).forEach(function(r){var d=dayOfMonth(r['Дата'])-1;if(d>=0&&d<totalDays){var e=parseNum(r['Расход']);if(isEssential(r['Статья']))dEE[d]+=e;else dEO[d]+=e}});var reg=fRegistry();var rDE=new Array(totalDays).fill(0),rDO=new Array(totalDays).fill(0);reg.forEach(function(r){var d=dayOfMonth(regDate(r))-1;if(d>=0&&d<totalDays){if(isEssential(r['Статья']))rDE[d]+=regRemainder(r);else rDO[d]+=regRemainder(r)}});var ofdD=new Array(totalDays).fill(0);fOfd().filter(function(r){return parseDate(r['Дата поступления на р/сч'])>=td}).forEach(function(r){var d=dayOfMonth(r['Дата поступления на р/сч'])-1;if(d>=0&&d<totalDays)ofdD[d]+=parseNum(r['Сумма'])});var a7=getLast7();var balS=fBalances().reduce(function(s,r){return s+parseNum(r['Сумма'])},0);var cI=[],cE=[],cO=[],bal=[];var ci=0,ce=0,co=0;for(var i=0;i<totalDays;i++){var dn=i+1,isFut=dn>todayD;if(!isFut){ci+=dI[i];ce+=dEE[i];co+=dEO[i]}else{var incF=ofdD[i];if(incF===0){var dt=new Date(currentMonth+'-'+String(dn).padStart(2,'0'));incF=isWeekend(dt)?a7.we:a7.wd}ci+=incF;ce+=rDE[i];co+=rDO[i]}cI.push(ci);cE.push(ce);cO.push(ce+co);bal.push(balS+ci-ce-co)}var ctx=document.getElementById('chartDynamics').getContext('2d');if(dynChart)dynChart.destroy();Chart.defaults.color='#8899aa';Chart.defaults.borderColor='#2a3a5c';dynChart=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'Остаток ДС',type:'bar',data:bal,yAxisID:'y',order:3,backgroundColor:'rgba(96,165,250,0.35)',borderColor:'#60a5fa',borderWidth:1},{label:'Накопленный доход',type:'line',data:cI,yAxisID:'y',order:1,borderColor:'#4ade80',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,tension:.3,segment:{borderDash:function(c){return c.p0DataIndex+1>=todayD?[5,5]:undefined}}},{label:'Обеспечение деятельности',type:'line',data:cE,yAxisID:'y',order:2,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.12)',fill:true,borderWidth:2,pointRadius:0,tension:.3,segment:{borderDash:function(c){return c.p0DataIndex+1>=todayD?[5,5]:undefined}}},{label:'Суммарные расходы',type:'line',data:cO,yAxisID:'y',order:2,borderColor:'#9ca3af',backgroundColor:'rgba(156,163,175,.08)',fill:'-1',borderWidth:2,pointRadius:0,tension:.3,segment:{borderDash:function(c){return c.p0DataIndex+1>=todayD?[5,5]:undefined}}}]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+fmt(c.parsed.y)}}}},scales:{y:{position:'left',title:{display:true,text:'Суммы (₽)'},ticks:{callback:function(v){return fmt(v)}}}}}})}
@@ -641,7 +644,7 @@ function toggleDrill(id){document.querySelectorAll('[data-drill="'+id+'"]').forE
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011249" data-report="finance"></script>
+<script src="chat-widget.js?v=202606011254" data-report="finance"></script>
 </body>
 </html>
 
@@ -696,7 +699,7 @@ function toggleDrill(id){document.querySelectorAll('[data-drill="'+id+'"]').forE
 <script>_FD_ALL.uvildy={};</script>
 <script>_FD_ALL.kurgan={};</script>
 <script>
-/* auto-start 01.06.2026 12:49 */
+/* auto-start 01.06.2026 12:54 */
 var _t=setInterval(function(){
   if(typeof buildDashboard==='function'&&typeof LOC_DATA!=='undefined'){
     clearInterval(_t);
@@ -724,7 +727,7 @@ setTimeout(function(){clearInterval(_t);},8000);
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011249" data-report="finance"></script>
+<script src="chat-widget.js?v=202606011254" data-report="finance"></script>
 </body>
                         </html>
                     
