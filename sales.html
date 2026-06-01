@@ -39,8 +39,31 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);padding:0 0 
 /* ── Topbar ── */
 .topbar{display:flex;align-items:center;gap:12px;background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
 .topbar .title{font-size:15px;font-weight:700;color:var(--gold);white-space:nowrap}
-.topbar .month-badge{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.topbar select.month-select{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
+.topbar select.month-select:hover{border-color:var(--gold-dim)}
+.topbar .cmp-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 12px;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap}
+.topbar .cmp-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.topbar .cmp-btn.active{background:var(--gold-dim);color:var(--bg);border-color:var(--gold)}
 .topbar .updated{margin-left:auto;font-size:11px;color:var(--text-dim);white-space:nowrap}
+/* ── Compare panel ── */
+.cmp-panel{display:none;background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.cmp-panel.open{display:flex}
+.cmp-panel .cmp-grp{display:flex;flex-direction:column;gap:4px}
+.cmp-panel .cmp-lbl{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.cmp-panel select{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:13px;color:var(--text);cursor:pointer;min-width:140px}
+.cmp-panel .yoy-btn{background:var(--bg2);border:1px solid var(--gold-dim);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;white-space:nowrap}
+.cmp-panel .yoy-btn:hover{background:var(--gold-dim);color:var(--bg)}
+.cmp-panel .dept-cb{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0}
+.cmp-panel .dept-cb label{font-size:12px;color:var(--text);cursor:pointer;user-select:none;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:3px 10px;transition:.15s}
+.cmp-panel .dept-cb label:hover{border-color:var(--gold-dim)}
+.cmp-panel .dept-cb input{margin-right:5px;vertical-align:-1px}
+.cmp-panel .dept-cb label:has(input:checked){background:var(--gold-dim);color:var(--bg);border-color:var(--gold)}
+.cmp-no-data{padding:30px;text-align:center;color:var(--text-dim);font-size:13px}
+.cmp-result{display:none;margin:0 16px 16px}
+.cmp-result.show{display:block}
+.delta-pos{color:var(--green);font-weight:600}
+.delta-neg{color:var(--red);font-weight:600}
+.delta-zero{color:var(--text-dim)}
 /* ── KPI cards ── */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:14px 16px 4px}
 .kpi-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;border:1px solid var(--border);box-shadow:var(--shadow);transition:border-color .2s;cursor:default}
@@ -94,9 +117,33 @@ th.t,td.t{border-left:2px solid #c8a96e33}
 <!-- ── Topbar ── -->
 <div class="topbar">
   <div class="title">📊 Sales Уктус</div>
-  <div class="month-badge" id="monthBadge">—</div>
+  <select id="monthSelect" class="month-select" onchange="onMonthChange()"></select>
+  <button id="cmpToggle" class="cmp-btn" onclick="toggleComparePanel()">📊 Сравнение периодов</button>
   <div class="updated">
     <span id="salesUpdatedLabel" style="display:none">Данные актуальны на: </span><span id="salesUpdatedDate"></span>
+  </div>
+</div>
+
+<!-- ── Compare panel ── -->
+<div id="cmpPanel" class="cmp-panel">
+  <div class="cmp-grp">
+    <div class="cmp-lbl">Период А</div>
+    <select id="cmpMonthA"></select>
+  </div>
+  <div class="cmp-grp">
+    <div class="cmp-lbl">Период Б</div>
+    <select id="cmpMonthB"></select>
+  </div>
+  <button class="yoy-btn" onclick="setYearOverYear()">↻ Год к году</button>
+  <div class="cmp-grp" style="flex:1;min-width:280px">
+    <div class="cmp-lbl">Подразделения</div>
+    <div class="dept-cb" id="cmpDeptCb"></div>
+  </div>
+</div>
+<div id="cmpResult" class="cmp-result">
+  <div class="section-title" id="cmpTitle">📊 Сравнение</div>
+  <div class="table-wrap">
+    <table id="cmpTable"></table>
   </div>
 </div>
 
@@ -155,8 +202,12 @@ th.t,td.t{border-left:2px solid #c8a96e33}
 // ═══════════════════════════════════════════════════════
 //  DATA — injected by update_sales_dashboard.ps1
 // ═══════════════════════════════════════════════════════
-var SALES_SUMMARY = null;   // { genDate, monthTitle, lastRealUpdate, depts:{}, daily:[] }
-var SALES_HISTORY = null;   // [ { year,month,plan,fact,guests, depts:{} }, ... ]
+var SALES_SUMMARY = null;   // { genDate, monthNum, monthYear, lastRealUpdate, depts:{}, daily:[] } — текущий месяц с подразделениями
+var SALES_HISTORY = null;   // [ { year,month,plan,fact,guests, depts:{}, deptGuests:{} }, ... ] — месячные итоги
+var SALES_DAILY_HISTORY = null; // { "YYYY-MM": [ {date, plan, fact, guests, depts:{}, deptPlans:{}, deptGuests:{}} ] }
+
+// Активный выбранный месяц для главных KPI/графика/таблицы. Формат "YYYY-MM".
+var ACTIVE_MONTH = null;
 
 // ═══════════════════════════════════════════════════════
 //  Helpers
@@ -199,12 +250,73 @@ var DEPT_EMOJI = {
   'TOTAL':'🏆','THERMAL':'🌊','HOTEL':'🏨','KAFE':'☕','ANIM':'🎭','SPA':'💆','PROCH':'📦'
 };
 
+// ───────────────────────────────────────────────────────
+//  getMonthView(ym) — единый объект для любого месяца.
+//  Источник: для текущего месяца — SALES_SUMMARY (полный, с прогнозом/ср.чеком),
+//  для остальных — агрегация из SALES_DAILY_HISTORY + месячные итоги из SALES_HISTORY.
+//  Возвращает: { ym, isCurrent, depts:{KEY:{plan,fact,pct,forecast,pctForecast,guests,avgCheck}}, daily:[...] }
+// ───────────────────────────────────────────────────────
+function activeMonthKey(){ return ACTIVE_MONTH || currentMonthKey(); }
+function currentMonthKey(){
+  if(SALES_SUMMARY && SALES_SUMMARY.monthNum && SALES_SUMMARY.monthYear){
+    return SALES_SUMMARY.monthYear+'-'+String(SALES_SUMMARY.monthNum).padStart(2,'0');
+  }
+  return null;
+}
+
+function getMonthView(ym){
+  var curK = currentMonthKey();
+  if(ym === curK && SALES_SUMMARY){
+    return {
+      ym: ym, isCurrent: true,
+      depts: SALES_SUMMARY.depts || {},
+      daily: SALES_SUMMARY.daily || []
+    };
+  }
+  // Прошлый/будущий — собираем из дневной истории
+  var daily = (SALES_DAILY_HISTORY && SALES_DAILY_HISTORY[ym]) ? SALES_DAILY_HISTORY[ym] : [];
+  // Месячные итоги (более надёжно, чем суммировать дни — могут отличаться)
+  var p = ym.split('-'); var yr = +p[0], mm = +p[1];
+  var mRec = (SALES_HISTORY||[]).find(function(r){return r.year===yr && r.month===mm});
+  var depts = {};
+  if(mRec){
+    // ИТОГО
+    var totGuests = mRec.guests || 0;
+    var totAvg = totGuests>0 ? Math.round((mRec.fact||0)/totGuests) : 0;
+    depts['TOTAL'] = {
+      plan: mRec.plan||0, fact: mRec.fact||0,
+      pct: pct(mRec.fact, mRec.plan), forecast: mRec.fact||0, pctForecast: pct(mRec.fact, mRec.plan),
+      guests: totGuests, avgCheck: totAvg
+    };
+    // По подразделениям из mRec.depts; план по dept надо взять из daily (агрегировать)
+    var deptPlanSums = {THERMAL:0,HOTEL:0,KAFE:0,ANIM:0,SPA:0,PROCH:0};
+    daily.forEach(function(d){
+      if(d.deptPlans){
+        for(var k in deptPlanSums){ deptPlanSums[k] += (d.deptPlans[k]||0); }
+      }
+    });
+    ['THERMAL','HOTEL','KAFE','ANIM','SPA','PROCH'].forEach(function(k){
+      var f = (mRec.depts&&mRec.depts[k])||0;
+      var pl = deptPlanSums[k];
+      var g = (mRec.deptGuests&&mRec.deptGuests[k])||0;
+      depts[k] = {
+        plan: pl, fact: f, pct: pct(f, pl),
+        forecast: f, pctForecast: pct(f, pl),
+        guests: g,
+        avgCheck: g>0?Math.round(f/g):0
+      };
+    });
+  }
+  return { ym: ym, isCurrent: false, depts: depts, daily: daily };
+}
+
 function renderKPI(){
-  var s=SALES_SUMMARY; if(!s||!s.depts)return;
+  var view = getMonthView(activeMonthKey()); if(!view||!view.depts)return;
+  var depts = view.depts;
   var html='';
   DEPT_ORDER.forEach(function(k){
-    var d=s.depts[k]; if(!d)return;
-    var isTotal=(k==='ИТОГО');
+    var d=depts[k]; if(!d)return;
+    var isTotal=(k==='TOTAL');
     var p=d.pct||0;
     var pf=d.pctForecast||0;
     var factFmt=isTotal?fmtM(d.fact):fmtK(d.fact);
@@ -215,12 +327,15 @@ function renderKPI(){
     html+='<div class="pct-badge '+cls+'">'+p+'% от плана</div>';
     html+='<div class="row2">';
     html+='<div>📋 План: <span>'+fmtK(d.plan)+'</span></div>';
-    html+='<div>🔮 Прогноз: <span class="'+cl(pf,100,85)+'">'+fmtK(d.forecast)+'</span> ('+pf+'%)</div>';
+    // Прогноз показываем только для текущего месяца (для прошлых = факту)
+    if(view.isCurrent){
+      html+='<div>🔮 Прогноз: <span class="'+cl(pf,100,85)+'">'+fmtK(d.forecast)+'</span> ('+pf+'%)</div>';
+    }
     if(d.guests){
-      var metric=( k==='КАФЕ')?'Чеков':'Гостей';
+      var metric=(k==='KAFE')?'Чеков':'Гостей';
       html+='<div>👥 '+metric+': <span>'+fmt(d.guests)+'</span>';
       if(d.avgCheck){
-        var chkLabel=(k==='КАФЕ')?'Ср.чек':'₽/чел';
+        var chkLabel=(k==='KAFE')?'Ср.чек':'₽/чел';
         html+=' · '+chkLabel+': <span>'+fmt(d.avgCheck)+'</span>';
       }
       html+='</div>';
@@ -236,13 +351,18 @@ function renderKPI(){
 //  DAILY CHART
 // ═══════════════════════════════════════════════════════
 function renderChart(){
-  var s=SALES_SUMMARY; if(!s||!s.daily||!s.daily.length)return;
-  var days=s.daily;
+  var view=getMonthView(activeMonthKey()); if(!view||!view.daily||!view.daily.length){
+    var ctx0=document.getElementById('dailyChart').getContext('2d');
+    if(_dailyChart){_dailyChart.destroy();_dailyChart=null;}
+    ctx0.clearRect(0,0,ctx0.canvas.width,ctx0.canvas.height);
+    return;
+  }
+  var days=view.daily;
   var labels=days.map(function(d){return d.date.slice(0,5)});
   var plans=days.map(function(d){return d.plan||0});
   var facts=days.map(function(d){return d.fact||0});
   // Cumulative % line
-  var planTotal=(s.depts&&s.depts['ИТОГО'])?s.depts['ИТОГО'].plan:0;
+  var planTotal=(view.depts&&view.depts['TOTAL'])?view.depts['TOTAL'].plan:0;
   var cumFact=0; var cumPcts=[];
   facts.forEach(function(f){ cumFact+=f; cumPcts.push(planTotal>0?Math.round(cumFact/planTotal*100):0); });
 
@@ -285,11 +405,14 @@ function renderChart(){
 //  DAILY TABLE
 // ═══════════════════════════════════════════════════════
 function renderDailyTable(){
-  var s=SALES_SUMMARY; if(!s||!s.daily||!s.daily.length)return;
-  var planTotal=(s.depts&&s.depts['ИТОГО'])?s.depts['ИТОГО'].plan:0;
-  var forecast=(s.depts&&s.depts['ИТОГО'])?s.depts['ИТОГО'].forecast:0;
+  var view=getMonthView(activeMonthKey()); if(!view||!view.daily||!view.daily.length){
+    document.getElementById('dailyTbody').innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px">Нет дневных данных за выбранный месяц</td></tr>';
+    return;
+  }
+  var planTotal=(view.depts&&view.depts['TOTAL'])?view.depts['TOTAL'].plan:0;
+  var forecast=(view.depts&&view.depts['TOTAL'])?view.depts['TOTAL'].forecast:0;
   var today=todayStr();
-  var rows=s.daily;
+  var rows=view.daily;
   var cumFact=0;
   var html='';
   rows.forEach(function(r){
@@ -401,6 +524,157 @@ function populateYearFilter(){
 }
 
 // ═══════════════════════════════════════════════════════
+//  MONTH SWITCHER (топбар) + COMPARE PANEL
+// ═══════════════════════════════════════════════════════
+function getAllMonths(){
+  // Объединение ключей из SALES_HISTORY + SALES_DAILY_HISTORY + currentMonthKey
+  var set={};
+  if(SALES_HISTORY) SALES_HISTORY.forEach(function(r){set[r.year+'-'+String(r.month).padStart(2,'0')]=true;});
+  if(SALES_DAILY_HISTORY) Object.keys(SALES_DAILY_HISTORY).forEach(function(k){set[k]=true;});
+  var cur=currentMonthKey(); if(cur)set[cur]=true;
+  return Object.keys(set).sort(); // YYYY-MM, ascending
+}
+function monthLabel(ym){
+  var p=ym.split('-'); var m=+p[1]; var y=+p[0];
+  return RU_MONTHS[m-1]+' '+y;
+}
+
+function populateMonthSelectors(){
+  var months = getAllMonths();
+  // Reverse — последние (свежие) сверху
+  var rev = months.slice().reverse();
+  var cur = currentMonthKey();
+
+  var mainSel = document.getElementById('monthSelect');
+  mainSel.innerHTML = '';
+  rev.forEach(function(ym){
+    var o=document.createElement('option'); o.value=ym; o.textContent=monthLabel(ym);
+    mainSel.appendChild(o);
+  });
+  // По умолчанию — текущий месяц если он есть, иначе самый свежий
+  ACTIVE_MONTH = (cur && months.indexOf(cur)>=0) ? cur : (rev[0]||null);
+  mainSel.value = ACTIVE_MONTH;
+
+  // Селекторы сравнения
+  var selA = document.getElementById('cmpMonthA');
+  var selB = document.getElementById('cmpMonthB');
+  selA.innerHTML=''; selB.innerHTML='';
+  rev.forEach(function(ym){
+    var oa=document.createElement('option'); oa.value=ym; oa.textContent=monthLabel(ym);
+    var ob=document.createElement('option'); ob.value=ym; ob.textContent=monthLabel(ym);
+    selA.appendChild(oa); selB.appendChild(ob);
+  });
+  // Дефолт: А = текущий/последний, Б = тот же месяц прошлого года если есть, иначе предыдущий месяц
+  selA.value = ACTIVE_MONTH;
+  selB.value = pickPrevYearOrPrevMonth(ACTIVE_MONTH, months) || (rev[1]||rev[0]);
+  selA.onchange = renderCompare;
+  selB.onchange = renderCompare;
+}
+
+function pickPrevYearOrPrevMonth(ym, list){
+  if(!ym) return null;
+  var p=ym.split('-'); var y=+p[0]-1, m=+p[1];
+  var prev = y+'-'+String(m).padStart(2,'0');
+  if(list.indexOf(prev)>=0) return prev;
+  // fallback — предыдущий месяц
+  var dt=new Date(+p[0], +p[1]-2, 1);
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');
+}
+
+function onMonthChange(){
+  ACTIVE_MONTH = document.getElementById('monthSelect').value;
+  renderActiveMonth();
+}
+
+function renderActiveMonth(){
+  renderKPI();
+  renderChart();
+  renderDailyTable();
+}
+
+function toggleComparePanel(){
+  var p=document.getElementById('cmpPanel');
+  var b=document.getElementById('cmpToggle');
+  var open=p.classList.toggle('open');
+  b.classList.toggle('active', open);
+  if(open){
+    if(!document.getElementById('cmpDeptCb').children.length) populateCompareDepts();
+    renderCompare();
+  } else {
+    document.getElementById('cmpResult').classList.remove('show');
+  }
+}
+
+function populateCompareDepts(){
+  var box=document.getElementById('cmpDeptCb');
+  box.innerHTML='';
+  DEPT_ORDER.forEach(function(k){
+    var lab=document.createElement('label');
+    lab.innerHTML='<input type="checkbox" value="'+k+'" checked onchange="renderCompare()"> '+DEPT_EMOJI[k]+' '+DEPT_LABEL[k];
+    box.appendChild(lab);
+  });
+}
+
+function setYearOverYear(){
+  var months=getAllMonths();
+  var sa=document.getElementById('cmpMonthA');
+  var ymA = sa.value;
+  var prev = pickPrevYearOrPrevMonth(ymA, months);
+  if(prev){
+    document.getElementById('cmpMonthB').value = prev;
+    renderCompare();
+  }
+}
+
+function renderCompare(){
+  var ymA=document.getElementById('cmpMonthA').value;
+  var ymB=document.getElementById('cmpMonthB').value;
+  if(!ymA||!ymB) return;
+  var viewA=getMonthView(ymA), viewB=getMonthView(ymB);
+  var selected = Array.from(document.querySelectorAll('#cmpDeptCb input:checked')).map(function(i){return i.value;});
+  if(!selected.length){ selected = DEPT_ORDER.slice(); }
+
+  document.getElementById('cmpTitle').textContent = '📊 Сравнение: '+monthLabel(ymA)+' vs '+monthLabel(ymB);
+
+  // Таблица: Подразделение | План А | Факт А | План Б | Факт Б | Δ факт ₽ | Δ факт % | Гости А | Гости Б | Δ гостей
+  var hdr='<thead><tr>'+
+    '<th>Подразделение</th>'+
+    '<th class="tag-plan">План А</th><th class="tag-fact">Факт А</th><th>%</th>'+
+    '<th class="tag-plan">План Б</th><th class="tag-fact">Факт Б</th><th>%</th>'+
+    '<th>Δ факт ₽</th><th>Δ факт %</th>'+
+    '<th>Гости А</th><th>Гости Б</th><th>Δ гостей</th>'+
+    '</tr></thead>';
+  var body='<tbody>';
+  selected.forEach(function(k){
+    var a = (viewA.depts&&viewA.depts[k]) || {plan:0,fact:0,guests:0};
+    var b = (viewB.depts&&viewB.depts[k]) || {plan:0,fact:0,guests:0};
+    var dF = (a.fact||0)-(b.fact||0);
+    var dFp = (b.fact>0) ? Math.round(((a.fact||0)/b.fact-1)*100) : 0;
+    var dG = (a.guests||0)-(b.guests||0);
+    var pa=pct(a.fact,a.plan), pb=pct(b.fact,b.plan);
+    var cls=(k==='TOTAL')?' class="total-row"':'';
+    body+='<tr'+cls+'>';
+    body+='<td>'+DEPT_EMOJI[k]+' '+DEPT_LABEL[k]+'</td>';
+    body+='<td class="tag-plan">'+fmtK(a.plan)+'</td>';
+    body+='<td class="tag-fact">'+fmtK(a.fact)+'</td>';
+    body+='<td class="'+(pa>=100?'pos':pa>=80?'':'neg')+'">'+pa+'%</td>';
+    body+='<td class="tag-plan">'+fmtK(b.plan)+'</td>';
+    body+='<td class="tag-fact">'+fmtK(b.fact)+'</td>';
+    body+='<td class="'+(pb>=100?'pos':pb>=80?'':'neg')+'">'+pb+'%</td>';
+    body+='<td class="'+(dF>0?'delta-pos':dF<0?'delta-neg':'delta-zero')+'">'+(dF>0?'+':'')+fmtK(dF)+'</td>';
+    body+='<td class="'+(dFp>0?'delta-pos':dFp<0?'delta-neg':'delta-zero')+'">'+(dFp>0?'+':'')+dFp+'%</td>';
+    body+='<td>'+(a.guests?fmt(a.guests):'—')+'</td>';
+    body+='<td>'+(b.guests?fmt(b.guests):'—')+'</td>';
+    body+='<td class="'+(dG>0?'delta-pos':dG<0?'delta-neg':'delta-zero')+'">'+(a.guests||b.guests?(dG>0?'+':'')+fmt(dG):'—')+'</td>';
+    body+='</tr>';
+  });
+  body+='</tbody>';
+
+  document.getElementById('cmpTable').innerHTML = hdr+body;
+  document.getElementById('cmpResult').classList.add('show');
+}
+
+// ═══════════════════════════════════════════════════════
 //  MAIN BUILD
 // ═══════════════════════════════════════════════════════
 function buildSalesDashboard(){
@@ -408,14 +682,6 @@ function buildSalesDashboard(){
     document.getElementById('kpiRow').innerHTML='<div class="loading">&#9888;&#65039; Данные не загружены</div>';
     return;
   }
-  // Topbar — monthTitle from numeric monthNum + monthYear (PS sends integers, no Cyrillic)
-  var mTitle='';
-  if(SALES_SUMMARY.monthNum&&SALES_SUMMARY.monthYear){
-    mTitle=RU_MONTHS[SALES_SUMMARY.monthNum-1]+' '+SALES_SUMMARY.monthYear;
-  }else if(SALES_SUMMARY.monthTitle){
-    mTitle=SALES_SUMMARY.monthTitle;
-  }
-  document.getElementById('monthBadge').textContent=mTitle;
   // Updated date
   var elDate=document.getElementById('salesUpdatedDate');
   var elLbl=document.getElementById('salesUpdatedLabel');
@@ -423,9 +689,8 @@ function buildSalesDashboard(){
     elDate.textContent=SALES_SUMMARY.lastRealUpdate;
     if(elLbl)elLbl.style.display='';
   }
-  renderKPI();
-  renderChart();
-  renderDailyTable();
+  populateMonthSelectors();   // топбар + панель сравнения
+  renderActiveMonth();         // KPI + график + дневная таблица для выбранного месяца
   populateYearFilter();
   renderHistory();
 }
@@ -441,15 +706,18 @@ var _st=setInterval(function(){
 setTimeout(function(){clearInterval(_st);},8000);
 </script>
 <script>
-SALES_SUMMARY={"genDate":"01.06.2026 10:15","monthNum":5,"monthYear":2026,"lastRealUpdate":"01.06.2026","sheetDate":"31.05.2026","depts":{"TOTAL":{"plan":50986881,"fact":55775913,"forecast":55775913,"pct":109,"pctForecast":109,"guests":22123,"avgCheck":2521},"THERMAL":{"plan":32500008,"fact":35864391,"forecast":35864391,"pct":110,"pctForecast":110,"guests":21373,"avgCheck":1678},"HOTEL":{"plan":5500000,"fact":4702032,"forecast":4702032,"pct":85,"pctForecast":85,"guests":750,"avgCheck":6269},"KAFE":{"plan":9515463,"fact":12155935,"forecast":12155935,"pct":128,"pctForecast":128,"guests":15590,"avgCheck":780},"ANIM":{"plan":329363,"fact":144700,"forecast":144700,"pct":44,"pctForecast":44,"guests":0,"avgCheck":0},"SPA":{"plan":1658580,"fact":1565159,"forecast":1565159,"pct":94,"pctForecast":94,"guests":0,"avgCheck":0},"PROCH":{"plan":1483467,"fact":1343696,"forecast":1343696,"pct":91,"pctForecast":91,"guests":0,"avgCheck":0}},"daily":[{"date":"01.05.2026","plan":2569990,"fact":2416776,"guests":781,"avgCheck":3094},{"date":"02.05.2026","plan":3632990,"fact":2389703,"guests":746,"avgCheck":3203},{"date":"03.05.2026","plan":2971310,"fact":1668201,"guests":583,"avgCheck":2861},{"date":"04.05.2026","plan":1588867,"fact":1227560,"guests":562,"avgCheck":2184},{"date":"05.05.2026","plan":1586867,"fact":1042351,"guests":474,"avgCheck":2199},{"date":"06.05.2026","plan":1836867,"fact":1556443,"guests":757,"avgCheck":2056},{"date":"07.05.2026","plan":1826867,"fact":1301550,"guests":625,"avgCheck":2082},{"date":"08.05.2026","plan":2111867,"fact":1763930,"guests":776,"avgCheck":2273},{"date":"09.05.2026","plan":2927990,"fact":2196470,"guests":589,"avgCheck":3729},{"date":"10.05.2026","plan":2693944,"fact":2163278,"guests":755,"avgCheck":2865},{"date":"11.05.2026","plan":35000,"fact":1133740,"guests":408,"avgCheck":2779},{"date":"12.05.2026","plan":35000,"fact":696525,"guests":321,"avgCheck":2170},{"date":"13.05.2026","plan":35000,"fact":865688,"guests":428,"avgCheck":2023},{"date":"14.05.2026","plan":35000,"fact":945035,"guests":414,"avgCheck":2283},{"date":"15.05.2026","plan":35000,"fact":1577425,"guests":691,"avgCheck":2283},{"date":"16.05.2026","plan":35000,"fact":2856603,"guests":871,"avgCheck":3280},{"date":"17.05.2026","plan":35000,"fact":2819026,"guests":970,"avgCheck":2906},{"date":"18.05.2026","plan":1269092,"fact":2365776,"guests":1104,"avgCheck":2143},{"date":"19.05.2026","plan":1094117,"fact":2320012,"guests":1068,"avgCheck":2172},{"date":"20.05.2026","plan":1194117,"fact":1095302,"guests":495,"avgCheck":2213},{"date":"21.05.2026","plan":1406393,"fact":1142495,"guests":497,"avgCheck":2299},{"date":"22.05.2026","plan":2120117,"fact":1611535,"guests":765,"avgCheck":2107},{"date":"23.05.2026","plan":2928240,"fact":2059257,"guests":607,"avgCheck":3393},{"date":"24.05.2026","plan":2310240,"fact":2973111,"guests":1028,"avgCheck":2892},{"date":"25.05.2026","plan":1347117,"fact":1814961,"guests":860,"avgCheck":2110},{"date":"26.05.2026","plan":1495117,"fact":1701247,"guests":799,"avgCheck":2129},{"date":"27.05.2026","plan":1864747,"fact":3148389,"guests":1518,"avgCheck":2074},{"date":"28.05.2026","plan":2060117,"fact":1199449,"guests":532,"avgCheck":2255},{"date":"29.05.2026","plan":2240110,"fact":1715104,"guests":790,"avgCheck":2171},{"date":"30.05.2026","plan":3030899,"fact":2051845,"guests":656,"avgCheck":3128},{"date":"31.05.2026","plan":2633899,"fact":1957126,"guests":653,"avgCheck":2997}]};
+SALES_SUMMARY={"genDate":"01.06.2026 13:28","monthNum":5,"monthYear":2026,"lastRealUpdate":"01.06.2026","sheetDate":"31.05.2026","depts":{"TOTAL":{"plan":50986881,"fact":55775913,"forecast":55775913,"pct":109,"pctForecast":109,"guests":22123,"avgCheck":2521},"THERMAL":{"plan":32500008,"fact":35864391,"forecast":35864391,"pct":110,"pctForecast":110,"guests":21373,"avgCheck":1678},"HOTEL":{"plan":5500000,"fact":4702032,"forecast":4702032,"pct":85,"pctForecast":85,"guests":750,"avgCheck":6269},"KAFE":{"plan":9515463,"fact":12155935,"forecast":12155935,"pct":128,"pctForecast":128,"guests":15590,"avgCheck":780},"ANIM":{"plan":329363,"fact":144700,"forecast":144700,"pct":44,"pctForecast":44,"guests":0,"avgCheck":0},"SPA":{"plan":1658580,"fact":1565159,"forecast":1565159,"pct":94,"pctForecast":94,"guests":0,"avgCheck":0},"PROCH":{"plan":1483467,"fact":1343696,"forecast":1343696,"pct":91,"pctForecast":91,"guests":0,"avgCheck":0}},"daily":[{"date":"01.05.2026","plan":2569990,"fact":2416776,"guests":781,"avgCheck":3094},{"date":"02.05.2026","plan":3632990,"fact":2389703,"guests":746,"avgCheck":3203},{"date":"03.05.2026","plan":2971310,"fact":1668201,"guests":583,"avgCheck":2861},{"date":"04.05.2026","plan":1588867,"fact":1227560,"guests":562,"avgCheck":2184},{"date":"05.05.2026","plan":1586867,"fact":1042351,"guests":474,"avgCheck":2199},{"date":"06.05.2026","plan":1836867,"fact":1556443,"guests":757,"avgCheck":2056},{"date":"07.05.2026","plan":1826867,"fact":1301550,"guests":625,"avgCheck":2082},{"date":"08.05.2026","plan":2111867,"fact":1763930,"guests":776,"avgCheck":2273},{"date":"09.05.2026","plan":2927990,"fact":2196470,"guests":589,"avgCheck":3729},{"date":"10.05.2026","plan":2693944,"fact":2163278,"guests":755,"avgCheck":2865},{"date":"11.05.2026","plan":35000,"fact":1133740,"guests":408,"avgCheck":2779},{"date":"12.05.2026","plan":35000,"fact":696525,"guests":321,"avgCheck":2170},{"date":"13.05.2026","plan":35000,"fact":865688,"guests":428,"avgCheck":2023},{"date":"14.05.2026","plan":35000,"fact":945035,"guests":414,"avgCheck":2283},{"date":"15.05.2026","plan":35000,"fact":1577425,"guests":691,"avgCheck":2283},{"date":"16.05.2026","plan":35000,"fact":2856603,"guests":871,"avgCheck":3280},{"date":"17.05.2026","plan":35000,"fact":2819026,"guests":970,"avgCheck":2906},{"date":"18.05.2026","plan":1269092,"fact":2365776,"guests":1104,"avgCheck":2143},{"date":"19.05.2026","plan":1094117,"fact":2320012,"guests":1068,"avgCheck":2172},{"date":"20.05.2026","plan":1194117,"fact":1095302,"guests":495,"avgCheck":2213},{"date":"21.05.2026","plan":1406393,"fact":1142495,"guests":497,"avgCheck":2299},{"date":"22.05.2026","plan":2120117,"fact":1611535,"guests":765,"avgCheck":2107},{"date":"23.05.2026","plan":2928240,"fact":2059257,"guests":607,"avgCheck":3393},{"date":"24.05.2026","plan":2310240,"fact":2973111,"guests":1028,"avgCheck":2892},{"date":"25.05.2026","plan":1347117,"fact":1814961,"guests":860,"avgCheck":2110},{"date":"26.05.2026","plan":1495117,"fact":1701247,"guests":799,"avgCheck":2129},{"date":"27.05.2026","plan":1864747,"fact":3148389,"guests":1518,"avgCheck":2074},{"date":"28.05.2026","plan":2060117,"fact":1199449,"guests":532,"avgCheck":2255},{"date":"29.05.2026","plan":2240110,"fact":1715104,"guests":790,"avgCheck":2171},{"date":"30.05.2026","plan":3030899,"fact":2051845,"guests":656,"avgCheck":3128},{"date":"31.05.2026","plan":2633899,"fact":1957126,"guests":653,"avgCheck":2997}]};
 </script>
 <script>
 SALES_HISTORY=[{"year":2024,"month":4,"plan":1677195,"fact":1854265,"guests":925,"depts":{"THERMAL":1211675,"HOTEL":213150,"KAFE":331948,"ANIM":600,"SPA":50440,"PROCH":14790},"deptGuests":{"THERMAL":884,"HOTEL":41,"KAFE":580}},{"year":2024,"month":5,"plan":2213500,"fact":1737511,"guests":675,"depts":{"THERMAL":1194035,"HOTEL":109800,"KAFE":300426,"ANIM":0,"SPA":64350,"PROCH":21500},"deptGuests":{"THERMAL":659,"HOTEL":16,"KAFE":458}},{"year":2024,"month":6,"plan":2498548,"fact":2463210,"guests":833,"depts":{"THERMAL":1433830,"HOTEL":301800,"KAFE":436930,"ANIM":146400,"SPA":67100,"PROCH":30300},"deptGuests":{"THERMAL":785,"HOTEL":48,"KAFE":703}},{"year":2024,"month":7,"plan":3445000,"fact":2999146,"guests":1410,"depts":{"THERMAL":1985940,"HOTEL":258950,"KAFE":621826,"ANIM":4000,"SPA":64880,"PROCH":22550},"deptGuests":{"THERMAL":1361,"HOTEL":49,"KAFE":927}},{"year":2024,"month":8,"plan":2955400,"fact":3147837,"guests":1552,"depts":{"THERMAL":2114566,"HOTEL":275200,"KAFE":635921,"ANIM":5300,"SPA":33100,"PROCH":40550},"deptGuests":{"THERMAL":1500,"HOTEL":52,"KAFE":927}},{"year":2024,"month":9,"plan":2529000,"fact":2142022,"guests":869,"depts":{"THERMAL":1478545,"HOTEL":178650,"KAFE":386427,"ANIM":0,"SPA":44500,"PROCH":17800},"deptGuests":{"THERMAL":840,"HOTEL":29,"KAFE":567}},{"year":2024,"month":10,"plan":1563500,"fact":1364121,"guests":613,"depts":{"THERMAL":857235,"HOTEL":126700,"KAFE":283736,"ANIM":2000,"SPA":46900,"PROCH":10000},"deptGuests":{"THERMAL":591,"HOTEL":22,"KAFE":451}},{"year":2024,"month":11,"plan":3046485,"fact":2847940,"guests":1339,"depts":{"THERMAL":1831719,"HOTEL":330450,"KAFE":530071,"ANIM":250,"SPA":74250,"PROCH":25450},"deptGuests":{"THERMAL":1284,"HOTEL":55,"KAFE":759}},{"year":2024,"month":12,"plan":2373750,"fact":2481155,"guests":955,"depts":{"THERMAL":1756950,"HOTEL":105500,"KAFE":413605,"ANIM":0,"SPA":127100,"PROCH":21650},"deptGuests":{"THERMAL":935,"HOTEL":20,"KAFE":671}},{"year":2025,"month":1,"plan":7510000,"fact":6977983,"guests":2017,"depts":{"THERMAL":5020000,"HOTEL":525850,"KAFE":758873,"ANIM":379600,"SPA":130210,"PROCH":82850},"deptGuests":{"THERMAL":1966,"HOTEL":51,"KAFE":763}},{"year":2025,"month":2,"plan":3783300,"fact":3764403,"guests":1256,"depts":{"THERMAL":2635925,"HOTEL":344220,"KAFE":594608,"ANIM":2500,"SPA":85300,"PROCH":43100},"deptGuests":{"THERMAL":1207,"HOTEL":49,"KAFE":717}},{"year":2025,"month":3,"plan":3376885,"fact":3187021,"guests":1023,"depts":{"THERMAL":2171060,"HOTEL":318840,"KAFE":494001,"ANIM":0,"SPA":137870,"PROCH":28700},"deptGuests":{"THERMAL":970,"HOTEL":53,"KAFE":656}},{"year":2025,"month":4,"plan":2138333,"fact":1637898,"guests":757,"depts":{"THERMAL":1055940,"HOTEL":139200,"KAFE":311118,"ANIM":0,"SPA":83490,"PROCH":18600},"deptGuests":{"THERMAL":727,"HOTEL":30,"KAFE":393}},{"year":2025,"month":5,"plan":1442337,"fact":2585422,"guests":869,"depts":{"THERMAL":1767065,"HOTEL":264480,"KAFE":421727,"ANIM":0,"SPA":67850,"PROCH":31950},"deptGuests":{"THERMAL":828,"HOTEL":41,"KAFE":464}},{"year":2025,"month":6,"plan":3352250,"fact":4810481,"guests":1635,"depts":{"THERMAL":3202665,"HOTEL":122440,"KAFE":1162876,"ANIM":193400,"SPA":57100,"PROCH":47550},"deptGuests":{"THERMAL":1612,"HOTEL":23,"KAFE":1185}},{"year":2025,"month":7,"plan":3277536,"fact":3106369,"guests":1499,"depts":{"THERMAL":2296225,"HOTEL":21620,"KAFE":664684,"ANIM":0,"SPA":82600,"PROCH":20740},"deptGuests":{"THERMAL":1495,"HOTEL":4,"KAFE":743}},{"year":2025,"month":8,"plan":3895604,"fact":3737597,"guests":1833,"depts":{"THERMAL":2674420,"HOTEL":204968,"KAFE":727979,"ANIM":3000,"SPA":63130,"PROCH":24250},"deptGuests":{"THERMAL":1805,"HOTEL":28,"KAFE":866}},{"year":2025,"month":9,"plan":1882320,"fact":1714740,"guests":2097,"depts":{"THERMAL":1026890,"HOTEL":37680,"KAFE":565430,"ANIM":550,"SPA":37950,"PROCH":19990},"deptGuests":{"THERMAL":2091,"HOTEL":6,"KAFE":628}},{"year":2025,"month":10,"plan":2025831,"fact":1214605,"guests":569,"depts":{"THERMAL":780765,"HOTEL":74700,"KAFE":253530,"ANIM":0,"SPA":63120,"PROCH":17440},"deptGuests":{"THERMAL":559,"HOTEL":10,"KAFE":280}},{"year":2025,"month":11,"plan":2769976,"fact":3006722,"guests":1423,"depts":{"THERMAL":1897320,"HOTEL":333180,"KAFE":602272,"ANIM":0,"SPA":95300,"PROCH":30300},"deptGuests":{"THERMAL":1372,"HOTEL":51,"KAFE":746}},{"year":2025,"month":12,"plan":1899913,"fact":1444990,"guests":670,"depts":{"THERMAL":908015,"HOTEL":120480,"KAFE":286795,"ANIM":0,"SPA":92400,"PROCH":15500},"deptGuests":{"THERMAL":639,"HOTEL":31,"KAFE":349}},{"year":2026,"month":1,"plan":7503394,"fact":6137803,"guests":1727,"depts":{"THERMAL":4426131,"HOTEL":377840,"KAFE":759272,"ANIM":290900,"SPA":152160,"PROCH":71650},"deptGuests":{"THERMAL":1689,"HOTEL":38,"KAFE":847}},{"year":2026,"month":2,"plan":2191091,"fact":2192517,"guests":790,"depts":{"THERMAL":1641285,"HOTEL":68560,"KAFE":392222,"ANIM":3000,"SPA":27000,"PROCH":24600},"deptGuests":{"THERMAL":776,"HOTEL":14,"KAFE":444}},{"year":2026,"month":3,"plan":2436764,"fact":2495395,"guests":862,"depts":{"THERMAL":1754955,"HOTEL":178010,"KAFE":432940,"ANIM":0,"SPA":40000,"PROCH":41740},"deptGuests":{"THERMAL":830,"HOTEL":32,"KAFE":498}},{"year":2026,"month":4,"plan":1429208,"fact":2244030,"guests":1064,"depts":{"THERMAL":1402940,"HOTEL":300869,"KAFE":464121,"ANIM":0,"SPA":43800,"PROCH":11750},"deptGuests":{"THERMAL":1009,"HOTEL":55,"KAFE":536}},{"year":2026,"month":5,"plan":50986881,"fact":55775913,"guests":22123,"depts":{"THERMAL":35864391,"HOTEL":4702032,"KAFE":12155935,"ANIM":144700,"SPA":1565159,"PROCH":569180},"deptGuests":{"THERMAL":21373,"HOTEL":750,"KAFE":15590}}];
+</script>
+<script>
+SALES_DAILY_HISTORY={"2023-01":[{"date":"01.01.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-02":[{"date":"01.02.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-03":[{"date":"01.03.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-04":[{"date":"01.04.2023","plan":0,"fact":2430959,"guests":1446,"depts":{"THERMAL":1920469,"HOTEL":0,"KAFE":481909,"ANIM":0,"SPA":0,"PROCH":5306},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":1446,"HOTEL":0,"KAFE":0}}],"2023-05":[{"date":"01.05.2023","plan":0,"fact":4409804,"guests":908,"depts":{"THERMAL":1348650,"HOTEL":182140,"KAFE":255412,"ANIM":0,"SPA":1836039,"PROCH":206545},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":908,"HOTEL":43,"KAFE":0}}],"2023-06":[{"date":"01.06.2023","plan":0,"fact":2426861,"guests":1478,"depts":{"THERMAL":1735040,"HOTEL":187780,"KAFE":452481,"ANIM":0,"SPA":26110,"PROCH":8600},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":1456,"HOTEL":42,"KAFE":0}}],"2023-07":[{"date":"01.07.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-08":[{"date":"01.08.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-09":[{"date":"01.09.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-10":[{"date":"01.10.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-11":[{"date":"01.11.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2023-12":[{"date":"01.12.2023","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2024-01":[{"date":"01.01.2024","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2024-02":[{"date":"01.02.2024","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2024-03":[{"date":"01.03.2024","plan":0,"fact":0,"guests":0,"depts":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":0,"PROCH":0},"deptGuests":{"THERMAL":0,"HOTEL":0,"KAFE":0}}],"2024-04":[{"date":"01.04.2024","plan":1677195,"fact":1854265,"guests":925,"depts":{"THERMAL":1211675,"HOTEL":213150,"KAFE":331948,"ANIM":600,"SPA":50440,"PROCH":14790},"deptPlans":{"THERMAL":1080000,"HOTEL":162800,"KAFE":330000,"ANIM":2050,"SPA":50000,"PROCH":52345},"deptGuests":{"THERMAL":884,"HOTEL":41,"KAFE":580}}],"2024-05":[{"date":"01.05.2024","plan":2213500,"fact":1737511,"guests":675,"depts":{"THERMAL":1194035,"HOTEL":109800,"KAFE":300426,"ANIM":0,"SPA":64350,"PROCH":21500},"deptPlans":{"THERMAL":1468500,"HOTEL":200000,"KAFE":408000,"ANIM":10000,"SPA":82000,"PROCH":45000},"deptGuests":{"THERMAL":659,"HOTEL":16,"KAFE":458}}],"2024-06":[{"date":"01.06.2024","plan":2498548,"fact":2463210,"guests":833,"depts":{"THERMAL":1433830,"HOTEL":301800,"KAFE":436930,"ANIM":146400,"SPA":67100,"PROCH":30300},"deptPlans":{"THERMAL":1500000,"HOTEL":300048,"KAFE":420000,"ANIM":146400,"SPA":67100,"PROCH":65000},"deptGuests":{"THERMAL":785,"HOTEL":48,"KAFE":703}}],"2024-07":[{"date":"01.07.2024","plan":3445000,"fact":2999146,"guests":1410,"depts":{"THERMAL":1985940,"HOTEL":258950,"KAFE":621826,"ANIM":4000,"SPA":64880,"PROCH":22550},"deptPlans":{"THERMAL":2550000,"HOTEL":210000,"KAFE":557000,"ANIM":5000,"SPA":70000,"PROCH":53000},"deptGuests":{"THERMAL":1361,"HOTEL":49,"KAFE":927}}],"2024-08":[{"date":"01.08.2024","plan":2955400,"fact":3147837,"guests":1552,"depts":{"THERMAL":2114566,"HOTEL":275200,"KAFE":635921,"ANIM":5300,"SPA":33100,"PROCH":40550},"deptPlans":{"THERMAL":2100000,"HOTEL":275000,"KAFE":487000,"ANIM":5300,"SPA":33100,"PROCH":55000},"deptGuests":{"THERMAL":1500,"HOTEL":52,"KAFE":927}}],"2024-09":[{"date":"01.09.2024","plan":2529000,"fact":2142022,"guests":869,"depts":{"THERMAL":1478545,"HOTEL":178650,"KAFE":386427,"ANIM":0,"SPA":44500,"PROCH":17800},"deptPlans":{"THERMAL":1800000,"HOTEL":200000,"KAFE":400000,"ANIM":5000,"SPA":59000,"PROCH":65000},"deptGuests":{"THERMAL":840,"HOTEL":29,"KAFE":567}}],"2024-10":[{"date":"01.10.2024","plan":1563500,"fact":1364121,"guests":613,"depts":{"THERMAL":857235,"HOTEL":126700,"KAFE":283736,"ANIM":2000,"SPA":46900,"PROCH":10000},"deptPlans":{"THERMAL":900000,"HOTEL":170000,"KAFE":385000,"ANIM":3500,"SPA":50000,"PROCH":55000},"deptGuests":{"THERMAL":591,"HOTEL":22,"KAFE":451}}],"2024-11":[{"date":"01.11.2024","plan":3046485,"fact":2847940,"guests":1339,"depts":{"THERMAL":1831719,"HOTEL":330450,"KAFE":530071,"ANIM":250,"SPA":74250,"PROCH":25450},"deptPlans":{"THERMAL":2000000,"HOTEL":330450,"KAFE":570000,"ANIM":1785,"SPA":74250,"PROCH":70000},"deptGuests":{"THERMAL":1284,"HOTEL":55,"KAFE":759}}],"2024-12":[{"date":"01.12.2024","plan":2373750,"fact":2481155,"guests":955,"depts":{"THERMAL":1756950,"HOTEL":105500,"KAFE":413605,"ANIM":0,"SPA":127100,"PROCH":21650},"deptPlans":{"THERMAL":1700000,"HOTEL":110000,"KAFE":415000,"ANIM":5000,"SPA":78750,"PROCH":65000},"deptGuests":{"THERMAL":935,"HOTEL":20,"KAFE":671}}],"2025-01":[{"date":"01.01.2025","plan":7510000,"fact":6977983,"guests":2017,"depts":{"THERMAL":5020000,"HOTEL":525850,"KAFE":758873,"ANIM":379600,"SPA":130210,"PROCH":82850},"deptPlans":{"THERMAL":5500000,"HOTEL":500000,"KAFE":880000,"ANIM":340000,"SPA":130000,"PROCH":160000},"deptGuests":{"THERMAL":1966,"HOTEL":51,"KAFE":763}}],"2025-02":[{"date":"01.02.2025","plan":3783300,"fact":3764403,"guests":1256,"depts":{"THERMAL":2635925,"HOTEL":344220,"KAFE":594608,"ANIM":2500,"SPA":85300,"PROCH":43100},"deptPlans":{"THERMAL":2700000,"HOTEL":265000,"KAFE":620000,"ANIM":3000,"SPA":85300,"PROCH":110000},"deptGuests":{"THERMAL":1207,"HOTEL":49,"KAFE":717}}],"2025-03":[{"date":"01.03.2025","plan":3376885,"fact":3187021,"guests":1023,"depts":{"THERMAL":2171060,"HOTEL":318840,"KAFE":494001,"ANIM":0,"SPA":137870,"PROCH":28700},"deptPlans":{"THERMAL":2438710,"HOTEL":243871,"KAFE":515530,"ANIM":2000,"SPA":85000,"PROCH":91774},"deptGuests":{"THERMAL":970,"HOTEL":53,"KAFE":656}}],"2025-04":[{"date":"01.04.2025","plan":2138333,"fact":1637898,"guests":757,"depts":{"THERMAL":1055940,"HOTEL":139200,"KAFE":311118,"ANIM":0,"SPA":83490,"PROCH":18600},"deptPlans":{"THERMAL":1233333,"HOTEL":206333,"KAFE":555000,"ANIM":3000,"SPA":69000,"PROCH":71667},"deptGuests":{"THERMAL":727,"HOTEL":30,"KAFE":393}}],"2025-05":[{"date":"01.05.2025","plan":1442337,"fact":2585422,"guests":869,"depts":{"THERMAL":1767065,"HOTEL":264480,"KAFE":421727,"ANIM":0,"SPA":67850,"PROCH":31950},"deptPlans":{"THERMAL":941935,"HOTEL":72258,"KAFE":310144,"ANIM":3000,"SPA":52000,"PROCH":63000},"deptGuests":{"THERMAL":828,"HOTEL":41,"KAFE":464}}],"2025-06":[{"date":"01.06.2025","plan":3352250,"fact":4810481,"guests":1635,"depts":{"THERMAL":3202665,"HOTEL":122440,"KAFE":1162876,"ANIM":193400,"SPA":57100,"PROCH":47550},"deptPlans":{"THERMAL":2133333,"HOTEL":250000,"KAFE":607917,"ANIM":220000,"SPA":72000,"PROCH":69000},"deptGuests":{"THERMAL":1612,"HOTEL":23,"KAFE":1185}}],"2025-07":[{"date":"01.07.2025","plan":3277536,"fact":3106369,"guests":1499,"depts":{"THERMAL":2296225,"HOTEL":21620,"KAFE":664684,"ANIM":0,"SPA":82600,"PROCH":20740},"deptPlans":{"THERMAL":2164516,"HOTEL":240323,"KAFE":700697,"ANIM":3000,"SPA":83000,"PROCH":86000},"deptGuests":{"THERMAL":1495,"HOTEL":4,"KAFE":743}}],"2025-08":[{"date":"01.08.2025","plan":3895604,"fact":3737597,"guests":1833,"depts":{"THERMAL":2674420,"HOTEL":204968,"KAFE":727979,"ANIM":3000,"SPA":63130,"PROCH":24250},"deptPlans":{"THERMAL":2851613,"HOTEL":280000,"KAFE":599991,"ANIM":3000,"SPA":72000,"PROCH":89000},"deptGuests":{"THERMAL":1805,"HOTEL":28,"KAFE":866}}],"2025-09":[{"date":"01.09.2025","plan":1882320,"fact":1714740,"guests":2097,"depts":{"THERMAL":1026890,"HOTEL":37680,"KAFE":565430,"ANIM":550,"SPA":37950,"PROCH":19990},"deptPlans":{"THERMAL":1026890,"HOTEL":200000,"KAFE":551240,"ANIM":20000,"SPA":37950,"PROCH":46240},"deptGuests":{"THERMAL":2091,"HOTEL":6,"KAFE":628}}],"2025-10":[{"date":"01.10.2025","plan":2025831,"fact":1214605,"guests":569,"depts":{"THERMAL":780765,"HOTEL":74700,"KAFE":253530,"ANIM":0,"SPA":63120,"PROCH":17440},"deptPlans":{"THERMAL":1250000,"HOTEL":196871,"KAFE":438305,"ANIM":2000,"SPA":65500,"PROCH":73155},"deptGuests":{"THERMAL":559,"HOTEL":10,"KAFE":280}}],"2025-11":[{"date":"01.11.2025","plan":2769976,"fact":3006722,"guests":1423,"depts":{"THERMAL":1897320,"HOTEL":333180,"KAFE":602272,"ANIM":0,"SPA":95300,"PROCH":30300},"deptPlans":{"THERMAL":1800000,"HOTEL":143333,"KAFE":530911,"ANIM":150000,"SPA":80000,"PROCH":65732},"deptGuests":{"THERMAL":1372,"HOTEL":51,"KAFE":746}}],"2025-12":[{"date":"01.12.2025","plan":1899913,"fact":1444990,"guests":670,"depts":{"THERMAL":908015,"HOTEL":120480,"KAFE":286795,"ANIM":0,"SPA":92400,"PROCH":15500},"deptPlans":{"THERMAL":1172581,"HOTEL":190000,"KAFE":377097,"ANIM":3000,"SPA":86235,"PROCH":71000},"deptGuests":{"THERMAL":639,"HOTEL":31,"KAFE":349}}],"2026-01":[{"date":"01.01.2026","plan":7503394,"fact":6137803,"guests":1727,"depts":{"THERMAL":4426131,"HOTEL":377840,"KAFE":759272,"ANIM":290900,"SPA":152160,"PROCH":71650},"deptPlans":{"THERMAL":5500000,"HOTEL":538710,"KAFE":880684,"ANIM":294000,"SPA":140000,"PROCH":150000},"deptGuests":{"THERMAL":1689,"HOTEL":38,"KAFE":847}}],"2026-02":[{"date":"01.02.2026","plan":2191091,"fact":2192517,"guests":790,"depts":{"THERMAL":1641285,"HOTEL":68560,"KAFE":392222,"ANIM":3000,"SPA":27000,"PROCH":24600},"deptPlans":{"THERMAL":1641285,"HOTEL":27549,"KAFE":420776,"ANIM":3000,"SPA":27000,"PROCH":71481},"deptGuests":{"THERMAL":776,"HOTEL":14,"KAFE":444}}],"2026-03":[{"date":"01.03.2026","plan":2436764,"fact":2495395,"guests":862,"depts":{"THERMAL":1754955,"HOTEL":178010,"KAFE":432940,"ANIM":0,"SPA":40000,"PROCH":41740},"deptPlans":{"THERMAL":1538588,"HOTEL":234516,"KAFE":497993,"ANIM":3000,"SPA":60000,"PROCH":102667},"deptGuests":{"THERMAL":830,"HOTEL":32,"KAFE":498}}],"2026-04":[{"date":"01.04.2026","plan":1429208,"fact":2244030,"guests":1064,"depts":{"THERMAL":1402940,"HOTEL":300869,"KAFE":464121,"ANIM":0,"SPA":43800,"PROCH":11750},"deptPlans":{"THERMAL":625602,"HOTEL":238333,"KAFE":462511,"ANIM":1000,"SPA":65279,"PROCH":36483},"deptGuests":{"THERMAL":1009,"HOTEL":55,"KAFE":536}}],"2026-05":[{"date":"01.05.2026","plan":2569990,"fact":2416776,"guests":781,"depts":{"THERMAL":1629036,"HOTEL":332200,"KAFE":333680,"ANIM":0,"SPA":82010,"PROCH":11650},"deptPlans":{"THERMAL":1654542,"HOTEL":305250,"KAFE":480932,"ANIM":5000,"SPA":56049,"PROCH":68217},"deptGuests":{"THERMAL":728,"HOTEL":53,"KAFE":434}},{"date":"02.05.2026","plan":3632990,"fact":2389703,"guests":746,"depts":{"THERMAL":1583395,"HOTEL":304916,"KAFE":390752,"ANIM":0,"SPA":42890,"PROCH":19500},"deptPlans":{"THERMAL":2714542,"HOTEL":345250,"KAFE":450932,"ANIM":3000,"SPA":56049,"PROCH":63217},"deptGuests":{"THERMAL":705,"HOTEL":41,"KAFE":489}},{"date":"03.05.2026","plan":2971310,"fact":1668201,"guests":583,"depts":{"THERMAL":1088105,"HOTEL":156663,"KAFE":308003,"ANIM":0,"SPA":80480,"PROCH":12050},"deptPlans":{"THERMAL":2184542,"HOTEL":223570,"KAFE":445932,"ANIM":3000,"SPA":56049,"PROCH":58217},"deptGuests":{"THERMAL":554,"HOTEL":29,"KAFE":389}},{"date":"04.05.2026","plan":1588867,"fact":1227560,"guests":562,"depts":{"THERMAL":748480,"HOTEL":177760,"KAFE":229970,"ANIM":0,"SPA":26800,"PROCH":20850},"deptPlans":{"THERMAL":984542,"HOTEL":155250,"KAFE":345809,"ANIM":2000,"SPA":56049,"PROCH":45217},"deptGuests":{"THERMAL":531,"HOTEL":31,"KAFE":321}},{"date":"05.05.2026","plan":1586867,"fact":1042351,"guests":474,"depts":{"THERMAL":649800,"HOTEL":68271,"KAFE":241840,"ANIM":0,"SPA":58000,"PROCH":7490},"deptPlans":{"THERMAL":984542,"HOTEL":155250,"KAFE":345809,"ANIM":2000,"SPA":56049,"PROCH":43217},"deptGuests":{"THERMAL":462,"HOTEL":12,"KAFE":325}},{"date":"06.05.2026","plan":1836867,"fact":1556443,"guests":757,"depts":{"THERMAL":1029685,"HOTEL":81848,"KAFE":340860,"ANIM":500,"SPA":66700,"PROCH":13700},"deptPlans":{"THERMAL":1234542,"HOTEL":155250,"KAFE":345809,"ANIM":2000,"SPA":56049,"PROCH":43217},"deptGuests":{"THERMAL":745,"HOTEL":12,"KAFE":453}},{"date":"07.05.2026","plan":1826867,"fact":1301550,"guests":625,"depts":{"THERMAL":844420,"HOTEL":113210,"KAFE":289970,"ANIM":500,"SPA":23000,"PROCH":10250},"deptPlans":{"THERMAL":1224542,"HOTEL":155250,"KAFE":345809,"ANIM":2000,"SPA":56049,"PROCH":43217},"deptGuests":{"THERMAL":606,"HOTEL":19,"KAFE":407}},{"date":"08.05.2026","plan":2111867,"fact":1763930,"guests":776,"depts":{"THERMAL":1063670,"HOTEL":216140,"KAFE":407420,"ANIM":500,"SPA":30200,"PROCH":22250},"deptPlans":{"THERMAL":1334542,"HOTEL":300250,"KAFE":345809,"ANIM":2000,"SPA":56049,"PROCH":73217},"deptGuests":{"THERMAL":746,"HOTEL":30,"KAFE":504}},{"date":"09.05.2026","plan":2927990,"fact":2196470,"guests":589,"depts":{"THERMAL":1225355,"HOTEL":435080,"KAFE":396535,"ANIM":0,"SPA":95620,"PROCH":13980},"deptPlans":{"THERMAL":1984542,"HOTEL":335250,"KAFE":480932,"ANIM":3000,"SPA":56049,"PROCH":68217},"deptGuests":{"THERMAL":534,"HOTEL":55,"KAFE":458}},{"date":"10.05.2026","plan":2693944,"fact":2163278,"guests":755,"depts":{"THERMAL":1464140,"HOTEL":177622,"KAFE":370466,"ANIM":500,"SPA":90900,"PROCH":21600},"deptPlans":{"THERMAL":1684542,"HOTEL":295250,"KAFE":476223,"ANIM":118663,"SPA":56049,"PROCH":63217},"deptGuests":{"THERMAL":733,"HOTEL":22,"KAFE":460}},{"date":"11.05.2026","plan":35000,"fact":1133740,"guests":408,"depts":{"THERMAL":849560,"HOTEL":0,"KAFE":238030,"ANIM":0,"SPA":20300,"PROCH":9500},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":407,"HOTEL":1,"KAFE":281}},{"date":"12.05.2026","plan":35000,"fact":696525,"guests":321,"depts":{"THERMAL":438780,"HOTEL":58745,"KAFE":145600,"ANIM":3000,"SPA":33600,"PROCH":9450},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":310,"HOTEL":11,"KAFE":211}},{"date":"13.05.2026","plan":35000,"fact":865688,"guests":428,"depts":{"THERMAL":581100,"HOTEL":15858,"KAFE":165960,"ANIM":3000,"SPA":60770,"PROCH":21950},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":425,"HOTEL":3,"KAFE":244}},{"date":"14.05.2026","plan":35000,"fact":945035,"guests":414,"depts":{"THERMAL":528420,"HOTEL":162995,"KAFE":203420,"ANIM":1000,"SPA":27400,"PROCH":7100},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":391,"HOTEL":23,"KAFE":277}},{"date":"15.05.2026","plan":35000,"fact":1577425,"guests":691,"depts":{"THERMAL":971235,"HOTEL":65180,"KAFE":413290,"ANIM":2000,"SPA":67770,"PROCH":33900},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":682,"HOTEL":9,"KAFE":561}},{"date":"16.05.2026","plan":35000,"fact":2856603,"guests":871,"depts":{"THERMAL":1714915,"HOTEL":313900,"KAFE":669868,"ANIM":120200,"SPA":3780,"PROCH":23190},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":814,"HOTEL":57,"KAFE":842}},{"date":"17.05.2026","plan":35000,"fact":2819026,"guests":970,"depts":{"THERMAL":1920245,"HOTEL":110246,"KAFE":716005,"ANIM":1000,"SPA":33790,"PROCH":27140},"deptPlans":{"THERMAL":0,"HOTEL":0,"KAFE":0,"ANIM":0,"SPA":35000,"PROCH":0},"deptGuests":{"THERMAL":951,"HOTEL":19,"KAFE":907}},{"date":"18.05.2026","plan":1269092,"fact":2365776,"guests":1104,"depts":{"THERMAL":1562345,"HOTEL":69551,"KAFE":620430,"ANIM":1000,"SPA":54200,"PROCH":30800},"deptPlans":{"THERMAL":634542,"HOTEL":152250,"KAFE":372034,"ANIM":2000,"SPA":63049,"PROCH":45217},"deptGuests":{"THERMAL":1092,"HOTEL":12,"KAFE":883}},{"date":"19.05.2026","plan":1094117,"fact":2320012,"guests":1068,"depts":{"THERMAL":1513790,"HOTEL":108265,"KAFE":599517,"ANIM":0,"SPA":67740,"PROCH":16100},"deptPlans":{"THERMAL":484542,"HOTEL":152250,"KAFE":349059,"ANIM":2000,"SPA":63049,"PROCH":43217},"deptGuests":{"THERMAL":1050,"HOTEL":18,"KAFE":843}},{"date":"20.05.2026","plan":1194117,"fact":1095302,"guests":495,"depts":{"THERMAL":663475,"HOTEL":140752,"KAFE":237035,"ANIM":0,"SPA":31100,"PROCH":6440},"deptPlans":{"THERMAL":584542,"HOTEL":152250,"KAFE":349059,"ANIM":2000,"SPA":63049,"PROCH":43217},"deptGuests":{"THERMAL":474,"HOTEL":21,"KAFE":329}},{"date":"21.05.2026","plan":1406393,"fact":1142495,"guests":497,"depts":{"THERMAL":667270,"HOTEL":152645,"KAFE":240280,"ANIM":0,"SPA":52200,"PROCH":12550},"deptPlans":{"THERMAL":784138,"HOTEL":164930,"KAFE":349059,"ANIM":2000,"SPA":63049,"PROCH":43217},"deptGuests":{"THERMAL":472,"HOTEL":25,"KAFE":304}},{"date":"22.05.2026","plan":2120117,"fact":1611535,"guests":765,"depts":{"THERMAL":1063215,"HOTEL":71970,"KAFE":389120,"ANIM":1000,"SPA":47700,"PROCH":20430},"deptPlans":{"THERMAL":1334542,"HOTEL":305250,"KAFE":349059,"ANIM":2000,"SPA":56049,"PROCH":73217},"deptGuests":{"THERMAL":752,"HOTEL":13,"KAFE":476}},{"date":"23.05.2026","plan":2928240,"fact":2059257,"guests":607,"depts":{"THERMAL":1250874,"HOTEL":279530,"KAFE":436853,"ANIM":2500,"SPA":55450,"PROCH":18300},"deptPlans":{"THERMAL":1984542,"HOTEL":315250,"KAFE":474182,"ANIM":15000,"SPA":66049,"PROCH":73217},"deptGuests":{"THERMAL":565,"HOTEL":42,"KAFE":499}},{"date":"24.05.2026","plan":2310240,"fact":2973111,"guests":1028,"depts":{"THERMAL":1986606,"HOTEL":175429,"KAFE":711276,"ANIM":0,"SPA":41800,"PROCH":35650},"deptPlans":{"THERMAL":1414542,"HOTEL":285250,"KAFE":474182,"ANIM":2000,"SPA":66049,"PROCH":68217},"deptGuests":{"THERMAL":998,"HOTEL":30,"KAFE":812}},{"date":"25.05.2026","plan":1347117,"fact":1814961,"guests":860,"depts":{"THERMAL":1208440,"HOTEL":71831,"KAFE":469540,"ANIM":4000,"SPA":26300,"PROCH":22100},"deptPlans":{"THERMAL":734542,"HOTEL":155250,"KAFE":349059,"ANIM":2000,"SPA":61049,"PROCH":45217},"deptGuests":{"THERMAL":847,"HOTEL":13,"KAFE":641}},{"date":"26.05.2026","plan":1495117,"fact":1701247,"guests":799,"depts":{"THERMAL":1098405,"HOTEL":65462,"KAFE":473230,"ANIM":0,"SPA":30400,"PROCH":13300},"deptPlans":{"THERMAL":884542,"HOTEL":155250,"KAFE":349059,"ANIM":2000,"SPA":61049,"PROCH":43217},"deptGuests":{"THERMAL":785,"HOTEL":14,"KAFE":607}},{"date":"27.05.2026","plan":1864747,"fact":3148389,"guests":1518,"depts":{"THERMAL":2168765,"HOTEL":131024,"KAFE":737830,"ANIM":3000,"SPA":41100,"PROCH":46570},"deptPlans":{"THERMAL":1240946,"HOTEL":155250,"KAFE":362285,"ANIM":2000,"SPA":61049,"PROCH":43217},"deptGuests":{"THERMAL":1496,"HOTEL":22,"KAFE":964}},{"date":"28.05.2026","plan":2060117,"fact":1199449,"guests":532,"depts":{"THERMAL":700060,"HOTEL":148434,"KAFE":278705,"ANIM":0,"SPA":55500,"PROCH":8800},"deptPlans":{"THERMAL":1434542,"HOTEL":155250,"KAFE":364059,"ANIM":2000,"SPA":61049,"PROCH":43217},"deptGuests":{"THERMAL":506,"HOTEL":26,"KAFE":341}},{"date":"29.05.2026","plan":2240110,"fact":1715104,"guests":790,"depts":{"THERMAL":1042905,"HOTEL":181330,"KAFE":347320,"ANIM":0,"SPA":101509,"PROCH":16890},"deptPlans":{"THERMAL":1429542,"HOTEL":305250,"KAFE":369052,"ANIM":2000,"SPA":61049,"PROCH":73217},"deptGuests":{"THERMAL":752,"HOTEL":38,"KAFE":391}},{"date":"30.05.2026","plan":3030899,"fact":2051845,"guests":656,"depts":{"THERMAL":1384985,"HOTEL":174180,"KAFE":388320,"ANIM":0,"SPA":64150,"PROCH":20660},"deptPlans":{"THERMAL":1984542,"HOTEL":335250,"KAFE":467141,"ANIM":134700,"SPA":36049,"PROCH":73217},"deptGuests":{"THERMAL":630,"HOTEL":26,"KAFE":482}},{"date":"31.05.2026","plan":2633899,"fact":1957126,"guests":653,"depts":{"THERMAL":1222915,"HOTEL":140995,"KAFE":364810,"ANIM":1000,"SPA":52000,"PROCH":15040},"deptPlans":{"THERMAL":1584542,"HOTEL":285250,"KAFE":474178,"ANIM":15000,"SPA":71453,"PROCH":203476},"deptGuests":{"THERMAL":630,"HOTEL":23,"KAFE":455}}]};
 </script>
 <script>var _sEl=document.getElementById('salesUpdatedDate');if(_sEl)_sEl.textContent='01.06.2026';var _sLb=document.getElementById('salesUpdatedLabel');if(_sLb&&_sEl&&_sEl.textContent)_sLb.style.display='';</script>
 
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011308" data-report="sales"></script>
+<script src="chat-widget.js?v=202606011329" data-report="sales"></script>
 </body>
 </html>
