@@ -374,8 +374,8 @@ function regFactSum(r){return parseNum(getField(r,['Сумма факт','Сум
 function regRemainder(r){return parseNum(getField(r,['Остаток']))}
 function regPeriod(r){return getField(r,['Период'])}
 function regKZ(r){return(getField(r,['КЗ'])||'').toLowerCase().trim()}
-function isEssential(art){if(!art)return false;var a=String(art).trim();for(var i=0;i<ESS_ART.length;i++){if(a===ESS_ART[i]||a.indexOf(ESS_ART[i]+' ')===0||a.indexOf(ESS_ART[i])===0)return true}return false}
-function matchArticle(r,list){var a=String(r['Статья']||'').trim();for(var i=0;i<list.length;i++){if(a===list[i]||a.indexOf(list[i]+' ')===0||a.indexOf(list[i])===0)return true}return false}
+function isEssential(art){if(!art)return false;var a=String(art).trim();for(var i=0;i<ESS_ART.length;i++){if(a===ESS_ART[i]||a.indexOf(ESS_ART[i]+' ')===0)return true}return false}
+function matchArticle(r,list){var a=String(r['Статья']||'').trim();for(var i=0;i<list.length;i++){if(a===list[i]||a.indexOf(list[i]+' ')===0)return true}return false}
 function artName(r){return String(r['Статья']||'').trim()}
 
 var expandSt={};
@@ -644,7 +644,7 @@ function toggleDrill(id){document.querySelectorAll('[data-drill="'+id+'"]').forE
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011254" data-report="finance"></script>
+<script src="chat-widget.js?v=202606011308" data-report="finance"></script>
 </body>
 </html>
 
@@ -699,7 +699,7 @@ function toggleDrill(id){document.querySelectorAll('[data-drill="'+id+'"]').forE
 <script>_FD_ALL.uvildy={};</script>
 <script>_FD_ALL.kurgan={};</script>
 <script>
-/* auto-start 01.06.2026 12:54 */
+/* auto-start 01.06.2026 13:07 */
 var _t=setInterval(function(){
   if(typeof buildDashboard==='function'&&typeof LOC_DATA!=='undefined'){
     clearInterval(_t);
@@ -727,7 +727,7 @@ setTimeout(function(){clearInterval(_t);},8000);
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011254" data-report="finance"></script>
+<script src="chat-widget.js?v=202606011308" data-report="finance"></script>
 </body>
                         </html>
                     
