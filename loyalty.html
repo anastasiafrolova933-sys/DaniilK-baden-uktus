@@ -6,19 +6,20 @@
 <title>Baden Loyalty — Дашборд</title>
 <style>
   :root {
-    --bg: #0f0f1a;
-    --surface: #1a1a2e;
-    --surface2: #16213e;
-    --accent: #00b4d8;
-    --accent2: #0077b6;
-    --accent3: #48cae4;
-    --text: #e0e0e0;
-    --text2: #a0a0b0;
-    --border: #2a2a4a;
-    --green: #2ecc71;
-    --yellow: #f1c40f;
-    --red: #e74c3c;
-    --radius: 12px;
+    /* Baden Uktus — премиум-минимализм (тёплый чёрный + золото) */
+    --bg: #0c0c0c;
+    --surface: #161412;
+    --surface2: #14110e;
+    --accent: #c8a97e;
+    --accent2: #8a7350;
+    --accent3: #d9bf94;
+    --text: #f0ede8;
+    --text2: rgba(240,237,232,.55);
+    --border: rgba(255,255,255,.08);
+    --green: #6db580;
+    --yellow: #d9a063;
+    --red: #d97373;
+    --radius: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -445,6 +446,7 @@
     <div class="tabs">
       <div class="tab active" onclick="showTab('guests')">👥 Гости</div>
       <div class="tab" onclick="showTab('visits')">🎫 Визиты</div>
+      <div class="tab" onclick="showTab('top')">🏆 Топ-30</div>
       <div class="tab" onclick="showTab('surveys')">📋 Опросы</div>
       <div class="tab" onclick="showTab('analytics')">📊 Аналитика</div>
       <div class="tab" onclick="showTab('reviews')">💬 Отзывы</div>
@@ -503,6 +505,29 @@
       <div class="pagination" id="visits-pages"></div>
     </div>
 
+    <!-- Top guests Panel -->
+    <div class="panel" id="panel-top">
+      <div class="toolbar">
+        <span style="font-size:13px;color:var(--text2)">Топ-30 самых частых гостей по количеству визитов.</span>
+        <span class="count-badge" id="top-count">0 гостей</span>
+      </div>
+      <div class="table-wrap">
+        <table id="top-table">
+          <thead><tr>
+            <th style="width:50px">№</th>
+            <th>Имя</th>
+            <th>Телефон</th>
+            <th>Город</th>
+            <th>Визитов</th>
+            <th>Первый визит</th>
+            <th>Последний визит</th>
+            <th>Дней с регистрации</th>
+          </tr></thead>
+          <tbody id="top-body"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Surveys Panel -->
     <div class="panel" id="panel-surveys">
       <div class="toolbar">
@@ -555,7 +580,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '01.06.2026 19:32',
+  updatedAt: '01.06.2026 20:06',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -909,9 +934,71 @@ function buildMonthFilter(type, id, colIdx) {
 function showTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  const tabs = ['guests','visits','surveys','analytics','reviews'];
-  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  const tabs = ['guests','visits','top','surveys','analytics','reviews'];
+  const idx = tabs.indexOf(name);
+  if (idx >= 0) document.querySelectorAll('.tab')[idx].classList.add('active');
   document.getElementById('panel-'+name).classList.add('active');
+  if (name === 'top') renderTop();
+}
+
+// ── Top-30 гостей по количеству визитов ───────────────────────────────────────
+function renderTop() {
+  const tbody = document.getElementById('top-body');
+  if (!data.visits || !data.visits.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="no-data">Нет данных о визитах</td></tr>';
+    document.getElementById('top-count').textContent = '0 гостей';
+    return;
+  }
+  const norm = p => String(p||'').replace(/\D/g,'');
+  const agg = {};
+  for (const v of data.visits) {
+    const phone = norm(v[3]);
+    if (!phone) continue;
+    const date = (v[4]||'').slice(0,10);
+    if (!agg[phone]) agg[phone] = { phone, name: v[2]||'', count:0, first:date, last:date };
+    agg[phone].count++;
+    if (!agg[phone].name && v[2]) agg[phone].name = v[2];
+    if (date && (!agg[phone].first || date < agg[phone].first)) agg[phone].first = date;
+    if (date && (!agg[phone].last  || date > agg[phone].last))  agg[phone].last  = date;
+  }
+  const guestByPhone = {};
+  for (const g of (data.guests||[])) {
+    const p = norm(g[3]);
+    if (p) guestByPhone[p] = g;
+  }
+  const list = Object.values(agg).sort((a,b) => b.count - a.count || (b.last||'').localeCompare(a.last||''));
+  const top = list.slice(0, 30);
+  document.getElementById('top-count').textContent = list.length + ' гостей в базе · показано топ-' + top.length;
+  const today = new Date();
+  const fmtDate = s => s ? s.split('-').reverse().join('.') : '—';
+  const daysFrom = s => {
+    if (!s) return '—';
+    const d = new Date(s);
+    if (isNaN(d)) return '—';
+    return Math.max(0, Math.round((today - d) / 86400000));
+  };
+  const phoneFmt = p => {
+    if (!p) return '—';
+    const s = String(p);
+    if (s.length === 11) return `+${s[0]} (${s.slice(1,4)}) ${s.slice(4,7)}-${s.slice(7,9)}-${s.slice(9,11)}`;
+    return p;
+  };
+  tbody.innerHTML = top.map((g, i) => {
+    const guest = guestByPhone[g.phone];
+    const city = guest && guest[4] ? esc(guest[4]) : '—';
+    const regDate = guest && guest[7] ? guest[7].slice(0,10) : '';
+    const medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1);
+    return `<tr>
+      <td><strong>${medal}</strong></td>
+      <td><strong>${esc(g.name||'—')}</strong></td>
+      <td>${phoneFmt(g.phone)}</td>
+      <td>${city}</td>
+      <td><strong style="color:var(--accent)">${g.count}</strong></td>
+      <td>${fmtDate(g.first)}</td>
+      <td>${fmtDate(g.last)}</td>
+      <td>${regDate ? daysFrom(regDate) : '—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── Sort ──────────────────────────────────────────────────────────────────────
@@ -1236,7 +1323,8 @@ function renderPagedReviews(reviews) {
     </div>`;
   }).join('');
 
-  document.getElementById('reviews-pages').innerHTML = buildPagination(page, total, p => {
+  document.getElementById('reviews-pages').innerHTML = buildPagination(page, total);
+  attachPagination('reviews-pages', p => {
     pageState.reviews = p;
     const q = document.querySelector('#panel-reviews .search-box').value.toLowerCase();
     const allReviews = data.surveys.filter(r => {
@@ -1257,7 +1345,8 @@ function renderPaged(type, filtered, rowFn, bodyId, pagesId) {
     ? slice.map(rowFn).join('')
     : `<tr><td colspan="20" class="no-data">Нет данных</td></tr>`;
 
-  document.getElementById(pagesId).innerHTML = buildPagination(page, total, p => {
+  document.getElementById(pagesId).innerHTML = buildPagination(page, total);
+  attachPagination(pagesId, p => {
     pageState[type] = p;
     if (type==='guests') filterGuests();
     if (type==='visits') filterVisits();
@@ -1265,11 +1354,13 @@ function renderPaged(type, filtered, rowFn, bodyId, pagesId) {
   });
 }
 
-function buildPagination(current, total, onClick) {
+// Возвращает HTML кнопок без inline-onclick (closures в строку ломали обработчик).
+// Вызывающий после вставки HTML должен запустить attachPagination().
+function buildPagination(current, total) {
   if (total <= 1) return '';
   let html = '';
-  const show = p => `<button class="page-btn ${p===current?'active':''}" onclick="(${onClick.toString()})(${p})">${p}</button>`;
-  html += `<button class="page-btn" ${current<=1?'disabled':''} onclick="(${onClick.toString()})(${current-1})">‹</button>`;
+  const show = p => `<button class="page-btn ${p===current?'active':''}" data-page="${p}">${p}</button>`;
+  html += `<button class="page-btn" ${current<=1?'disabled':''} data-page="${current-1}">‹</button>`;
   if (total <= 7) {
     for (let p=1; p<=total; p++) html += show(p);
   } else {
@@ -1279,8 +1370,18 @@ function buildPagination(current, total, onClick) {
     if (current < total-2) html += '<span style="color:var(--text2);padding:0 4px">…</span>';
     html += show(total);
   }
-  html += `<button class="page-btn" ${current>=total?'disabled':''} onclick="(${onClick.toString()})(${current+1})">›</button>`;
+  html += `<button class="page-btn" ${current>=total?'disabled':''} data-page="${current+1}">›</button>`;
   return html;
+}
+
+// Программно вешает обработчик клика на кнопки пагинации внутри контейнера.
+function attachPagination(containerId, onClick) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.querySelectorAll('button.page-btn[data-page]').forEach(b => {
+    if (b.disabled) return;
+    b.addEventListener('click', () => onClick(+b.dataset.page));
+  });
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -1321,6 +1422,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606011932" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202606012006" data-report="loyalty"></script>
 </body>
 </html>
