@@ -287,6 +287,61 @@
 </head>
 <body>
 
+<!-- Splash intro (logo water animation) -->
+<div id="splash-intro" aria-hidden="true">
+  <video id="splash-video" muted playsinline preload="auto" disablepictureinpicture>
+    <source src="logo-intro.mp4" type="video/mp4">
+  </video>
+  <div class="splash-skip">нажмите, чтобы пропустить</div>
+</div>
+<style>
+  #splash-intro {
+    position: fixed; inset: 0; z-index: 99999;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: opacity .9s ease;
+  }
+  #splash-intro video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    background: #000;
+  }
+  #splash-intro .splash-skip {
+    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    color: rgba(240,237,232,0.35);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    user-select: none;
+    opacity: 0; animation: splashSkipFade 1.6s ease 1.5s forwards;
+  }
+  @keyframes splashSkipFade { to { opacity: 1; } }
+  #splash-intro.hide { opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { #splash-intro { display: none; } }
+</style>
+<script>
+(function(){
+  var splash = document.getElementById('splash-intro');
+  if(!splash) return;
+  if(sessionStorage.getItem('splashShown') === '1'){ splash.remove(); return; }
+  var vid = document.getElementById('splash-video');
+  var done = false;
+  function finish(){
+    if(done) return; done = true;
+    sessionStorage.setItem('splashShown','1');
+    splash.classList.add('hide');
+    setTimeout(function(){ if(splash.parentNode) splash.parentNode.removeChild(splash); }, 950);
+  }
+  vid.addEventListener('ended', finish);
+  vid.addEventListener('error', finish);
+  splash.addEventListener('click', finish);
+  // Hard cap on safety: 8 seconds
+  setTimeout(finish, 8000);
+  var p = vid.play();
+  if(p && typeof p.catch === 'function'){ p.catch(finish); }
+})();
+</script>
+
 <!-- Auth -->
 <div id="auth-overlay">
   <div class="auth-box">
