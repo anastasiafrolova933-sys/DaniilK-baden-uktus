@@ -1122,12 +1122,8 @@
 <!-- ── 3D scene v4: knowledge-graph + bloom + energy pulses + parallax + dust ── -->
 <script type="module">
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
 
-(function init3D() {
+(async function init3D() {
   var canvas = document.getElementById('webgl-bg');
   if (!canvas || !window.WebGLRenderingContext) return;
 
@@ -1293,20 +1289,27 @@ import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
   var halo = new THREE.Mesh(new THREE.SphereGeometry(0.62, 32, 32), haloMat);
   scene.add(halo);
 
-  // ---------- Post-processing: Bloom ----------
+  // ---------- Post-processing: Bloom (dynamic, fail-safe) ----------
   var composer = null;
   if (!isMobile) {
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    var bloom = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.85,   // strength
-      0.85,   // radius
-      0.0     // threshold (low → most things bloom; objects with additive add a lot)
-    );
-    bloom.threshold = 0.0;
-    composer.addPass(bloom);
-    composer.addPass(new OutputPass());
+    try {
+      var ec = await import('three/addons/postprocessing/EffectComposer.js');
+      var rp = await import('three/addons/postprocessing/RenderPass.js');
+      var bp = await import('three/addons/postprocessing/UnrealBloomPass.js');
+      var op = await import('three/addons/postprocessing/OutputPass.js');
+      composer = new ec.EffectComposer(renderer);
+      composer.addPass(new rp.RenderPass(scene, camera));
+      var bloom = new bp.UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        0.85, 0.85, 0.0
+      );
+      composer.addPass(bloom);
+      composer.addPass(new op.OutputPass());
+      console.info('[3D] bloom enabled');
+    } catch (err) {
+      console.warn('[3D] bloom unavailable, falling back to direct render', err);
+      composer = null;
+    }
   }
 
   // ---------- Resize ----------
@@ -1341,6 +1344,7 @@ import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
 
   // ---------- Scroll-driven camera (Lenis + GSAP) ----------
   var camTarget = { x: 0, y: 0, z: 14, lx: 0, ly: 0, lz: 0 };
+  var basePos = { x: 0, y: 0, z: 14 };  // smoothed base for scroll, parallax added on top
 
   function setupScroll() {
     if (typeof Lenis === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -1408,27 +1412,19 @@ import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
     var dt = Math.min(0.05, clock.getDelta());
     var t = clock.elapsedTime;
 
-    // Smooth camera lerp (scroll-driven)
+    // Smooth camera lerp (scroll-driven base position)
     var k = 1 - Math.pow(0.001, dt);
-    camera.position.x += (camTarget.x - camera.position.x) * k;
-    camera.position.y += (camTarget.y - camera.position.y) * k;
-    camera.position.z += (camTarget.z - camera.position.z) * k;
+    basePos.x += (camTarget.x - basePos.x) * k;
+    basePos.y += (camTarget.y - basePos.y) * k;
+    basePos.z += (camTarget.z - basePos.z) * k;
 
-    // Mouse parallax (smooth additional offset)
+    // Mouse parallax (smooth additional offset, applied on top of basePos)
     parallaxX += (mouseX * 1.6 - parallaxX) * 0.06;
     parallaxY += (-mouseY * 1.2 - parallaxY) * 0.06;
-    camera.position.x += parallaxX;
-    camera.position.y += parallaxY;
 
+    camera.position.set(basePos.x + parallaxX, basePos.y + parallaxY, basePos.z);
     lookAt.set(camTarget.lx, camTarget.ly, camTarget.lz);
     camera.lookAt(lookAt);
-
-    // Subtract parallax for next frame (restore base)
-    camera.position.x -= parallaxX;
-    camera.position.y -= parallaxY;
-    // Apply via final transform (so lookAt is from offset position)
-    camera.position.x += parallaxX;
-    camera.position.y += parallaxY;
 
     // Ambient drift of whole network
     scene.rotation.y = Math.sin(t * 0.05) * 0.10;
