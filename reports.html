@@ -14,7 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Color tokens */
+    color-scheme: dark;
+    /* Color tokens — dark (default) */
     --bg: #080808;
     --bg-2: #0c0c0c;
     --surface: #111111;
@@ -28,6 +29,32 @@
     --accent-2: #d4b893;
     --success: #7ec999;
     --warning: #e2b974;
+    --logo-invert: 0;
+    --logo-filter: none;
+    --glow-1: rgba(200,169,126,0.06);
+    --glow-2: rgba(125,160,200,0.04);
+  }
+
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #faf8f4;
+    --bg-2: #f3eee5;
+    --surface: #ffffff;
+    --surface-2: #f7f3ec;
+    --border: rgba(20,20,20,0.08);
+    --border-h: rgba(20,20,20,0.16);
+    --text: #1a1814;
+    --text-2: rgba(26,24,20,0.55);
+    --text-3: rgba(26,24,20,0.30);
+    --accent: #a8865a;
+    --accent-2: #8a6e48;
+    --success: #4f9e6e;
+    --warning: #b9892d;
+    --logo-invert: 1;
+    --logo-filter: invert(1) hue-rotate(180deg) brightness(1);
+    --glow-1: rgba(168,134,90,0.10);
+    --glow-2: rgba(100,130,170,0.06);
+  }
 
     /* Spacing scale (4px base) */
     --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
@@ -51,8 +78,8 @@
 
   body {
     background:
-      radial-gradient(1200px 600px at 20% -10%, rgba(200,169,126,0.06), transparent 60%),
-      radial-gradient(900px 500px at 90% 10%, rgba(125,160,200,0.04), transparent 60%),
+      radial-gradient(1200px 600px at 20% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, var(--glow-2), transparent 60%),
       var(--bg);
     color: var(--text);
     font-family: 'DM Sans', -apple-system, sans-serif;
@@ -64,7 +91,9 @@
     padding: 32px 24px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background-color var(--d) var(--ease), color var(--d) var(--ease);
   }
+  img[src*="logo"] { filter: var(--logo-filter); transition: filter var(--d) var(--ease); }
 
   /* ── Entrance animations (framer-motion-inspired CSS) ── */
   @keyframes fadeUp {
@@ -151,10 +180,56 @@
   #main { display: none; width: 100%; max-width: 900px; }
 
   header {
+    position: sticky; top: -1px; z-index: 50;
+    width: 100%; max-width: 900px;
+    margin: 0 auto var(--s-8);
+    padding: var(--s-3) 0;
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 64px;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    background: transparent;
+    transition: backdrop-filter var(--d) var(--ease),
+                background var(--d) var(--ease),
+                padding var(--d) var(--ease),
+                border-color var(--d) var(--ease);
+    border-bottom: 1px solid transparent;
   }
-  .logo-img { height: 36px; width: auto; opacity: 0.9; }
+  body[data-scrolled="1"] header {
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    border-bottom-color: var(--border);
+    padding: var(--s-2) 0;
+  }
+  .header-brand { display: flex; align-items: center; gap: var(--s-3); }
+  .logo-img {
+    height: 36px; width: auto; opacity: 0;
+    transform: scale(0.85);
+    transition: opacity var(--d) var(--ease), transform var(--d) var(--ease), height var(--d) var(--ease);
+  }
+  body[data-scrolled="1"] .logo-img { opacity: 0.92; transform: scale(1); height: 28px; }
+  .header-actions { display: flex; align-items: center; gap: var(--s-4); }
+  .theme-toggle {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-2); cursor: pointer;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color var(--d-fast) var(--ease), color var(--d-fast) var(--ease), background var(--d-fast) var(--ease);
+    padding: 0;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+  .theme-toggle .theme-auto { display: none; }
+  :root[data-theme-mode="auto"] .theme-toggle .theme-auto { display: block; }
+  :root[data-theme-mode="auto"] .theme-toggle .theme-dark,
+  :root[data-theme-mode="auto"] .theme-toggle .theme-light { display: none; }
+  :root[data-theme-mode="dark"] .theme-toggle .theme-dark { display: block; }
+  :root[data-theme-mode="dark"] .theme-toggle .theme-light,
+  :root[data-theme-mode="dark"] .theme-toggle .theme-auto { display: none; }
+  :root[data-theme-mode="light"] .theme-toggle .theme-light { display: block; }
+  :root[data-theme-mode="light"] .theme-toggle .theme-dark,
+  :root[data-theme-mode="light"] .theme-toggle .theme-auto { display: none; }
   .logout-btn {
     background: transparent; border: none;
     color: var(--text-3); font-size: 12px;
@@ -168,17 +243,24 @@
   .hero {
     text-align: center;
     margin-bottom: 80px;
+    transform-origin: center top;
+    will-change: transform, opacity;
   }
   .hero img {
     height: 200px; width: auto;
     opacity: 0.95;
+    transition: opacity var(--d) var(--ease);
   }
   .hero-sub {
     margin-top: 20px;
     font-size: 11px; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--text-3);
     font-weight: 400;
+    transition: opacity var(--d-fast) var(--ease);
   }
+  body[data-scrolled="1"] .hero .hero-sub { opacity: 0; }
+  /* Scroll-driven shrink for hero — fallback via JS sets CSS var --sp (0..1) */
+  .hero { transform: scale(calc(1 - var(--sp, 0) * 0.35)) translateY(calc(var(--sp, 0) * -10px)); opacity: calc(1 - var(--sp, 0) * 0.7); }
 
   /* ── Section label ── */
   .section-label {
@@ -535,8 +617,17 @@
 <!-- Main -->
 <div id="main">
   <header class="anim-in">
-    <img class="logo-img" src="logo.png" alt="Baden Uktus">
-    <button class="logout-btn" onclick="logout()">Выйти</button>
+    <div class="header-brand">
+      <img class="logo-img" src="logo.png" alt="Baden Uktus">
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Переключить тему" title="Тема: тёмная / светлая / системная">
+        <svg class="theme-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        <svg class="theme-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="theme-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 0 0 18" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
   </header>
 
   <div class="hero anim-up delay-1">
@@ -674,6 +765,64 @@
     });
   }
 
+  // Prefetch on hover (one-shot per URL)
+  function attachPrefetch() {
+    var seen = {};
+    document.querySelectorAll('.card[href]').forEach(function(c){
+      c.addEventListener('pointerenter', function(){
+        var url = c.getAttribute('href');
+        if(!url || seen[url] || /^(https?:|mailto:|tel:)/i.test(url) && url.indexOf(location.origin) !== 0) return;
+        seen[url] = 1;
+        var l = document.createElement('link');
+        l.rel = 'prefetch'; l.href = url; l.as = 'document';
+        document.head.appendChild(l);
+      }, { once: true });
+    });
+  }
+
+  // Scroll-driven hero shrink + sticky-header surface
+  function attachScrollFx() {
+    var hero = document.querySelector('.hero');
+    var body = document.body;
+    var max = 300; // px of scroll over which the hero shrinks fully
+    var raf = 0;
+    function update() {
+      var y = window.scrollY || window.pageYOffset || 0;
+      var sp = Math.max(0, Math.min(1, y / max));
+      if(hero) hero.style.setProperty('--sp', sp.toFixed(3));
+      body.dataset.scrolled = y > 8 ? '1' : '0';
+      raf = 0;
+    }
+    function onScroll(){ if(!raf) raf = requestAnimationFrame(update); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+  }
+
+  // Theme: auto (system) / dark / light, persisted, cycles on click
+  function attachTheme() {
+    var root = document.documentElement;
+    var mql = window.matchMedia('(prefers-color-scheme: light)');
+    var stored = localStorage.getItem('bbt_theme') || 'auto';
+    function apply(mode) {
+      root.setAttribute('data-theme-mode', mode);
+      var effective = mode === 'auto' ? (mql.matches ? 'light' : 'dark') : mode;
+      root.setAttribute('data-theme', effective);
+      localStorage.setItem('bbt_theme', mode);
+    }
+    apply(stored);
+    mql.addEventListener('change', function(){
+      if(localStorage.getItem('bbt_theme') === 'auto') apply('auto');
+    });
+    var btn = document.getElementById('theme-toggle');
+    if(btn) btn.addEventListener('click', function(){
+      var cur = root.getAttribute('data-theme-mode') || 'auto';
+      var next = cur === 'auto' ? 'dark' : (cur === 'dark' ? 'light' : 'auto');
+      apply(next);
+    });
+  }
+  // Apply theme immediately (avoid flash) — call before main visible
+  attachTheme();
+
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
@@ -681,6 +830,8 @@
     document.getElementById('last-update').textContent =
       now.toLocaleDateString('ru', {day:'2-digit', month:'long', year:'numeric'});
     attachCardCursor();
+    attachPrefetch();
+    attachScrollFx();
   }
 
   function tryAuth(pwd) {
