@@ -262,6 +262,84 @@
   /* Scroll-driven shrink for hero — fallback via JS sets CSS var --sp (0..1) */
   .hero { transform: scale(calc(1 - var(--sp, 0) * 0.35)) translateY(calc(var(--sp, 0) * -10px)); opacity: calc(1 - var(--sp, 0) * 0.7); }
 
+  /* ── Weekly brief card ── */
+  .weekly-brief {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: linear-gradient(135deg, rgba(200,169,126,0.04), var(--surface));
+    padding: var(--s-6);
+    margin-bottom: var(--s-7);
+    cursor: pointer;
+    transition: border-color var(--d-fast) var(--ease), background var(--d-fast) var(--ease);
+    position: relative; overflow: hidden;
+  }
+  .weekly-brief:hover { border-color: var(--border-h); }
+  .weekly-brief .wb-head {
+    display: flex; align-items: center; gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+  .weekly-brief .wb-label {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .weekly-brief .wb-period {
+    font-size: 11px; color: var(--text-3);
+    letter-spacing: 0.04em;
+    margin-left: auto;
+  }
+  .weekly-brief .wb-title {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 26px; font-weight: 300; font-style: italic;
+    line-height: 1.25;
+    margin-bottom: var(--s-4);
+  }
+  .weekly-brief .wb-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+  .weekly-brief .wb-kpi {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: var(--s-3) var(--s-4);
+  }
+  .weekly-brief .wb-kpi-lbl { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+  .weekly-brief .wb-kpi-val { font-size: 18px; font-weight: 500; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .weekly-brief .wb-kpi-delta { font-size: 10px; color: var(--success); margin-top: 2px; }
+  .weekly-brief .wb-kpi-delta.neg { color: #e08a8a; }
+  .weekly-brief .wb-toggle {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-2); font-weight: 500;
+  }
+  .weekly-brief .wb-toggle svg { width: 14px; height: 14px; transition: transform var(--d-fast) var(--ease); }
+  .weekly-brief.open .wb-toggle svg { transform: rotate(180deg); }
+  .weekly-brief .wb-body {
+    max-height: 0; overflow: hidden;
+    opacity: 0;
+    transition: max-height .45s var(--ease), opacity .35s var(--ease), margin-top .35s var(--ease);
+  }
+  .weekly-brief.open .wb-body {
+    max-height: 1400px;
+    opacity: 1;
+    margin-top: var(--s-4);
+  }
+  .weekly-brief .wb-text {
+    white-space: pre-wrap;
+    font-size: 13.5px; line-height: 1.7;
+    color: var(--text-2);
+    font-weight: 300;
+    border-top: 1px solid var(--border);
+    padding-top: var(--s-4);
+  }
+  .weekly-brief.skeleton { background: var(--surface); }
+  .weekly-brief.skeleton::before {
+    content: 'Следующая сводка — в понедельник в 9:00';
+    color: var(--text-3); font-size: 12px;
+  }
+
   /* ── Command palette (Ctrl+K) ── */
   #cmdk-backdrop {
     position: fixed; inset: 0; z-index: 9000;
@@ -807,6 +885,22 @@
     <div class="kpi-skeleton"></div>
   </div>
 
+  <div class="weekly-brief anim-up delay-3" id="weekly-brief" style="display:none">
+    <div class="wb-head">
+      <span class="wb-label">📈 Сводка недели</span>
+      <span class="wb-period" id="wb-period"></span>
+    </div>
+    <div class="wb-title" id="wb-title">Итоги недели</div>
+    <div class="wb-kpis" id="wb-kpis"></div>
+    <div class="wb-toggle">
+      <span id="wb-toggle-text">Развернуть полный анализ</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="wb-body">
+      <div class="wb-text" id="wb-text"></div>
+    </div>
+  </div>
+
   <div class="section-label anim-up delay-3">Отчёты</div>
 
   <div class="cards bento">
@@ -1254,6 +1348,47 @@
       .catch(function(){ /* swallow — KPI просто не отрендерится */ });
   }
 
+  // Weekly Brief loader & expand/collapse
+  function renderWeeklyBrief(d) {
+    var card = document.getElementById('weekly-brief');
+    if (!card || !d) return;
+    var maxAgeDays = 8; // показываем только если не старше 8 дней
+    var gen = d.generatedAt ? new Date(d.generatedAt) : null;
+    if (!gen || (Date.now() - gen.getTime()) > maxAgeDays * 864e5) return;
+    document.getElementById('wb-period').textContent = d.weekStart + ' — ' + d.weekEnd;
+    document.getElementById('wb-title').textContent = 'Итоги недели · ' + d.weekStart + ' — ' + d.weekEnd;
+    var kn = d.keyNumbers || {};
+    var kpiHtml = '';
+    function tile(lbl, val, delta) {
+      var d = '';
+      if (delta !== undefined && delta !== null) {
+        d = '<div class="wb-kpi-delta' + (delta < 0 ? ' neg' : '') + '">' + (delta >= 0 ? '+' : '') + delta + '% к пр. нед.</div>';
+      }
+      return '<div class="wb-kpi"><div class="wb-kpi-lbl">' + lbl + '</div><div class="wb-kpi-val">' + val + '</div>' + d + '</div>';
+    }
+    if (kn.guests !== undefined)     kpiHtml += tile('гости',   fmtRu(kn.guests),   kn.deltaGuestsWeek);
+    if (kn.revenueMln !== undefined) kpiHtml += tile('выручка', fmtRu(kn.revenueMln, 2) + ' млн', kn.deltaRevenueWeek);
+    if (kn.checkRub !== undefined)   kpiHtml += tile('средний чек', fmtRu(kn.checkRub) + ' ₽');
+    if (kn.cashFlowMln !== undefined) kpiHtml += tile('приход', fmtRu(kn.cashFlowMln, 2) + ' млн');
+    document.getElementById('wb-kpis').innerHTML = kpiHtml;
+    document.getElementById('wb-text').textContent = d.summary || '— нет AI-комментария —';
+    card.style.display = '';
+    var toggleText = document.getElementById('wb-toggle-text');
+    card.addEventListener('click', function(e){
+      // не реагировать на клик по KPI-тайлам если они станут ссылками
+      if (e.target.closest('.wb-kpi a')) return;
+      card.classList.toggle('open');
+      toggleText.textContent = card.classList.contains('open') ? 'Свернуть' : 'Развернуть полный анализ';
+    });
+  }
+
+  function loadWeeklyBrief() {
+    fetch('weekly_brief.json?v=' + Date.now())
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ renderWeeklyBrief(d); })
+      .catch(function(){});
+  }
+
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
@@ -1265,6 +1400,7 @@
     attachScrollFx();
     attachCmdk();
     loadLiveData();
+    loadWeeklyBrief();
   }
 
   function tryAuth(pwd) {
