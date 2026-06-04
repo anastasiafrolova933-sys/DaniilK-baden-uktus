@@ -1124,8 +1124,10 @@
 import * as THREE from 'three';
 
 (async function init3D() {
+  console.info('[3D] init3D start');
   var canvas = document.getElementById('webgl-bg');
-  if (!canvas || !window.WebGLRenderingContext) return;
+  if (!canvas) { console.error('[3D] canvas not found'); return; }
+  if (!window.WebGLRenderingContext) { console.error('[3D] no WebGL'); return; }
 
   var isMobile = window.matchMedia('(max-width: 700px)').matches;
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1134,12 +1136,12 @@ import * as THREE from 'three';
   var renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance' });
-  } catch(e) { return; }
+  } catch(e) { console.error('[3D] renderer failed', e); return; }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setClearColor(0x000000, 0);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  try { renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1; } catch(e){}
+  console.info('[3D] renderer ready');
 
   // ---------- Scene & camera ----------
   var scene = new THREE.Scene();
