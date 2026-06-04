@@ -136,9 +136,9 @@
   }
   :root[data-theme="light"] #webgl-bg { opacity: 0.5; }
 
-  /* Контент-секции лежат поверх 3D */
-  #main, .top-actions, .preview-banner, #auth-overlay, #splash-intro { position: relative; }
-  #main { z-index: 10; }
+  /* Контент-секции лежат поверх 3D (не трогаем position у фиксированных элементов) */
+  #main { position: relative; z-index: 10; }
+  /* top-actions, preview-banner, auth-overlay, splash-intro уже position: fixed → они и так выше canvas (z-index -2) */
 
   /* ── Entrance animations (fail-safe via fill-mode: both) ── */
   @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
