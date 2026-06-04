@@ -233,7 +233,15 @@
   .hero img {
     height: 200px; width: auto;
     opacity: 0.95;
+    animation: hero-float 7s ease-in-out infinite;
+    filter: drop-shadow(0 20px 40px rgba(200,169,126,0.25));
+    transform-style: preserve-3d;
   }
+  @keyframes hero-float {
+    0%,100% { transform: translateY(0) rotateX(0) rotateY(0); }
+    50%     { transform: translateY(-10px) rotateX(3deg) rotateY(-2deg); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero img { animation: none; } }
   .hero-sub {
     margin-top: 20px;
     font-size: 11px; letter-spacing: 0.22em;
@@ -259,6 +267,8 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--s-3);
     margin-bottom: var(--s-8);
+    perspective: 1400px;
+    perspective-origin: 50% 50%;
   }
   .cards.bento .card:first-child {
     grid-column: span 2; grid-row: span 2;
@@ -266,6 +276,8 @@
   }
   .cards.bento .card:first-child .card-title { font-size: 26px; }
   .cards.bento .card:first-child .card-desc  { font-size: 13.5px; }
+
+  @property --ang { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 
   .card {
     background: rgba(22,20,18,0.55);
@@ -278,40 +290,99 @@
     color: inherit;
     display: flex; flex-direction: column;
     gap: 0;
-    transition: border-color var(--d-fast) var(--ease),
-                background    var(--d-fast) var(--ease),
-                transform     var(--d-fast) var(--ease),
-                box-shadow    var(--d-fast) var(--ease);
+    transition: border-color var(--d) var(--ease),
+                background    var(--d) var(--ease),
+                box-shadow    var(--d) var(--ease);
     position: relative;
     overflow: hidden;
     min-height: 180px;
     cursor: pointer;
     isolation: isolate;
+    transform-style: preserve-3d;
+    will-change: transform;
   }
   :root[data-theme="light"] .card {
     background: rgba(255,255,255,0.65);
   }
-  /* Magnetic gradient sheen following cursor */
+  /* Spotlight — мягкий золотой свет следует за курсором */
   .card::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(600px 200px at var(--mx, 50%) 0%, rgba(200,169,126,0.08), transparent 60%);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+                rgba(212,184,147,0.20), rgba(200,169,126,0.05) 35%, transparent 65%);
     opacity: 0;
     transition: opacity var(--d) var(--ease);
     pointer-events: none;
-    z-index: -1;
+    z-index: 1;
+    mix-blend-mode: screen;
+  }
+  /* Holographic edge — переливающаяся золотая граница на hover */
+  .card::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--ang, 0deg),
+                rgba(200,169,126,0) 0deg,
+                rgba(212,184,147,0.55) 60deg,
+                rgba(255,235,170,0.9) 110deg,
+                rgba(200,169,126,0.45) 170deg,
+                rgba(200,169,126,0) 220deg,
+                rgba(200,169,126,0) 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 500ms var(--ease);
+    pointer-events: none;
+    z-index: 2;
   }
   .card:hover {
     background: rgba(32,28,24,0.68);
     border-color: var(--border-h);
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-2);
+    box-shadow: var(--shadow-2), 0 30px 80px -20px rgba(200,169,126,0.28);
   }
   :root[data-theme="light"] .card:hover {
     background: rgba(255,255,255,0.82);
   }
   .card:hover::before { opacity: 1; }
-  .card:active { transform: translateY(-1px); }
+  .card:hover::after  { opacity: 1; animation: angle-spin 6s linear infinite; }
+  @keyframes angle-spin { to { --ang: 360deg; } }
+
+  /* Parallax-слои внутри карточки */
+  .card-num, .card-title, .card-desc, .card-meta, .card-arrow {
+    transition: transform 420ms cubic-bezier(0.22,1,0.36,1);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .card:hover .card-num   { transform: translateZ(18px); }
+  .card:hover .card-title { transform: translateZ(34px); }
+  .card:hover .card-desc  { transform: translateZ(14px); }
+  .card:hover .card-meta  { transform: translateZ(24px); }
+  .card:hover .card-arrow { transform: translate(6px, -2px) translateZ(30px); }
+
+  /* Scroll-reveal — 3D-вылет из глубины */
+  .reveal-3d {
+    transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+  }
+  .reveal-3d.pre {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(14deg) translateY(40px) translateZ(-80px);
+  }
+  .reveal-3d.in {
+    opacity: 1;
+    transform: perspective(1200px) rotateX(0) translateY(0) translateZ(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-3d { opacity: 1; transform: none; transition: none; }
+    .card,
+    .card:hover .card-num,
+    .card:hover .card-title,
+    .card:hover .card-desc,
+    .card:hover .card-meta,
+    .card:hover .card-arrow { transform: none !important; }
+  }
 
   .card-num {
     font-family: 'Cormorant', Georgia, serif;
@@ -495,9 +566,14 @@
   .ai-btn:hover {
     border-color: var(--accent);
     background: rgba(200,169,126,0.06);
-    transform: translateY(-2px);
+    transform: translate(var(--magx, 0), calc(-2px + var(--magy, 0px)));
+    box-shadow: 0 18px 40px -12px rgba(200,169,126,0.4);
   }
   .ai-btn:hover::after { transform: translateX(100%); }
+  .ai-btn { transition: border-color var(--d-fast) var(--ease),
+              background var(--d-fast) var(--ease),
+              transform 280ms cubic-bezier(0.22,1,0.36,1),
+              box-shadow 280ms var(--ease); }
 
   /* ── Footer ── */
   .footer {
@@ -704,7 +780,7 @@
   <div class="section-label anim-up delay-2">Отчёты</div>
 
   <div class="cards bento">
-    <a class="card anim-up delay-3" href="finance.html">
+    <a class="card reveal-3d anim-up delay-3" href="finance.html">
       <div class="card-num">01 · Главный отчёт</div>
       <div class="card-title">БДДС</div>
       <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам, прогноз закрытия и ликвидность</div>
@@ -714,7 +790,7 @@
       </div>
     </a>
 
-    <a class="card anim-up delay-3" href="sales.html">
+    <a class="card reveal-3d anim-up delay-3" href="sales.html">
       <div class="card-num">02</div>
       <div class="card-title">Продажи</div>
       <div class="card-desc">Выручка, средний чек, динамика по услугам и периодам</div>
@@ -724,7 +800,7 @@
       </div>
     </a>
 
-    <a class="card anim-up delay-4" href="forecast.html">
+    <a class="card reveal-3d anim-up delay-4" href="forecast.html">
       <div class="card-num">03</div>
       <div class="card-title">Прогноз</div>
       <div class="card-desc">Ежедневный прогноз посещаемости и выручки</div>
@@ -734,7 +810,7 @@
       </div>
     </a>
 
-    <a class="card anim-up delay-5" href="loyalty.html">
+    <a class="card reveal-3d anim-up delay-5" href="loyalty.html">
       <div class="card-num">04</div>
       <div class="card-title">Лояльность</div>
       <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot</div>
@@ -744,7 +820,7 @@
       </div>
     </a>
 
-    <a class="card anim-up delay-6" href="staff.html">
+    <a class="card reveal-3d anim-up delay-6" href="staff.html">
       <div class="card-num">05</div>
       <div class="card-title">Штат</div>
       <div class="card-desc">Укомплектованность 8 подразделений, текучесть, дефицит</div>
@@ -872,15 +948,80 @@
     if(p && typeof p.catch === 'function'){ p.catch(finish); }
   })();
 
-  // ── Magnetic cursor sheen on cards (framer-motion-style) ──
+  // ── 3D tilt + spotlight on cards (framer-motion-style) ──
   function attachCardCursor() {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('.card').forEach(function(c){
+      var raf = 0, tx = 0, ty = 0;
+      function apply(){
+        c.style.transform = 'perspective(900px) rotateX(' + ty + 'deg) rotateY(' + tx + 'deg) translateZ(0)';
+        raf = 0;
+      }
       c.addEventListener('pointermove', function(e){
         var r = c.getBoundingClientRect();
-        var x = ((e.clientX - r.left) / r.width) * 100;
-        c.style.setProperty('--mx', x + '%');
+        var px = (e.clientX - r.left) / r.width;
+        var py = (e.clientY - r.top) / r.height;
+        c.style.setProperty('--mx', (px * 100) + '%');
+        c.style.setProperty('--my', (py * 100) + '%');
+        if (reduced) return;
+        var max = 8;
+        tx = (px - 0.5) * 2 * max;
+        ty = -(py - 0.5) * 2 * max;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      c.addEventListener('pointerleave', function(){
+        tx = 0; ty = 0;
+        if (!raf) raf = requestAnimationFrame(apply);
       });
     });
+  }
+
+  // ── Magnetic buttons — притягиваются к курсору ──
+  function attachMagnetic() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.ai-btn, .auth-btn').forEach(function(b){
+      b.addEventListener('pointermove', function(e){
+        var r = b.getBoundingClientRect();
+        var dx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+        var dy = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+        b.style.setProperty('--magx', (dx * 8) + 'px');
+        b.style.setProperty('--magy', (dy * 6) + 'px');
+      });
+      b.addEventListener('pointerleave', function(){
+        b.style.setProperty('--magx','0px');
+        b.style.setProperty('--magy','0px');
+      });
+    });
+  }
+
+  // ── Scroll-reveal: 3D-вылет из глубины (safe — fallback на показ всего) ──
+  function attachReveal() {
+    var els = document.querySelectorAll('.reveal-3d');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    els.forEach(function(el){ el.classList.add('pre'); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          en.target.classList.remove('pre');
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px 10% 0px' });
+    els.forEach(function(el){ io.observe(el); });
+    // Safety fallback — если IO не сработал за 1.2s, показать всё
+    setTimeout(function(){
+      els.forEach(function(el){
+        if (!el.classList.contains('in')) {
+          el.classList.remove('pre');
+          el.classList.add('in');
+        }
+      });
+    }, 1200);
   }
 
   // ── Prefetch on hover (one-shot per URL) ──
@@ -1059,6 +1200,8 @@
     attachPrefetch();
     attachCmdk();
     attachCardCursor();
+    attachMagnetic();
+    attachReveal();
     attachThemePill();
   }
 
@@ -1303,6 +1446,13 @@ import * as THREE from 'three';
   if (!prefersReduced) setupScroll();
   updateCamFromScroll();
 
+  // ---------- Mouse parallax ----------
+  var mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  window.addEventListener('pointermove', function(e){
+    mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive: true });
+
   // ---------- Render loop ----------
   var clock = new THREE.Clock();
   var lookAt = new THREE.Vector3();
@@ -1318,9 +1468,13 @@ import * as THREE from 'three';
     lookAt.set(camTarget.lx, camTarget.ly, camTarget.lz);
     camera.lookAt(lookAt);
 
-    // Ambient drift of whole network
-    scene.rotation.y = Math.sin(t * 0.05) * 0.08;
-    scene.rotation.x = Math.cos(t * 0.04) * 0.04;
+    // Mouse parallax — сцена мягко наклоняется к курсору
+    mouse.x += (mouse.tx - mouse.x) * 0.05;
+    mouse.y += (mouse.ty - mouse.y) * 0.05;
+
+    // Ambient drift + mouse-driven tilt
+    scene.rotation.y = Math.sin(t * 0.05) * 0.08 + mouse.x * 0.15;
+    scene.rotation.x = Math.cos(t * 0.04) * 0.04 + mouse.y * 0.10;
 
     // Hub pulse
     var pulse = 1 + Math.sin(t * 1.2) * 0.08;
