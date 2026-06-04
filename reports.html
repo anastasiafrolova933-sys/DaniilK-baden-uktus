@@ -262,6 +262,59 @@
   /* Scroll-driven shrink for hero — fallback via JS sets CSS var --sp (0..1) */
   .hero { transform: scale(calc(1 - var(--sp, 0) * 0.35)) translateY(calc(var(--sp, 0) * -10px)); opacity: calc(1 - var(--sp, 0) * 0.7); }
 
+  /* ── Calendar widget ── */
+  .calendar-widget {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: var(--s-5) var(--s-6);
+    margin-bottom: var(--s-7);
+    background: var(--surface);
+  }
+  .calendar-widget .cal-head {
+    display: flex; align-items: center; gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+  .calendar-widget .cal-label {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .calendar-widget .cal-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--s-3);
+  }
+  .cal-event {
+    display: flex; align-items: center; gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    transition: border-color var(--d-fast) var(--ease);
+  }
+  .cal-event:hover { border-color: var(--border-h); }
+  .cal-event.today { border-color: var(--accent); background: linear-gradient(135deg, rgba(200,169,126,0.10), var(--surface-2)); }
+  .cal-event.holiday { }
+  .cal-event.event   { }
+  .cal-date {
+    flex-shrink: 0;
+    width: 44px; min-height: 44px;
+    border-radius: 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .cal-date-d { font-size: 18px; font-weight: 600; line-height: 1; }
+  .cal-date-m { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-top: 2px; }
+  .cal-info { flex: 1; min-width: 0; }
+  .cal-title { font-size: 13px; font-weight: 500; line-height: 1.3; color: var(--text); }
+  .cal-note  { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .cal-icon  { font-size: 16px; opacity: 0.7; }
+  .cal-event.today .cal-icon { opacity: 1; }
+  .cal-event.today::after {
+    content: 'СЕГОДНЯ'; margin-left: auto;
+    font-size: 9px; letter-spacing: 0.18em; color: var(--accent); font-weight: 600;
+  }
+
   /* ── Weekly brief card ── */
   .weekly-brief {
     border: 1px solid var(--border);
@@ -885,6 +938,13 @@
     <div class="kpi-skeleton"></div>
   </div>
 
+  <div class="calendar-widget anim-up delay-3" id="calendar-widget" style="display:none">
+    <div class="cal-head">
+      <span class="cal-label">📅 Ближайшие события</span>
+    </div>
+    <div class="cal-list" id="cal-list"></div>
+  </div>
+
   <div class="weekly-brief anim-up delay-3" id="weekly-brief" style="display:none">
     <div class="wb-head">
       <span class="wb-label">📈 Сводка недели</span>
@@ -1389,6 +1449,44 @@
       .catch(function(){});
   }
 
+  // Calendar widget: nearest events, includes today + upcoming
+  var MONTH_SHORT_RU = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  function renderCalendar(data) {
+    if (!data || !data.events) return;
+    var widget = document.getElementById('calendar-widget');
+    var list = document.getElementById('cal-list');
+    var now = new Date(); now.setHours(0,0,0,0);
+    var lookAhead = 30; // дней
+    var horizon = new Date(now.getTime() + lookAhead * 864e5);
+    var items = data.events
+      .map(function(e){ return { e: e, d: new Date(e.date + 'T00:00:00') }; })
+      .filter(function(x){ return !isNaN(x.d) && x.d >= now && x.d <= horizon; })
+      .sort(function(a,b){ return a.d - b.d; })
+      .slice(0, 6);
+    if (!items.length) return;
+    var html = '';
+    items.forEach(function(x){
+      var isToday = x.d.getTime() === now.getTime();
+      var ic = x.e.type === 'holiday' ? '🎉' : (x.e.type === 'event' ? '✨' : '📌');
+      html += '<div class="cal-event ' + (x.e.type || '') + (isToday ? ' today' : '') + '">' +
+        '<div class="cal-date"><div class="cal-date-d">' + x.d.getDate() + '</div>' +
+        '<div class="cal-date-m">' + MONTH_SHORT_RU[x.d.getMonth()] + '</div></div>' +
+        '<div class="cal-info"><div class="cal-title">' + escapeHtml(x.e.title) + '</div>' +
+        (x.e.note ? '<div class="cal-note">' + escapeHtml(x.e.note) + '</div>' : '') + '</div>' +
+        '<div class="cal-icon">' + ic + '</div>' +
+        '</div>';
+    });
+    list.innerHTML = html;
+    widget.style.display = '';
+  }
+
+  function loadCalendar() {
+    fetch('events.json?v=' + Date.now())
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ renderCalendar(d); })
+      .catch(function(){});
+  }
+
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
@@ -1401,6 +1499,7 @@
     attachCmdk();
     loadLiveData();
     loadWeeklyBrief();
+    loadCalendar();
   }
 
   function tryAuth(pwd) {
