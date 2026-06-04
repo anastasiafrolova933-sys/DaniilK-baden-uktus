@@ -466,6 +466,30 @@
   .footer-link:hover { color: var(--text-2); }
   .footer-actions { display: flex; align-items: center; gap: 18px; }
 
+  /* ── Theme toggle pill (day/night) ── */
+  .theme-pill {
+    display: inline-flex; align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px;
+    gap: 0;
+    cursor: pointer;
+    transition: border-color var(--d-fast) var(--ease), background var(--d-fast) var(--ease);
+  }
+  .theme-pill:hover { border-color: var(--border-h); }
+  .theme-pill__seg {
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-3);
+    border-radius: 999px;
+    transition: color var(--d-fast) var(--ease), background var(--d-fast) var(--ease);
+  }
+  .theme-pill__seg svg { width: 12px; height: 12px; }
+  .theme-pill[data-eff="dark"]  .theme-pill__seg.moon { background: var(--accent); color: var(--bg); }
+  .theme-pill[data-eff="light"] .theme-pill__seg.sun  { background: var(--accent); color: #fff; }
+  .theme-pill[aria-label]:focus { outline: 1px dotted var(--accent); outline-offset: 2px; }
+
   /* ── Command palette (Ctrl/⌘+K) ── */
   #cmdk-backdrop {
     position: fixed; inset: 0; z-index: 9000;
@@ -545,12 +569,20 @@
   }
 
   @media (max-width: 600px) {
+    body { padding-top: calc(32px + env(safe-area-inset-top, 0px)); }
     .cards { grid-template-columns: 1fr; }
+    .cards.bento .card:first-child {
+      grid-column: span 1; grid-row: auto; min-height: auto;
+    }
+    .cards.bento .card:first-child .card-title { font-size: 20px; }
     .hero img { height: 150px; }
     .hero { margin-bottom: 56px; margin-top: 8px; }
     .ai-block { padding: 24px; flex-direction: column; }
     .ai-btn { width: 100%; justify-content: center; }
     .card { min-height: auto; padding: 24px 20px; }
+    .footer { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .footer-actions { width: 100%; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .footer-actions #last-update { margin-left: auto; }
   }
 </style>
 </head>
@@ -684,6 +716,14 @@
   <div class="footer">
     <span class="footer-text">Отчёты обновляются в 10:00 и 18:00 · Лояльность — каждый час</span>
     <div class="footer-actions">
+      <button class="theme-pill" id="theme-pill" aria-label="Переключить тему" title="Переключить тему день / ночь">
+        <span class="theme-pill__seg sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </span>
+        <span class="theme-pill__seg moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        </span>
+      </button>
       <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
       <button class="footer-link" onclick="logout()">Выйти</button>
       <span class="footer-text" id="last-update"></span>
@@ -721,11 +761,24 @@
     var eff = mode === 'auto' ? (mql.matches ? 'light' : 'dark') : mode;
     root.setAttribute('data-theme', eff);
     localStorage.setItem('bbt_theme', mode);
+    // Sync pill state (data-eff highlights the active segment)
+    var pill = document.getElementById('theme-pill');
+    if (pill) pill.setAttribute('data-eff', eff);
   }
   applyTheme(localStorage.getItem('bbt_theme') || 'auto');
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(){
     if ((localStorage.getItem('bbt_theme') || 'auto') === 'auto') applyTheme('auto');
   });
+
+  // Pill click — toggles dark ↔ light (overrides auto-mode if it was on)
+  function attachThemePill() {
+    var pill = document.getElementById('theme-pill');
+    if (!pill) return;
+    pill.addEventListener('click', function(){
+      var cur = pill.getAttribute('data-eff') || 'dark';
+      applyTheme(cur === 'dark' ? 'light' : 'dark');
+    });
+  }
 
   // ── Splash intro ──
   (function(){
@@ -934,6 +987,7 @@
     attachPrefetch();
     attachCmdk();
     attachCardCursor();
+    attachThemePill();
   }
 
   function tryAuth(pwd) {
