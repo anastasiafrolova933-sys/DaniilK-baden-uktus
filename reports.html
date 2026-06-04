@@ -466,6 +466,19 @@
   .footer-link:hover { color: var(--text-2); }
   .footer-actions { display: flex; align-items: center; gap: 18px; }
 
+  /* ── Top floating actions (theme + cmdk + logout) ── */
+  .top-actions {
+    position: fixed;
+    top: calc(20px + env(safe-area-inset-top, 0px));
+    right: 28px;
+    z-index: 70;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .top-actions .footer-link { font-size: 11px; }
+  @media (max-width: 600px) {
+    .top-actions { top: calc(10px + env(safe-area-inset-top, 0px)); right: 14px; gap: 12px; }
+  }
+
   /* ── Theme toggle pill (day/night) ── */
   .theme-pill {
     display: inline-flex; align-items: center;
@@ -580,13 +593,25 @@
     .ai-block { padding: 24px; flex-direction: column; }
     .ai-btn { width: 100%; justify-content: center; }
     .card { min-height: auto; padding: 24px 20px; }
-    .footer { flex-direction: column; align-items: flex-start; gap: 14px; }
-    .footer-actions { width: 100%; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .footer-actions #last-update { margin-left: auto; }
+    .footer { flex-direction: column; align-items: flex-start; gap: 8px; }
   }
 </style>
 </head>
 <body>
+
+<!-- Top floating actions -->
+<div class="top-actions" id="top-actions" style="display:none">
+  <button class="theme-pill" id="theme-pill" aria-label="Переключить тему" title="Переключить тему день / ночь">
+    <span class="theme-pill__seg sun" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </span>
+    <span class="theme-pill__seg moon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+    </span>
+  </button>
+  <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
+  <button class="footer-link" onclick="logout()">Выйти</button>
+</div>
 
 <!-- Splash intro (logo water animation) -->
 <div id="splash-intro" aria-hidden="true">
@@ -715,19 +740,7 @@
 
   <div class="footer">
     <span class="footer-text">Отчёты обновляются в 10:00 и 18:00 · Лояльность — каждый час</span>
-    <div class="footer-actions">
-      <button class="theme-pill" id="theme-pill" aria-label="Переключить тему" title="Переключить тему день / ночь">
-        <span class="theme-pill__seg sun" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        </span>
-        <span class="theme-pill__seg moon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
-        </span>
-      </button>
-      <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
-      <button class="footer-link" onclick="logout()">Выйти</button>
-      <span class="footer-text" id="last-update"></span>
-    </div>
+    <span class="footer-text" id="last-update"></span>
   </div>
 </div>
 
@@ -981,6 +994,8 @@
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
+    var topA = document.getElementById('top-actions');
+    if (topA) topA.style.display = '';
     var now = new Date();
     document.getElementById('last-update').textContent =
       now.toLocaleDateString('ru', {day:'2-digit', month:'long', year:'numeric'});
