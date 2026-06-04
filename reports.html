@@ -262,6 +262,64 @@
   /* Scroll-driven shrink for hero — fallback via JS sets CSS var --sp (0..1) */
   .hero { transform: scale(calc(1 - var(--sp, 0) * 0.35)) translateY(calc(var(--sp, 0) * -10px)); opacity: calc(1 - var(--sp, 0) * 0.7); }
 
+  /* ── KPI ribbon ── */
+  .kpi-ribbon {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--s-3);
+    margin: calc(var(--s-8) * -1 + var(--s-6)) 0 var(--s-8);
+    padding: 0;
+  }
+  .kpi-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: var(--s-4) var(--s-5);
+    text-decoration: none; color: inherit;
+    transition: border-color var(--d-fast) var(--ease), background var(--d-fast) var(--ease), transform var(--d-fast) var(--ease);
+    display: flex; flex-direction: column; gap: var(--s-1);
+    min-height: 78px;
+    position: relative; overflow: hidden;
+  }
+  .kpi-tile:hover { border-color: var(--border-h); transform: translateY(-2px); background: var(--surface-2); }
+  .kpi-tile.warn { border-color: rgba(226,185,116,0.25); }
+  .kpi-tile.warn::before { content:''; position:absolute; inset:0; background: radial-gradient(400px 80px at 0% 0%, rgba(226,185,116,0.08), transparent 60%); pointer-events:none; }
+  .kpi-label {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-3); font-weight: 500;
+  }
+  .kpi-row { display: flex; align-items: baseline; gap: var(--s-2); }
+  .kpi-value {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 26px; font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-unit { font-size: 12px; color: var(--text-2); font-weight: 400; }
+  .kpi-delta {
+    font-size: 11px; letter-spacing: 0.04em;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+    background: rgba(126,201,153,0.08); color: var(--success);
+  }
+  .kpi-delta.neg { background: rgba(226,135,135,0.1); color: #e08a8a; }
+  .kpi-skeleton {
+    background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    min-height: 78px;
+  }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+  @media (max-width: 600px) {
+    .kpi-ribbon { grid-auto-flow: column; grid-auto-columns: 70%; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+    .kpi-tile { scroll-snap-align: start; }
+  }
+
   /* ── Section label ── */
   .section-label {
     font-size: 10px; letter-spacing: 0.22em;
@@ -635,55 +693,63 @@
     <div class="hero-sub">Термы Уктус · Термальный комплекс · Екатеринбург</div>
   </div>
 
-  <div class="section-label anim-up delay-2">Отчёты</div>
+  <div class="kpi-ribbon anim-up delay-2" id="kpi-ribbon" aria-live="polite">
+    <div class="kpi-skeleton"></div>
+    <div class="kpi-skeleton"></div>
+    <div class="kpi-skeleton"></div>
+    <div class="kpi-skeleton"></div>
+    <div class="kpi-skeleton"></div>
+  </div>
+
+  <div class="section-label anim-up delay-3">Отчёты</div>
 
   <div class="cards bento">
-    <a class="card anim-up delay-3" href="finance.html">
+    <a class="card anim-up delay-4" href="finance.html" data-key="finance">
       <div class="card-num">01 · Главный отчёт</div>
       <div class="card-title">БДДС</div>
       <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам, прогноз закрытия и ликвидность</div>
       <div class="card-meta">
-        <span class="card-status">обновляется 10:00 / 18:00</span>
+        <span class="card-status" data-tag>обновляется 10:00 / 18:00</span>
         <span class="card-arrow">→</span>
       </div>
     </a>
 
-    <a class="card anim-up delay-3" href="sales.html">
+    <a class="card anim-up delay-4" href="sales.html" data-key="sales">
       <div class="card-num">02</div>
       <div class="card-title">Продажи</div>
       <div class="card-desc">Выручка, средний чек, динамика по услугам и периодам</div>
       <div class="card-meta">
-        <span class="card-status">10:00 / 18:00</span>
+        <span class="card-status" data-tag>10:00 / 18:00</span>
         <span class="card-arrow">→</span>
       </div>
     </a>
 
-    <a class="card anim-up delay-4" href="forecast.html">
+    <a class="card anim-up delay-5" href="forecast.html" data-key="forecast">
       <div class="card-num">03</div>
       <div class="card-title">Прогноз</div>
       <div class="card-desc">Ежедневный прогноз посещаемости и выручки</div>
       <div class="card-meta">
-        <span class="card-status">10:00 / 18:00</span>
+        <span class="card-status" data-tag>10:00 / 18:00</span>
         <span class="card-arrow">→</span>
       </div>
     </a>
 
-    <a class="card anim-up delay-5" href="loyalty.html">
+    <a class="card anim-up delay-5" href="loyalty.html" data-key="loyalty">
       <div class="card-num">04</div>
       <div class="card-title">Лояльность</div>
       <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot</div>
       <div class="card-meta">
-        <span class="card-status">каждый час</span>
+        <span class="card-status" data-tag>каждый час</span>
         <span class="card-arrow">→</span>
       </div>
     </a>
 
-    <a class="card anim-up delay-6" href="staff.html">
+    <a class="card anim-up delay-6" href="staff.html" data-key="staff">
       <div class="card-num">05</div>
       <div class="card-title">Штат</div>
       <div class="card-desc">Укомплектованность 8 подразделений, текучесть, дефицит</div>
       <div class="card-meta">
-        <span class="card-status warn">требует внимания</span>
+        <span class="card-status warn" data-tag>требует внимания</span>
         <span class="card-arrow">→</span>
       </div>
     </a>
@@ -823,6 +889,97 @@
   // Apply theme immediately (avoid flash) — call before main visible
   attachTheme();
 
+  // Number formatter (Russian: comma as decimal, space as thousands)
+  function fmtRu(n, decimals) {
+    if (n === null || n === undefined || isNaN(n)) return '—';
+    var s = Number(n).toFixed(decimals || 0);
+    var parts = s.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return parts.join(',');
+  }
+
+  // Count-up animation for KPI numbers
+  function animateNumber(el, to, decimals, duration) {
+    decimals = decimals || 0;
+    duration = duration || 900;
+    var from = 0;
+    var start = performance.now();
+    function tick(now) {
+      var t = Math.min(1, (now - start) / duration);
+      // easeOutCubic
+      var eased = 1 - Math.pow(1 - t, 3);
+      var val = from + (to - from) * eased;
+      el.textContent = fmtRu(val, decimals);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = fmtRu(to, decimals);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function renderKpi(data) {
+    var ribbon = document.getElementById('kpi-ribbon');
+    if (!ribbon || !data || !data.kpi || !data.kpi.length) {
+      if (ribbon) ribbon.style.display = 'none';
+      return;
+    }
+    ribbon.innerHTML = '';
+    data.kpi.forEach(function(k){
+      var tile = document.createElement('a');
+      tile.className = 'kpi-tile' + (k.tone === 'warn' ? ' warn' : '');
+      tile.href = k.href || '#';
+      var dec = (k.unit && k.unit.indexOf('млн') >= 0) ? 3 : 0;
+      tile.innerHTML =
+        '<div class="kpi-label">' + escapeHtml(k.label) + '</div>' +
+        '<div class="kpi-row">' +
+          '<span class="kpi-value" data-target="' + k.value + '" data-decimals="' + dec + '">0</span>' +
+          '<span class="kpi-unit">' + escapeHtml(k.unit || '') + '</span>' +
+          (k.delta !== null && k.delta !== undefined
+            ? '<span class="kpi-delta' + (k.delta < 0 ? ' neg' : '') + '">' + (k.delta >= 0 ? '+' : '') + k.delta + '%</span>'
+            : '') +
+        '</div>';
+      ribbon.appendChild(tile);
+    });
+    // Trigger count-up
+    setTimeout(function(){
+      ribbon.querySelectorAll('.kpi-value').forEach(function(el){
+        var target = parseFloat(el.dataset.target);
+        var dec = parseInt(el.dataset.decimals || '0', 10);
+        if (!isNaN(target)) animateNumber(el, target, dec, 900);
+      });
+    }, 200);
+  }
+
+  function renderCardTags(data) {
+    if (!data || !data.reports) return;
+    Object.keys(data.reports).forEach(function(key){
+      var card = document.querySelector('.card[data-key="' + key + '"]');
+      if (!card) return;
+      var tagEl = card.querySelector('[data-tag]');
+      var info = data.reports[key];
+      if (tagEl && info.tag) {
+        tagEl.textContent = info.tag;
+        tagEl.classList.toggle('warn', info.status === 'warn');
+      }
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  function loadLiveData() {
+    fetch('live.json?v=' + Date.now())
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d) return;
+        renderKpi(d);
+        renderCardTags(d);
+      })
+      .catch(function(){ /* swallow — KPI просто не отрендерится */ });
+  }
+
   function showMain() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('main').style.display = 'block';
@@ -832,6 +989,7 @@
     attachCardCursor();
     attachPrefetch();
     attachScrollFx();
+    loadLiveData();
   }
 
   function tryAuth(pwd) {
