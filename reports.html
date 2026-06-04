@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отчёты — Baden Uktus</title>
+
+<!-- 3D libs from CDN -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -69,11 +81,9 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { background: var(--bg); }
   body {
-    background:
-      radial-gradient(1200px 600px at 20% -10%, var(--glow-1), transparent 60%),
-      radial-gradient(900px 500px at 90% 10%, var(--glow-2), transparent 60%),
-      var(--bg);
+    background: transparent;
     color: var(--text);
     font-family: 'DM Sans', -apple-system, sans-serif;
     min-height: 100vh;
@@ -85,6 +95,35 @@
     overflow-x: hidden;
     transition: background-color .4s var(--ease), color .4s var(--ease);
   }
+
+  /* ── 3D background scene ── */
+  #webgl-bg {
+    position: fixed; inset: 0;
+    width: 100vw; height: 100vh;
+    z-index: -2;
+    pointer-events: none;
+  }
+  /* Vignette overlay above 3D but below content — улучшает читаемость */
+  #scene-overlay {
+    position: fixed; inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(900px 600px at 50% 40%, transparent 0%, rgba(12,12,12,0.55) 100%),
+      radial-gradient(1200px 700px at 20% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, var(--glow-2), transparent 60%);
+  }
+  :root[data-theme="light"] #scene-overlay {
+    background:
+      radial-gradient(900px 600px at 50% 40%, transparent 0%, rgba(247,245,240,0.55) 100%),
+      radial-gradient(1200px 700px at 20% -10%, var(--glow-1), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, var(--glow-2), transparent 60%);
+  }
+  :root[data-theme="light"] #webgl-bg { opacity: 0.5; }
+
+  /* Контент-секции лежат поверх 3D (не трогаем position у фиксированных элементов) */
+  #main { position: relative; z-index: 10; }
+  /* top-actions, preview-banner, auth-overlay, splash-intro уже position: fixed → они и так выше canvas (z-index -2) */
 
   /* ── Entrance animations (fail-safe via fill-mode: both) ── */
   @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
@@ -229,7 +268,9 @@
   .cards.bento .card:first-child .card-desc  { font-size: 13.5px; }
 
   .card {
-    background: var(--surface);
+    background: rgba(22,20,18,0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
     border: 1px solid var(--border);
     border-radius: var(--r);
     padding: var(--s-6) var(--s-5);
@@ -247,6 +288,9 @@
     cursor: pointer;
     isolation: isolate;
   }
+  :root[data-theme="light"] .card {
+    background: rgba(255,255,255,0.65);
+  }
   /* Magnetic gradient sheen following cursor */
   .card::before {
     content: '';
@@ -258,10 +302,13 @@
     z-index: -1;
   }
   .card:hover {
-    background: var(--surface-2);
+    background: rgba(32,28,24,0.68);
     border-color: var(--border-h);
     transform: translateY(-4px);
     box-shadow: var(--shadow-2);
+  }
+  :root[data-theme="light"] .card:hover {
+    background: rgba(255,255,255,0.82);
   }
   .card:hover::before { opacity: 1; }
   .card:active { transform: translateY(-1px); }
@@ -328,13 +375,19 @@
 
   /* Карточка проекта (внешний сайт) — лёгкий золотой акцент */
   .card-project {
-    background: linear-gradient(135deg, rgba(200,169,126,0.06), var(--surface));
-    border-color: rgba(200,169,126,0.20);
+    background: linear-gradient(135deg, rgba(200,169,126,0.10), rgba(22,20,18,0.50));
+    border-color: rgba(200,169,126,0.22);
   }
   .card-project:hover {
-    background: linear-gradient(135deg, rgba(200,169,126,0.12), var(--surface-2));
+    background: linear-gradient(135deg, rgba(200,169,126,0.18), rgba(32,28,24,0.65));
     border-color: var(--accent);
     box-shadow: 0 16px 48px rgba(200,169,126,0.18);
+  }
+  :root[data-theme="light"] .card-project {
+    background: linear-gradient(135deg, rgba(154,121,72,0.10), rgba(255,255,255,0.65));
+  }
+  :root[data-theme="light"] .card-project:hover {
+    background: linear-gradient(135deg, rgba(154,121,72,0.16), rgba(255,255,255,0.85));
   }
   .card-project .card-num { color: var(--accent); opacity: 1; }
   .card-project .card-arrow { color: var(--accent); }
@@ -598,6 +651,10 @@
 </style>
 </head>
 <body>
+
+<!-- 3D scroll-driven background -->
+<canvas id="webgl-bg" aria-hidden="true"></canvas>
+<div id="scene-overlay" aria-hidden="true"></div>
 
 <!-- Top floating actions -->
 <div class="top-actions" id="top-actions" style="display:none">
@@ -1032,5 +1089,250 @@
 })();
 </script>
 
+<!-- ── 3D scene: knowledge-graph background driven by scroll ── -->
+<script type="module">
+import * as THREE from 'three';
+
+(function init3D() {
+  var canvas = document.getElementById('webgl-bg');
+  if (!canvas || !window.WebGLRenderingContext) return;
+
+  var isMobile = window.matchMedia('(max-width: 700px)').matches;
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Renderer ----------
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance' });
+  } catch(e) { return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5));
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  renderer.setClearColor(0x000000, 0);
+
+  // ---------- Scene & camera ----------
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0c0c0c, 0.038);
+  var camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 120);
+  camera.position.set(0, 0, 14);
+  camera.lookAt(0, 0, 0);
+
+  // ---------- Knowledge graph generation ----------
+  var NODE_COUNT = isMobile ? 70 : 140;
+  var nodes = [];
+  var rng = (function(seed){return function(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};})(7);
+
+  for (var i = 0; i < NODE_COUNT; i++) {
+    // Cluster bias: more nodes near center
+    var r = Math.pow(rng(), 0.55) * 11;
+    var theta = rng() * Math.PI * 2;
+    var phi = Math.acos(2 * rng() - 1);
+    nodes.push({
+      x: r * Math.sin(phi) * Math.cos(theta),
+      y: r * Math.sin(phi) * Math.sin(theta) * 0.85,
+      z: r * Math.cos(phi),
+      pulse: rng() * Math.PI * 2
+    });
+  }
+
+  // ---------- Edges: connect each node to nearest few ----------
+  var MAX_DIST = 2.6;
+  var MAX_NEIGH = 3;
+  var edgeIndex = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var dists = [];
+    for (var j = 0; j < nodes.length; j++) {
+      if (i === j) continue;
+      var dx = nodes[i].x - nodes[j].x;
+      var dy = nodes[i].y - nodes[j].y;
+      var dz = nodes[i].z - nodes[j].z;
+      var d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (d < MAX_DIST) dists.push([j, d]);
+    }
+    dists.sort(function(a,b){ return a[1]-b[1]; });
+    for (var k = 0; k < Math.min(MAX_NEIGH, dists.length); k++) {
+      var j2 = dists[k][0];
+      if (j2 > i) edgeIndex.push(i, j2);
+    }
+  }
+
+  var edgePositions = new Float32Array(edgeIndex.length * 3);
+  for (var e = 0; e < edgeIndex.length; e++) {
+    var idx = edgeIndex[e];
+    edgePositions[e*3]   = nodes[idx].x;
+    edgePositions[e*3+1] = nodes[idx].y;
+    edgePositions[e*3+2] = nodes[idx].z;
+  }
+  var edgeGeom = new THREE.BufferGeometry();
+  edgeGeom.setAttribute('position', new THREE.BufferAttribute(edgePositions, 3));
+  var edgeMat = new THREE.LineBasicMaterial({
+    color: 0xd4b893,
+    transparent: true,
+    opacity: 0.22,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  var edgesObj = new THREE.LineSegments(edgeGeom, edgeMat);
+  scene.add(edgesObj);
+
+  // ---------- Nodes as Points with soft circular sprite ----------
+  function makeCircleTex() {
+    var c = document.createElement('canvas'); c.width = c.height = 64;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,235,170,1)');
+    g.addColorStop(0.35, 'rgba(212,175,55,0.85)');
+    g.addColorStop(0.7, 'rgba(200,169,126,0.18)');
+    g.addColorStop(1, 'rgba(200,169,126,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,64,64);
+    var t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+  var spriteTex = makeCircleTex();
+
+  var nodePositions = new Float32Array(nodes.length * 3);
+  for (var n = 0; n < nodes.length; n++) {
+    nodePositions[n*3]   = nodes[n].x;
+    nodePositions[n*3+1] = nodes[n].y;
+    nodePositions[n*3+2] = nodes[n].z;
+  }
+  var nodeGeom = new THREE.BufferGeometry();
+  nodeGeom.setAttribute('position', new THREE.BufferAttribute(nodePositions, 3));
+  var nodeMat = new THREE.PointsMaterial({
+    size: 0.32,
+    map: spriteTex,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+    color: 0xffffff
+  });
+  var nodesObj = new THREE.Points(nodeGeom, nodeMat);
+  scene.add(nodesObj);
+
+  // ---------- Central hub ----------
+  var hubMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.92 });
+  var hub = new THREE.Mesh(new THREE.SphereGeometry(0.32, 32, 32), hubMat);
+  scene.add(hub);
+  var haloMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false });
+  var halo = new THREE.Mesh(new THREE.SphereGeometry(0.55, 32, 32), haloMat);
+  scene.add(halo);
+
+  // ---------- Resize ----------
+  window.addEventListener('resize', function(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+  }, { passive: true });
+
+  // ---------- Theme reaction: subtle palette swap ----------
+  var observer = new MutationObserver(function(){
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    scene.fog.color.set(isLight ? 0xf7f5f0 : 0x0c0c0c);
+    edgeMat.color.set(isLight ? 0x9a7948 : 0xd4b893);
+    edgeMat.opacity = isLight ? 0.34 : 0.22;
+    hubMat.color.set(isLight ? 0x9a7948 : 0xd4af37);
+    haloMat.color.set(isLight ? 0x9a7948 : 0xd4af37);
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // ---------- Scroll-driven camera (Lenis + GSAP) ----------
+  var camTarget = { x: 0, y: 0, z: 14, lx: 0, ly: 0, lz: 0 };
+
+  function setupScroll() {
+    if (typeof Lenis === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      // Fallback: plain scroll handler
+      window.addEventListener('scroll', updateCamFromScroll, { passive: true });
+      updateCamFromScroll();
+      return;
+    }
+    var lenis = new Lenis({
+      duration: 1.05,
+      easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true,
+      smoothTouch: false
+    });
+    function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1,
+      onUpdate: function(self){ updateCamFromProgress(self.progress); }
+    });
+  }
+  function updateCamFromScroll(){
+    var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    var p = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+    updateCamFromProgress(p);
+  }
+  function updateCamFromProgress(p){
+    // Four-phase camera flight
+    var x, y, z, lx = 0, ly = 0, lz = 0;
+    if (p < 0.25) {
+      var t = p / 0.25;
+      x = Math.sin(t * Math.PI * 0.5) * 4.2;
+      y = -0.3;
+      z = 14 - t * 3.5;
+    } else if (p < 0.5) {
+      var t = (p - 0.25) / 0.25;
+      x = 4.2 - t * 4.2;
+      y = -0.3 + t * 0.4;
+      z = 10.5 - t * 12.5;       // push forward through the graph
+      lz = t * 1;
+    } else if (p < 0.75) {
+      var t = (p - 0.5) / 0.25;
+      x = -t * 3;
+      y = 0.1 - t * 1.2;
+      z = -2 + t * 18;            // pull way back
+      lz = 1 - t;
+    } else {
+      var t = (p - 0.75) / 0.25;
+      x = -3 + t * 3;
+      y = -1.1 + t * 1.1;
+      z = 16 - t * 14;            // dive into the central hub
+    }
+    camTarget.x = x; camTarget.y = y; camTarget.z = z;
+    camTarget.lx = lx; camTarget.ly = ly; camTarget.lz = lz;
+  }
+
+  if (!prefersReduced) setupScroll();
+  updateCamFromScroll();
+
+  // ---------- Render loop ----------
+  var clock = new THREE.Clock();
+  var lookAt = new THREE.Vector3();
+  function tick(){
+    var dt = Math.min(0.05, clock.getDelta());
+    var t = clock.elapsedTime;
+
+    // Smooth camera lerp
+    var k = 1 - Math.pow(0.001, dt);
+    camera.position.x += (camTarget.x - camera.position.x) * k;
+    camera.position.y += (camTarget.y - camera.position.y) * k;
+    camera.position.z += (camTarget.z - camera.position.z) * k;
+    lookAt.set(camTarget.lx, camTarget.ly, camTarget.lz);
+    camera.lookAt(lookAt);
+
+    // Ambient drift of whole network
+    scene.rotation.y = Math.sin(t * 0.05) * 0.08;
+    scene.rotation.x = Math.cos(t * 0.04) * 0.04;
+
+    // Hub pulse
+    var pulse = 1 + Math.sin(t * 1.2) * 0.08;
+    hub.scale.setScalar(pulse);
+    halo.scale.setScalar(1.35 + Math.sin(t * 1.1 + 0.6) * 0.12);
+    haloMat.opacity = 0.15 + Math.sin(t * 1.1) * 0.04;
+
+    renderer.render(scene, camera);
+    if (!prefersReduced) requestAnimationFrame(tick);
+  }
+  if (prefersReduced) renderer.render(scene, camera); else requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
