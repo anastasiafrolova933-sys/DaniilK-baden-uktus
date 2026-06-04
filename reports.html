@@ -15,44 +15,50 @@
 <style>
   :root {
     color-scheme: dark;
-    /* Color tokens — dark (default) */
-    --bg: #080808;
-    --bg-2: #0c0c0c;
-    --surface: #111111;
-    --surface-2: #161616;
-    --border: rgba(255,255,255,0.07);
-    --border-h: rgba(255,255,255,0.14);
+    /* Brand-aligned dark tokens (matches main Baden Uktus site) */
+    --bg: #0c0c0c;
+    --bg-2: #131110;
+    --surface: #161412;
+    --surface-2: #1f1c18;
+    --surface-3: #2a2520;
+    --border: rgba(255,255,255,0.10);
+    --border-h: rgba(255,255,255,0.18);
     --text: #f0ede8;
-    --text-2: rgba(240,237,232,0.45);
-    --text-3: rgba(240,237,232,0.22);
+    --text-2: rgba(240,237,232,0.55);
+    --text-3: rgba(240,237,232,0.32);
     --accent: #c8a97e;
     --accent-2: #d4b893;
+    --accent-dark: #b0936a;
+    --accent-bg: rgba(200,169,126,0.10);
     --success: #7ec999;
     --warning: #e2b974;
     --logo-invert: 0;
     --logo-filter: none;
-    --glow-1: rgba(200,169,126,0.06);
-    --glow-2: rgba(125,160,200,0.04);
+    --glow-1: rgba(200,169,126,0.07);
+    --glow-2: rgba(180,150,110,0.04);
   }
 
   :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #fafafa;
-    --bg-2: #f3f1ed;
+    --bg: #f7f5f0;
+    --bg-2: #efece5;
     --surface: #ffffff;
     --surface-2: #f7f5f1;
-    --border: rgba(20,20,20,0.10);
-    --border-h: rgba(20,20,20,0.22);
+    --surface-3: #ebe7df;
+    --border: rgba(20,16,10,0.12);
+    --border-h: rgba(20,16,10,0.24);
     --text: #16140f;
     --text-2: rgba(22,20,15,0.62);
     --text-3: rgba(22,20,15,0.40);
     --accent: #9a7948;
     --accent-2: #7a5e34;
+    --accent-dark: #6e5530;
+    --accent-bg: rgba(154,121,72,0.10);
     --success: #2e8553;
     --warning: #a67318;
     --logo-invert: 1;
     --logo-filter: invert(1) hue-rotate(180deg) contrast(1.05);
-    --glow-1: rgba(154,121,72,0.08);
+    --glow-1: rgba(154,121,72,0.07);
     --glow-2: rgba(90,120,160,0.04);
   }
 
@@ -266,28 +272,85 @@
   }
   .logout-btn:hover { color: var(--text-2); }
 
-  /* ── Hero ── */
+  /* ── Hero (cinematic, full-bleed image, like brand site) ── */
   .hero {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    min-height: 78vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     text-align: center;
-    margin-bottom: 80px;
+    padding: 80px 24px;
+    overflow: hidden;
+    margin-top: -32px;  /* compensate body padding so hero touches top */
+    margin-bottom: 96px;
+  }
+  .hero-bg {
+    position: absolute; inset: -6%;
+    background-image: url('pool-outdoor.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.42;
+    filter: blur(1px) saturate(0.85) brightness(0.75);
+    transform: scale(1.05);
+    animation: kenburns 36s ease-in-out infinite alternate;
+  }
+  :root[data-theme="light"] .hero-bg { opacity: 0.55; filter: blur(0.5px) saturate(0.95) brightness(1.05); }
+  @keyframes kenburns {
+    from { transform: scale(1.05) translate(0,0); }
+    to   { transform: scale(1.18) translate(-2%, -1%); }
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--bg) 25%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 50%, transparent) 55%,
+      var(--bg) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
     transform-origin: center top;
     will-change: transform, opacity;
+    transform: scale(calc(1 - var(--sp, 0) * 0.20)) translateY(calc(var(--sp, 0) * -6px));
+    opacity: calc(1 - var(--sp, 0) * 0.5);
+    display: flex; flex-direction: column; align-items: center;
   }
   .hero img {
-    height: 200px; width: auto;
-    opacity: 0.95;
+    height: 180px; width: auto;
+    opacity: 0.96;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
     transition: opacity var(--d) var(--ease);
   }
+  :root[data-theme="light"] .hero img {
+    filter: drop-shadow(0 8px 22px rgba(20,15,5,0.20));
+  }
+  .hero-eyebrow {
+    margin-top: 28px;
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 17px; font-weight: 300; font-style: italic;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
   .hero-sub {
-    margin-top: 20px;
-    font-size: 11px; letter-spacing: 0.22em;
-    text-transform: uppercase; color: var(--text-3);
+    margin-top: 10px;
+    font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--text-2);
     font-weight: 400;
     transition: opacity var(--d-fast) var(--ease);
   }
-  body[data-scrolled="1"] .hero .hero-sub { opacity: 0; }
-  /* Scroll-driven shrink for hero — fallback via JS sets CSS var --sp (0..1) */
-  .hero { transform: scale(calc(1 - var(--sp, 0) * 0.35)) translateY(calc(var(--sp, 0) * -10px)); opacity: calc(1 - var(--sp, 0) * 0.7); }
+  body[data-scrolled="1"] .hero .hero-eyebrow { opacity: 0.7; }
+  @media (max-width: 600px) {
+    .hero { min-height: 64vh; padding: 56px 16px; }
+    .hero img { height: 130px; }
+    .hero-eyebrow { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg { animation: none; }
+  }
 
   /* ── Calendar widget ── */
   .calendar-widget {
@@ -700,13 +763,13 @@
     overflow: hidden;
     isolation: isolate;
   }
-  /* Aurora glow behind */
+  /* Aurora glow behind — gold-toned for brand alignment */
   .ai-block::before {
     content: '';
     position: absolute;
     width: 600px; height: 300px;
     top: -150px; left: -100px;
-    background: radial-gradient(closest-side, rgba(125,160,200,0.18), transparent);
+    background: radial-gradient(closest-side, rgba(200,169,126,0.18), transparent);
     filter: blur(40px);
     z-index: -1;
     animation: drift 16s var(--ease) infinite alternate;
@@ -716,7 +779,7 @@
     position: absolute;
     width: 500px; height: 280px;
     bottom: -120px; right: -80px;
-    background: radial-gradient(closest-side, rgba(200,169,126,0.16), transparent);
+    background: radial-gradient(closest-side, rgba(176,147,106,0.14), transparent);
     filter: blur(50px);
     z-index: -1;
     animation: drift 20s var(--ease) infinite alternate-reverse;
@@ -919,9 +982,13 @@
     </div>
   </header>
 
-  <div class="hero anim-up delay-1">
-    <img src="logo.png" alt="Baden Uktus">
-    <div class="hero-sub">Термы Уктус · Термальный комплекс · Екатеринбург</div>
+  <div class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-inner anim-up delay-1">
+      <img src="logo.png" alt="Baden Uktus">
+      <div class="hero-eyebrow">Место, где время останавливается</div>
+      <div class="hero-sub">Термы Уктус · Термальный комплекс · Екатеринбург</div>
+    </div>
   </div>
 
   <div class="section-label anim-up delay-2">Отчёты</div>
