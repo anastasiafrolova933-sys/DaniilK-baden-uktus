@@ -1515,21 +1515,35 @@ import * as THREE from 'three';
     ctx.drawImage(img, 0, 0);
     var data = ctx.getImageData(0, 0, img.width, img.height).data;
 
-    // Авто-подбор шага так, чтобы получилось не больше ~700 точек (для производительности)
-    var aspect = img.width / img.height;
+    // Шаг 1: найдём реальный bounding box непрозрачных пикселей
+    var minX = img.width, minY = img.height, maxX = 0, maxY = 0, found = false;
+    for (var yy = 0; yy < img.height; yy++) {
+      for (var xx = 0; xx < img.width; xx++) {
+        if (data[(yy*img.width + xx)*4 + 3] > 80) {
+          if (xx < minX) minX = xx; if (xx > maxX) maxX = xx;
+          if (yy < minY) minY = yy; if (yy > maxY) maxY = yy;
+          found = true;
+        }
+      }
+    }
+    if (!found) { hideOverlay(); return; }
+    var bbW = maxX - minX, bbH = maxY - minY;
+    var bbAspect = bbW / bbH;
+
+    // Шаг 2: сэмплируем точки внутри bounding box и центрируем относительно него
     var scale = 7;
     var allPts = [];
-    var step = Math.max(2, Math.floor(Math.min(img.width, img.height) / 110));
-    for (var y = 0; y < img.height; y += step) {
-      for (var x = 0; x < img.width; x += step) {
+    var step = Math.max(2, Math.floor(Math.min(bbW, bbH) / 110));
+    for (var y = minY; y <= maxY; y += step) {
+      for (var x = minX; x <= maxX; x += step) {
         var i = (y * img.width + x) * 4;
         var alpha = data[i+3];
         var b = (data[i] + data[i+1] + data[i+2]) / 3;
-        // КЛЮЧЕВОЕ: проверяем alpha (логотип белый на прозрачном фоне)
         if (alpha > 80 && b > 40) {
           allPts.push({
-            x: ((x/img.width) - 0.5) * scale * aspect,
-            y: -((y/img.height) - 0.5) * scale,
+            // нормализуем по bbox: (x - minX) / bbW даёт 0..1, центрируем -0.5..0.5
+            x: ((x - minX)/bbW - 0.5) * scale * bbAspect,
+            y: -((y - minY)/bbH - 0.5) * scale,
             z: 0,
             bright: b/255
           });
