@@ -147,9 +147,11 @@
   #intro-logo {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(0.85);
-    max-width: min(560px, 70vw); height: auto;
+    width: min(900px, 85vw); height: auto;
     opacity: 0; pointer-events: none;
-    filter: drop-shadow(0 0 60px rgba(200,169,126,0.6)) drop-shadow(0 0 120px rgba(200,169,126,0.3));
+    filter: drop-shadow(0 0 80px rgba(200,169,126,0.7))
+            drop-shadow(0 0 160px rgba(200,169,126,0.4))
+            drop-shadow(0 0 240px rgba(200,169,126,0.25));
     transition: opacity 1.2s ease, transform 1.6s cubic-bezier(0.16,1,0.3,1);
   }
   #intro-overlay.logo-in #intro-logo { opacity: 1; transform: translate(-50%, -50%) scale(1); }
