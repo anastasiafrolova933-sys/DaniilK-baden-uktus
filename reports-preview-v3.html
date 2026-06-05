@@ -918,13 +918,7 @@
     });
   }
 
-  // ── Splash intro v3 — JS-инициализация перенесена в отдельный <script type="module"> ниже.
-  // Здесь только сбрасываем, если уже показывали в этой сессии.
-  (function(){
-    var ov = document.getElementById('intro-overlay');
-    if(!ov) return;
-    if(sessionStorage.getItem('introShownV3') === '1'){ ov.remove(); }
-  })();
+  // ── Splash intro v3 — preview: всегда показываем заставку (sessionStorage отключён) ──
 
   // ── 3D tilt + spotlight on cards (framer-motion-style) ──
   function attachCardCursor() {
@@ -1490,7 +1484,6 @@ import * as THREE from 'three';
   renderer.setClearColor(0x000000, 1);
 
   function hideOverlay(){
-    sessionStorage.setItem('introShownV3','1');
     overlay.classList.add('hide');
     setTimeout(function(){ if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 1100);
   }
