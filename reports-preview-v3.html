@@ -1677,7 +1677,7 @@ import * as THREE from 'three';
         'void main(){',
         '  vAlpha = alpha;',
         '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
-        '  gl_PointSize = (4.0 + alpha * 3.0) * (12.0 / -mv.z);',
+        '  gl_PointSize = (14.0 + alpha * 10.0) * (28.0 / -mv.z);',
         '  gl_Position = projectionMatrix * mv;',
         '}'
       ].join('\n'),
@@ -1823,23 +1823,28 @@ import * as THREE from 'three';
         hubGlow.material.opacity = Math.max(0, hubGlow.material.opacity - 0.005);
       }
 
-      // Camera
+      // Fade network when logo emerges (phase >= 1)
+      var netFade = phase === 0 ? 1 : phase === 1 ? Math.max(0.15, 1 - p*0.85) : 0.15;
+      netMat.opacity = 0.6 * netFade;
+      netLineMat.opacity = 0.2 * netFade;
+
+      // Camera — близкий план на лого начиная с phase 2
       var cx = 0, cy = 0, cz = 45, lookY = 0;
       if (phase === 0) {
-        cz = 45 - p*15; cy = Math.sin(p*Math.PI)*3; cx = mx*3;
+        cz = 45 - p*22; cy = Math.sin(p*Math.PI)*3; cx = mx*3;
       } else if (phase === 1) {
         var ease = p*p*(3 - 2*p);
-        cz = 30 - ease*22; cy = 3 - ease*2 + my*2; cx = mx*3; lookY = -ease*0.5;
+        cz = 23 - ease*16; cy = 3 - ease*2 + my*2; cx = mx*3; lookY = -ease*0.3;
       } else if (phase === 2) {
-        cz = 8 - p*2; cy = 1 + my; cx = mx*2;
+        cz = 7 - p*1.5; cy = 0.5 + my*0.5; cx = mx*1.5;
       } else if (phase === 3) {
         var ang = p*Math.PI*1.5;
-        cx = Math.sin(ang)*6; cz = 6 + Math.cos(ang)*3;
-        cy = 1 + Math.sin(p*Math.PI)*1.5 + my;
+        cx = Math.sin(ang)*3.5; cz = 6 + Math.cos(ang)*1.5;
+        cy = 0.5 + Math.sin(p*Math.PI)*0.8 + my*0.5;
       }
-      camera.position.x += (cx - camera.position.x)*0.04;
-      camera.position.y += (cy - camera.position.y)*0.04;
-      camera.position.z += (cz - camera.position.z)*0.04;
+      camera.position.x += (cx - camera.position.x)*0.06;
+      camera.position.y += (cy - camera.position.y)*0.06;
+      camera.position.z += (cz - camera.position.z)*0.06;
       camera.lookAt(0, lookY, 0);
 
       renderer.render(scene, camera);
