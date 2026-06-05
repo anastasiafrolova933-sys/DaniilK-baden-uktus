@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BADEN-BADEN · v4 Corporate [TEST]</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink-bg: #0a1320;            /* deep navy */
+    --ink-bg-2: #0e1a2a;
+    --ink-bg-3: #14233a;
+    --ivory: #f5efe4;              /* warm cream */
+    --ivory-2: rgba(245,239,228,0.66);
+    --ivory-3: rgba(245,239,228,0.38);
+    --gold: #c9a96e;               /* champagne */
+    --gold-soft: rgba(201,169,110,0.16);
+    --gold-line: rgba(201,169,110,0.32);
+    --line: rgba(245,239,228,0.10);
+    --line-2: rgba(245,239,228,0.20);
+    --ease: cubic-bezier(0.65,0.05,0.36,1);
+    --ease-out: cubic-bezier(0.22,1,0.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--ink-bg); color: var(--ivory); font-family: 'Inter', sans-serif; font-weight: 400; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  body { line-height: 1.5; }
+
+  /* TEST BANNER */
+  .test-banner {
+    position: fixed; top: 14px; right: 14px;
+    background: var(--gold); color: var(--ink-bg);
+    padding: 5px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; z-index: 1000; font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── FIXED 3D STAGE ── */
+  #stage { position: fixed; inset: 0; z-index: 1; }
+
+  /* ── NAVIGATION ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 22px 40px;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    transition: background .5s var(--ease), border-color .5s, backdrop-filter .5s;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.scrolled { background: rgba(10,19,32,0.85); backdrop-filter: blur(20px) saturate(180%); border-bottom-color: var(--line); }
+  .nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Newsreader', serif; font-weight: 500; font-size: 19px; letter-spacing: 0.02em; }
+  .nav-brand-mark { width: 22px; height: 22px; border: 1px solid var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+  .nav-brand-mark::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .nav-brand-name em { font-style: italic; font-weight: 300; }
+
+  .nav-links { display: flex; gap: 36px; justify-content: center; }
+  .nav-link { font-size: 13px; color: var(--ivory-2); font-weight: 500; transition: color .3s; }
+  .nav-link:hover { color: var(--gold); }
+  .nav-cta-row { display: flex; align-items: center; gap: 20px; justify-content: flex-end; }
+  .nav-phone { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ivory-2); }
+  .nav-cta {
+    padding: 11px 22px; background: var(--gold); color: var(--ink-bg);
+    border-radius: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; transition: all .35s var(--ease);
+  }
+  .nav-cta:hover { background: var(--ivory); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,169,110,0.25); }
+
+  /* ── HUD CORNERS ── */
+  .hud { position: fixed; padding: 14px 24px; z-index: 20; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; color: var(--ivory-3); pointer-events: none; }
+  .hud-bl { bottom: 0; left: 0; }
+  .hud-br { bottom: 0; right: 0; text-align: right; }
+  .hud-bl strong, .hud-br strong { color: var(--ivory); font-weight: 500; }
+
+  /* ── PROGRESS RAIL (numbered chapters) ── */
+  .rail {
+    position: fixed; right: 32px; top: 50%; transform: translateY(-50%); z-index: 25;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .rail-step {
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+    color: var(--ivory-3); transition: color .4s;
+  }
+  .rail-step-num { display: inline-block; min-width: 24px; opacity: 0.6; }
+  .rail-step-bar { width: 20px; height: 1px; background: currentColor; transition: width .4s, background .4s; }
+  .rail-step.active { color: var(--ivory); }
+  .rail-step.active .rail-step-bar { width: 48px; background: var(--gold); }
+  .rail-step.active .rail-step-num { opacity: 1; color: var(--gold); }
+
+  /* ── PAGE FLOW ── */
+  .scroll-body { position: relative; z-index: 10; }
+  .section { padding: 140px 40px; min-height: 100vh; display: flex; align-items: center; position: relative; }
+  .section-inner { width: 100%; max-width: 1440px; margin: 0 auto; }
+
+  /* Reveal */
+  .anim { opacity: 0; transform: translateY(36px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); }
+  .section.in .anim { opacity: 1; transform: translateY(0); }
+  .section.in .d1 { transition-delay: .08s; }
+  .section.in .d2 { transition-delay: .16s; }
+  .section.in .d3 { transition-delay: .24s; }
+  .section.in .d4 { transition-delay: .32s; }
+  .section.in .d5 { transition-delay: .40s; }
+
+  /* Section heading pattern */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em;
+    color: var(--gold); text-transform: uppercase; display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow-num { color: var(--gold); }
+  .eyebrow-line { display: inline-block; width: 28px; height: 1px; background: var(--gold-line); }
+
+  /* ─────────────────────────────────────────── */
+  /* HERO                                          */
+  /* ─────────────────────────────────────────── */
+  .hero { padding-top: 200px; min-height: 100vh; padding-bottom: 80px; }
+  .hero-inner { display: grid; grid-template-columns: 1fr 0.85fr; gap: 80px; align-items: end; }
+  .hero-left { max-width: 720px; }
+  .hero-title {
+    margin-top: 32px;
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(56px, 7.5vw, 132px); line-height: 0.96; letter-spacing: -0.02em;
+    color: var(--ivory);
+  }
+  .hero-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .hero-sub {
+    margin-top: 28px; font-size: 16px; line-height: 1.6; color: var(--ivory-2); max-width: 540px;
+  }
+  .hero-actions { margin-top: 40px; display: flex; gap: 14px; align-items: center; }
+  .btn-primary, .btn-secondary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    border-radius: 4px; transition: all .35s var(--ease);
+  }
+  .btn-primary { background: var(--gold); color: var(--ink-bg); }
+  .btn-primary:hover { background: var(--ivory); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,169,110,0.25); }
+  .btn-secondary { background: transparent; color: var(--ivory); border: 1px solid var(--line-2); }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-arrow {
+    width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.15);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 11px;
+  }
+
+  /* Hero right — KPI summary */
+  .hero-kpi-card {
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 28px; background: rgba(20,35,58,0.45); backdrop-filter: blur(18px);
+  }
+  .hero-kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--ivory-3); text-transform: uppercase; margin-bottom: 24px; display: flex; justify-content: space-between; }
+  .hero-kpi-label::after { content: ''; flex: 1; height: 1px; background: var(--line); margin: 8px 0 0 12px; }
+  .hero-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 32px; }
+  .kpi { padding: 12px 0; border-top: 1px solid var(--line); }
+  .kpi-num { font-family: 'Newsreader', serif; font-weight: 400; font-style: italic; font-size: 46px; line-height: 1; color: var(--gold); letter-spacing: -0.02em; }
+  .kpi-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ivory-2); margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .kpi-foot { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ivory-3); display: flex; justify-content: space-between; align-items: center; }
+  .kpi-foot-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* ── HERO TRUST STRIP ── */
+  .trust-strip {
+    margin-top: 60px; padding: 20px 32px;
+    border: 1px solid var(--line); border-radius: 4px;
+    background: rgba(14,26,42,0.6); backdrop-filter: blur(20px);
+    display: flex; justify-content: space-between; align-items: center; gap: 32px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  }
+  .trust-item { display: flex; align-items: center; gap: 10px; color: var(--ivory-2); }
+  .trust-item-num { color: var(--gold); font-weight: 500; }
+  .trust-item-sep { width: 1px; height: 18px; background: var(--line); }
+
+  /* ─────────────────────────────────────────── */
+  /* SECTION 02 — Capabilities (5 elements)        */
+  /* ─────────────────────────────────────────── */
+  .s-caps .section-inner { display: grid; grid-template-rows: auto 1fr; gap: 70px; }
+  .s-caps-head { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+  .s-title { font-family: 'Newsreader', serif; font-weight: 400; font-size: clamp(40px, 5.5vw, 80px); line-height: 0.98; letter-spacing: -0.02em; margin-top: 18px; }
+  .s-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .s-lead { font-size: 15px; line-height: 1.6; color: var(--ivory-2); }
+
+  .caps-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .cap {
+    padding: 36px 24px 28px; border-right: 1px solid var(--line);
+    transition: background .5s; position: relative;
+  }
+  .cap:last-child { border-right: none; }
+  .cap:hover { background: rgba(201,169,110,0.04); }
+  .cap-num-mono { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ivory-3); margin-bottom: 28px; letter-spacing: 0.1em; }
+  .cap-num { font-family: 'Newsreader', serif; font-weight: 400; font-size: 72px; line-height: 0.88; letter-spacing: -0.03em; color: var(--ivory); }
+  .cap-num em { font-style: italic; color: var(--gold); }
+  .cap-lbl { margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--ivory); }
+  .cap-desc { margin-top: 8px; font-size: 12.5px; line-height: 1.55; color: var(--ivory-2); }
+
+  /* ─────────────────────────────────────────── */
+  /* SECTION 03 — Aufguss                          */
+  /* ─────────────────────────────────────────── */
+  .s-auf .section-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; align-items: start; }
+  .auf-left { position: sticky; top: 120px; }
+  .auf-title { margin-top: 18px; font-family: 'Newsreader', serif; font-weight: 400; font-size: clamp(48px, 6.5vw, 100px); line-height: 0.95; letter-spacing: -0.02em; }
+  .auf-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .auf-lead { margin-top: 24px; font-size: 15px; line-height: 1.7; color: var(--ivory-2); max-width: 460px; }
+  .auf-stats { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; border-top: 1px solid var(--line); padding-top: 28px; }
+  .auf-stat-num { font-family: 'Newsreader', serif; font-style: italic; font-weight: 400; font-size: 48px; color: var(--gold); line-height: 1; }
+  .auf-stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ivory-2); margin-top: 6px; text-transform: uppercase; }
+
+  .auf-schedule { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .auf-sch-head {
+    padding: 18px 28px; border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(20,35,58,0.45); backdrop-filter: blur(16px);
+  }
+  .auf-sch-head-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; }
+  .auf-sch-head-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-2); }
+  .auf-row {
+    display: grid; grid-template-columns: 110px 1fr 180px 60px; gap: 24px; align-items: baseline;
+    padding: 22px 28px; border-bottom: 1px solid var(--line);
+    transition: background .4s, padding-left .4s;
+    background: rgba(14,26,42,0.4); backdrop-filter: blur(16px);
+  }
+  .auf-row:last-child { border-bottom: none; }
+  .auf-row:hover { background: rgba(201,169,110,0.06); padding-left: 36px; }
+  .auf-row:hover .auf-row-name { color: var(--gold); }
+  .auf-row-time { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--gold); }
+  .auf-row-name { font-size: 15px; font-weight: 500; transition: color .3s; }
+  .auf-row-tag { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ivory-3); letter-spacing: 0.05em; text-transform: uppercase; }
+  .auf-row-tag.star { color: var(--gold); }
+  .auf-row-arrow { color: var(--gold); text-align: right; opacity: 0.5; transition: opacity .3s, transform .3s; }
+  .auf-row:hover .auf-row-arrow { opacity: 1; transform: translateX(4px); }
+
+  /* ─────────────────────────────────────────── */
+  /* SECTION 04 — Tariffs (comparison table style) */
+  /* ─────────────────────────────────────────── */
+  .s-tar .section-inner { display: grid; grid-template-rows: auto 1fr; gap: 70px; }
+  .tar-head { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+
+  .tar-grid {
+    display: grid; grid-template-columns: 220px 1fr 1fr 1fr;
+    border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+    background: rgba(14,26,42,0.45); backdrop-filter: blur(20px);
+  }
+  .tar-cell { padding: 22px 24px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .tar-cell:nth-child(4n) { border-right: none; }
+  .tar-row:last-child .tar-cell { border-bottom: none; }
+
+  .tar-cell.head {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase;
+    background: rgba(20,35,58,0.5);
+  }
+  .tar-cell.head.row-label { color: var(--ivory-3); }
+  .tar-cell.head .day-num { font-family: 'Newsreader', serif; font-style: italic; font-size: 32px; color: var(--ivory); display: block; margin-top: 4px; letter-spacing: -0.02em; }
+
+  .tar-cell.row-label {
+    font-size: 13px; color: var(--ivory-2); font-weight: 500;
+    background: rgba(14,26,42,0.3);
+  }
+  .tar-cell.row-label .row-sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ivory-3); margin-top: 4px; letter-spacing: 0.05em; }
+  .tar-cell.price { font-family: 'Newsreader', serif; font-weight: 400; font-size: 22px; color: var(--ivory); letter-spacing: -0.01em; }
+  .tar-cell.price .ru { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ivory-3); margin-left: 4px; }
+
+  .tar-foot { margin-top: 20px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-3); }
+  .tar-foot-note::before { content: '★ '; color: var(--gold); }
+
+  /* ─────────────────────────────────────────── */
+  /* SECTION 05 — Combo                            */
+  /* ─────────────────────────────────────────── */
+  .s-combo .section-inner { display: grid; grid-template-rows: auto 1fr; gap: 60px; }
+  .combo-head { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+  .combo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .combo-card {
+    padding: 36px 30px; border: 1px solid var(--line); border-radius: 6px;
+    background: rgba(14,26,42,0.55); backdrop-filter: blur(20px);
+    transition: all .4s var(--ease);
+    position: relative; overflow: hidden;
+  }
+  .combo-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease);
+  }
+  .combo-card:hover { border-color: var(--gold-line); background: rgba(20,35,58,0.7); transform: translateY(-3px); }
+  .combo-card:hover::before { transform: scaleX(1); }
+  .combo-card-min { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 24px; display: flex; justify-content: space-between; }
+  .combo-card-min-cnt { color: var(--ivory-3); }
+  .combo-card-title { font-family: 'Newsreader', serif; font-weight: 400; font-size: 26px; line-height: 1.2; color: var(--ivory); letter-spacing: -0.01em; }
+  .combo-card-title em { font-style: italic; color: var(--gold); }
+  .combo-card-extra { margin-top: 12px; font-size: 13px; color: var(--ivory-2); }
+  .combo-card-divider { height: 1px; background: var(--line); margin: 28px 0; }
+  .combo-card-price { font-family: 'Newsreader', serif; font-weight: 400; font-size: 46px; letter-spacing: -0.03em; color: var(--ivory); display: flex; align-items: baseline; gap: 6px; }
+  .combo-card-price .ru { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--gold); }
+  .combo-card-action { margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--gold); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+  .combo-card-action-arrow { transition: transform .3s; }
+  .combo-card:hover .combo-card-action-arrow { transform: translateX(4px); }
+
+  /* ─────────────────────────────────────────── */
+  /* SECTION 06 — Corporate                        */
+  /* ─────────────────────────────────────────── */
+  .s-corp .section-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+  .corp-title { font-family: 'Newsreader', serif; font-weight: 400; font-size: clamp(40px, 5.5vw, 80px); line-height: 0.98; letter-spacing: -0.02em; margin-top: 18px; }
+  .corp-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .corp-text { margin-top: 24px; font-size: 15px; line-height: 1.65; color: var(--ivory-2); max-width: 500px; }
+  .corp-list { margin-top: 28px; display: flex; flex-direction: column; gap: 0; }
+  .corp-item {
+    display: grid; grid-template-columns: 60px 1fr auto; gap: 24px; align-items: baseline;
+    padding: 22px 0; border-top: 1px solid var(--line); font-size: 14px;
+  }
+  .corp-item:last-child { border-bottom: 1px solid var(--line); }
+  .corp-item-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 0.08em; }
+  .corp-item-name { font-weight: 500; color: var(--ivory); }
+  .corp-item-name span { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-3); margin-top: 4px; letter-spacing: 0.04em; }
+  .corp-item-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-2); }
+
+  .corp-cta {
+    margin-top: 40px; display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 28px; background: var(--gold); color: var(--ink-bg);
+    border-radius: 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    transition: all .35s var(--ease);
+  }
+  .corp-cta:hover { background: var(--ivory); transform: translateY(-2px); }
+
+  .corp-card {
+    padding: 40px; border: 1px solid var(--line); border-radius: 6px;
+    background: rgba(14,26,42,0.55); backdrop-filter: blur(20px);
+  }
+  .corp-card-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 28px; display: flex; justify-content: space-between; }
+  .corp-card-label::after { content: 'Контакты'; }
+  .corp-card-row { display: grid; grid-template-columns: 130px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .corp-card-row:first-of-type { border-top: none; }
+  .corp-card-row-key { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-3); letter-spacing: 0.05em; text-transform: uppercase; }
+  .corp-card-row-val { font-size: 14px; color: var(--ivory); }
+  .corp-card-row-val a { color: var(--ivory); border-bottom: 1px solid var(--gold-line); padding-bottom: 1px; transition: border-color .3s; }
+  .corp-card-row-val a:hover { border-color: var(--gold); }
+  .corp-card-row-val.phone { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--gold); font-weight: 500; }
+
+  /* ─────────────────────────────────────────── */
+  /* FOOTER                                        */
+  /* ─────────────────────────────────────────── */
+  .footer { padding: 60px 40px 36px; border-top: 1px solid var(--line); background: rgba(10,19,32,0.85); backdrop-filter: blur(20px); position: relative; z-index: 10; }
+  .footer-grid { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 36px; border-bottom: 1px solid var(--line); }
+  .footer-brand { font-family: 'Newsreader', serif; font-weight: 500; font-size: 22px; margin-bottom: 14px; }
+  .footer-brand em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .footer-brand-desc { font-size: 13px; color: var(--ivory-2); line-height: 1.55; max-width: 360px; }
+  .footer-col-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+  .footer-link { display: block; padding: 5px 0; font-size: 13px; color: var(--ivory-2); transition: color .3s; }
+  .footer-link:hover { color: var(--gold); }
+  .footer-bottom { max-width: 1440px; margin: 28px auto 0; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ivory-3); letter-spacing: 0.08em; }
+
+  @media (max-width: 1100px) {
+    .nav { padding: 16px 20px; grid-template-columns: 1fr auto; }
+    .nav-links { display: none; } .nav-phone { display: none; }
+    .hero { padding: 140px 20px 60px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+    .section { padding: 80px 20px; }
+    .s-caps-head, .tar-head, .combo-head { grid-template-columns: 1fr; gap: 24px; }
+    .caps-grid { grid-template-columns: repeat(2, 1fr); }
+    .cap { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .s-auf .section-inner { grid-template-columns: 1fr; gap: 60px; }
+    .auf-left { position: static; }
+    .tar-grid { grid-template-columns: 1fr; }
+    .tar-cell { border-right: none; }
+    .combo-grid { grid-template-columns: 1fr; }
+    .s-corp .section-inner { grid-template-columns: 1fr; gap: 60px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+    .auf-row { grid-template-columns: 80px 1fr 40px; gap: 12px; }
+    .auf-row-tag { display: none; }
+    .trust-strip { flex-wrap: wrap; gap: 14px; padding: 16px 20px; }
+    .rail { display: none; } .hud { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="test-banner">TEST · v4 CORPORATE</div>
+
+<canvas id="stage"></canvas>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-brand">
+    <span class="nav-brand-mark"></span>
+    <span class="nav-brand-name">Baden-Baden<em> · Uktus</em></span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#capabilities">Возможности</a>
+    <a class="nav-link" href="#aufguss">Ауфгусс</a>
+    <a class="nav-link" href="#tariffs">Тарифы</a>
+    <a class="nav-link" href="#combo">Пакеты</a>
+    <a class="nav-link" href="#corporate">Контакты</a>
+  </div>
+  <div class="nav-cta-row">
+    <a class="nav-phone" href="tel:+73433849411">+7 343 384 94 11</a>
+    <a class="nav-cta" href="#corporate">Забронировать</a>
+  </div>
+</nav>
+
+<!-- ── HUD ── -->
+<div class="hud hud-bl">
+  N 56°44'21" · E 60°34'12"<br>
+  <strong>BADEN·BADEN / UKTUS</strong>
+</div>
+<div class="hud hud-br">
+  <span id="navTime">EKB · 00:00</span><br>
+  <strong>ЕЖЕДНЕВНО 10:00 — 24:00</strong>
+</div>
+
+<!-- ── PROGRESS RAIL ── -->
+<nav class="rail" id="rail">
+  <a class="rail-step" data-i="0"><span class="rail-step-num">01</span><span class="rail-step-bar"></span>BRAND</a>
+  <a class="rail-step" data-i="1"><span class="rail-step-num">02</span><span class="rail-step-bar"></span>SCALE</a>
+  <a class="rail-step" data-i="2"><span class="rail-step-num">03</span><span class="rail-step-bar"></span>RITUAL</a>
+  <a class="rail-step" data-i="3"><span class="rail-step-num">04</span><span class="rail-step-bar"></span>PRICING</a>
+  <a class="rail-step" data-i="4"><span class="rail-step-num">05</span><span class="rail-step-bar"></span>BUNDLES</a>
+  <a class="rail-step" data-i="5"><span class="rail-step-num">06</span><span class="rail-step-bar"></span>CONTACT</a>
+</nav>
+
+<div class="scroll-body">
+
+  <!-- ── 01 HERO ── -->
+  <section class="section hero" data-frame="0">
+    <div class="section-inner hero-inner">
+      <div class="hero-left">
+        <div class="eyebrow anim"><span class="eyebrow-num">01</span><span class="eyebrow-line"></span>Термальный курорт · Уктус · с 2014</div>
+        <h1 class="hero-title anim d1">Премиальный термальный комплекс <em>в&nbsp;центре Урала</em></h1>
+        <p class="hero-sub anim d2">5 бассейнов, 11 саун, 20 ежедневных ауфгуссов и 43 СПА-услуги в одном комплексе на Уктусе. Корпоративное размещение, программы для коллективов, СПА-выезды и переговорные пространства.</p>
+        <div class="hero-actions anim d3">
+          <a class="btn-primary" href="#tariffs">Тарифы и пакеты <span class="btn-arrow">→</span></a>
+          <a class="btn-secondary" href="#aufguss">Расписание ауфгуссов</a>
+        </div>
+      </div>
+
+      <div class="hero-kpi-card anim d4">
+        <div class="hero-kpi-label">КЛЮЧЕВЫЕ ПОКАЗАТЕЛИ <span>2026</span></div>
+        <div class="hero-kpi-grid">
+          <div class="kpi"><div class="kpi-num">49</div><div class="kpi-lbl">объектов на карте</div></div>
+          <div class="kpi"><div class="kpi-num">43</div><div class="kpi-lbl">СПА-услуги</div></div>
+          <div class="kpi"><div class="kpi-num">14</div><div class="kpi-lbl">акций и скидок</div></div>
+          <div class="kpi"><div class="kpi-num">11</div><div class="kpi-lbl">лет на рынке</div></div>
+        </div>
+        <div class="kpi-foot">
+          <span>Источник данных</span>
+          <span class="kpi-foot-tag">internal · 2026.06</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-inner anim d5">
+      <div class="trust-strip">
+        <div class="trust-item"><span class="trust-item-num">5</span> бассейнов</div>
+        <div class="trust-item-sep"></div>
+        <div class="trust-item"><span class="trust-item-num">11</span> саун и парных</div>
+        <div class="trust-item-sep"></div>
+        <div class="trust-item"><span class="trust-item-num">20</span> ауфгуссов в день</div>
+        <div class="trust-item-sep"></div>
+        <div class="trust-item"><span class="trust-item-num">3</span> формата проживания</div>
+        <div class="trust-item-sep"></div>
+        <div class="trust-item"><span class="trust-item-num">24/7</span> приём бронирований</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02 CAPABILITIES ── -->
+  <section class="section s-caps" id="capabilities" data-frame="1">
+    <div class="section-inner">
+      <div class="s-caps-head">
+        <div>
+          <div class="eyebrow anim"><span class="eyebrow-num">02</span><span class="eyebrow-line"></span>Масштаб комплекса</div>
+          <h2 class="s-title anim d1">Один комплекс — <em>пять стихий</em></h2>
+        </div>
+        <p class="s-lead anim d2">49 объектов на 0,8 га: бассейны открытого и закрытого типов, парные с собственной парильной командой, СПА-центр с 5 направлениями процедур, ресторан и кафе на 5 площадках, проживание трёх форматов на территории.</p>
+      </div>
+
+      <div class="caps-grid">
+        <div class="cap anim d1">
+          <div class="cap-num-mono">001 — ВОДА</div>
+          <div class="cap-num">0<em>5</em></div>
+          <div class="cap-lbl">Бассейнов</div>
+          <div class="cap-desc">Открытый, закрытый, детский, СПА, контрастный</div>
+        </div>
+        <div class="cap anim d2">
+          <div class="cap-num-mono">002 — ОГОНЬ</div>
+          <div class="cap-num">1<em>1</em></div>
+          <div class="cap-lbl">Саун и парных</div>
+          <div class="cap-desc">Цитрусовая, кофейная, гималайская, панорамная, киносауна, 3 хаммама</div>
+        </div>
+        <div class="cap anim d3">
+          <div class="cap-num-mono">003 — ВОЗДУХ</div>
+          <div class="cap-num">2<em>0</em></div>
+          <div class="cap-lbl">Ауфгуссов в день</div>
+          <div class="cap-desc">Бесплатные групповые аромапарения с эфирными маслами</div>
+        </div>
+        <div class="cap anim d4">
+          <div class="cap-num-mono">004 — ЗЕМЛЯ</div>
+          <div class="cap-num">4<em>3</em></div>
+          <div class="cap-lbl">СПА-услуги</div>
+          <div class="cap-desc">5 направлений: массаж, хаммам, обёртывания, скрабы, ритуалы</div>
+        </div>
+        <div class="cap anim d5">
+          <div class="cap-num-mono">005 — ВРЕМЯ</div>
+          <div class="cap-num">0<em>3</em></div>
+          <div class="cap-lbl">Формата проживания</div>
+          <div class="cap-desc">БарнХаус, Коттедж, Дом-Контейнер на территории</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 AUFGUSS ── -->
+  <section class="section s-auf" id="aufguss" data-frame="2">
+    <div class="section-inner">
+      <div class="auf-left">
+        <div class="eyebrow anim"><span class="eyebrow-num">03</span><span class="eyebrow-line"></span>Фирменный ритуал · Бесплатно</div>
+        <h2 class="auf-title anim d1">20 ауфгуссов <em>ежедневно</em></h2>
+        <p class="auf-lead anim d2">Групповые аромапарения с эфирными маслами в исполнении парильщика. Каждые 30 минут — новая программа. По субботам — авторские: «Инь&Ян», «Травяное путешествие», «Aufgussparty».</p>
+        <div class="auf-stats anim d3">
+          <div><div class="auf-stat-num">20</div><div class="auf-stat-lbl">сеансов / день</div></div>
+          <div><div class="auf-stat-num">30</div><div class="auf-stat-lbl">мин. интервал</div></div>
+          <div><div class="auf-stat-num">12</div><div class="auf-stat-lbl">авторских</div></div>
+        </div>
+      </div>
+
+      <div class="auf-schedule anim d2">
+        <div class="auf-sch-head">
+          <div class="auf-sch-head-title">Сегодня · ближайшие сеансы</div>
+          <div class="auf-sch-head-date" id="aufDate">—</div>
+        </div>
+        <div class="auf-row"><span class="auf-row-time">14:00</span><span class="auf-row-name">Цитрусовый микс</span><span class="auf-row-tag">грейпфрут · лимон</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">14:30</span><span class="auf-row-name">Травы Урала</span><span class="auf-row-tag">мята · чабрец</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">15:00</span><span class="auf-row-name">Кофейный ритуал</span><span class="auf-row-tag">робуста · корица</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">15:30</span><span class="auf-row-name">Инь & Ян</span><span class="auf-row-tag star">★ авторский</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">16:00</span><span class="auf-row-name">Эвкалипт и мята</span><span class="auf-row-tag">прохладный</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">16:30</span><span class="auf-row-name">Aufgussparty</span><span class="auf-row-tag star">★ суббота</span><span class="auf-row-arrow">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 TARIFFS ── -->
+  <section class="section s-tar" id="tariffs" data-frame="3">
+    <div class="section-inner">
+      <div class="tar-head">
+        <div>
+          <div class="eyebrow anim"><span class="eyebrow-num">04</span><span class="eyebrow-line"></span>Прайс · Термы</div>
+          <h2 class="s-title anim d1">Тарифы — <em>прозрачный прайс</em></h2>
+        </div>
+        <p class="s-lead anim d2">Стоимость зависит от дня недели и категории. Льготная категория — дети 4–12 лет, пенсионеры, ветераны, инвалиды, семьи 3+. Цены действительны с 01.06.2026.</p>
+      </div>
+
+      <div class="tar-grid anim d2">
+        <!-- Header row -->
+        <div class="tar-cell head row-label">Категория<br><span style="font-family:'JetBrains Mono';font-size:9.5px;opacity:.6;letter-spacing:.08em">/ длительность</span></div>
+        <div class="tar-cell head">Будни <span class="day-num">пн–пт</span></div>
+        <div class="tar-cell head">Суббота <span class="day-num">сб</span></div>
+        <div class="tar-cell head">Воскресенье <span class="day-num">вс</span></div>
+
+        <div class="tar-cell row-label">Общий <span class="row-sub">/ 2 часа</span></div>
+        <div class="tar-cell price">1 500 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 300 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 100 <span class="ru">RUB</span></div>
+
+        <div class="tar-cell row-label">Общий <span class="row-sub">/ 3 часа</span></div>
+        <div class="tar-cell price">1 900 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 700 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 500 <span class="ru">RUB</span></div>
+
+        <div class="tar-cell row-label">Льготный ★ <span class="row-sub">/ 2 часа</span></div>
+        <div class="tar-cell price">1 400 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">1 800 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">1 600 <span class="ru">RUB</span></div>
+
+        <div class="tar-cell row-label">Льготный ★ <span class="row-sub">/ 3 часа</span></div>
+        <div class="tar-cell price">1 600 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 200 <span class="ru">RUB</span></div>
+        <div class="tar-cell price">2 000 <span class="ru">RUB</span></div>
+      </div>
+
+      <div class="tar-foot">
+        <span class="tar-foot-note">Льготная категория: дети 4–12 лет, пенсионеры, ветераны, инвалиды, семьи 3+</span>
+        <span>Действительно с 2026.06.01</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 COMBO ── -->
+  <section class="section s-combo" id="combo" data-frame="4">
+    <div class="section-inner">
+      <div class="combo-head">
+        <div>
+          <div class="eyebrow anim"><span class="eyebrow-num">05</span><span class="eyebrow-line"></span>Комплексные пакеты</div>
+          <h2 class="s-title anim d1">Термы + СПА — <em>вход без очереди</em></h2>
+        </div>
+        <p class="s-lead anim d2">Готовые программы с включёнными процедурами. Бронирование за 24 часа. Удобно для корпоративных групп — фиксированная стоимость на человека.</p>
+      </div>
+
+      <div class="combo-grid">
+        <div class="combo-card anim d1">
+          <div class="combo-card-min"><span>PACKAGE 01</span><span class="combo-card-min-cnt">120 МИН · 1 ЧЕЛ</span></div>
+          <div class="combo-card-title">1 час термы + <em>1 час СПА</em></div>
+          <div class="combo-card-extra">Скраб + массаж спины</div>
+          <div class="combo-card-divider"></div>
+          <div class="combo-card-price">4 900<span class="ru">₽</span></div>
+          <div class="combo-card-action">Забронировать <span class="combo-card-action-arrow">→</span></div>
+        </div>
+        <div class="combo-card anim d2">
+          <div class="combo-card-min"><span>PACKAGE 02</span><span class="combo-card-min-cnt">180 МИН · 1 ЧЕЛ</span></div>
+          <div class="combo-card-title">1.5 ч термы + <em>1.5 ч СПА</em></div>
+          <div class="combo-card-extra">Скраб + массаж + маска</div>
+          <div class="combo-card-divider"></div>
+          <div class="combo-card-price">6 500<span class="ru">₽</span></div>
+          <div class="combo-card-action">Забронировать <span class="combo-card-action-arrow">→</span></div>
+        </div>
+        <div class="combo-card anim d3">
+          <div class="combo-card-min"><span>PACKAGE 03</span><span class="combo-card-min-cnt">240 МИН · 1 ЧЕЛ</span></div>
+          <div class="combo-card-title">2 ч термы + <em>2 ч СПА</em></div>
+          <div class="combo-card-extra">Скраб + массаж тела + маска</div>
+          <div class="combo-card-divider"></div>
+          <div class="combo-card-price">8 000<span class="ru">₽</span></div>
+          <div class="combo-card-action">Забронировать <span class="combo-card-action-arrow">→</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 06 CORPORATE / CONTACT ── -->
+  <section class="section s-corp" id="corporate" data-frame="5">
+    <div class="section-inner">
+      <div>
+        <div class="eyebrow anim"><span class="eyebrow-num">06</span><span class="eyebrow-line"></span>Контакты и бронирование</div>
+        <h2 class="corp-title anim d1">Корпоративным <em>гостям</em></h2>
+        <p class="corp-text anim d2">Размещение коллективов, выездные СПА-программы для сотрудников, переговорные пространства в трёх форматах проживания на территории комплекса. Бронирование по согласованному корпоративному прайсу.</p>
+
+        <div class="corp-list anim d3">
+          <div class="corp-item">
+            <span class="corp-item-num">01</span>
+            <span class="corp-item-name">БарнХаус <span>деревянный коттедж на берегу</span></span>
+            <span class="corp-item-meta">до 8 чел</span>
+          </div>
+          <div class="corp-item">
+            <span class="corp-item-num">02</span>
+            <span class="corp-item-name">Коттедж <span>классический формат проживания</span></span>
+            <span class="corp-item-meta">до 6 чел</span>
+          </div>
+          <div class="corp-item">
+            <span class="corp-item-num">03</span>
+            <span class="corp-item-name">Дом-Контейнер <span>современный архитектурный формат</span></span>
+            <span class="corp-item-meta">до 4 чел</span>
+          </div>
+        </div>
+
+        <a class="corp-cta anim d4" href="tel:+73433849411">Позвонить отделу бронирования →</a>
+      </div>
+
+      <div class="corp-card anim d3">
+        <div class="corp-card-label">CONTACT</div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Телефон</span>
+          <span class="corp-card-row-val phone">+7 343 384 94 11</span>
+        </div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Адрес</span>
+          <span class="corp-card-row-val">г. Екатеринбург, район Уктус</span>
+        </div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Часы работы</span>
+          <span class="corp-card-row-val">Ежедневно, 10:00 — 24:00</span>
+        </div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Бронирование</span>
+          <span class="corp-card-row-val">24 / 7 онлайн и по телефону</span>
+        </div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Корпорат. отдел</span>
+          <span class="corp-card-row-val"><a href="mailto:corporate@baden.ru">corporate@baden.ru</a></span>
+        </div>
+        <div class="corp-card-row">
+          <span class="corp-card-row-key">Координаты</span>
+          <span class="corp-card-row-val" style="font-family:'JetBrains Mono';font-size:12px">N 56°44'21" · E 60°34'12"</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Baden-Baden<em> · Uktus</em></div>
+      <p class="footer-brand-desc">Премиальный термальный курорт на Уктусе. Бассейны, сауны, ауфгуссы, СПА и проживание. С 2014 года.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Комплекс</div>
+      <a class="footer-link" href="#capabilities">Возможности</a>
+      <a class="footer-link" href="#tariffs">Тарифы</a>
+      <a class="footer-link" href="#aufguss">Ауфгусс</a>
+      <a class="footer-link" href="#combo">Пакеты</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Гостям</div>
+      <a class="footer-link" href="#">Меню кафе</a>
+      <a class="footer-link" href="#">Акции и скидки</a>
+      <a class="footer-link" href="#">Проживание</a>
+      <a class="footer-link" href="#">Карта комплекса</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Контакты</div>
+      <a class="footer-link" href="tel:+73433849411">+7 343 384 94 11</a>
+      <a class="footer-link" href="#">Екатеринбург · Уктус</a>
+      <a class="footer-link" href="mailto:corporate@baden.ru">corporate@baden.ru</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 BADEN-BADEN · ВСЕ ПРАВА ЗАЩИЩЕНЫ</span>
+    <span>v4 · TEST BUILD · CORPORATE</span>
+  </div>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ════════════════════════════════════════════════════════════════
+   CORPORATE 3D — orbiting glass-card constellation
+   Represents the "49 objects" of the complex as floating glass tiles
+   arranged in a sophisticated formation. Camera slow-orbits and
+   tilts based on scroll progress.
+   ════════════════════════════════════════════════════════════════ */
+
+const canvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a1320, 0.03);
+scene.background = new THREE.Color(0x0a1320);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 6, 22);
+camera.lookAt(0, 0, 0);
+
+/* ── LIGHTS — restrained warm/cool balance ── */
+scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+const goldLight = new THREE.DirectionalLight(0xc9a96e, 1.0); goldLight.position.set(8, 12, 6); scene.add(goldLight);
+const coolFill = new THREE.PointLight(0x6890b8, 0.6, 50); coolFill.position.set(-10, 4, 8); scene.add(coolFill);
+const rim = new THREE.PointLight(0xc9a96e, 0.5, 35); rim.position.set(0, -4, -10); scene.add(rim);
+
+/* ── CONSTELLATION — 49 floating glass tiles in 3D ── */
+const TILE_COUNT = 49;
+const tiles = [];
+const tileGroup = new THREE.Group();
+scene.add(tileGroup);
+
+// Hexagonal-ish arrangement on multiple horizontal rings
+const ringConfigs = [
+  { count: 1,  r: 0,    y: 0.6 },
+  { count: 6,  r: 2.0,  y: 0.2 },
+  { count: 10, r: 3.6,  y: -0.4 },
+  { count: 14, r: 5.2,  y: -1.0 },
+  { count: 18, r: 6.8,  y: -1.7 },
+];
+
+let total = 0;
+const glassMat = new THREE.MeshPhysicalMaterial({
+  color: 0x1a3050, metalness: 0.4, roughness: 0.15,
+  transmission: 0.7, thickness: 0.6, ior: 1.45,
+  clearcoat: 1.0, clearcoatRoughness: 0.1,
+  emissive: 0xc9a96e, emissiveIntensity: 0.04,
+  transparent: true, opacity: 0.92,
+});
+
+ringConfigs.forEach(rc => {
+  for (let i = 0; i < rc.count && total < TILE_COUNT; i++) {
+    const angle = (i / rc.count) * Math.PI * 2;
+    // small jitter for organic feel
+    const jr = rc.r + (Math.random() - 0.5) * 0.4;
+    const x = Math.cos(angle) * jr;
+    const z = Math.sin(angle) * jr;
+    const y = rc.y + (Math.random() - 0.5) * 0.6;
+
+    // Tile is a thin rounded box
+    const w = 0.55 + Math.random() * 0.3;
+    const h = 0.55 + Math.random() * 0.3;
+    const d = 0.08;
+    const geo = new THREE.BoxGeometry(w, h, d);
+    const mat = glassMat.clone();
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    // Face center-ish
+    m.lookAt(0, y, 0);
+    m.userData = {
+      basePos: { x, y, z },
+      baseAngle: angle,
+      ring: rc,
+      pulseOff: Math.random() * Math.PI * 2,
+      idx: total,
+    };
+
+    // Wireframe overlay for premium feel
+    const wf = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({ color: 0xc9a96e, transparent: true, opacity: 0.35 })
+    );
+    m.add(wf);
+
+    tileGroup.add(m);
+    tiles.push(m);
+    total++;
+  }
+});
+
+/* ── Connecting lines between rings (subtle architectural feel) ── */
+const linePositions = [];
+for (let i = 0; i < tiles.length; i++) {
+  const t = tiles[i];
+  // connect to nearest 2 tiles
+  const distances = tiles
+    .map((other, j) => ({ j, d: t.position.distanceTo(other.position) }))
+    .filter(d => d.j !== i && d.d > 0.5 && d.d < 2.5)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 2);
+  distances.forEach(({ j }) => {
+    if (j > i) {
+      const o = tiles[j];
+      linePositions.push(t.position.x, t.position.y, t.position.z);
+      linePositions.push(o.position.x, o.position.y, o.position.z);
+    }
+  });
+}
+const lineGeo = new THREE.BufferGeometry();
+lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+const lineMat = new THREE.LineBasicMaterial({ color: 0xc9a96e, transparent: true, opacity: 0.12 });
+const constellLines = new THREE.LineSegments(lineGeo, lineMat);
+tileGroup.add(constellLines);
+
+/* ── Atmospheric dust particles ── */
+const dustCount = 400;
+const dustPos = new Float32Array(dustCount * 3);
+for (let i = 0; i < dustCount; i++) {
+  dustPos[i*3]   = (Math.random() - 0.5) * 40;
+  dustPos[i*3+1] = (Math.random() - 0.5) * 16;
+  dustPos[i*3+2] = (Math.random() - 0.5) * 30;
+}
+const dustGeo = new THREE.BufferGeometry();
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dustMat = new THREE.PointsMaterial({
+  color: 0xc9a96e, size: 0.025, transparent: true, opacity: 0.4,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const dust = new THREE.Points(dustGeo, dustMat);
+scene.add(dust);
+
+/* ════════════════════════════════════════════════════════════════
+   SCROLL-DRIVEN CAMERA PATH
+   6 keyframes, smooth interpolation
+   ════════════════════════════════════════════════════════════════ */
+
+const CAM_KEYS = [
+  // Hero — wide overview, slight downward tilt
+  { x: 0,    y: 6,    z: 22,   look: [0, 0, 0],   fog: 0.030, tileEm: 0.04 },
+  // Capabilities — orbit right + closer
+  { x: 16,   y: 4,    z: 14,   look: [0, 0, 0],   fog: 0.035, tileEm: 0.06 },
+  // Aufguss — orbit further, slight low angle
+  { x: 18,   y: -2,   z: -2,   look: [0, 1, 0],   fog: 0.045, tileEm: 0.10 },
+  // Tariffs — opposite side, tight
+  { x: -16,  y: 5,    z: -10,  look: [0, 0, 0],   fog: 0.040, tileEm: 0.07 },
+  // Combo — high overhead
+  { x: -2,   y: 18,   z: 4,    look: [0, 0, 0],   fog: 0.035, tileEm: 0.05 },
+  // Corporate — pull back wide final
+  { x: 0,    y: 3,    z: 26,   look: [0, 0, 0],   fog: 0.028, tileEm: 0.04 },
+];
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function smoothstep(t) { return t * t * (3 - 2 * t); }
+function lerpColor(c1, c2, t) {
+  const r1 = (c1 >> 16) & 255, g1 = (c1 >> 8) & 255, b1 = c1 & 255;
+  const r2 = (c2 >> 16) & 255, g2 = (c2 >> 8) & 255, b2 = c2 & 255;
+  return (Math.round(lerp(r1, r2, t)) << 16) | (Math.round(lerp(g1, g2, t)) << 8) | Math.round(lerp(b1, b2, t));
+}
+
+let scrollProgress = 0;
+function updateScroll() {
+  const totalH = document.documentElement.scrollHeight - innerHeight;
+  scrollProgress = Math.max(0, Math.min(1, scrollY / totalH));
+}
+window.addEventListener('scroll', updateScroll, { passive: true });
+
+const lookTarget = new THREE.Vector3();
+function updateCamera() {
+  const segs = CAM_KEYS.length - 1;
+  const f = scrollProgress * segs;
+  const i = Math.min(segs - 1, Math.floor(f));
+  const t = smoothstep(f - i);
+  const A = CAM_KEYS[i], B = CAM_KEYS[i+1];
+  camera.position.x = lerp(A.x, B.x, t);
+  camera.position.y = lerp(A.y, B.y, t);
+  camera.position.z = lerp(A.z, B.z, t);
+  lookTarget.set(lerp(A.look[0], B.look[0], t), lerp(A.look[1], B.look[1], t), lerp(A.look[2], B.look[2], t));
+  camera.lookAt(lookTarget);
+  scene.fog.density = lerp(A.fog, B.fog, t);
+  const targetEm = lerp(A.tileEm, B.tileEm, t);
+  tiles.forEach(tile => { tile.material.emissiveIntensity = targetEm; });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ANIMATION
+   ════════════════════════════════════════════════════════════════ */
+const start = performance.now();
+function tick() {
+  requestAnimationFrame(tick);
+  const T = (performance.now() - start) / 1000;
+
+  updateCamera();
+
+  // Slow global rotation
+  tileGroup.rotation.y = T * 0.04;
+
+  // Per-tile gentle float
+  tiles.forEach(tile => {
+    const u = tile.userData;
+    tile.position.y = u.basePos.y + Math.sin(T * 0.4 + u.pulseOff) * 0.08;
+    // Slight tilt
+    tile.rotation.z = Math.sin(T * 0.3 + u.pulseOff) * 0.05;
+  });
+
+  // Dust drift
+  dust.rotation.y = T * 0.01;
+  const dPos = dust.geometry.attributes.position.array;
+  for (let i = 1; i < dPos.length; i += 3) {
+    dPos[i] += 0.003;
+    if (dPos[i] > 8) dPos[i] = -8;
+  }
+  dust.geometry.attributes.position.needsUpdate = true;
+
+  renderer.render(scene, camera);
+}
+tick();
+updateScroll();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+/* ════════════════════════════════════════════════════════════════
+   DOM: section reveal, rail, nav scrolled state
+   ════════════════════════════════════════════════════════════════ */
+const sections = document.querySelectorAll('.section');
+const railSteps = document.querySelectorAll('.rail-step');
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      const idx = parseInt(e.target.dataset.frame);
+      if (!isNaN(idx)) {
+        railSteps.forEach((s, i) => s.classList.toggle('active', i === idx));
+      }
+    }
+  });
+}, { threshold: 0.25, rootMargin: '0px 0px -80px 0px' });
+sections.forEach(s => io.observe(s));
+
+railSteps.forEach((s, i) => s.addEventListener('click', () => sections[i].scrollIntoView({ behavior: 'smooth' })));
+
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', scrollY > 60);
+});
+
+/* ════════════════════════════════════════════════════════════════
+   NAV TIME + AUFGUSS DATE
+   ════════════════════════════════════════════════════════════════ */
+function updTime() {
+  const opts = { timeZone: 'Asia/Yekaterinburg', hour: '2-digit', minute: '2-digit', hour12: false };
+  document.getElementById('navTime').textContent = 'EKB · ' + new Date().toLocaleTimeString('ru-RU', opts);
+}
+updTime(); setInterval(updTime, 30000);
+const dOpts = { day: '2-digit', month: 'long', weekday: 'long' };
+document.getElementById('aufDate').textContent = new Date().toLocaleDateString('ru-RU', dOpts).toUpperCase();
+
+// Initial reveal
+setTimeout(() => sections[0].classList.add('in'), 200);
+</script>
+</body>
+</html>
