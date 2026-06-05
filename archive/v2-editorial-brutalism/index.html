@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BADEN · v2 [TEST]</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --bg-2: #050507;
+    --ink: #ffffff;
+    --ink-2: rgba(255,255,255,0.55);
+    --ink-3: rgba(255,255,255,0.28);
+    --acid: #c7ff3a;        /* signature electric lime */
+    --acid-2: #a8e025;
+    --ember: #ff5e1f;       /* fire accent */
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.16);
+    --ease: cubic-bezier(0.65,0.05,0.36,1);
+    --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter Tight', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; font-weight: 400; }
+  body { font-feature-settings: "ss01", "ss02"; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── TEST BANNER ── */
+  .test-banner {
+    position: fixed; top: 14px; right: 14px;
+    background: var(--acid); color: var(--bg);
+    padding: 5px 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; z-index: 100;
+  }
+
+  /* ─────────────────────────────────────────── */
+  /* CUSTOM CURSOR                                 */
+  /* ─────────────────────────────────────────── */
+  .cur-dot, .cur-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+  .cur-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--acid);
+    transform: translate(-50%, -50%);
+    transition: transform .15s var(--ease), background .3s, width .3s, height .3s;
+    mix-blend-mode: difference;
+  }
+  .cur-ring {
+    width: 36px; height: 36px; border: 1px solid var(--ink);
+    border-radius: 50%; transform: translate(-50%, -50%);
+    transition: width .35s var(--ease-spring), height .35s var(--ease-spring),
+                border-color .3s, background .3s, opacity .3s;
+    mix-blend-mode: difference;
+  }
+  body.cur-hover .cur-dot { width: 2px; height: 2px; background: var(--ink); }
+  body.cur-hover .cur-ring { width: 72px; height: 72px; border-color: var(--acid); background: rgba(199,255,58,0.05); }
+
+  /* ─────────────────────────────────────────── */
+  /* PRELOADER                                     */
+  /* ─────────────────────────────────────────── */
+  .loader {
+    position: fixed; inset: 0; z-index: 200; background: var(--bg-2);
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 40px; pointer-events: all;
+  }
+  .loader.gone { pointer-events: none; }
+  .loader-mark { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .loader-bar { flex: 1; height: 1px; background: var(--line); margin: 0 32px; position: relative; align-self: flex-end; margin-bottom: 4px; }
+  .loader-bar::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--acid); transition: width 1.2s var(--ease); }
+  .loader.go .loader-bar::before { width: 100%; }
+  .loader-pct { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 0.05em; min-width: 50px; text-align: right; }
+
+  /* ─────────────────────────────────────────── */
+  /* NAVIGATION                                    */
+  /* ─────────────────────────────────────────── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 24px 40px; display: flex; justify-content: space-between; align-items: center;
+    mix-blend-mode: difference; color: var(--ink);
+  }
+  .nav-brand {
+    display: flex; align-items: baseline; gap: 6px;
+    font-weight: 900; font-size: 16px; letter-spacing: -0.04em; text-transform: uppercase;
+  }
+  .nav-brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--acid); align-self: center; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-link { font-size: 12px; letter-spacing: 0.04em; font-weight: 500; position: relative; padding: 4px 0; }
+  .nav-link::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .4s var(--ease); }
+  .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+  .nav-time { font-size: 11px; font-weight: 500; letter-spacing: 0.05em; opacity: 0.7; }
+
+  /* ─────────────────────────────────────────── */
+  /* HERO                                          */
+  /* ─────────────────────────────────────────── */
+  .hero { position: relative; height: 100vh; min-height: 700px; overflow: hidden; }
+  #three { position: absolute; inset: 0; }
+
+  .hero-edge {
+    position: absolute; padding: 40px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .he-tl { top: 0; left: 0; padding-top: 80px; }
+  .he-tr { top: 0; right: 0; padding-top: 80px; text-align: right; }
+  .he-bl { bottom: 0; left: 0; }
+  .he-br { bottom: 0; right: 0; text-align: right; }
+  .he-bl strong, .he-br strong, .he-tl strong, .he-tr strong { color: var(--acid); font-weight: 600; }
+
+  .hero-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; pointer-events: none;
+    z-index: 5;
+  }
+  .hero-kicker {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--ink-2); display: inline-flex; align-items: center; gap: 16px;
+    padding: 8px 16px; border: 1px solid var(--line-2); border-radius: 100px;
+    backdrop-filter: blur(20px); background: rgba(10,10,12,0.3);
+  }
+  .hero-kicker::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 12px var(--acid); }
+
+  .hero-title {
+    margin-top: 32px;
+    font-family: 'Inter Tight', sans-serif; font-weight: 800;
+    font-size: clamp(72px, 14vw, 240px); line-height: 0.85; letter-spacing: -0.06em;
+    text-transform: uppercase;
+  }
+  .hero-title .it {
+    font-family: 'Fraunces', serif; font-weight: 300; font-style: italic;
+    font-variation-settings: "opsz" 144;
+    text-transform: lowercase; color: var(--acid); letter-spacing: -0.04em;
+  }
+  .hero-meta {
+    margin-top: 40px; display: flex; gap: 60px; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; color: var(--ink-2);
+  }
+  .hero-meta strong { color: var(--ink); font-weight: 700; }
+
+  .hero-cta {
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    pointer-events: all;
+    display: inline-flex; align-items: center; gap: 16px;
+    padding: 20px 36px; border-radius: 100px;
+    background: var(--acid); color: var(--bg);
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    overflow: hidden; isolation: isolate;
+    z-index: 6;
+  }
+  .hero-cta::before {
+    content: ''; position: absolute; inset: 0; background: var(--ink); z-index: -1;
+    transform: translateY(101%); transition: transform .5s var(--ease);
+  }
+  .hero-cta:hover::before { transform: translateY(0); }
+  .hero-cta:hover { color: var(--acid); }
+  .hero-cta-arrow {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--bg); color: var(--acid);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform .4s var(--ease);
+  }
+  .hero-cta:hover .hero-cta-arrow { transform: rotate(-45deg); background: var(--acid); color: var(--bg); }
+
+  /* ─────────────────────────────────────────── */
+  /* MARQUEE                                       */
+  /* ─────────────────────────────────────────── */
+  .marquee {
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    overflow: hidden; padding: 28px 0; background: var(--bg-2);
+  }
+  .marq-track {
+    display: flex; gap: 80px;
+    animation: marq 30s linear infinite;
+    white-space: nowrap;
+  }
+  .marq-item {
+    font-family: 'Inter Tight', sans-serif; font-weight: 700;
+    font-size: 56px; letter-spacing: -0.03em; text-transform: uppercase;
+    color: var(--ink); display: inline-flex; align-items: center; gap: 80px;
+  }
+  .marq-item::after { content: ''; width: 14px; height: 14px; border-radius: 50%; background: var(--acid); flex: none; }
+  .marq-item .it { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; text-transform: lowercase; color: var(--acid); }
+  @keyframes marq { to { transform: translateX(-50%); } }
+
+  /* ─────────────────────────────────────────── */
+  /* MANIFESTO                                     */
+  /* ─────────────────────────────────────────── */
+  .manifesto { padding: 200px 40px; max-width: 1600px; margin: 0 auto; position: relative; }
+  .manif-label {
+    position: absolute; top: 200px; left: 40px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--acid);
+  }
+  .manif-label::before { content: '◆ '; }
+  .manif-text {
+    max-width: 1200px; margin: 0 auto;
+    font-family: 'Inter Tight', sans-serif; font-weight: 500;
+    font-size: clamp(32px, 5vw, 80px); line-height: 1.05; letter-spacing: -0.035em;
+  }
+  .manif-text .dim { color: var(--ink-3); }
+  .manif-text .it { font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: var(--acid); }
+
+  /* ─────────────────────────────────────────── */
+  /* CAPABILITIES — sticky horizontal cards        */
+  /* ─────────────────────────────────────────── */
+  .caps-wrap { padding: 0 40px 160px; }
+  .caps-header { display: flex; justify-content: space-between; align-items: flex-end; max-width: 1600px; margin: 0 auto 64px; }
+  .caps-num { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
+  .caps-num::before { content: '02 / '; color: var(--acid); }
+  .caps-title { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: clamp(48px, 7vw, 120px); line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase; max-width: 900px; }
+  .caps-title .it { font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: var(--acid); text-transform: lowercase; }
+
+  .caps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; max-width: 1600px; margin: 0 auto; border: 1px solid var(--line); }
+  .cap {
+    position: relative; padding: 40px 28px 200px; border-right: 1px solid var(--line);
+    transition: background .5s var(--ease); overflow: hidden;
+    cursor: none;
+  }
+  .cap:last-child { border-right: none; }
+  .cap::before {
+    content: ''; position: absolute; inset: 0; background: var(--acid);
+    transform: translateY(101%); transition: transform .55s var(--ease); z-index: 0;
+  }
+  .cap:hover::before { transform: translateY(0); }
+  .cap > * { position: relative; z-index: 1; }
+  .cap:hover { color: var(--bg); }
+  .cap-num {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: clamp(80px, 9vw, 160px); line-height: 0.85; letter-spacing: -0.04em;
+    color: var(--acid);
+    transition: color .5s var(--ease);
+  }
+  .cap:hover .cap-num { color: var(--bg); }
+  .cap-lbl { margin-top: 24px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cap-desc { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); transition: color .5s var(--ease); }
+  .cap:hover .cap-desc { color: rgba(0,0,0,0.65); }
+  .cap-tag {
+    position: absolute; bottom: 28px; left: 28px; right: 28px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); transition: color .5s; z-index: 1;
+  }
+  .cap:hover .cap-tag { color: var(--bg); opacity: 0.5; }
+
+  /* ─────────────────────────────────────────── */
+  /* AUFGUSS — full bleed with steam              */
+  /* ─────────────────────────────────────────── */
+  .aufguss { position: relative; min-height: 100vh; padding: 140px 40px; background: radial-gradient(ellipse at 50% 30%, #2a0a04 0%, #060205 70%); overflow: hidden; }
+  #steamCanvas { position: absolute; inset: 0; opacity: 0.9; pointer-events: none; }
+  .auf-inner { position: relative; z-index: 5; max-width: 1600px; margin: 0 auto; }
+  .auf-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
+  .auf-cat { font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ember); }
+  .auf-cat::before { content: '◆ '; }
+  .auf-title { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: clamp(64px, 11vw, 200px); line-height: 0.85; letter-spacing: -0.05em; text-transform: uppercase; }
+  .auf-title .it { font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: var(--ember); text-transform: lowercase; }
+  .auf-body { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; }
+  .auf-lead {
+    font-size: 18px; line-height: 1.55; color: var(--ink); font-weight: 400;
+  }
+  .auf-lead .em { color: var(--ember); font-weight: 600; }
+  .auf-stats { margin-top: 56px; display: flex; gap: 48px; }
+  .auf-stat-num {
+    font-family: 'Inter Tight', sans-serif; font-weight: 800;
+    font-size: 80px; color: var(--ink); line-height: 1; letter-spacing: -0.04em;
+  }
+  .auf-stat-num .it { font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: var(--ember); }
+  .auf-stat-lbl { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); margin-top: 6px; }
+
+  .auf-list { display: flex; flex-direction: column; gap: 0; }
+  .auf-row {
+    display: grid; grid-template-columns: 80px 1fr 1fr 60px; gap: 24px; align-items: baseline;
+    padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: padding .4s var(--ease);
+  }
+  .auf-row:hover { padding-left: 16px; }
+  .auf-row:hover .auf-row-name { color: var(--ember); }
+  .auf-row-time { font-family: 'Fraunces', serif; font-style: italic; font-size: 32px; color: var(--ember); }
+  .auf-row-name { font-size: 18px; font-weight: 500; transition: color .4s; }
+  .auf-row-tag { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .auf-row-tag.star { color: var(--ember); }
+  .auf-row-arrow { color: var(--ember); font-size: 18px; text-align: right; opacity: 0.5; transition: opacity .3s; }
+  .auf-row:hover .auf-row-arrow { opacity: 1; }
+
+  /* ─────────────────────────────────────────── */
+  /* TARIFFS                                       */
+  /* ─────────────────────────────────────────── */
+  .tariffs { padding: 160px 40px; max-width: 1600px; margin: 0 auto; }
+  .tar-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 80px; }
+  .tar-cat { font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--acid); }
+  .tar-cat::before { content: '◆ '; }
+  .tar-title { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: clamp(56px, 9vw, 160px); line-height: 0.85; letter-spacing: -0.05em; text-transform: uppercase; }
+  .tar-title .it { font-family: 'Fraunces', serif; font-weight: 300; font-style: italic; color: var(--acid); text-transform: lowercase; }
+  .tar-sub { font-size: 14px; color: var(--ink-2); max-width: 400px; line-height: 1.5; }
+
+  .tar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .tar-card { padding: 40px 32px; background: var(--bg); transition: background .4s; cursor: none; }
+  .tar-card:hover { background: var(--bg-2); }
+  .tar-day { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 32px; }
+  .tar-day .it { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; color: var(--acid); text-transform: lowercase; }
+  .tar-row { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .tar-row:last-of-type { border-bottom: none; }
+  .tar-name { font-size: 13px; color: var(--ink-2); }
+  .tar-price { font-family: 'Inter Tight', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+  .tar-note { margin-top: 20px; font-size: 11px; color: var(--ink-3); }
+
+  /* ─────────────────────────────────────────── */
+  /* FOOTER                                        */
+  /* ─────────────────────────────────────────── */
+  .footer { padding: 80px 40px 40px; background: var(--bg-2); border-top: 1px solid var(--line); }
+  .foot-mega {
+    font-family: 'Inter Tight', sans-serif; font-weight: 900;
+    font-size: clamp(80px, 22vw, 380px); line-height: 0.8; letter-spacing: -0.07em;
+    text-transform: uppercase; text-align: center; margin-bottom: 80px;
+    background: linear-gradient(180deg, var(--ink) 0%, var(--bg-2) 95%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .foot-grid { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 60px; border-bottom: 1px solid var(--line); }
+  .foot-brand { font-weight: 800; font-size: 16px; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 16px; }
+  .foot-brand-dot { color: var(--acid); }
+  .foot-brand-desc { font-size: 13px; color: var(--ink-2); line-height: 1.6; max-width: 360px; }
+  .foot-col-title { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--acid); margin-bottom: 18px; font-weight: 700; }
+  .foot-link { display: block; padding: 6px 0; font-size: 13px; color: var(--ink-2); transition: color .3s, padding .3s; }
+  .foot-link:hover { color: var(--acid); padding-left: 8px; }
+  .foot-bottom { max-width: 1600px; margin: 32px auto 0; display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+
+  /* ── Reveal ── */
+  .reveal { opacity: 0; transform: translateY(50px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.show { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: .08s; } .reveal.d2 { transition-delay: .16s; }
+  .reveal.d3 { transition-delay: .24s; } .reveal.d4 { transition-delay: .32s; }
+
+  @media (max-width: 900px) {
+    * { cursor: auto; } .cur-dot, .cur-ring { display: none; }
+    .nav-links { display: none; }
+    .hero-edge { display: none; }
+    .caps { grid-template-columns: 1fr; }
+    .cap { border-right: none; border-bottom: 1px solid var(--line); padding-bottom: 80px; }
+    .auf-body { grid-template-columns: 1fr; gap: 48px; }
+    .auf-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .tar-grid { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .marq-item { font-size: 36px; }
+    .auf-row { grid-template-columns: 60px 1fr 40px; gap: 12px; }
+    .auf-row-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="test-banner">TEST · v2</div>
+
+<!-- Cursor -->
+<div class="cur-dot" id="curDot"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- Preloader -->
+<div class="loader" id="loader">
+  <div class="loader-mark">BADEN<span style="color:var(--acid)">·</span>BADEN</div>
+  <div class="loader-bar"></div>
+  <div class="loader-pct" id="loaderPct">0%</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-brand">BADEN<span class="nav-brand-dot"></span>BADEN</div>
+  <div class="nav-links">
+    <a class="nav-link" href="#manifesto">Манифест</a>
+    <a class="nav-link" href="#caps">Возможности</a>
+    <a class="nav-link" href="#aufguss">Ауфгусс</a>
+    <a class="nav-link" href="#tariffs">Тарифы</a>
+    <a class="nav-link" href="#">СПА</a>
+  </div>
+  <div class="nav-time" id="navTime">EKB · 00:00</div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <canvas id="three"></canvas>
+
+  <div class="hero-edge he-tl">N 56°44'21" / E 60°34'12"<br><strong>EKATERINBURG · UKTUS</strong></div>
+  <div class="hero-edge he-tr">с 2014<br><strong>11 лет термального опыта</strong></div>
+  <div class="hero-edge he-bl">001 / 008<br><strong>HERO</strong></div>
+  <div class="hero-edge he-br">скролл для исследования<br><strong>↓</strong></div>
+
+  <div class="hero-center">
+    <div class="hero-kicker">Термальный курорт</div>
+    <h1 class="hero-title">BADEN<br>BADEN<span class="it">— термы</span></h1>
+    <div class="hero-meta">
+      <span><strong>5</strong> бассейнов</span>
+      <span><strong>11</strong> саун</span>
+      <span><strong>20</strong> ауфгуссов</span>
+      <span><strong>43</strong> СПА-услуги</span>
+    </div>
+  </div>
+
+  <a class="hero-cta" href="#tariffs">
+    забронировать визит
+    <span class="hero-cta-arrow">↗</span>
+  </a>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div class="marquee">
+  <div class="marq-track">
+    <span class="marq-item">ТЕРМЫ</span>
+    <span class="marq-item"><span class="it">ауфгусс</span></span>
+    <span class="marq-item">СПА</span>
+    <span class="marq-item"><span class="it">парения</span></span>
+    <span class="marq-item">ПРОЖИВАНИЕ</span>
+    <span class="marq-item"><span class="it">кафе</span></span>
+    <span class="marq-item">БАССЕЙНЫ</span>
+    <span class="marq-item"><span class="it">пар</span></span>
+    <!-- repeat for seamless loop -->
+    <span class="marq-item">ТЕРМЫ</span>
+    <span class="marq-item"><span class="it">ауфгусс</span></span>
+    <span class="marq-item">СПА</span>
+    <span class="marq-item"><span class="it">парения</span></span>
+    <span class="marq-item">ПРОЖИВАНИЕ</span>
+    <span class="marq-item"><span class="it">кафе</span></span>
+    <span class="marq-item">БАССЕЙНЫ</span>
+    <span class="marq-item"><span class="it">пар</span></span>
+  </div>
+</div>
+
+<!-- ─── MANIFESTO ─── -->
+<section class="manifesto" id="manifesto">
+  <div class="manif-label reveal">01 / Манифест</div>
+  <p class="manif-text reveal d1">
+    Тёплая вода <span class="dim">·</span> белый пар <span class="dim">·</span>
+    тишина дерева. <span class="it">Возвращение к себе —</span>
+    единственный продукт, который <span class="dim">мы продаём</span>.
+    <br>Остальное <span class="dim">— инфраструктура.</span>
+  </p>
+</section>
+
+<!-- ─── CAPABILITIES ─── -->
+<section class="caps-wrap" id="caps">
+  <div class="caps-header">
+    <div class="caps-num reveal">Возможности</div>
+    <h2 class="caps-title reveal d1">ОДИН КОМПЛЕКС<br><span class="it">пять стихий</span></h2>
+  </div>
+  <div class="caps">
+    <div class="cap reveal d1">
+      <div class="cap-num">05</div>
+      <div class="cap-lbl">Бассейнов</div>
+      <div class="cap-desc">Открытый, закрытый, детский, СПА и контрастный.</div>
+      <div class="cap-tag">— Стихия воды</div>
+    </div>
+    <div class="cap reveal d2">
+      <div class="cap-num">11</div>
+      <div class="cap-lbl">Саун и парных</div>
+      <div class="cap-desc">Цитрусовая, кофейная, гималайская, панорамная, киносауна, 3 хаммама.</div>
+      <div class="cap-tag">— Стихия огня</div>
+    </div>
+    <div class="cap reveal d3">
+      <div class="cap-num">20</div>
+      <div class="cap-lbl">Ауфгуссов в день</div>
+      <div class="cap-desc">Бесплатные групповые аромапарения с эфирными маслами.</div>
+      <div class="cap-tag">— Стихия воздуха</div>
+    </div>
+    <div class="cap reveal d4">
+      <div class="cap-num">43</div>
+      <div class="cap-lbl">СПА-услуги</div>
+      <div class="cap-desc">5 направлений: массаж, хаммам, обёртывания, скрабы.</div>
+      <div class="cap-tag">— Стихия земли</div>
+    </div>
+    <div class="cap reveal d4">
+      <div class="cap-num">03</div>
+      <div class="cap-lbl">Формата проживания</div>
+      <div class="cap-desc">БарнХаус, Коттедж, Дом-Контейнер на территории.</div>
+      <div class="cap-tag">— Стихия времени</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AUFGUSS ─── -->
+<section class="aufguss" id="aufguss">
+  <canvas id="steamCanvas"></canvas>
+  <div class="auf-inner">
+    <div class="auf-head">
+      <div class="auf-cat reveal">03 / Ауфгусс</div>
+      <h2 class="auf-title reveal d1">20 сеансов<br><span class="it">бесплатно</span></h2>
+    </div>
+    <div class="auf-body">
+      <div>
+        <p class="auf-lead reveal d2">Групповые аромапарения с эфирными маслами в исполнении парильщика. <span class="em">Каждые 30 минут</span> — новый аромат, новое настроение. По субботам — авторские программы: «Инь&Ян», «Травяное путешествие», «Aufgussparty».</p>
+        <div class="auf-stats reveal d3">
+          <div><div class="auf-stat-num">20</div><div class="auf-stat-lbl">сеансов / день</div></div>
+          <div><div class="auf-stat-num"><span class="it">30</span></div><div class="auf-stat-lbl">мин. интервал</div></div>
+          <div><div class="auf-stat-num">12</div><div class="auf-stat-lbl">авторских</div></div>
+        </div>
+      </div>
+      <div class="auf-list reveal d3">
+        <div class="auf-row"><span class="auf-row-time">14:00</span><span class="auf-row-name">Цитрусовый микс</span><span class="auf-row-tag">грейпфрут / лимон</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">14:30</span><span class="auf-row-name">Травы Урала</span><span class="auf-row-tag">мята / чабрец</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">15:00</span><span class="auf-row-name">Кофейный ритуал</span><span class="auf-row-tag">робуста / корица</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">15:30</span><span class="auf-row-name">Инь & Ян</span><span class="auf-row-tag star">★ авторский</span><span class="auf-row-arrow">→</span></div>
+        <div class="auf-row"><span class="auf-row-time">16:00</span><span class="auf-row-name">Эвкалипт и мята</span><span class="auf-row-tag">прохладный</span><span class="auf-row-arrow">→</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TARIFFS ─── -->
+<section class="tariffs" id="tariffs">
+  <div class="tar-head">
+    <div>
+      <div class="tar-cat reveal">04 / Цены</div>
+      <h2 class="tar-title reveal d1">ТЕРМЫ<br><span class="it">тарифы</span></h2>
+    </div>
+    <p class="tar-sub reveal d2">Стоимость зависит от дня недели и категории. Льготный тариф — дети 4–12, пенсионеры, ветераны, семьи 3+.</p>
+  </div>
+
+  <div class="tar-grid">
+    <div class="tar-card reveal d1">
+      <div class="tar-day">Будни <span class="it">пн–пт</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 2 часа</span><span class="tar-price">1 500 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 3 часа</span><span class="tar-price">1 900 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 2 часа</span><span class="tar-price">1 400 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 3 часа</span><span class="tar-price">1 600 ₽</span></div>
+      <div class="tar-note">— Дети 4–12, пенсионеры, инвалиды, ветераны, семьи 3+</div>
+    </div>
+    <div class="tar-card reveal d2">
+      <div class="tar-day"><span class="it">суббота</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 2 часа</span><span class="tar-price">2 300 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 3 часа</span><span class="tar-price">2 700 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 2 часа</span><span class="tar-price">1 800 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 3 часа</span><span class="tar-price">2 200 ₽</span></div>
+      <div class="tar-note">— Льготная категория</div>
+    </div>
+    <div class="tar-card reveal d3">
+      <div class="tar-day"><span class="it">воскресенье</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 2 часа</span><span class="tar-price">2 100 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Общий · 3 часа</span><span class="tar-price">2 500 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 2 часа</span><span class="tar-price">1 600 ₽</span></div>
+      <div class="tar-row"><span class="tar-name">Льготный · 3 часа</span><span class="tar-price">2 000 ₽</span></div>
+      <div class="tar-note">— Льготная категория</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="foot-mega">BADEN/BADEN</div>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-brand">BADEN<span class="foot-brand-dot">·</span>BADEN</div>
+      <p class="foot-brand-desc">Термальный курорт на Уктусе. Бассейны, сауны, ауфгуссы, СПА и проживание. С 2014 года.</p>
+    </div>
+    <div>
+      <div class="foot-col-title">Комплекс</div>
+      <a class="foot-link" href="#caps">Возможности</a>
+      <a class="foot-link" href="#tariffs">Тарифы</a>
+      <a class="foot-link" href="#aufguss">Ауфгусс</a>
+      <a class="foot-link" href="#">СПА</a>
+    </div>
+    <div>
+      <div class="foot-col-title">Гостям</div>
+      <a class="foot-link" href="#">Меню</a>
+      <a class="foot-link" href="#">Акции</a>
+      <a class="foot-link" href="#">Проживание</a>
+      <a class="foot-link" href="#">Карта</a>
+    </div>
+    <div>
+      <div class="foot-col-title">Контакты</div>
+      <a class="foot-link" href="tel:+73433849411">+7 343 384 94 11</a>
+      <a class="foot-link" href="#">Екатеринбург · Уктус</a>
+      <a class="foot-link" href="#">10:00 — 24:00</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 BADEN-BADEN</span>
+    <span>TEST BUILD · v2</span>
+  </div>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ────────────────────────────────────────────────────────────────
+   CUSTOM CURSOR
+   ────────────────────────────────────────────────────────────────*/
+const dot = document.getElementById('curDot');
+const ring = document.getElementById('curRing');
+let mx = innerWidth/2, my = innerHeight/2, rx = mx, ry = my;
+window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; dot.style.left = mx+'px'; dot.style.top = my+'px'; });
+function curLoop() {
+  rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(curLoop);
+}
+curLoop();
+document.querySelectorAll('a, button, .cap, .tar-card, .auf-row').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
+});
+
+/* ────────────────────────────────────────────────────────────────
+   PRELOADER
+   ────────────────────────────────────────────────────────────────*/
+const loader = document.getElementById('loader');
+const pct = document.getElementById('loaderPct');
+let p = 0;
+const pTimer = setInterval(() => {
+  p += Math.random() * 18 + 6;
+  if (p >= 100) { p = 100; clearInterval(pTimer);
+    setTimeout(() => {
+      loader.classList.add('gone');
+      gsap.to(loader, { opacity: 0, duration: .8, ease: 'power3.out', onComplete: () => loader.style.display = 'none' });
+      revealAll();
+    }, 300);
+  }
+  pct.textContent = Math.floor(p) + '%';
+}, 120);
+setTimeout(() => loader.classList.add('go'), 100);
+
+/* ────────────────────────────────────────────────────────────────
+   HERO 3D — distorted glass blob
+   ────────────────────────────────────────────────────────────────*/
+const canvas = document.getElementById('three');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x0a0a0c, 1);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0, 0, 6);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+const key = new THREE.DirectionalLight(0xc7ff3a, 1.5); key.position.set(3, 4, 5); scene.add(key);
+const fill = new THREE.PointLight(0xff5e1f, 1.2, 20); fill.position.set(-4, -2, 3); scene.add(fill);
+const rim = new THREE.PointLight(0xffffff, 0.8, 15); rim.position.set(0, 0, -4); scene.add(rim);
+
+// Liquid blob with vertex displacement
+const geo = new THREE.IcosahedronGeometry(1.7, 64);
+const mat = new THREE.MeshPhysicalMaterial({
+  color: 0xeeeeee, metalness: 0.1, roughness: 0.0,
+  transmission: 1.0, thickness: 1.5, ior: 1.45,
+  clearcoat: 1.0, clearcoatRoughness: 0.05,
+  envMapIntensity: 1.0,
+});
+
+// Patch shader for procedural displacement
+let uTime = { value: 0 }, uHover = { value: 0 }, uScroll = { value: 0 };
+mat.onBeforeCompile = (shader) => {
+  shader.uniforms.uTime = uTime;
+  shader.uniforms.uHover = uHover;
+  shader.uniforms.uScroll = uScroll;
+  shader.vertexShader = `
+    uniform float uTime; uniform float uHover; uniform float uScroll;
+    // Classic Perlin noise (Ashima) — compact
+    vec3 mod289(vec3 x){return x - floor(x*(1./289.))*289.;}
+    vec4 mod289(vec4 x){return x - floor(x*(1./289.))*289.;}
+    vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314*r;}
+    vec3 fade(vec3 t){return t*t*t*(t*(t*6.-15.)+10.);}
+    float cnoise(vec3 P){
+      vec3 Pi0=floor(P), Pi1=Pi0+vec3(1.); Pi0=mod289(Pi0); Pi1=mod289(Pi1);
+      vec3 Pf0=fract(P), Pf1=Pf0-vec3(1.);
+      vec4 ix=vec4(Pi0.x,Pi1.x,Pi0.x,Pi1.x);
+      vec4 iy=vec4(Pi0.yy,Pi1.yy);
+      vec4 iz0=Pi0.zzzz, iz1=Pi1.zzzz;
+      vec4 ixy=permute(permute(ix)+iy);
+      vec4 ixy0=permute(ixy+iz0), ixy1=permute(ixy+iz1);
+      vec4 gx0=ixy0*(1./7.), gy0=fract(floor(gx0)*(1./7.))-.5; gx0=fract(gx0);
+      vec4 gz0=vec4(.5)-abs(gx0)-abs(gy0); vec4 sz0=step(gz0,vec4(0.));
+      gx0-=sz0*(step(0.,gx0)-.5); gy0-=sz0*(step(0.,gy0)-.5);
+      vec4 gx1=ixy1*(1./7.), gy1=fract(floor(gx1)*(1./7.))-.5; gx1=fract(gx1);
+      vec4 gz1=vec4(.5)-abs(gx1)-abs(gy1); vec4 sz1=step(gz1,vec4(0.));
+      gx1-=sz1*(step(0.,gx1)-.5); gy1-=sz1*(step(0.,gy1)-.5);
+      vec3 g000=vec3(gx0.x,gy0.x,gz0.x), g100=vec3(gx0.y,gy0.y,gz0.y),
+           g010=vec3(gx0.z,gy0.z,gz0.z), g110=vec3(gx0.w,gy0.w,gz0.w),
+           g001=vec3(gx1.x,gy1.x,gz1.x), g101=vec3(gx1.y,gy1.y,gz1.y),
+           g011=vec3(gx1.z,gy1.z,gz1.z), g111=vec3(gx1.w,gy1.w,gz1.w);
+      vec4 norm0=taylorInvSqrt(vec4(dot(g000,g000),dot(g010,g010),dot(g100,g100),dot(g110,g110)));
+      g000*=norm0.x; g010*=norm0.y; g100*=norm0.z; g110*=norm0.w;
+      vec4 norm1=taylorInvSqrt(vec4(dot(g001,g001),dot(g011,g011),dot(g101,g101),dot(g111,g111)));
+      g001*=norm1.x; g011*=norm1.y; g101*=norm1.z; g111*=norm1.w;
+      float n000=dot(g000,Pf0), n100=dot(g100,vec3(Pf1.x,Pf0.y,Pf0.z)),
+            n010=dot(g010,vec3(Pf0.x,Pf1.y,Pf0.z)), n110=dot(g110,vec3(Pf1.xy,Pf0.z)),
+            n001=dot(g001,vec3(Pf0.xy,Pf1.z)), n101=dot(g101,vec3(Pf1.x,Pf0.y,Pf1.z)),
+            n011=dot(g011,vec3(Pf0.x,Pf1.yz)), n111=dot(g111,Pf1);
+      vec3 fade_xyz=fade(Pf0);
+      vec4 n_z=mix(vec4(n000,n100,n010,n110),vec4(n001,n101,n011,n111),fade_xyz.z);
+      vec2 n_yz=mix(n_z.xy,n_z.zw,fade_xyz.y);
+      return 2.2*mix(n_yz.x,n_yz.y,fade_xyz.x);
+    }
+  ` + shader.vertexShader;
+  shader.vertexShader = shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    `
+    float n = cnoise(position * (1.2 + uScroll * 0.6) + vec3(0.0, uTime * 0.25, 0.0));
+    float n2 = cnoise(position * 2.5 - vec3(uTime * 0.4));
+    float displace = n * (0.35 + uHover * 0.25) + n2 * 0.08;
+    vec3 transformed = position + normal * displace;
+    `
+  );
+};
+
+const blob = new THREE.Mesh(geo, mat);
+scene.add(blob);
+
+// Particles around blob
+const partCount = 200;
+const pPos = new Float32Array(partCount*3);
+for (let i = 0; i < partCount; i++) {
+  const r = 2.5 + Math.random()*2;
+  const t = Math.random()*Math.PI*2; const ph = Math.acos(2*Math.random()-1);
+  pPos[i*3] = r*Math.sin(ph)*Math.cos(t);
+  pPos[i*3+1] = r*Math.sin(ph)*Math.sin(t);
+  pPos[i*3+2] = r*Math.cos(ph);
+}
+const pg = new THREE.BufferGeometry();
+pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pmat = new THREE.PointsMaterial({ color: 0xc7ff3a, size: 0.03, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+const particles = new THREE.Points(pg, pmat);
+scene.add(particles);
+
+// Cursor influence
+let cx = 0, cy = 0, tcx = 0, tcy = 0, hover = 0, thover = 0;
+window.addEventListener('mousemove', (e) => {
+  tcx = (e.clientX / innerWidth - 0.5) * 2;
+  tcy = -(e.clientY / innerHeight - 0.5) * 2;
+});
+canvas.addEventListener('mouseenter', () => thover = 1);
+canvas.addEventListener('mouseleave', () => thover = 0);
+
+// Scroll influence
+let scrollY = 0;
+window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+const start = performance.now();
+function animate() {
+  requestAnimationFrame(animate);
+  cx += (tcx - cx)*0.06; cy += (tcy - cy)*0.06;
+  hover += (thover - hover)*0.04;
+  uTime.value = (performance.now() - start)/1000;
+  uHover.value = hover;
+  uScroll.value = Math.min(1, scrollY / innerHeight);
+
+  blob.rotation.x += 0.002 + cy*0.02;
+  blob.rotation.y += 0.003 + cx*0.02;
+  blob.position.x = cx*0.4;
+  blob.position.y = cy*0.3 - uScroll.value * 1.5;
+  blob.scale.setScalar(1 - uScroll.value*0.2);
+
+  particles.rotation.y += 0.0008;
+  particles.rotation.x += 0.0003;
+
+  camera.position.z = 6 + uScroll.value*2;
+  camera.lookAt(0, 0, 0);
+
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ────────────────────────────────────────────────────────────────
+   STEAM shader for aufguss
+   ────────────────────────────────────────────────────────────────*/
+(function() {
+  const cv = document.getElementById('steamCanvas');
+  const gl = cv.getContext('webgl'); if (!gl) return;
+
+  const VERT = `attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}`;
+  const FRAG = `
+  precision highp float;
+  uniform vec2 u_res; uniform float u_time;
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);
+    return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+  float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<6;i++){v+=a*noise(p);p*=2.03;a*=.5;}return v;}
+  void main(){
+    vec2 uv = gl_FragCoord.xy/u_res.xy;
+    vec2 p = uv;
+    float t = u_time*0.12;
+    float steam = 0.;
+    for(int i=0;i<4;i++){float fi=float(i);
+      vec2 sp = p*vec2(1.6,1.0); sp += vec2(sin(t+fi*1.3)*0.4, -t*(1.5+fi*0.3)-fi*2.0); sp *= 1.0+fi*0.4;
+      steam += fbm(sp + fi*9.0)*(0.6 - fi*0.13);}
+    steam = smoothstep(0.35, 0.95, steam);
+    float embers = 0.;
+    for(int i=0;i<3;i++){float fi=float(i);
+      vec2 ep = p*vec2(3.0,2.0) + vec2(fi*7.0, -t*1.5 - fi);
+      float e = fbm(ep); e = smoothstep(0.55, 0.85, e);
+      embers += e * smoothstep(0.0, 0.4, p.y) * (1.0 - smoothstep(0.3, 0.7, p.y));}
+    vec2 c = vec2(0.5, 0.35);
+    float center = smoothstep(0.7, 0.0, length((p-c)*vec2(1.0,1.6)));
+    vec3 emberCol = mix(vec3(0.6,0.1,0.02), vec3(1.0,0.6,0.2), embers);
+    vec3 steamCol = mix(vec3(0.6,0.4,0.3), vec3(0.95,0.85,0.7), steam);
+    vec3 col = vec3(0.06,0.025,0.015);
+    col += emberCol * embers * 0.7;
+    col += steamCol * steam * 0.4;
+    col += vec3(1.0,0.65,0.3) * center * 0.4;
+    float vig = smoothstep(1.3, 0.3, length((p-0.5)*vec2(1.0,0.9)));
+    col *= 0.4 + 0.6 * vig;
+    gl_FragColor = vec4(col, 1.0);
+  }`;
+  function sh(src, type){const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;}
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(VERT, gl.VERTEX_SHADER));
+  gl.attachShader(prog, sh(FRAG, gl.FRAGMENT_SHADER));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog,'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const Ures = gl.getUniformLocation(prog,'u_res'), Ut = gl.getUniformLocation(prog,'u_time');
+  function rs(){const dpr=Math.min(devicePixelRatio,1.5); cv.width=cv.clientWidth*dpr; cv.height=cv.clientHeight*dpr; gl.viewport(0,0,cv.width,cv.height);}
+  rs(); window.addEventListener('resize', rs);
+  const st = performance.now();
+  function lp(){requestAnimationFrame(lp); gl.uniform2f(Ures, cv.width, cv.height); gl.uniform1f(Ut,(performance.now()-st)/1000); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}
+  lp();
+})();
+
+/* ────────────────────────────────────────────────────────────────
+   Reveal + nav time
+   ────────────────────────────────────────────────────────────────*/
+const io = new IntersectionObserver((es) => {
+  es.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+function revealAll() {
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+// Hero text instant reveal after loader
+function heroShow() {
+  document.querySelectorAll('.hero .reveal, .hero-edge, .hero-center > *, .hero-cta').forEach((el, i) => {
+    gsap.from(el, { opacity: 0, y: 30, duration: 1, delay: 0.1 + i*0.06, ease: 'power3.out' });
+  });
+}
+setTimeout(heroShow, 800);
+
+// Nav time
+function updT() {
+  const t = new Date();
+  const opts = { timeZone: 'Asia/Yekaterinburg', hour: '2-digit', minute: '2-digit', hour12: false };
+  document.getElementById('navTime').textContent = 'EKB · ' + t.toLocaleTimeString('ru-RU', opts);
+}
+updT(); setInterval(updT, 30000);
+</script>
+</body>
+</html>
