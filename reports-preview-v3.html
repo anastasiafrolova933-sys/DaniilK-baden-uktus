@@ -144,6 +144,15 @@
   }
   #intro-overlay.hide { opacity: 0; pointer-events: none; }
   #intro-canvas { width: 100%; height: 100%; display: block; }
+  #intro-logo {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    max-width: min(560px, 70vw); height: auto;
+    opacity: 0; pointer-events: none;
+    filter: drop-shadow(0 0 60px rgba(200,169,126,0.6)) drop-shadow(0 0 120px rgba(200,169,126,0.3));
+    transition: opacity 1.2s ease, transform 1.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  #intro-overlay.logo-in #intro-logo { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   #intro-skip {
     position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
     color: rgba(240,237,232,0.25);
@@ -743,6 +752,7 @@
 <!-- Splash intro v3 — Three.js: network sphere → logo emerges from center -->
 <div id="intro-overlay" aria-hidden="true">
   <canvas id="intro-canvas"></canvas>
+  <img id="intro-logo" src="logo.png" alt="Baden Uktus">
   <div id="intro-skip">нажмите, чтобы пропустить</div>
 </div>
 
@@ -1498,7 +1508,11 @@ import * as THREE from 'three';
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // ── Load logo.png and sample bright pixels ──
+  // ── Build pure network intro; reveal real logo as <img> overlay ──
+  buildScene();
+  return;
+
+  // (отключённая ветвь с particle-logo, оставлена на случай возврата) ──
   var loader = new THREE.TextureLoader();
   loader.load('logo.png', function(tex){
     var img = tex.image;
@@ -1555,7 +1569,7 @@ import * as THREE from 'three';
     buildScene(logoPts);
   }, undefined, function(){ hideOverlay(); });
 
-  function buildScene(logoPts) {
+  function buildScene() {
     var group = new THREE.Group();
     scene.add(group);
 
@@ -1644,91 +1658,15 @@ import * as THREE from 'three';
       blending: THREE.AdditiveBlending, depthWrite: false
     })));
 
-    // ═══ LOGO PARTICLES (start at center, emerge to shape) ═══
-    var LOGO_COUNT = logoPts.length;
-    var logoGeo = new THREE.BufferGeometry();
-    var logoPos = new Float32Array(LOGO_COUNT*3);
-    var logoAlpha = new Float32Array(LOGO_COUNT);
-    var logoTargets = new Float32Array(LOGO_COUNT*3);
-
-    logoPts.forEach(function(p, idx){
-      var ang = Math.random()*Math.PI*2;
-      var r = Math.random()*0.5;
-      logoPos[idx*3]   = Math.cos(ang)*r;
-      logoPos[idx*3+1] = Math.sin(ang)*r;
-      logoPos[idx*3+2] = (Math.random()-0.5)*0.5;
-      logoTargets[idx*3]   = p.x;
-      logoTargets[idx*3+1] = p.y;
-      logoTargets[idx*3+2] = p.z;
-      logoAlpha[idx] = 0;
-    });
-
-    logoGeo.setAttribute('position', new THREE.BufferAttribute(logoPos, 3));
-    logoGeo.setAttribute('alpha', new THREE.BufferAttribute(logoAlpha, 1));
-
-    var logoMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uColor:  { value: new THREE.Color(0xffffff) },
-        uAccent: { value: new THREE.Color(0xc8a97e) }
-      },
-      vertexShader: [
-        'attribute float alpha;',
-        'varying float vAlpha;',
-        'void main(){',
-        '  vAlpha = alpha;',
-        '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
-        '  gl_PointSize = (14.0 + alpha * 10.0) * (28.0 / -mv.z);',
-        '  gl_Position = projectionMatrix * mv;',
-        '}'
-      ].join('\n'),
-      fragmentShader: [
-        'uniform vec3 uColor;',
-        'uniform vec3 uAccent;',
-        'varying float vAlpha;',
-        'void main(){',
-        '  float d = length(gl_PointCoord - vec2(0.5));',
-        '  if (d > 0.5) discard;',
-        '  float glow = 1.0 - smoothstep(0.0, 0.5, d);',
-        '  float core = 1.0 - smoothstep(0.0, 0.12, d);',
-        '  vec3 col = mix(uAccent, uColor, core * 0.7);',
-        '  float a = (glow * 0.5 + core * 0.8) * vAlpha;',
-        '  gl_FragColor = vec4(col, a);',
-        '}'
-      ].join('\n'),
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    });
-    group.add(new THREE.Points(logoGeo, logoMat));
-
-    // Logo connection lines — соединяем только с соседями по индексу (O(N) вместо O(N²))
-    var logoLines = [];
-    var MAX_LOGO_LINES = 250;
-    for (var i = 0; i < LOGO_COUNT && logoLines.length/6 < MAX_LOGO_LINES; i++) {
-      // Проверяем небольшое окно ближайших по индексу — обычно они рядом и в пространстве
-      var checked = 0;
-      for (var j = i+1; j < Math.min(i+24, LOGO_COUNT) && checked < 3; j++) {
-        var dx = logoPts[i].x - logoPts[j].x;
-        var dy = logoPts[i].y - logoPts[j].y;
-        var dsq = dx*dx + dy*dy;
-        if (dsq < 0.49 && Math.random() > 0.5) {
-          logoLines.push(logoPts[i].x, logoPts[i].y, 0, logoPts[j].x, logoPts[j].y, 0);
-          checked++;
-        }
-      }
-    }
-    var logoLineGeo = new THREE.BufferGeometry();
-    logoLineGeo.setAttribute('position', new THREE.Float32BufferAttribute(logoLines, 3));
-    var logoLineMat = new THREE.LineBasicMaterial({
-      color: 0xc8a97e, transparent: true, opacity: 0,
-      blending: THREE.AdditiveBlending, depthWrite: false
-    });
-    group.add(new THREE.LineSegments(logoLineGeo, logoLineMat));
-
-    // ═══ Animation phases ═══
+    // ═══ Animation phases (без particle-logo) ═══
+    // 0: широкий план сети (2.5с)
+    // 1: подход к центру + угасание сети, fade-in лого-картинки (1.8с)
+    // 2: лого в фокусе, мягкое дыхание (2с)
+    // 3: финальное затемнение (0.7с)
     var phase = 0, phaseTime = 0;
-    var PHASE_DUR = [2.0, 2.5, 1.0, 2.5, 0.8];
+    var PHASE_DUR = [2.5, 1.8, 2.0, 0.7];
     var startTime = null, skipped = false;
+    var logoShown = false;
 
     var mx = 0, my = 0;
     document.addEventListener('mousemove', function(e){
@@ -1752,7 +1690,10 @@ import * as THREE from 'three';
       var pd = PHASE_DUR[phase] || 1;
       var p = Math.min(1, phaseTime/pd);
 
-      if (phase >= 4) { hideOverlay(); return; }
+      if (phase >= 4 || phase === 3 && p > 0.98) { hideOverlay(); return; }
+
+      // Триггер показа реального лого в фазе 1
+      if (phase >= 1 && !logoShown) { overlay.classList.add('logo-in'); logoShown = true; }
 
       group.rotation.y = elapsed * 0.04;
 
@@ -1776,75 +1717,48 @@ import * as THREE from 'three';
         np.mesh.scale.setScalar(0.4 + fade);
       });
 
-      // Logo particles
-      var pos = logoGeo.attributes.position.array;
-      var alp = logoGeo.attributes.alpha.array;
-      for (var i = 0; i < LOGO_COUNT; i++) {
-        var i3 = i*3;
-        var delay = (i/LOGO_COUNT)*0.4;
-        var ep = Math.max(0, Math.min(1, (p - delay) / Math.max(0.01, 1 - delay)));
-        if (phase === 0) {
-          var breathe = Math.sin(elapsed*3 + i*0.5)*0.15;
-          pos[i3]   = breathe;
-          pos[i3+1] = breathe*0.5;
-          pos[i3+2] = Math.cos(elapsed*2 + i)*0.1;
-          alp[i] = 0.1 + Math.sin(elapsed*4 + i)*0.05;
-        } else if (phase === 1) {
-          // Быстрее приближаемся к цели; дрожание только в первой половине, очень слабое
-          pos[i3]   += (logoTargets[i3]   - pos[i3])   * 0.12;
-          pos[i3+1] += (logoTargets[i3+1] - pos[i3+1]) * 0.12;
-          pos[i3+2] += (logoTargets[i3+2] - pos[i3+2]) * 0.12;
-          if (ep < 0.4) {
-            pos[i3]   += (Math.random()-0.5)*0.01*(0.4-ep);
-            pos[i3+1] += (Math.random()-0.5)*0.01*(0.4-ep);
-          }
-          alp[i] = Math.min(0.9, alp[i] + 0.03);
-        } else if (phase >= 2) {
-          var br = Math.sin(elapsed*2 + i*0.3)*0.02;
-          pos[i3]   = logoTargets[i3]   + br;
-          pos[i3+1] = logoTargets[i3+1] + br*0.5;
-          pos[i3+2] = Math.sin(elapsed + i)*0.03;
-          alp[i] = 0.85 + Math.sin(elapsed*2.5 + i)*0.08;
-        }
-      }
-      logoGeo.attributes.position.needsUpdate = true;
-      logoGeo.attributes.alpha.needsUpdate = true;
-
-      if (phase >= 2) logoLineMat.opacity = Math.min(0.25, logoLineMat.opacity + 0.008);
-
-      // Hub glow
+      // Hub glow — мягко пульсирует на старте, угасает к концу
       if (phase === 0) {
-        hubGlow.material.opacity = 0.02 + p*0.03;
-        hubGlow.scale.setScalar(1 + p*0.3);
+        hubGlow.material.opacity = 0.04 + p*0.04;
+        hubGlow.scale.setScalar(1 + Math.sin(elapsed*1.8)*0.15);
       } else if (phase === 1) {
-        hubGlow.material.opacity = 0.05 + (1-p)*0.08;
+        hubGlow.material.opacity = Math.max(0, 0.08 - p*0.08);
         hubGlow.scale.setScalar(1.3 + Math.sin(elapsed*3)*0.2);
       } else {
-        hubGlow.material.opacity = Math.max(0, hubGlow.material.opacity - 0.005);
+        hubGlow.material.opacity = 0;
       }
 
-      // Fade network when logo emerges (phase >= 1)
-      var netFade = phase === 0 ? 1 : phase === 1 ? Math.max(0.15, 1 - p*0.85) : 0.15;
+      // Сеть постепенно угасает когда появляется лого
+      var netFade;
+      if (phase === 0) netFade = 1;
+      else if (phase === 1) netFade = Math.max(0.2, 1 - p*0.8);
+      else if (phase === 2) netFade = Math.max(0.1, 0.2 - p*0.1);
+      else netFade = Math.max(0, 0.1 - p*0.1);
       netMat.opacity = 0.6 * netFade;
-      netLineMat.opacity = 0.2 * netFade;
+      netLineMat.opacity = 0.25 * netFade;
 
-      // Camera — близкий план на лого начиная с phase 2
+      // Камера: широкий план → подход → орбита вокруг центра
       var cx = 0, cy = 0, cz = 45, lookY = 0;
       if (phase === 0) {
-        cz = 45 - p*22; cy = Math.sin(p*Math.PI)*3; cx = mx*3;
+        // Широкий план, медленное движение
+        cz = 35 - p*12; cy = Math.sin(p*Math.PI*0.5)*2; cx = mx*4;
       } else if (phase === 1) {
+        // Подходим к центру
         var ease = p*p*(3 - 2*p);
-        cz = 23 - ease*16; cy = 3 - ease*2 + my*2; cx = mx*3; lookY = -ease*0.3;
+        cz = 23 - ease*8; cy = 2 - ease*2 + my*1.5; cx = mx*3;
       } else if (phase === 2) {
-        cz = 7 - p*1.5; cy = 0.5 + my*0.5; cx = mx*1.5;
+        // Лёгкая орбита вокруг лого
+        var ang = p*Math.PI*0.6;
+        cx = Math.sin(ang)*2 + mx*1.5;
+        cz = 15 + Math.cos(ang)*1;
+        cy = my*1;
       } else if (phase === 3) {
-        var ang = p*Math.PI*1.5;
-        cx = Math.sin(ang)*3.5; cz = 6 + Math.cos(ang)*1.5;
-        cy = 0.5 + Math.sin(p*Math.PI)*0.8 + my*0.5;
+        // Финальное затемнение — слегка отъезжаем
+        cz = 15 + p*3;
       }
-      camera.position.x += (cx - camera.position.x)*0.06;
-      camera.position.y += (cy - camera.position.y)*0.06;
-      camera.position.z += (cz - camera.position.z)*0.06;
+      camera.position.x += (cx - camera.position.x)*0.05;
+      camera.position.y += (cy - camera.position.y)*0.05;
+      camera.position.z += (cz - camera.position.z)*0.05;
       camera.lookAt(0, lookY, 0);
 
       renderer.render(scene, camera);
