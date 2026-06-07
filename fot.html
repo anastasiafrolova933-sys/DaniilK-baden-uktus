@@ -39,6 +39,12 @@ window.FOT_DATA = {"generated_at":"2026-06-07T11:11:20.241Z","rows":[{"period":"
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font);background:var(--bg);color:var(--text);padding:16px;min-height:100vh}
+
+.report-switcher{display:flex;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-bottom:16px}
+.report-switcher .rs-lbl{font-size:11px;color:var(--gold-dim);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-right:6px}
+.report-switcher a{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text-dim);background:var(--card);transition:.15s}
+.report-switcher a:hover{color:var(--text);border-color:var(--gold-dim)}
+.report-switcher a.active{background:var(--gold-dim);color:#0c0c0c;border-color:var(--gold)}
 h1{color:var(--gold);font-size:22px;font-weight:700;letter-spacing:.3px}
 h2,.section-title{color:var(--gold)}
 
@@ -108,6 +114,12 @@ tr.vacancy td{color:var(--orange)}
 </style>
 </head>
 <body><script>(function(){var H="dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95";function s(p){var b=new TextEncoder().encode(p);return crypto.subtle.digest("SHA-256",b).then(function(a){return Array.from(new Uint8Array(a)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")});}var k=localStorage.getItem("bbt_ok");if(k===H)return;document.documentElement.style.visibility="hidden";var p=prompt("Введите пароль:");if(!p){document.documentElement.style.visibility="";window.location.href="about:blank";return;}s(p).then(function(h){if(h===H){localStorage.setItem("bbt_ok",H);document.documentElement.style.visibility="";}else{alert("Неверный пароль");window.location.reload();}});})();</script>
+
+<div class="report-switcher">
+  <span class="rs-lbl">Раздел:</span>
+  <a href="staff.html">Штат</a>
+  <a href="fot.html" class="active">Аналитика ФОТ</a>
+</div>
 
 <div class="header-bar">
   <div>
