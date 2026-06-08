@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Вход — Baden Uktus</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --ink:    #f4ebdc;
+    --ink-2:  rgba(244,235,220,0.62);
+    --ink-3:  rgba(244,235,220,0.32);
+    --accent: #d4b893;
+    --gold:   #c8a97e;
+    --error:  #e2486c;
+    --ease:   cubic-bezier(.22,1,.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, #1a1410 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 80% 100%, #14110a 0%, transparent 60%),
+      #050505;
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    padding: 32px 20px;
+  }
+
+  /* Subtle floating dots in background */
+  .bg-dots {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(212,184,147,0.06) 0%, transparent 8%),
+      radial-gradient(circle at 70% 60%, rgba(212,184,147,0.05) 0%, transparent 6%),
+      radial-gradient(circle at 40% 80%, rgba(212,184,147,0.04) 0%, transparent 10%);
+  }
+
+  .box {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 420px;
+    padding: 48px 36px;
+    background: rgba(20, 18, 14, 0.6);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(212,184,147,0.12);
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02);
+  }
+
+  .brand {
+    text-align: center; margin-bottom: 32px;
+  }
+  .brand-logo img {
+    height: 56px; width: auto;
+  }
+  .brand-name {
+    margin-top: 14px;
+    font-size: 13px; letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .brand-name b { color: var(--accent); font-weight: 500; }
+
+  .title {
+    font-weight: 200;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  /* User chips */
+  .users {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .user-chip {
+    padding: 14px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s var(--ease);
+    color: var(--ink-2);
+    font-size: 13px;
+    user-select: none;
+  }
+  .user-chip:hover {
+    border-color: rgba(212,184,147,0.25);
+    color: var(--ink);
+    background: rgba(212,184,147,0.04);
+  }
+  .user-chip.active {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(212,184,147,0.12), rgba(212,184,147,0.04));
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .user-chip .role {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .user-chip.active .role { color: var(--accent); opacity: 0.7; }
+  .user-chip.full-width { grid-column: span 2; }
+
+  /* Password field */
+  .field { position: relative; margin-bottom: 16px; }
+  .field input {
+    width: 100%; padding: 16px 18px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.3s var(--ease);
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field input::placeholder { color: var(--ink-3); }
+
+  /* Submit button */
+  .submit {
+    width: 100%; padding: 16px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--accent) 100%);
+    color: #1a1410;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    box-shadow: 0 12px 32px -8px rgba(212,184,147,0.35);
+  }
+  .submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px -8px rgba(212,184,147,0.55);
+  }
+  .submit:disabled { opacity: 0.5; cursor: wait; }
+
+  /* Status / error message */
+  .status {
+    min-height: 22px;
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .status.error { color: var(--error); }
+  .status.success { color: #7ec999; }
+
+  /* Footer note */
+  .foot {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 480px) {
+    .box { padding: 36px 24px; }
+    .users { grid-template-columns: 1fr; }
+    .user-chip.full-width { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-dots"></div>
+
+<div class="box">
+
+  <div class="brand">
+    <div class="brand-logo"><img src="logo.png" alt="Baden Uktus"></div>
+    <div class="brand-name">Baden Uktus · <b>отчёты</b></div>
+  </div>
+
+  <h1 class="title">Вход</h1>
+  <p class="subtitle">Выбери себя и введи пароль</p>
+
+  <div class="users" id="users">
+    <button type="button" class="user-chip" data-login="anastasia">
+      Анастасия Ф.
+      <span class="role">admin</span>
+    </button>
+    <button type="button" class="user-chip" data-login="daniil">
+      Даниил К.
+      <span class="role">admin</span>
+    </button>
+    <button type="button" class="user-chip" data-login="artem">
+      Артем К.
+      <span class="role">manager</span>
+    </button>
+    <button type="button" class="user-chip" data-login="fnb">
+      F&amp;B
+      <span class="role">fnb</span>
+    </button>
+    <button type="button" class="user-chip full-width" data-login="kadry">
+      Кадры
+      <span class="role">hr</span>
+    </button>
+  </div>
+
+  <form id="login-form" autocomplete="on">
+    <div class="field">
+      <input type="password" id="pwd" name="password" placeholder="••••••••••" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="submit" id="submit-btn">Войти</button>
+    <div class="status" id="status"></div>
+  </form>
+
+  <div class="foot">внутренний портал · v1</div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  // Auto-select last used login from localStorage
+  const lastLogin = localStorage.getItem('baden_last_login');
+  let selectedLogin = null;
+
+  function selectUser(login) {
+    selectedLogin = login;
+    document.querySelectorAll('.user-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.login === login);
+    });
+    document.getElementById('pwd').focus();
+  }
+
+  document.querySelectorAll('.user-chip').forEach(chip => {
+    chip.addEventListener('click', () => selectUser(chip.dataset.login));
+  });
+
+  // Restore last used
+  if (lastLogin && document.querySelector('.user-chip[data-login="' + lastLogin + '"]')) {
+    selectUser(lastLogin);
+  }
+
+  // Pre-fill from ?expired=1 / ?forbidden=
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('expired')) {
+    document.getElementById('status').textContent = 'Сессия истекла — войди заново';
+    document.getElementById('status').className = 'status error';
+  }
+  if (params.get('forbidden')) {
+    document.getElementById('status').textContent = 'Нет доступа к этому отчёту';
+    document.getElementById('status').className = 'status error';
+  }
+
+  // Already logged in? skip
+  if (BadenAuth.getSession()) {
+    window.location.href = 'reports.html';
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('pwd').value;
+    const status = document.getElementById('status');
+    const btn = document.getElementById('submit-btn');
+
+    if (!selectedLogin) {
+      status.textContent = 'Сначала выбери имя';
+      status.className = 'status error';
+      return;
+    }
+    if (!password) {
+      status.textContent = 'Введи пароль';
+      status.className = 'status error';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Проверка...';
+    status.textContent = '';
+    status.className = 'status';
+
+    try {
+      const result = await BadenAuth.login(selectedLogin, password);
+      localStorage.setItem('baden_last_login', selectedLogin);
+      status.textContent = 'Добро пожаловать, ' + result.user.name;
+      status.className = 'status success';
+
+      // Redirect: либо next из query, либо reports.html
+      const next = params.get('next');
+      setTimeout(() => {
+        window.location.href = next || 'reports.html';
+      }, 400);
+    } catch (err) {
+      status.textContent = err.message || 'Ошибка входа';
+      status.className = 'status error';
+      btn.disabled = false;
+      btn.textContent = 'Войти';
+    }
+  });
+</script>
+
+</body>
+</html>
