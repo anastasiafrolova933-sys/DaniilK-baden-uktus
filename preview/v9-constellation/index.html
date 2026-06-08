@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Отчёты · Baden Uktus — v9 Созвездие отчётов</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #f4ebdc; --ink-2: rgba(244,235,220,0.65); --ink-3: rgba(244,235,220,0.34);
+    --accent: #d4b893; --gold: #c8a97e;
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background:
+      radial-gradient(ellipse 70% 50% at 30% 30%, #0a0a14 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 70%, #100a14 0%, transparent 60%),
+      #03030a;
+    color: var(--ink); font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden; font-weight: 300;
+  }
+  #webgl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+  .vignette { position: fixed; inset: 0; z-index: 2; background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 30%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
+  .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 24px clamp(20px, 4vw, 48px); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%); background: rgba(3,3,10,0.5); border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .brand { font-size: 13px; letter-spacing: 0.04em; } .brand b { color: var(--accent); font-weight: 500; }
+  .topbar-meta { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3); }
+
+  main { position: relative; z-index: 10; }
+  section { min-height: 100vh; padding: 120px clamp(20px, 4vw, 64px) 100px; display: flex; align-items: center; position: relative; }
+  .inner { max-width: 1240px; margin: 0 auto; width: 100%; }
+  .hero { text-align: center; flex-direction: column; justify-content: center; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 32px; }
+  .hero h1 { font-weight: 200; font-size: clamp(56px, 10vw, 140px); line-height: 0.95; letter-spacing: -0.04em; background: linear-gradient(180deg, #ffffff 0%, rgba(244,235,220,0.4) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero h1 b { font-weight: 200; font-style: italic; background: linear-gradient(180deg, var(--gold), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-sub { margin-top: 28px; font-size: 17px; line-height: 1.55; max-width: 540px; margin-inline: auto; color: var(--ink-2); }
+  .scroll-cue { margin-top: 80px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--ink-3); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  .section-eyebrow { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .section-title { font-weight: 200; font-size: clamp(44px, 7vw, 96px); line-height: 0.96; letter-spacing: -0.03em; margin-bottom: 28px; }
+  .section-title b { font-weight: 200; font-style: italic; background: linear-gradient(180deg, var(--gold), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .section-lead { font-size: 17px; line-height: 1.6; max-width: 540px; color: var(--ink-2); margin-bottom: 56px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .card { position: relative; padding: 28px 26px; background: rgba(12, 12, 22, 0.5); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); border: 1px solid rgba(212,184,147,0.08); border-radius: 14px; text-decoration: none; color: inherit; transition: transform 0.6s var(--ease), border-color 0.4s, background 0.4s; overflow: hidden; }
+  .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(212,184,147,0.18), transparent 60%); opacity: 0; transition: opacity 0.5s var(--ease); pointer-events: none; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(212,184,147,0.32); background: rgba(20, 20, 32, 0.6); }
+  .card:hover::before { opacity: 1; }
+  .card-num { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .card-title { font-weight: 300; font-size: 22px; letter-spacing: -0.01em; margin-bottom: 10px; }
+  .card-desc { font-size: 13px; line-height: 1.55; color: var(--ink-2); margin-bottom: 24px; }
+  .card-foot { padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+  .card-arrow { font-size: 16px; color: var(--accent); transition: transform 0.4s var(--ease); }
+  .card:hover .card-arrow { transform: translateX(4px); }
+
+  .ai-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; }
+  @media (max-width: 900px) { .ai-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .ai-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; background: linear-gradient(180deg, var(--gold), var(--accent)); color: #1a1410; text-decoration: none; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; transition: transform 0.3s, box-shadow 0.4s; box-shadow: 0 12px 32px -8px rgba(212,184,147,0.4); }
+  .ai-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -8px rgba(212,184,147,0.6); }
+
+  footer { position: relative; z-index: 10; padding: 48px clamp(20px, 4vw, 48px); display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); border-top: 1px solid rgba(255,255,255,0.04); }
+  @media (max-width: 700px) { footer { flex-direction: column; gap: 10px; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<canvas id="webgl"></canvas>
+<div class="vignette"></div>
+
+<div class="topbar">
+  <div class="brand">Baden Uktus · <b>отчёты</b></div>
+  <div class="topbar-meta">v9 · созвездие</div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="inner">
+      <div class="hero-eyebrow">Внутренний портал · 2026</div>
+      <h1>Созвездие <b>отчётов</b></h1>
+      <p class="hero-sub">Пять звёзд — пять дашбордов, связанных линиями данных. Скролль — камера летит между ними.</p>
+      <div class="scroll-cue">↓ Scroll</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="section-eyebrow">Раздел I · 5 отчётов</div>
+      <h2 class="section-title">Звёзды <br><b>в реальном времени</b></h2>
+      <p class="section-lead">Каждый узел созвездия — отдельный дашборд. Линии — взаимосвязи: продажи влияют на ФОТ, прогноз — на штат.</p>
+      <div class="grid">
+        <a class="card hover-tilt" href="../../finance.html"><div class="card-num">α · Главная звезда</div><div class="card-title">БДДС</div><div class="card-desc">Бюджет движения денежных средств, доходы / расходы / остатки, прогноз закрытия.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../sales.html"><div class="card-num">β</div><div class="card-title">Продажи</div><div class="card-desc">Выручка, средний чек, динамика по услугам и периодам.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../forecast.html"><div class="card-num">γ</div><div class="card-title">Прогноз</div><div class="card-desc">Ежедневный ML-прогноз посещаемости и выручки на 30 дней.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../loyalty.html"><div class="card-num">δ</div><div class="card-title">Лояльность</div><div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot.</div><div class="card-foot"><span>каждый час</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../staff.html"><div class="card-num">ε</div><div class="card-title">ФОТ и Штат</div><div class="card-desc">Укомплектованность, дефицит, текучесть · ФОТ и доля в выручке.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="ai-grid">
+        <div><div class="section-eyebrow">Раздел II · ИИ-аналитик</div><h2 class="section-title">Спроси <b>что угодно</b></h2></div>
+        <div>
+          <p class="section-lead">Claude Haiku 4.5 + Sonnet 4.6 видит все отчёты целиком. Задавай вопросы человеческим языком.</p>
+          <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank" rel="noopener">Открыть @BBTUktus_bot →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="section-eyebrow">Раздел III · экосистема</div>
+      <h2 class="section-title">Проекты,<br><b>связанные с порталом</b></h2>
+      <div class="grid">
+        <a class="card hover-tilt" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener"><div class="card-num">01</div><div class="card-title">Главный сайт</div><div class="card-desc">Премиум-лендинг термального комплекса.</div><div class="card-foot"><span>baden-baden</span><span class="card-arrow">↗</span></div></a>
+        <a class="card hover-tilt" href="https://t.me/BadenLoyalty_bot" target="_blank" rel="noopener"><div class="card-num">02</div><div class="card-title">Бот лояльности</div><div class="card-desc">Регистрация, визиты, скидки до 20%, QR в Telegram.</div><div class="card-foot"><span>@BadenLoyalty_bot</span><span class="card-arrow">↗</span></div></a>
+        <a class="card hover-tilt" href="../../presentation.html" target="_blank" rel="noopener"><div class="card-num">03</div><div class="card-title">Презентация</div><div class="card-desc">Цифровая экосистема Baden Uktus.</div><div class="card-foot"><span>presentation</span><span class="card-arrow">↗</span></div></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Отчёты · 10:00 и 18:00 · Лояльность — каждый час</span>
+  <span>v9 · созвездие</span>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+
+// Lenis
+const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+gsap.registerPlugin(ScrollTrigger);
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(t => lenis.raf(t * 1000));
+gsap.ticker.lagSmoothing(0);
+
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setClearColor(0x000000, 0);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x03030a, 0.012);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 600);
+camera.position.set(0, 0, 18);
+
+// Background star field
+const NUM_STARS = 1200;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(NUM_STARS * 3);
+const starCol = new Float32Array(NUM_STARS * 3);
+for (let i = 0; i < NUM_STARS; i++) {
+  const r = 80 + Math.random() * 80;
+  const a = Math.random() * Math.PI * 2;
+  const b = Math.acos(2 * Math.random() - 1);
+  starPos[i*3]   = r * Math.sin(b) * Math.cos(a);
+  starPos[i*3+1] = r * Math.sin(b) * Math.sin(a);
+  starPos[i*3+2] = r * Math.cos(b);
+  // mostly white, a few golden
+  const golden = Math.random() < 0.18;
+  if (golden) { starCol[i*3] = 0.85; starCol[i*3+1] = 0.7; starCol[i*3+2] = 0.5; }
+  else { const c = 0.7 + Math.random() * 0.3; starCol[i*3] = c; starCol[i*3+1] = c; starCol[i*3+2] = c * 0.95; }
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+starGeo.setAttribute('color', new THREE.BufferAttribute(starCol, 3));
+const starMat = new THREE.PointsMaterial({ size: 0.18, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true });
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+// Soft star sprite texture
+function makeGlow(color) {
+  const size = 256, c = document.createElement('canvas'); c.width = c.height = size;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+  g.addColorStop(0,   color + ',1)');
+  g.addColorStop(0.3, color + ',0.5)');
+  g.addColorStop(0.7, color + ',0.1)');
+  g.addColorStop(1,   color + ',0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, size, size);
+  return new THREE.CanvasTexture(c);
+}
+const glowTex = makeGlow('rgba(255,220,170');
+
+// 5 report stars
+const REPORT_STARS = [
+  { name: 'БДДС',       pos: [0, 1.5, 2],     size: 0.36, glow: 1.4 },
+  { name: 'Продажи',    pos: [-3.2, -1, -2],  size: 0.24, glow: 1.0 },
+  { name: 'Прогноз',    pos: [3.0, 0.8, -4],  size: 0.24, glow: 1.0 },
+  { name: 'Лояльность', pos: [-2.0, 2.2, -7], size: 0.22, glow: 0.9 },
+  { name: 'ФОТ+Штат',   pos: [1.8, -1.8, -9], size: 0.24, glow: 1.0 },
+];
+
+const starsGroup = new THREE.Group();
+scene.add(starsGroup);
+
+REPORT_STARS.forEach(s => {
+  // Core
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(s.size, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffe5bc })
+  );
+  core.position.set(...s.pos);
+  starsGroup.add(core);
+
+  // Outer glow sprite
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTex,
+    color: 0xffe5bc,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    opacity: 0.9,
+  }));
+  sprite.position.set(...s.pos);
+  sprite.scale.setScalar(s.size * 10 * s.glow);
+  starsGroup.add(sprite);
+  core.userData = { sprite, basePos: [...s.pos], pulse: Math.random() * Math.PI * 2 };
+});
+
+// Connection lines between stars
+const lineMat = new THREE.LineBasicMaterial({ color: 0xd4b893, transparent: true, opacity: 0.32 });
+const linePairs = [[0,1],[0,2],[0,3],[0,4],[1,4],[2,3],[1,2]];
+linePairs.forEach(([a, b]) => {
+  const geom = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(...REPORT_STARS[a].pos),
+    new THREE.Vector3(...REPORT_STARS[b].pos),
+  ]);
+  scene.add(new THREE.Line(geom, lineMat));
+});
+
+// Scroll progress → camera position interpolation through stations
+let scrollProgress = 0;
+ScrollTrigger.create({ trigger: 'main', start: 'top top', end: 'bottom bottom', onUpdate: self => { scrollProgress = self.progress; } });
+
+// Define camera waypoints (one per section roughly)
+const camPath = [
+  new THREE.Vector3(0, 0, 18),    // hero — overview
+  new THREE.Vector3(0.5, 0.5, 6), // reports — close to alpha
+  new THREE.Vector3(-1.5, 0, -3), // AI — between
+  new THREE.Vector3(2.0, -0.5, -12), // projects — far end
+];
+function camAt(p) {
+  const t = p * (camPath.length - 1);
+  const i = Math.floor(t);
+  const f = t - i;
+  if (i >= camPath.length - 1) return camPath[camPath.length - 1].clone();
+  return camPath[i].clone().lerp(camPath[i+1], f);
+}
+
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5);
+  mouseY = (e.clientY / window.innerHeight - 0.5);
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  const t = clock.getElapsedTime();
+
+  // Pulse the stars
+  starsGroup.children.forEach(c => {
+    if (c.userData && c.userData.pulse !== undefined) {
+      const pulse = 1 + Math.sin(t * 1.2 + c.userData.pulse) * 0.12;
+      c.scale.setScalar(pulse);
+      if (c.userData.sprite) {
+        c.userData.sprite.material.opacity = 0.7 + Math.sin(t * 1.2 + c.userData.pulse) * 0.2;
+      }
+    }
+  });
+
+  // Camera path + parallax
+  const target = camAt(scrollProgress);
+  target.x += mouseX * 0.8;
+  target.y += mouseY * -0.5;
+  camera.position.x += (target.x - camera.position.x) * 0.05;
+  camera.position.y += (target.y - camera.position.y) * 0.05;
+  camera.position.z += (target.z - camera.position.z) * 0.05;
+  camera.lookAt(0, 0, -3);
+
+  // Slow star field rotation
+  stars.rotation.y = t * 0.005;
+  stars.rotation.x = t * 0.002;
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+animate();
+
+document.querySelectorAll('.hover-tilt').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+</script>
+
+</body>
+</html>

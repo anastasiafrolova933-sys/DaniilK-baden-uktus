@@ -7,67 +7,132 @@
 <title>Baden Uktus · Preview редизайна портала отчётов</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #0a0a0a; color: #f4ebdc;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, #14110a 0%, #0a0a0a 60%, #050505 100%);
+    color: #f4ebdc;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 300;
     min-height: 100vh;
-    padding: 48px clamp(20px, 4vw, 64px);
+    padding: 56px clamp(20px, 4vw, 64px);
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 880px; margin: 0 auto; }
-  h1 { font-weight: 200; font-size: clamp(36px, 6vw, 64px); letter-spacing: -0.03em; margin-bottom: 12px; }
-  h1 b { font-weight: 200; color: #d4b893; }
-  .lead { color: rgba(244,235,220,0.5); font-size: 15px; line-height: 1.6; margin-bottom: 48px; max-width: 560px; }
-  .variants { display: grid; gap: 16px; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-weight: 200; font-size: clamp(40px, 6vw, 72px); letter-spacing: -0.03em; margin-bottom: 14px; }
+  h1 b { font-weight: 200; font-style: italic; color: #d4b893; }
+  .lead { color: rgba(244,235,220,0.55); font-size: 15px; line-height: 1.6; margin-bottom: 56px; max-width: 620px; }
+  .lead a { color: #d4b893; text-decoration: none; border-bottom: 1px solid rgba(212,184,147,0.3); }
+
+  .group-label {
+    font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(244,235,220,0.34);
+    margin: 48px 0 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .group-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+
+  .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+
   a.variant {
-    display: block;
-    padding: 28px 32px;
+    display: block; padding: 26px 28px;
     background: rgba(20,18,14,0.5);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px;
-    text-decoration: none;
-    color: inherit;
+    text-decoration: none; color: inherit;
     transition: transform 0.4s cubic-bezier(.22,1,.36,1), border-color 0.3s, background 0.3s;
+    position: relative; overflow: hidden;
   }
-  a.variant:hover {
-    transform: translateY(-3px);
-    border-color: rgba(212,184,147,0.3);
-    background: rgba(28,24,18,0.6);
+  a.variant:hover { transform: translateY(-3px); border-color: rgba(212,184,147,0.3); background: rgba(28,24,18,0.6); }
+  a.variant.fav { border-color: rgba(212,184,147,0.25); background: rgba(28,22,14,0.55); }
+  a.variant.fav::before {
+    content: '⭐ фаворит'; position: absolute; top: 14px; right: 16px;
+    font-size: 10px; letter-spacing: 0.18em; color: #d4b893;
   }
-  .v-num { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: #d4b893; margin-bottom: 10px; }
-  .v-title { font-weight: 300; font-size: 24px; margin-bottom: 8px; }
-  .v-desc { font-size: 14px; line-height: 1.55; color: rgba(244,235,220,0.6); }
+
+  .v-num { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: #d4b893; margin-bottom: 8px; }
+  .v-title { font-weight: 300; font-size: 22px; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .v-desc { font-size: 13px; line-height: 1.55; color: rgba(244,235,220,0.6); }
   .v-meta { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
-            font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
-  footer { margin-top: 64px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
+            font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
+
+  footer { margin-top: 72px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Preview <b>редизайна</b></h1>
-  <p class="lead">Тестовая площадка для редизайна портала отчётов. Не индексируется поисковиками. Финальная версия попадёт в <a href="../reports.html" style="color:#d4b893;">reports.html</a> только после согласования.</p>
+  <p class="lead">Тестовая площадка для редизайна портала отчётов. Не индексируется поисковиками. Финальная версия попадёт в <a href="../reports.html">reports.html</a> только после согласования.</p>
 
+  <div class="group-label">🌊 Тематические — про Baden</div>
   <div class="variants">
-    <a class="variant" href="v5-apple-webgl/">
-      <div class="v-num">Вариант 5 · фаворит</div>
-      <div class="v-title">Scroll-driven WebGL</div>
-      <div class="v-desc">Three.js фон с тоннелем золотых колец, камера летит по скроллу, PBR-материалы, прогресс-бар, glass-карточки с blur. Inspired by Apple Vision Pro.</div>
-      <div class="v-meta">Three.js · GSAP ScrollTrigger · Lenis · PMREM env</div>
+    <a class="variant" href="v6-thermal-steam/">
+      <div class="v-num">v6 · soft-particles</div>
+      <div class="v-title">Термальный пар</div>
+      <div class="v-desc">Двухслойная мгла из золотых частиц медленно поднимается. Камера дрейфует, мышь даёт параллакс. Прямое попадание в тематику термального комплекса.</div>
+      <div class="v-meta">Three.js Points · CanvasTexture · 240 particles</div>
     </a>
-
-    <a class="variant" href="v4-stripe-tilt/">
-      <div class="v-num">Вариант 4 · альтернатива</div>
-      <div class="v-title">Editorial 3D-tilt</div>
-      <div class="v-desc">Тёплая бумажная палитра, serif-типографика Fraunces, карточки с tilt-эффектом от мыши, цвет страницы меняется по hover. Inspired by Stripe Press.</div>
-      <div class="v-meta">CSS perspective · Fraunces / Inter · grain overlay</div>
+    <a class="variant" href="v11-reflective-water/">
+      <div class="v-num">v11 · three.js Water</div>
+      <div class="v-title">Reflective water</div>
+      <div class="v-desc">Водная гладь с настоящими отражениями: тор-кольца, икосаэдры и сферы из золота плавают над ней. Sun direction задаёт блики.</div>
+      <div class="v-meta">Water shader · waternormals · PBR floaters</div>
     </a>
   </div>
 
-  <footer>preview · baden uktus · не для прода</footer>
+  <div class="group-label">✨ Виральные — wow-эффект</div>
+  <div class="variants">
+    <a class="variant fav" href="v7-liquid-gold/">
+      <div class="v-num">v7 · simplex GLSL</div>
+      <div class="v-title">Жидкое золото</div>
+      <div class="v-desc">Центральная капля с PBR-материалом морфит форму через шейдер simplex-noise. Камера орбитит, 6 спутников вращаются.</div>
+      <div class="v-meta">onBeforeCompile · simplex 3D noise · MeshPhysical</div>
+    </a>
+    <a class="variant fav" href="v5-apple-webgl/">
+      <div class="v-num">v5 · scroll-driven</div>
+      <div class="v-title">Apple Vision WebGL</div>
+      <div class="v-desc">Тоннель из 14 золотых колец, камера летит по скроллу, прогресс-бар, PBR + RoomEnvironment. Inspired by Apple Vision Pro.</div>
+      <div class="v-meta">Three.js · ScrollTrigger · PMREM · 600 stars</div>
+    </a>
+  </div>
+
+  <div class="group-label">🏛️ Драматичные — атмосфера</div>
+  <div class="variants">
+    <a class="variant" href="v8-mirror-corridor/">
+      <div class="v-num">v8 · LatheGeometry</div>
+      <div class="v-title">Зеркальный коридор</div>
+      <div class="v-desc">Колоннада из 28 золотых fluted-колонн с арками. Reflector-пол даёт настоящие отражения. Скролл двигает камеру вперёд через коридор.</div>
+      <div class="v-meta">Reflector · Lathe columns · 8 floating orbs</div>
+    </a>
+    <a class="variant" href="v9-constellation/">
+      <div class="v-num">v9 · sprites + lines</div>
+      <div class="v-title">Созвездие отчётов</div>
+      <div class="v-desc">5 светящихся звёзд = 5 отчётов в 3D-пространстве, линии связи между ними. Камера летит по 4 waypoints, 1200 фоновых звёзд.</div>
+      <div class="v-meta">Sprites · Glow texture · 4 camera waypoints</div>
+    </a>
+    <a class="variant" href="v10-3d-typography/">
+      <div class="v-num">v10 · TextGeometry</div>
+      <div class="v-title">3D-типографика</div>
+      <div class="v-desc">"BADEN" вылеплен из 3D-золота с bevel и PBR. Reveal-анимация на загрузку, текст уходит вглубь при скролле. Sparkle-частицы.</div>
+      <div class="v-meta">FontLoader · TextGeometry · GSAP intro</div>
+    </a>
+  </div>
+
+  <div class="group-label">📐 Не-WebGL варианты</div>
+  <div class="variants">
+    <a class="variant" href="v4-stripe-tilt/">
+      <div class="v-num">v4 · CSS perspective</div>
+      <div class="v-title">Editorial 3D-tilt</div>
+      <div class="v-desc">Тёплая бумажная палитра, Fraunces serif, карточки tilt от мыши, цвет страницы меняется по hover. Inspired by Stripe Press. Без WebGL — лёгкая.</div>
+      <div class="v-meta">~12 KB · Fraunces / Inter · grain overlay</div>
+    </a>
+  </div>
+
+  <footer>preview · baden uktus · не для прода · 8 вариантов</footer>
 </div>
 </body>
 </html>

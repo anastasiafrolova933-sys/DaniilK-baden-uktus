@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Отчёты · Baden Uktus — v7 Жидкое золото</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #f4ebdc; --ink-2: rgba(244,235,220,0.65); --ink-3: rgba(244,235,220,0.34);
+    --accent: #d4b893; --gold: #c8a97e;
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: radial-gradient(ellipse 80% 50% at 50% 35%, #1f1610 0%, #0c0805 60%, #030201 100%);
+    color: var(--ink); font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden; font-weight: 300;
+  }
+  #webgl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+  .vignette { position: fixed; inset: 0; z-index: 2; background: radial-gradient(ellipse 90% 70% at 50% 50%, transparent 30%, rgba(0,0,0,0.65) 100%); pointer-events: none; }
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 24px clamp(20px, 4vw, 48px); display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%);
+    background: rgba(10,6,4,0.5); border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .brand { font-size: 13px; letter-spacing: 0.04em; } .brand b { color: var(--accent); font-weight: 500; }
+  .topbar-meta { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3); }
+
+  main { position: relative; z-index: 10; }
+  section { min-height: 100vh; padding: 120px clamp(20px, 4vw, 64px) 100px; display: flex; align-items: center; position: relative; }
+  .inner { max-width: 1240px; margin: 0 auto; width: 100%; }
+  .hero { text-align: center; flex-direction: column; justify-content: center; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 32px; }
+  .hero h1 {
+    font-weight: 200; font-size: clamp(56px, 10vw, 140px); line-height: 0.95; letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ffffff 0%, rgba(244,235,220,0.4) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero h1 b {
+    font-weight: 200; font-style: italic;
+    background: linear-gradient(180deg, var(--gold), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { margin-top: 28px; font-size: 17px; line-height: 1.55; max-width: 540px; margin-inline: auto; color: var(--ink-2); }
+  .scroll-cue { margin-top: 80px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--ink-3); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  .section-eyebrow { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .section-title { font-weight: 200; font-size: clamp(44px, 7vw, 96px); line-height: 0.96; letter-spacing: -0.03em; margin-bottom: 28px; }
+  .section-title b { font-weight: 200; font-style: italic; background: linear-gradient(180deg, var(--gold), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .section-lead { font-size: 17px; line-height: 1.6; max-width: 540px; color: var(--ink-2); margin-bottom: 56px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .card {
+    position: relative; padding: 28px 26px;
+    background: rgba(24, 16, 10, 0.5);
+    backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid rgba(212,184,147,0.08); border-radius: 14px;
+    text-decoration: none; color: inherit;
+    transition: transform 0.6s var(--ease), border-color 0.4s, background 0.4s; overflow: hidden;
+  }
+  .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(212,184,147,0.18), transparent 60%); opacity: 0; transition: opacity 0.5s var(--ease); pointer-events: none; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(212,184,147,0.32); background: rgba(32, 22, 14, 0.6); }
+  .card:hover::before { opacity: 1; }
+  .card-num { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .card-title { font-weight: 300; font-size: 22px; letter-spacing: -0.01em; margin-bottom: 10px; }
+  .card-desc { font-size: 13px; line-height: 1.55; color: var(--ink-2); margin-bottom: 24px; }
+  .card-foot { padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+  .card-arrow { font-size: 16px; color: var(--accent); transition: transform 0.4s var(--ease); }
+  .card:hover .card-arrow { transform: translateX(4px); }
+
+  .ai-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; }
+  @media (max-width: 900px) { .ai-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .ai-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; background: linear-gradient(180deg, var(--gold), var(--accent)); color: #1a1410; text-decoration: none; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; transition: transform 0.3s, box-shadow 0.4s; box-shadow: 0 12px 32px -8px rgba(212,184,147,0.4); }
+  .ai-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -8px rgba(212,184,147,0.6); }
+
+  footer { position: relative; z-index: 10; padding: 48px clamp(20px, 4vw, 48px); display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); border-top: 1px solid rgba(255,255,255,0.04); }
+  @media (max-width: 700px) { footer { flex-direction: column; gap: 10px; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<canvas id="webgl"></canvas>
+<div class="vignette"></div>
+
+<div class="topbar">
+  <div class="brand">Baden Uktus · <b>отчёты</b></div>
+  <div class="topbar-meta">v7 · liquid gold</div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="inner">
+      <div class="hero-eyebrow">Внутренний портал · 2026</div>
+      <h1>Жидкое <b>золото цифр</b></h1>
+      <p class="hero-sub">Финансы, продажи, прогноз, лояльность и штат. Морфит как капля ртути — но это только дашборды.</p>
+      <div class="scroll-cue">↓ Scroll</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="section-eyebrow">Раздел I · 5 отчётов</div>
+      <h2 class="section-title">Отчёты,<br><b>в реальном времени</b></h2>
+      <p class="section-lead">Каждый дашборд обновляется автоматически — ты заходишь и видишь сегодняшние цифры без ручных выгрузок.</p>
+      <div class="grid">
+        <a class="card hover-tilt" href="../../finance.html"><div class="card-num">01 · Главный</div><div class="card-title">БДДС</div><div class="card-desc">Бюджет движения денежных средств, доходы / расходы / остатки, прогноз закрытия.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../sales.html"><div class="card-num">02</div><div class="card-title">Продажи</div><div class="card-desc">Выручка, средний чек, динамика по услугам и периодам.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../forecast.html"><div class="card-num">03</div><div class="card-title">Прогноз</div><div class="card-desc">Ежедневный ML-прогноз посещаемости и выручки на 30 дней.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../loyalty.html"><div class="card-num">04</div><div class="card-title">Лояльность</div><div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot.</div><div class="card-foot"><span>каждый час</span><span class="card-arrow">→</span></div></a>
+        <a class="card hover-tilt" href="../../staff.html"><div class="card-num">05</div><div class="card-title">ФОТ и Штат</div><div class="card-desc">Укомплектованность, дефицит, текучесть · ФОТ и доля в выручке.</div><div class="card-foot"><span>10:00 / 18:00</span><span class="card-arrow">→</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="ai-grid">
+        <div><div class="section-eyebrow">Раздел II · ИИ-аналитик</div><h2 class="section-title">Спроси <b>что угодно</b></h2></div>
+        <div>
+          <p class="section-lead">Claude Haiku 4.5 + Sonnet 4.6 видит все отчёты целиком. Задавай вопросы человеческим языком.</p>
+          <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank" rel="noopener">Открыть @BBTUktus_bot →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="inner">
+      <div class="section-eyebrow">Раздел III · экосистема</div>
+      <h2 class="section-title">Проекты,<br><b>связанные с порталом</b></h2>
+      <div class="grid">
+        <a class="card hover-tilt" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener"><div class="card-num">01</div><div class="card-title">Главный сайт</div><div class="card-desc">Премиум-лендинг термального комплекса.</div><div class="card-foot"><span>baden-baden</span><span class="card-arrow">↗</span></div></a>
+        <a class="card hover-tilt" href="https://t.me/BadenLoyalty_bot" target="_blank" rel="noopener"><div class="card-num">02</div><div class="card-title">Бот лояльности</div><div class="card-desc">Регистрация, визиты, скидки до 20%, QR в Telegram.</div><div class="card-foot"><span>@BadenLoyalty_bot</span><span class="card-arrow">↗</span></div></a>
+        <a class="card hover-tilt" href="../../presentation.html" target="_blank" rel="noopener"><div class="card-num">03</div><div class="card-title">Презентация</div><div class="card-desc">Цифровая экосистема Baden Uktus.</div><div class="card-foot"><span>presentation</span><span class="card-arrow">↗</span></div></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Отчёты · 10:00 и 18:00 · Лояльность — каждый час</span>
+  <span>v7 · liquid gold</span>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// Lenis
+const lenis = new Lenis({ duration: 1.4, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+gsap.registerPlugin(ScrollTrigger);
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(t => lenis.raf(t * 1000));
+gsap.ticker.lagSmoothing(0);
+
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setClearColor(0x000000, 0);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0c0805, 0.04);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 5.5);
+
+// Env
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// Lights
+scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+const key = new THREE.DirectionalLight(0xfff2dc, 2.0); key.position.set(5, 6, 4); scene.add(key);
+const rim = new THREE.PointLight(0xd4b893, 5.0, 20); rim.position.set(-4, -2, -3); scene.add(rim);
+
+// Liquid gold blob — high-res icosahedron with shader displacement
+const blobGeo = new THREE.IcosahedronGeometry(1.4, 64);
+const blobMat = new THREE.MeshPhysicalMaterial({
+  color: 0xc8a97e,
+  metalness: 1.0,
+  roughness: 0.08,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.05,
+  envMapIntensity: 1.4,
+});
+
+// Inject GLSL displacement
+blobMat.onBeforeCompile = (shader) => {
+  shader.uniforms.uTime = { value: 0 };
+  shader.uniforms.uAmp = { value: 0.32 };
+
+  shader.vertexShader = shader.vertexShader.replace('#include <common>', `
+    #include <common>
+    uniform float uTime;
+    uniform float uAmp;
+
+    // Simplex 3D noise by Ashima
+    vec3 mod289(vec3 x){return x - floor(x*(1.0/289.0))*289.0;}
+    vec4 mod289(vec4 x){return x - floor(x*(1.0/289.0))*289.0;}
+    vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+    float snoise(vec3 v){
+      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+      vec3 i  = floor(v + dot(v, C.yyy));
+      vec3 x0 = v - i + dot(i, C.xxx);
+      vec3 g = step(x0.yzx, x0.xyz);
+      vec3 l = 1.0 - g;
+      vec3 i1 = min(g.xyz, l.zxy);
+      vec3 i2 = max(g.xyz, l.zxy);
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+      i = mod289(i);
+      vec4 p = permute(permute(permute(
+        i.z + vec4(0.0, i1.z, i2.z, 1.0))
+        + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+        + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+      float n_ = 0.142857142857;
+      vec3 ns = n_ * D.wyz - D.xzx;
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_);
+      vec4 x = x_ * ns.x + ns.yyyy;
+      vec4 y = y_ * ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+      vec4 b0 = vec4(x.xy, y.xy);
+      vec4 b1 = vec4(x.zw, y.zw);
+      vec4 s0 = floor(b0)*2.0 + 1.0;
+      vec4 s1 = floor(b1)*2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+      vec3 p0 = vec3(a0.xy, h.x);
+      vec3 p1 = vec3(a0.zw, h.y);
+      vec3 p2 = vec3(a1.xy, h.z);
+      vec3 p3 = vec3(a1.zw, h.w);
+      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+    }
+  `);
+
+  shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
+    float n1 = snoise(position * 0.9 + vec3(uTime * 0.25));
+    float n2 = snoise(position * 1.8 + vec3(uTime * -0.4, uTime * 0.3, 0.0)) * 0.4;
+    float disp = (n1 + n2) * uAmp;
+    vec3 transformed = position + normal * disp;
+  `);
+
+  shader.vertexShader = shader.vertexShader.replace('#include <beginnormal_vertex>', `
+    vec3 objectNormal = normal;
+    #ifdef USE_TANGENT
+      vec3 objectTangent = vec3(tangent.xyz);
+    #endif
+  `);
+
+  blobMat.userData.shader = shader;
+};
+
+const blob = new THREE.Mesh(blobGeo, blobMat);
+scene.add(blob);
+
+// Tiny golden satellites orbiting
+const satMat = new THREE.MeshStandardMaterial({ color: 0xd4b893, metalness: 1, roughness: 0.15, envMapIntensity: 1.2 });
+const sats = [];
+for (let i = 0; i < 6; i++) {
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), satMat);
+  s.userData = { angle: (i / 6) * Math.PI * 2, radius: 2.3 + Math.random() * 0.7, speed: 0.2 + Math.random() * 0.25, y: (Math.random() - 0.5) * 1.2 };
+  scene.add(s);
+  sats.push(s);
+}
+
+let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5);
+  mouseY = (e.clientY / window.innerHeight - 0.5);
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  const t = clock.getElapsedTime();
+
+  if (blobMat.userData.shader) {
+    blobMat.userData.shader.uniforms.uTime.value = t;
+  }
+  blob.rotation.y = t * 0.15;
+  blob.rotation.x = Math.sin(t * 0.2) * 0.3;
+
+  sats.forEach(s => {
+    s.userData.angle += s.userData.speed * 0.01;
+    s.position.x = Math.cos(s.userData.angle) * s.userData.radius;
+    s.position.z = Math.sin(s.userData.angle) * s.userData.radius - 0.5;
+    s.position.y = s.userData.y + Math.sin(t * 0.5 + s.userData.angle) * 0.1;
+  });
+
+  // Camera orbit + parallax
+  const orbit = t * 0.06;
+  const targetX = Math.sin(orbit) * 0.6 + mouseX * 0.8;
+  const targetY = mouseY * -0.5;
+  camera.position.x += (targetX - camera.position.x) * 0.04;
+  camera.position.y += (targetY - camera.position.y) * 0.04;
+  camera.lookAt(0, 0, 0);
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+animate();
+
+document.querySelectorAll('.hover-tilt').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+</script>
+
+</body>
+</html>
