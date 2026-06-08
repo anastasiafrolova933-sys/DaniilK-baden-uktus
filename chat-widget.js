@@ -1,35 +1,35 @@
-/* ─────────────────────────────────────────────────────────────────────────
+/* в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
    Baden Report Chat Widget
-   Универсальный AI-чат для дашбордов Baden Uktus.
-   Подключение: <script src="chat-widget.js" data-report="finance"></script>
-   Автоопределение report_id — по имени файла страницы.
-   ───────────────────────────────────────────────────────────────────────── */
+   РЈРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ AI-С‡Р°С‚ РґР»СЏ РґР°С€Р±РѕСЂРґРѕРІ Baden Uktus.
+   РџРѕРґРєР»СЋС‡РµРЅРёРµ: <script src="chat-widget.js" data-report="finance"></script>
+   РђРІС‚РѕРѕРїСЂРµРґРµР»РµРЅРёРµ report_id вЂ” РїРѕ РёРјРµРЅРё С„Р°Р№Р»Р° СЃС‚СЂР°РЅРёС†С‹.
+   в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 (function() {
   'use strict';
 
-  // ── Конфиг ────────────────────────────────────────────────────────────
-  // Сервер чата (cloudflared URL). Меняется при перезапуске тоннеля.
+  // в”Ђв”Ђ РљРѕРЅС„РёРі в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+  // РЎРµСЂРІРµСЂ С‡Р°С‚Р° (cloudflared URL). РњРµРЅСЏРµС‚СЃСЏ РїСЂРё РїРµСЂРµР·Р°РїСѓСЃРєРµ С‚РѕРЅРЅРµР»СЏ.
   const SERVER_URL_KEY = 'baden_chat_server_url';
-  // Дефолтный URL — заменим при первом запуске тоннеля и встроим в HTML
-  const DEFAULT_SERVER = 'https://restricted-aruba-programming-visual.trycloudflare.com';
+  // Р”РµС„РѕР»С‚РЅС‹Р№ URL вЂ” Р·Р°РјРµРЅРёРј РїСЂРё РїРµСЂРІРѕРј Р·Р°РїСѓСЃРєРµ С‚РѕРЅРЅРµР»СЏ Рё РІСЃС‚СЂРѕРёРј РІ HTML
+  const DEFAULT_SERVER = 'https://trader-graphical-atom-writers.trycloudflare.com';
 
   function getServerUrl() {
-    // 1. data-server атрибут скрипта (если задан вручную)
+    // 1. data-server Р°С‚СЂРёР±СѓС‚ СЃРєСЂРёРїС‚Р° (РµСЃР»Рё Р·Р°РґР°РЅ РІСЂСѓС‡РЅСѓСЋ)
     const script = document.currentScript || document.querySelector('script[data-report]');
     if (script && script.dataset.server) return script.dataset.server;
-    // 2. window.__chatServerUrl (если задан до подключения)
+    // 2. window.__chatServerUrl (РµСЃР»Рё Р·Р°РґР°РЅ РґРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ)
     if (window.__chatServerUrl) return window.__chatServerUrl;
-    // 3. localStorage (запомнили в прошлый раз)
+    // 3. localStorage (Р·Р°РїРѕРјРЅРёР»Рё РІ РїСЂРѕС€Р»С‹Р№ СЂР°Р·)
     const stored = localStorage.getItem(SERVER_URL_KEY);
     if (stored) return stored;
     return DEFAULT_SERVER;
   }
 
-  // ── Определение report_id ─────────────────────────────────────────────
+  // в”Ђв”Ђ РћРїСЂРµРґРµР»РµРЅРёРµ report_id в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function detectReportId() {
     const script = document.currentScript || document.querySelector('script[data-report]');
     if (script && script.dataset.report) return script.dataset.report;
-    // Авто — по имени файла
+    // РђРІС‚Рѕ вЂ” РїРѕ РёРјРµРЅРё С„Р°Р№Р»Р°
     const path = location.pathname.toLowerCase();
     if (path.includes('finance')) return 'finance';
     if (path.includes('sales')) return 'sales';
@@ -40,45 +40,45 @@
 
   const REPORT_ID = detectReportId();
   if (!REPORT_ID) {
-    console.warn('[chat-widget] report_id не определён — виджет не показан');
+    console.warn('[chat-widget] report_id РЅРµ РѕРїСЂРµРґРµР»С‘РЅ вЂ” РІРёРґР¶РµС‚ РЅРµ РїРѕРєР°Р·Р°РЅ');
     return;
   }
 
-  // ── Заголовки на каждый отчёт ─────────────────────────────────────────
+  // в”Ђв”Ђ Р—Р°РіРѕР»РѕРІРєРё РЅР° РєР°Р¶РґС‹Р№ РѕС‚С‡С‘С‚ в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   const REPORT_TITLES = {
-    finance: 'Помощник по БДДС',
-    sales:   'Помощник по Продажам',
-    forecast:'Помощник по Прогнозу',
-    loyalty: 'Помощник по Лояльности',
+    finance: 'РџРѕРјРѕС‰РЅРёРє РїРѕ Р‘Р”Р”РЎ',
+    sales:   'РџРѕРјРѕС‰РЅРёРє РїРѕ РџСЂРѕРґР°Р¶Р°Рј',
+    forecast:'РџРѕРјРѕС‰РЅРёРє РїРѕ РџСЂРѕРіРЅРѕР·Сѓ',
+    loyalty: 'РџРѕРјРѕС‰РЅРёРє РїРѕ Р›РѕСЏР»СЊРЅРѕСЃС‚Рё',
   };
 
-  // ── Извлечение данных из дашборда ─────────────────────────────────────
+  // в”Ђв”Ђ РР·РІР»РµС‡РµРЅРёРµ РґР°РЅРЅС‹С… РёР· РґР°С€Р±РѕСЂРґР° в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function extractDashboardData() {
-    // 1) Специальная переменная (для loyalty.html)
+    // 1) РЎРїРµС†РёР°Р»СЊРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ (РґР»СЏ loyalty.html)
     if (window.__preloaded) {
       try {
         const p = window.__preloaded;
         const parts = [];
-        if (p.updatedAt) parts.push('Обновлено: ' + p.updatedAt);
+        if (p.updatedAt) parts.push('РћР±РЅРѕРІР»РµРЅРѕ: ' + p.updatedAt);
         if (p.guests)   parts.push('=== GUESTS.CSV ===\n' + p.guests);
         if (p.visits)   parts.push('=== VISITS.CSV ===\n' + p.visits);
         if (p.surveys)  parts.push('=== SURVEYS.CSV ===\n' + p.surveys);
         return parts.join('\n\n');
       } catch (e) {}
     }
-    // 2) Если есть кастомный extractor — используем его
+    // 2) Р•СЃР»Рё РµСЃС‚СЊ РєР°СЃС‚РѕРјРЅС‹Р№ extractor вЂ” РёСЃРїРѕР»СЊР·СѓРµРј РµРіРѕ
     if (typeof window.__reportData === 'function') {
       try { return window.__reportData(); } catch (e) {}
     }
     if (typeof window.__reportData === 'string') return window.__reportData;
-    // 3) Generic — собираем весь видимый текст таблиц, заголовков и инпутов с данными
+    // 3) Generic вЂ” СЃРѕР±РёСЂР°РµРј РІРµСЃСЊ РІРёРґРёРјС‹Р№ С‚РµРєСЃС‚ С‚Р°Р±Р»РёС†, Р·Р°РіРѕР»РѕРІРєРѕРІ Рё РёРЅРїСѓС‚РѕРІ СЃ РґР°РЅРЅС‹РјРё
     const parts = [];
     const title = document.querySelector('h1, h2');
     if (title) parts.push('# ' + title.innerText.trim());
     document.querySelectorAll('table').forEach((t, i) => {
-      if (i < 8) parts.push('### Таблица ' + (i+1) + ':\n' + t.innerText.replace(/\t/g, ' | '));
+      if (i < 8) parts.push('### РўР°Р±Р»РёС†Р° ' + (i+1) + ':\n' + t.innerText.replace(/\t/g, ' | '));
     });
-    // Если таблиц нет — возьмём body innerText
+    // Р•СЃР»Рё С‚Р°Р±Р»РёС† РЅРµС‚ вЂ” РІРѕР·СЊРјС‘Рј body innerText
     if (parts.length < 2) {
       const txt = (document.body.innerText || '').replace(/\s+\n/g, '\n').trim();
       parts.push(txt.slice(0, 60000));
@@ -86,7 +86,7 @@
     return parts.join('\n\n');
   }
 
-  // ── UI ────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ UI в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   const STYLE = `
 .bc-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;
   background:#c8a97e;border:none;cursor:pointer;color:#0c0c0c;display:flex;align-items:center;
@@ -153,15 +153,15 @@
 }
 `;
 
-  // Подсказки (chips) на каждый отчёт
+  // РџРѕРґСЃРєР°Р·РєРё (chips) РЅР° РєР°Р¶РґС‹Р№ РѕС‚С‡С‘С‚
   const CHIPS = {
-    finance: ['Главные изменения', 'Найди аномалии', 'Самый прибыльный месяц'],
-    sales:   ['Топ услуг по выручке', 'Динамика среднего чека', 'Какой день недели лучший'],
-    forecast:['Что ждёт в ближайший месяц', 'Где отклонения от факта', 'Тренды посещаемости'],
-    loyalty: ['Сколько активных гостей', 'Топ-5 по визитам', 'Средний NPS'],
+    finance: ['Р“Р»Р°РІРЅС‹Рµ РёР·РјРµРЅРµРЅРёСЏ', 'РќР°Р№РґРё Р°РЅРѕРјР°Р»РёРё', 'РЎР°РјС‹Р№ РїСЂРёР±С‹Р»СЊРЅС‹Р№ РјРµСЃСЏС†'],
+    sales:   ['РўРѕРї СѓСЃР»СѓРі РїРѕ РІС‹СЂСѓС‡РєРµ', 'Р”РёРЅР°РјРёРєР° СЃСЂРµРґРЅРµРіРѕ С‡РµРєР°', 'РљР°РєРѕР№ РґРµРЅСЊ РЅРµРґРµР»Рё Р»СѓС‡С€РёР№'],
+    forecast:['Р§С‚Рѕ Р¶РґС‘С‚ РІ Р±Р»РёР¶Р°Р№С€РёР№ РјРµСЃСЏС†', 'Р“РґРµ РѕС‚РєР»РѕРЅРµРЅРёСЏ РѕС‚ С„Р°РєС‚Р°', 'РўСЂРµРЅРґС‹ РїРѕСЃРµС‰Р°РµРјРѕСЃС‚Рё'],
+    loyalty: ['РЎРєРѕР»СЊРєРѕ Р°РєС‚РёРІРЅС‹С… РіРѕСЃС‚РµР№', 'РўРѕРї-5 РїРѕ РІРёР·РёС‚Р°Рј', 'РЎСЂРµРґРЅРёР№ NPS'],
   };
 
-  // Хранилище истории диалога (per-report)
+  // РҐСЂР°РЅРёР»РёС‰Рµ РёСЃС‚РѕСЂРёРё РґРёР°Р»РѕРіР° (per-report)
   const HIST_KEY = 'baden_chat_history_' + REPORT_ID;
   let history = [];
   try {
@@ -173,12 +173,12 @@
     try { sessionStorage.setItem(HIST_KEY, JSON.stringify(history.slice(-20))); } catch (e) {}
   }
 
-  // ── Создание DOM ──────────────────────────────────────────────────────
+  // в”Ђв”Ђ РЎРѕР·РґР°РЅРёРµ DOM в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   const styleEl = document.createElement('style');
   styleEl.textContent = STYLE;
   document.head.appendChild(styleEl);
 
-  // Подключим шрифты, если не подключены
+  // РџРѕРґРєР»СЋС‡РёРј С€СЂРёС„С‚С‹, РµСЃР»Рё РЅРµ РїРѕРґРєР»СЋС‡РµРЅС‹
   if (!document.querySelector('link[href*="DM+Sans"]')) {
     const f = document.createElement('link');
     f.rel = 'stylesheet';
@@ -188,26 +188,26 @@
 
   const btn = document.createElement('button');
   btn.className = 'bc-btn';
-  btn.innerHTML = '✦';
-  btn.title = 'Спросить ИИ-помощника';
+  btn.innerHTML = 'вњ¦';
+  btn.title = 'РЎРїСЂРѕСЃРёС‚СЊ РР-РїРѕРјРѕС‰РЅРёРєР°';
 
   const panel = document.createElement('div');
   panel.className = 'bc-panel';
   panel.innerHTML = `
     <div class="bc-head">
       <div>
-        <div class="bc-head-title">${REPORT_TITLES[REPORT_ID] || 'AI Помощник'}</div>
-        <div class="bc-head-sub">AI · Baden Uktus</div>
+        <div class="bc-head-title">${REPORT_TITLES[REPORT_ID] || 'AI РџРѕРјРѕС‰РЅРёРє'}</div>
+        <div class="bc-head-sub">AI В· Baden Uktus</div>
       </div>
-      <button class="bc-clear" title="Очистить диалог">Очистить</button>
+      <button class="bc-clear" title="РћС‡РёСЃС‚РёС‚СЊ РґРёР°Р»РѕРі">РћС‡РёСЃС‚РёС‚СЊ</button>
     </div>
     <div class="bc-msgs"></div>
     <div class="bc-chips"></div>
     <div class="bc-input-row">
-      <textarea class="bc-input" placeholder="Задайте вопрос по отчёту..." rows="1"></textarea>
-      <button class="bc-send">Отправить</button>
+      <textarea class="bc-input" placeholder="Р—Р°РґР°Р№С‚Рµ РІРѕРїСЂРѕСЃ РїРѕ РѕС‚С‡С‘С‚Сѓ..." rows="1"></textarea>
+      <button class="bc-send">РћС‚РїСЂР°РІРёС‚СЊ</button>
     </div>
-    <div class="bc-footer">Ответы носят информационный характер</div>
+    <div class="bc-footer">РћС‚РІРµС‚С‹ РЅРѕСЃСЏС‚ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹Р№ С…Р°СЂР°РєС‚РµСЂ</div>
   `;
 
   document.body.appendChild(btn);
@@ -219,7 +219,7 @@
   const chipsRow = panel.querySelector('.bc-chips');
   const clearBtn = panel.querySelector('.bc-clear');
 
-  // Чипы
+  // Р§РёРїС‹
   (CHIPS[REPORT_ID] || []).forEach(t => {
     const c = document.createElement('button');
     c.className = 'bc-chip';
@@ -234,7 +234,7 @@
     if (history.length === 0) {
       const hint = document.createElement('div');
       hint.className = 'bc-msg ai';
-      hint.innerHTML = `<strong>Привет!</strong> Я могу ответить на вопросы по этому отчёту — данные у меня перед глазами. Спросите про цифры, тренды, аномалии — что угодно.`;
+      hint.innerHTML = `<strong>РџСЂРёРІРµС‚!</strong> РЇ РјРѕРіСѓ РѕС‚РІРµС‚РёС‚СЊ РЅР° РІРѕРїСЂРѕСЃС‹ РїРѕ СЌС‚РѕРјСѓ РѕС‚С‡С‘С‚Сѓ вЂ” РґР°РЅРЅС‹Рµ Сѓ РјРµРЅСЏ РїРµСЂРµРґ РіР»Р°Р·Р°РјРё. РЎРїСЂРѕСЃРёС‚Рµ РїСЂРѕ С†РёС„СЂС‹, С‚СЂРµРЅРґС‹, Р°РЅРѕРјР°Р»РёРё вЂ” С‡С‚Рѕ СѓРіРѕРґРЅРѕ.`;
       msgs.appendChild(hint);
     } else {
       history.forEach(m => addMessage(m.role, m.content, false));
@@ -246,7 +246,7 @@
     const el = document.createElement('div');
     el.className = 'bc-msg ' + (role === 'user' ? 'user' : 'ai');
     if (role === 'assistant') {
-      // Простая markdown-обработка
+      // РџСЂРѕСЃС‚Р°СЏ markdown-РѕР±СЂР°Р±РѕС‚РєР°
       text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     }
     el.innerHTML = text;
@@ -285,20 +285,20 @@
           report_id: REPORT_ID,
           question: q,
           data: data,
-          history: history.slice(-6, -1),  // последние 3 пары без только что добавленного
+          history: history.slice(-6, -1),  // РїРѕСЃР»РµРґРЅРёРµ 3 РїР°СЂС‹ Р±РµР· С‚РѕР»СЊРєРѕ С‡С‚Рѕ РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ
         })
       });
       typingEl.remove();
       if (!resp.ok) {
-        const err = await resp.json().catch(() => ({error: 'Сервер вернул ' + resp.status}));
-        addMessage('assistant', '<span class="bc-msg err">Ошибка: ' + (err.error || 'неизвестная') + '</span>');
+        const err = await resp.json().catch(() => ({error: 'РЎРµСЂРІРµСЂ РІРµСЂРЅСѓР» ' + resp.status}));
+        addMessage('assistant', '<span class="bc-msg err">РћС€РёР±РєР°: ' + (err.error || 'РЅРµРёР·РІРµСЃС‚РЅР°СЏ') + '</span>');
         return;
       }
       const j = await resp.json();
       addMessage('assistant', j.answer);
     } catch (e) {
       typingEl.remove();
-      addMessage('assistant', '<span class="bc-msg err">Не удалось связаться с сервером чата. Проверьте подключение.</span>');
+      addMessage('assistant', '<span class="bc-msg err">РќРµ СѓРґР°Р»РѕСЃСЊ СЃРІСЏР·Р°С‚СЊСЃСЏ СЃ СЃРµСЂРІРµСЂРѕРј С‡Р°С‚Р°. РџСЂРѕРІРµСЂСЊС‚Рµ РїРѕРґРєР»СЋС‡РµРЅРёРµ.</span>');
     } finally {
       sendBtn.disabled = false;
       input.focus();
@@ -319,7 +319,7 @@
   sendBtn.onclick = send;
 
   clearBtn.onclick = () => {
-    if (confirm('Очистить историю диалога?')) {
+    if (confirm('РћС‡РёСЃС‚РёС‚СЊ РёСЃС‚РѕСЂРёСЋ РґРёР°Р»РѕРіР°?')) {
       history = [];
       saveHistory();
       renderHistory();
@@ -330,7 +330,7 @@
     const opening = !panel.classList.contains('open');
     panel.classList.toggle('open', opening);
     btn.classList.toggle('open', opening);
-    btn.innerHTML = opening ? '×' : '✦';
+    btn.innerHTML = opening ? 'Г—' : 'вњ¦';
     if (opening) {
       renderHistory();
       setTimeout(() => input.focus(), 100);
