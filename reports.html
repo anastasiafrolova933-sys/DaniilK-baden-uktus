@@ -748,6 +748,7 @@
     </span>
   </button>
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
+  <span class="footer-link" id="user-name" style="opacity:.7;cursor:default" title="Текущий пользователь"></span>
   <button class="footer-link" onclick="logout()">Выйти</button>
 </div>
 
@@ -784,7 +785,7 @@
   <div class="section-label anim-up delay-2">Отчёты</div>
 
   <div class="cards bento">
-    <a class="card reveal-3d anim-up delay-3" href="finance.html">
+    <a class="card reveal-3d anim-up delay-3" href="finance.html" data-permission="finance">
       <div class="card-num">01 · Главный отчёт</div>
       <div class="card-title">БДДС</div>
       <div class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам, прогноз закрытия и ликвидность</div>
@@ -794,7 +795,7 @@
       </div>
     </a>
 
-    <a class="card reveal-3d anim-up delay-3" href="sales.html">
+    <a class="card reveal-3d anim-up delay-3" href="sales.html" data-permission="sales">
       <div class="card-num">02</div>
       <div class="card-title">Продажи</div>
       <div class="card-desc">Выручка, средний чек, динамика по услугам и периодам</div>
@@ -804,7 +805,7 @@
       </div>
     </a>
 
-    <a class="card reveal-3d anim-up delay-4" href="forecast.html">
+    <a class="card reveal-3d anim-up delay-4" href="forecast.html" data-permission="forecast">
       <div class="card-num">03</div>
       <div class="card-title">Прогноз</div>
       <div class="card-desc">Ежедневный прогноз посещаемости и выручки</div>
@@ -814,7 +815,7 @@
       </div>
     </a>
 
-    <a class="card reveal-3d anim-up delay-5" href="loyalty.html">
+    <a class="card reveal-3d anim-up delay-5" href="loyalty.html" data-permission="loyalty">
       <div class="card-num">04</div>
       <div class="card-title">Лояльность</div>
       <div class="card-desc">Гости, визиты, опросы — дашборд @BadenLoyalty_bot</div>
@@ -824,7 +825,7 @@
       </div>
     </a>
 
-    <a class="card reveal-3d anim-up delay-6" href="staff.html">
+    <a class="card reveal-3d anim-up delay-6" href="staff.html" data-permission="staff">
       <div class="card-num">05</div>
       <div class="card-title">Аналитика ФОТ и Штат</div>
       <div class="card-desc">Укомплектованность, дефицит, текучесть · фонд оплаты труда, доля в выручке. Переключатель сверху страницы.</div>
@@ -893,6 +894,7 @@
   </div>
 </div>
 
+<script src="js/api.js"></script>
 <script>
 (function () {
   var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
@@ -1178,11 +1180,30 @@
     if (trigger) trigger.addEventListener('click', open);
   }
 
-  function showMain() {
-    document.getElementById('auth-overlay').style.display = 'none';
+  function showMain(session) {
+    // Скрываем оба auth-блока (старый и новый flow вместе уживаются)
+    var oldOverlay = document.getElementById('auth-overlay');
+    if (oldOverlay) oldOverlay.style.display = 'none';
     document.getElementById('main').style.display = 'block';
     var topA = document.getElementById('top-actions');
     if (topA) topA.style.display = '';
+
+    // Показываем имя юзера
+    if (session && session.user) {
+      var u = document.getElementById('user-name');
+      if (u) u.textContent = session.user.name;
+    }
+
+    // Фильтруем карточки по permissions — скрываем те, к которым нет доступа
+    if (session && session.permissions) {
+      document.querySelectorAll('[data-permission]').forEach(function(card) {
+        var perm = card.getAttribute('data-permission');
+        if (!session.permissions[perm]) {
+          card.style.display = 'none';
+        }
+      });
+    }
+
     var now = new Date();
     document.getElementById('last-update').textContent =
       now.toLocaleDateString('ru', {day:'2-digit', month:'long', year:'numeric'});
@@ -1194,30 +1215,48 @@
     attachThemePill();
   }
 
-  function tryAuth(pwd) {
-    sha256(pwd).then(function(h) {
-      if (h === HASH) {
-        localStorage.setItem(KEY, HASH);
-        showMain();
-      } else {
-        document.getElementById('auth-error').style.display = 'block';
-        document.getElementById('pwd-input').value = '';
-        document.getElementById('pwd-input').focus();
+  // ── НОВАЯ АВТОРИЗАЦИЯ через BadenAuth (login.html + JWT) ──
+  // Старая логика sha256/HASH сохранена выше как код, но больше не используется.
+  window.logout = function() {
+    if (window.BadenAuth) {
+      BadenAuth.logout();   // чистит localStorage и редиректит на login.html
+    } else {
+      // Fallback на случай, если js/api.js не загрузился
+      localStorage.removeItem('baden_session');
+      localStorage.removeItem(KEY);
+      location.href = 'login.html';
+    }
+  };
+
+  // На этом этапе BadenAuth уже загружен (js/api.js подключён выше).
+  // requireAuth() либо вернёт session, либо редиректнет на login.html.
+  if (window.BadenAuth) {
+    BadenAuth.requireAuth({ verify: false }).then(function(session) {
+      if (session) showMain(session);
+    }).catch(function() {
+      // редирект уже произошёл внутри requireAuth
+    });
+  } else {
+    // js/api.js не загрузился — fallback на старый flow для безопасности
+    console.warn('[reports] BadenAuth not loaded — falling back to legacy password');
+    if (localStorage.getItem(KEY) === HASH) { showMain(); return; }
+    var authOverlay = document.getElementById('auth-overlay');
+    if (authOverlay) authOverlay.style.display = '';
+    var authBtn = document.getElementById('auth-btn');
+    if (authBtn) authBtn.addEventListener('click', function() {
+      var pwd = document.getElementById('pwd-input').value;
+      if (pwd) {
+        sha256(pwd).then(function(h) {
+          if (h === HASH) { localStorage.setItem(KEY, HASH); showMain(); }
+          else { document.getElementById('auth-error').style.display = 'block'; }
+        });
       }
     });
+    var pwdInput = document.getElementById('pwd-input');
+    if (pwdInput) pwdInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && this.value) authBtn.click();
+    });
   }
-
-  window.logout = function() { localStorage.removeItem(KEY); location.reload(); };
-
-  if (localStorage.getItem(KEY) === HASH) { showMain(); return; }
-
-  document.getElementById('auth-btn').addEventListener('click', function() {
-    var pwd = document.getElementById('pwd-input').value;
-    if (pwd) tryAuth(pwd);
-  });
-  document.getElementById('pwd-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && this.value) tryAuth(this.value);
-  });
 })();
 </script>
 
