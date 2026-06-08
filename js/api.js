@@ -61,18 +61,39 @@
   function clearSession() { localStorage.removeItem(SESSION_KEY); }
 
   // ── HTTP helpers ──────────────────────────────────────────────────────
-  async function apiPost(path, body, { auth = true } = {}) {
-    const apiUrl = await getApiUrl();
-    const headers = { 'Content-Type': 'application/json' };
+  // Признак "URL устарел / туннель мёртв" — стоит сбросить кэш и попробовать заново
+  function _isStaleUrlError(err, response) {
+    if (err && err instanceof TypeError) return true; // network error, CORS, DNS
+    if (response && [502, 503, 504, 530].includes(response.status)) return true; // CF tunnel errors
+    return false;
+  }
+
+  async function _request(method, path, body, { auth = true, _retry = false } = {}) {
+    const apiUrl = await getApiUrl(_retry);  // на ретрае — форсируем свежий URL
+    const headers = {};
+    if (body) headers['Content-Type'] = 'application/json';
     if (auth) {
       const s = getSession();
       if (s && s.token) headers['Authorization'] = 'Bearer ' + s.token;
     }
-    const r = await fetch(apiUrl + path, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    let r;
+    try {
+      r = await fetch(apiUrl + path, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (e) {
+      if (!_retry && _isStaleUrlError(e)) {
+        console.warn('[api] network error, refreshing API URL and retrying', e.message);
+        return _request(method, path, body, { auth, _retry: true });
+      }
+      throw e;
+    }
+    if (!_retry && _isStaleUrlError(null, r)) {
+      console.warn('[api] HTTP', r.status, '— refreshing API URL and retrying');
+      return _request(method, path, body, { auth, _retry: true });
+    }
     const text = await r.text();
     let data; try { data = JSON.parse(text); } catch { data = { error: text }; }
     if (!r.ok) {
@@ -83,22 +104,11 @@
     return data;
   }
 
-  async function apiGet(path, { auth = true } = {}) {
-    const apiUrl = await getApiUrl();
-    const headers = {};
-    if (auth) {
-      const s = getSession();
-      if (s && s.token) headers['Authorization'] = 'Bearer ' + s.token;
-    }
-    const r = await fetch(apiUrl + path, { headers });
-    const text = await r.text();
-    let data; try { data = JSON.parse(text); } catch { data = { error: text }; }
-    if (!r.ok) {
-      const err = new Error(data.error || ('HTTP ' + r.status));
-      err.status = r.status;
-      throw err;
-    }
-    return data;
+  async function apiPost(path, body, opts) {
+    return _request('POST', path, body, opts);
+  }
+  async function apiGet(path, opts) {
+    return _request('GET', path, null, opts);
   }
 
   // ── Auth methods ──────────────────────────────────────────────────────
