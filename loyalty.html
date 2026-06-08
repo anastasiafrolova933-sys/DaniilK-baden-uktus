@@ -580,7 +580,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '08.06.2026 21:32',
+  updatedAt: '08.06.2026 21:49',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -899,27 +899,44 @@ window.__preloaded = {
 };
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
+// Загружаем js/api.js — он подключит BadenAuth
 (function(){
-  var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
-  var KEY  = 'bbt_ok';
-  function sha256(str) {
-    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
-      .then(function(ab){ return Array.from(new Uint8Array(ab)).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); });
-  }
+  var s = document.createElement('script');
+  s.src = 'js/api.js';
+  s.onload = checkAuth;
+  s.onerror = function(){ console.warn('[loyalty] js/api.js failed to load, falling back to legacy'); legacyAuth(); };
+  document.head.appendChild(s);
+
   function showApp() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('app-wrapper').style.display = '';
   }
-  if (localStorage.getItem(KEY) === HASH) { showApp(); return; }
-  document.getElementById('auth-submit').addEventListener('click', function(){
-    var pwd = document.getElementById('auth-pwd').value;
-    if (!pwd) return;
-    sha256(pwd).then(function(h){
-      if (h === HASH) { localStorage.setItem(KEY, HASH); showApp(); }
-      else { document.getElementById('auth-error').style.display = 'block'; document.getElementById('auth-pwd').value = ''; document.getElementById('auth-pwd').focus(); }
+
+  function checkAuth() {
+    if (!window.BadenAuth) { legacyAuth(); return; }
+    BadenAuth.requireAuth({ permission: 'loyalty', verify: false }).then(function(sess){
+      if (sess) showApp();
+    }).catch(function(){ /* requireAuth уже редиректнул */ });
+  }
+
+  function legacyAuth() {
+    var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
+    var KEY  = 'bbt_ok';
+    function sha256(str) {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
+        .then(function(ab){ return Array.from(new Uint8Array(ab)).map(function(b){return b.toString(16).padStart(2,'0');}).join(''); });
+    }
+    if (localStorage.getItem(KEY) === HASH) { showApp(); return; }
+    document.getElementById('auth-submit').addEventListener('click', function(){
+      var pwd = document.getElementById('auth-pwd').value;
+      if (!pwd) return;
+      sha256(pwd).then(function(h){
+        if (h === HASH) { localStorage.setItem(KEY, HASH); showApp(); }
+        else { document.getElementById('auth-error').style.display = 'block'; document.getElementById('auth-pwd').value = ''; document.getElementById('auth-pwd').focus(); }
+      });
     });
-  });
-  document.getElementById('auth-pwd').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('auth-submit').click(); });
+    document.getElementById('auth-pwd').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('auth-submit').click(); });
+  }
 })();
 
 // ── Data storage ──────────────────────────────────────────────────────────────
@@ -1588,6 +1605,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202606082132" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202606082149" data-report="loyalty"></script>
 </body>
 </html>
