@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Отчёты · Baden Uktus — v4 Editorial 3D-tilt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..600,0..100&family=Inter:wght@300..600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg:        #f3efe7;
+    --paper:     #fbf8f1;
+    --ink:       #1a1614;
+    --ink-2:     rgba(26,22,20,0.58);
+    --ink-3:     rgba(26,22,20,0.32);
+    --rule:      rgba(26,22,20,0.12);
+    --accent:    #b4855a;
+    --page-tint: 200, 169, 126;
+    --ease:      cubic-bezier(.22,1,.36,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse 1200px 600px at 50% -20%,
+        rgba(var(--page-tint), 0.22) 0%,
+        transparent 70%),
+      var(--bg);
+    transition: background 0.8s var(--ease);
+    min-height: 100vh;
+    padding: 32px clamp(20px, 5vw, 64px) 80px;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.6;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
+
+  .container { max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 64px;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .brand em { font-style: italic; color: var(--accent); }
+  .topbar-meta {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+  }
+
+  /* ── Masthead ── */
+  .masthead {
+    padding: 40px 0 80px;
+    text-align: center;
+  }
+  .masthead-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 28px;
+  }
+  .masthead-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(56px, 11vw, 156px);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .masthead-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+    font-feature-settings: "ss01";
+  }
+  .masthead-sub {
+    margin-top: 32px;
+    font-size: 17px;
+    line-height: 1.5;
+    max-width: 520px;
+    margin-inline: auto;
+    color: var(--ink-2);
+  }
+
+  /* ── Section labels ── */
+  .section-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 64px 0 32px;
+    border-top: 1px solid var(--rule);
+  }
+  .section-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--accent);
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.02em;
+  }
+  .section-meta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ── Cards grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(20px, 2.2vw, 32px);
+    padding: 24px 0 16px;
+    perspective: 1400px;
+  }
+  .grid.featured { grid-template-columns: 1.5fr 1fr 1fr; }
+  @media (max-width: 900px) { .grid.featured { grid-template-columns: 1fr; } }
+
+  .card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 36px 32px 32px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    color: inherit;
+    transform-style: preserve-3d;
+    transition:
+      box-shadow 0.6s var(--ease),
+      border-color 0.4s var(--ease),
+      background 0.4s var(--ease);
+    will-change: transform;
+    overflow: hidden;
+  }
+  .card.featured {
+    min-height: 380px;
+    padding: 48px 40px 40px;
+    background:
+      radial-gradient(ellipse 400px 200px at 100% 0%,
+        rgba(var(--card-accent, var(--page-tint)), 0.18) 0%,
+        transparent 70%),
+      var(--paper);
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(
+      circle 320px at var(--mx, 50%) var(--my, 50%),
+      rgba(var(--card-accent, var(--page-tint)), 0.14),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.5s var(--ease);
+    pointer-events: none;
+  }
+  .card:hover {
+    box-shadow:
+      0 30px 60px -20px rgba(26, 22, 20, 0.18),
+      0 12px 24px -12px rgba(var(--card-accent, var(--page-tint)), 0.4);
+    border-color: rgba(var(--card-accent, var(--page-tint)), 0.5);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 18px;
+    letter-spacing: 0.02em;
+  }
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .card.featured .card-title { font-size: 44px; }
+  .card-title em { font-style: italic; color: var(--accent); }
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin-bottom: 28px;
+    transform: translateZ(20px);
+  }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .card-arrow {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--accent);
+    transition: transform 0.4s var(--ease);
+  }
+  .card:hover .card-arrow { transform: translateX(6px); }
+
+  /* ── AI block ── */
+  .ai-block {
+    margin: 24px 0;
+    padding: clamp(48px, 6vw, 80px) clamp(32px, 5vw, 64px);
+    background:
+      linear-gradient(135deg,
+        rgba(180, 133, 90, 0.06) 0%,
+        rgba(180, 133, 90, 0.02) 100%),
+      var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .ai-block { grid-template-columns: 1fr; } }
+  .ai-eyebrow {
+    font-size: 11px; letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .ai-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+  }
+  .ai-title em { font-style: italic; color: var(--accent); }
+  .ai-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin-bottom: 28px;
+  }
+  .ai-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 14px 24px;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    transition: transform 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .ai-btn:hover { transform: translateY(-2px); background: var(--accent); }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  @media (max-width: 700px) {
+    .footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .topbar { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+
+  /* ── Reveal animation ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">Baden Uktus · <em>отчёты</em></div>
+    <div class="topbar-meta">Внутренний портал · версия 4</div>
+  </div>
+
+  <!-- Masthead -->
+  <section class="masthead reveal">
+    <div class="masthead-eyebrow">Том IV · 2026</div>
+    <h1 class="masthead-title">
+      Цифры,<br><em>которые работают</em>
+    </h1>
+    <p class="masthead-sub">
+      Ежедневная аналитика термального комплекса: финансы, продажи, прогноз, лояльность и штат — обновляются автоматически в 10:00 и 18:00.
+    </p>
+  </section>
+
+  <!-- Reports section -->
+  <div class="section-head reveal">
+    <div>
+      <div class="section-num">I.</div>
+      <div class="section-title">Отчёты</div>
+    </div>
+    <div class="section-meta">5 разделов · обновлено сегодня</div>
+  </div>
+
+  <div class="grid featured tilt-grid">
+    <a class="card featured tilt" href="finance.html" style="--card-accent: 200, 169, 126;">
+      <div>
+        <div class="card-num">01 · Главный</div>
+        <h3 class="card-title"><em>БДДС</em><br>и денежный поток</h3>
+        <p class="card-desc">Бюджет движения денежных средств — доходы, расходы, остатки по месяцам, прогноз закрытия и ликвидность.</p>
+      </div>
+      <div class="card-foot">
+        <span>10:00 / 18:00</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card tilt" href="sales.html" style="--card-accent: 126, 201, 153;">
+      <div>
+        <div class="card-num">02</div>
+        <h3 class="card-title">Продажи</h3>
+        <p class="card-desc">Выручка, средний чек, динамика по услугам и периодам.</p>
+      </div>
+      <div class="card-foot">
+        <span>10:00 / 18:00</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card tilt" href="forecast.html" style="--card-accent: 226, 185, 116;">
+      <div>
+        <div class="card-num">03</div>
+        <h3 class="card-title">Прогноз</h3>
+        <p class="card-desc">Ежедневный ML-прогноз посещаемости и выручки на 30 дней.</p>
+      </div>
+      <div class="card-foot">
+        <span>10:00 / 18:00</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="grid tilt-grid" style="margin-top: 4px;">
+    <a class="card tilt" href="loyalty.html" style="--card-accent: 200, 140, 180;">
+      <div>
+        <div class="card-num">04</div>
+        <h3 class="card-title">Лояльность</h3>
+        <p class="card-desc">Гости, визиты, опросы — дашборд бота @BadenLoyalty_bot.</p>
+      </div>
+      <div class="card-foot">
+        <span>каждый час</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card tilt" href="staff.html" style="--card-accent: 140, 170, 220;">
+      <div>
+        <div class="card-num">05</div>
+        <h3 class="card-title">ФОТ <em>и</em> Штат</h3>
+        <p class="card-desc">Укомплектованность, дефицит, текучесть · фонд оплаты труда и доля в выручке.</p>
+      </div>
+      <div class="card-foot">
+        <span>10:00 / 18:00</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- AI block -->
+  <div class="section-head reveal">
+    <div>
+      <div class="section-num">II.</div>
+      <div class="section-title">ИИ-аналитик</div>
+    </div>
+    <div class="section-meta">Claude · Haiku 4.5 + Sonnet 4.6</div>
+  </div>
+
+  <div class="ai-block reveal">
+    <div>
+      <div class="ai-eyebrow">Анализ в свободной форме</div>
+      <h2 class="ai-title">Спроси <em>что угодно</em><br>о цифрах</h2>
+    </div>
+    <div>
+      <p class="ai-text">
+        ИИ-помощник видит все отчёты целиком: финансы, продажи, прогноз, лояльность, штат, реестр БДДС и контекст конкурентов. Задавай вопросы человеческим языком — получаешь сводку или объяснение в чате.
+      </p>
+      <a class="ai-btn" href="https://t.me/BBTUktus_bot" target="_blank" rel="noopener">
+        Открыть @BBTUktus_bot <span style="font-family:'Fraunces',serif;font-style:italic;">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Projects section -->
+  <div class="section-head reveal">
+    <div>
+      <div class="section-num">III.</div>
+      <div class="section-title">Проекты</div>
+    </div>
+    <div class="section-meta">экосистема Baden Uktus</div>
+  </div>
+
+  <div class="grid tilt-grid">
+    <a class="card tilt" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener" style="--card-accent: 200, 169, 126;">
+      <div>
+        <div class="card-num">01</div>
+        <h3 class="card-title">Главный <em>сайт</em></h3>
+        <p class="card-desc">Премиум-лендинг термального комплекса: тарифы, СПА, ауфгуссы, меню 5 площадок.</p>
+      </div>
+      <div class="card-foot"><span>baden-baden</span><span class="card-arrow">↗</span></div>
+    </a>
+
+    <a class="card tilt" href="https://t.me/BadenLoyalty_bot" target="_blank" rel="noopener" style="--card-accent: 200, 140, 180;">
+      <div>
+        <div class="card-num">02</div>
+        <h3 class="card-title">Бот лояльности</h3>
+        <p class="card-desc">Регистрация, накопление визитов, скидки до 20%, QR-карта в Telegram.</p>
+      </div>
+      <div class="card-foot"><span>@BadenLoyalty_bot</span><span class="card-arrow">↗</span></div>
+    </a>
+
+    <a class="card tilt" href="presentation.html" target="_blank" rel="noopener" style="--card-accent: 140, 170, 220;">
+      <div>
+        <div class="card-num">03</div>
+        <h3 class="card-title">Презентация</h3>
+        <p class="card-desc">Цифровая экосистема Baden Uktus: архитектура, боты, интеграции, дашборды.</p>
+      </div>
+      <div class="card-foot"><span>presentation</span><span class="card-arrow">↗</span></div>
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Отчёты обновляются · 10:00 и 18:00 · Лояльность — каждый час</span>
+    <span>v4 · editorial 3D-tilt</span>
+  </div>
+
+</div>
+
+<script>
+  // ── Tilt effect ──
+  const tiltCards = document.querySelectorAll('.tilt');
+  const MAX_TILT = 6; // degrees
+
+  tiltCards.forEach(card => {
+    let rafId = null;
+    card.addEventListener('mousemove', (e) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const px = (x / rect.width) * 100;
+        const py = (y / rect.height) * 100;
+        const rx = ((y - rect.height / 2) / rect.height) * -MAX_TILT;
+        const ry = ((x - rect.width / 2) / rect.width) * MAX_TILT;
+        card.style.transform = `perspective(1400px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px)`;
+        card.style.setProperty('--mx', px + '%');
+        card.style.setProperty('--my', py + '%');
+      });
+
+      // Page tint shift
+      const accent = card.style.getPropertyValue('--card-accent');
+      if (accent) document.documentElement.style.setProperty('--page-tint', accent);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      card.style.transform = '';
+      document.documentElement.style.setProperty('--page-tint', '200, 169, 126');
+    });
+  });
+
+  // ── Reveal on scroll ──
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

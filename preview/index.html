@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Baden Uktus · Preview редизайна портала отчётов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..600&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0a; color: #f4ebdc;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 48px clamp(20px, 4vw, 64px);
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-weight: 200; font-size: clamp(36px, 6vw, 64px); letter-spacing: -0.03em; margin-bottom: 12px; }
+  h1 b { font-weight: 200; color: #d4b893; }
+  .lead { color: rgba(244,235,220,0.5); font-size: 15px; line-height: 1.6; margin-bottom: 48px; max-width: 560px; }
+  .variants { display: grid; gap: 16px; }
+  a.variant {
+    display: block;
+    padding: 28px 32px;
+    background: rgba(20,18,14,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.4s cubic-bezier(.22,1,.36,1), border-color 0.3s, background 0.3s;
+  }
+  a.variant:hover {
+    transform: translateY(-3px);
+    border-color: rgba(212,184,147,0.3);
+    background: rgba(28,24,18,0.6);
+  }
+  .v-num { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: #d4b893; margin-bottom: 10px; }
+  .v-title { font-weight: 300; font-size: 24px; margin-bottom: 8px; }
+  .v-desc { font-size: 14px; line-height: 1.55; color: rgba(244,235,220,0.6); }
+  .v-meta { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
+  footer { margin-top: 64px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,235,220,0.32); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Preview <b>редизайна</b></h1>
+  <p class="lead">Тестовая площадка для редизайна портала отчётов. Не индексируется поисковиками. Финальная версия попадёт в <a href="../reports.html" style="color:#d4b893;">reports.html</a> только после согласования.</p>
+
+  <div class="variants">
+    <a class="variant" href="v5-apple-webgl/">
+      <div class="v-num">Вариант 5 · фаворит</div>
+      <div class="v-title">Scroll-driven WebGL</div>
+      <div class="v-desc">Three.js фон с тоннелем золотых колец, камера летит по скроллу, PBR-материалы, прогресс-бар, glass-карточки с blur. Inspired by Apple Vision Pro.</div>
+      <div class="v-meta">Three.js · GSAP ScrollTrigger · Lenis · PMREM env</div>
+    </a>
+
+    <a class="variant" href="v4-stripe-tilt/">
+      <div class="v-num">Вариант 4 · альтернатива</div>
+      <div class="v-title">Editorial 3D-tilt</div>
+      <div class="v-desc">Тёплая бумажная палитра, serif-типографика Fraunces, карточки с tilt-эффектом от мыши, цвет страницы меняется по hover. Inspired by Stripe Press.</div>
+      <div class="v-meta">CSS perspective · Fraunces / Inter · grain overlay</div>
+    </a>
+  </div>
+
+  <footer>preview · baden uktus · не для прода</footer>
+</div>
+</body>
+</html>
