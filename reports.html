@@ -17,6 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Отчеты Baden Uktus">
@@ -748,6 +749,8 @@
     </span>
   </button>
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
+  <button class="footer-link" id="install-btn" style="display:none" title="Установить как приложение">📱 Установить</button>
+  <button class="footer-link" id="push-btn" style="display:none" title="Включить push-уведомления">🔔 Уведомления</button>
   <span class="footer-link" id="user-name" style="opacity:.7;cursor:default" title="Текущий пользователь"></span>
   <button class="footer-link" onclick="logout()">Выйти</button>
 </div>
@@ -895,6 +898,7 @@
 </div>
 
 <script src="js/api.js"></script>
+<script src="js/pwa.js"></script>
 <script>
 (function () {
   var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
@@ -1213,6 +1217,70 @@
     attachMagnetic();
     attachReveal();
     attachThemePill();
+    attachPwaButtons();
+  }
+
+  // ── PWA: install + push кнопки ──────────────────────────────────────
+  function attachPwaButtons() {
+    if (!window.BadenPWA) return;
+
+    var installBtn = document.getElementById('install-btn');
+    var pushBtn    = document.getElementById('push-btn');
+
+    // Install: показываем когда станет доступно
+    document.addEventListener('baden-pwa-installable', function() {
+      if (installBtn) installBtn.style.display = '';
+    });
+    if (installBtn) {
+      installBtn.addEventListener('click', function() { BadenPWA.install(); });
+    }
+
+    // На iOS Safari (где нет beforeinstallprompt) показываем кнопку всегда — она покажет инструкцию
+    var isIOSStandalone = window.navigator.standalone === true;
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS && !isIOSStandalone && installBtn) {
+      installBtn.style.display = '';
+      installBtn.textContent = '📱 На экран Домой';
+    }
+
+    // Push кнопка
+    function refreshPushBtn() {
+      if (!pushBtn) return;
+      var s = BadenPWA.pushPermissionState();
+      if (s === 'unsupported') {
+        pushBtn.style.display = 'none';
+      } else if (s === 'granted') {
+        pushBtn.style.display = '';
+        pushBtn.innerHTML = '🔔 Вкл.';
+        pushBtn.title = 'Push-уведомления включены. Нажми для теста.';
+      } else if (s === 'denied') {
+        pushBtn.style.display = '';
+        pushBtn.innerHTML = '🔕 Заблок';
+        pushBtn.title = 'Уведомления заблокированы в браузере';
+      } else {
+        pushBtn.style.display = '';
+        pushBtn.innerHTML = '🔔 Уведомления';
+      }
+    }
+    refreshPushBtn();
+
+    if (pushBtn) {
+      pushBtn.addEventListener('click', async function() {
+        var s = BadenPWA.pushPermissionState();
+        try {
+          if (s === 'granted') {
+            // Уже включены — отправляем тест
+            await BadenPWA.testPush();
+            // (push придёт в фоне)
+          } else {
+            await BadenPWA.enablePush();
+            refreshPushBtn();
+          }
+        } catch (e) {
+          alert('Ошибка: ' + e.message);
+        }
+      });
+    }
   }
 
   // ── НОВАЯ АВТОРИЗАЦИЯ через BadenAuth (login.html + JWT) ──

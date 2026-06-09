@@ -1,0 +1,58 @@
+{
+  "name": "Baden Uktus — Отчёты",
+  "short_name": "Baden Отчёты",
+  "description": "Внутренний портал отчётов термального комплекса Baden Uktus: финансы, продажи, прогноз, лояльность и штат.",
+  "start_url": "/DaniilK-baden-uktus/reports.html",
+  "scope": "/DaniilK-baden-uktus/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "lang": "ru",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "БДДС / Финансы",
+      "short_name": "БДДС",
+      "url": "/DaniilK-baden-uktus/finance.html"
+    },
+    {
+      "name": "Продажи",
+      "url": "/DaniilK-baden-uktus/sales.html"
+    },
+    {
+      "name": "Прогноз",
+      "url": "/DaniilK-baden-uktus/forecast.html"
+    },
+    {
+      "name": "ФОТ и Штат",
+      "url": "/DaniilK-baden-uktus/staff.html"
+    }
+  ]
+}
