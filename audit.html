@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Аудит — Baden Uktus</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:     #0a0a0a;
+    --ink:    #f4ebdc;
+    --ink-2:  rgba(244,235,220,0.62);
+    --ink-3:  rgba(244,235,220,0.32);
+    --rule:   rgba(255,255,255,0.06);
+    --accent: #d4b893;
+    --gold:   #c8a97e;
+    --error:  #e2486c;
+    --ease:   cubic-bezier(.22,1,.36,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, #14110a 0%, var(--bg) 60%);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: 32px clamp(20px, 4vw, 48px);
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; }
+
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 32px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.04em; }
+  .brand b { color: var(--accent); font-weight: 500; }
+  .topbar-meta {
+    display: flex; gap: 16px; align-items: center;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .topbar-meta a { color: var(--ink-3); text-decoration: none; }
+  .topbar-meta a:hover { color: var(--accent); }
+  .logout-btn { background: transparent; border: none; color: inherit; cursor: pointer; font-family: inherit; font-size: inherit; letter-spacing: inherit; text-transform: inherit; }
+
+  h1 { font-weight: 200; font-size: clamp(32px, 5vw, 56px); letter-spacing: -0.03em; margin-bottom: 32px; }
+  h1 b { font-weight: 200; font-style: italic; color: var(--accent); }
+
+  /* Stats cards */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    padding: 18px 22px;
+    background: rgba(20,18,14,0.5);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+  }
+  .stat-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 300; letter-spacing: -0.02em; color: var(--ink); }
+  .stat-value b { font-weight: 200; color: var(--accent); }
+
+  /* Filters */
+  .filters {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding: 16px 18px;
+    background: rgba(20,18,14,0.35);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .filters select, .filters input {
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .filters select:focus, .filters input:focus { outline: none; border-color: var(--accent); }
+  .filters button {
+    padding: 8px 18px;
+    background: linear-gradient(180deg, var(--gold), var(--accent));
+    color: #1a1410;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    cursor: pointer;
+  }
+  .filters button.secondary { background: transparent; color: var(--ink-2); border: 1px solid var(--rule); }
+  .filters button.secondary:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Events table */
+  .events {
+    background: rgba(20,18,14,0.35);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  th {
+    background: rgba(0,0,0,0.3);
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  tbody tr { transition: background 0.2s; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .ts { color: var(--ink-3); font-family: ui-monospace, Consolas, monospace; font-size: 11px; white-space: nowrap; }
+  .user { font-weight: 500; }
+  .role { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); display: inline-block; padding: 2px 6px; border-radius: 3px; background: rgba(255,255,255,0.05); }
+  .role.admin { color: var(--accent); background: rgba(212,184,147,0.1); }
+  .role.hr    { color: #7ec999; background: rgba(126,201,153,0.08); }
+  .role.manager { color: #e2b974; background: rgba(226,185,116,0.08); }
+  .role.fnb   { color: #d488ff; background: rgba(212,136,255,0.08); }
+  .type {
+    font-size: 11px; letter-spacing: 0.1em;
+    padding: 3px 8px; border-radius: 3px;
+    background: rgba(255,255,255,0.06);
+    color: var(--ink-2);
+    font-family: ui-monospace, monospace;
+  }
+  .type.page_view  { color: #8ab7e0; background: rgba(138,183,224,0.08); }
+  .type.chat_open  { color: #7ec999; background: rgba(126,201,153,0.08); }
+  .page {
+    font-family: ui-monospace, monospace; font-size: 11px;
+    color: var(--ink-2);
+  }
+  .meta-cell { font-size: 11px; color: var(--ink-3); max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta-cell:hover { white-space: normal; overflow: visible; }
+
+  /* Pagination */
+  .pagination {
+    display: flex; justify-content: center; gap: 8px;
+    margin-top: 24px;
+    font-size: 13px;
+  }
+  .pagination button {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .pagination button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pagination .info { padding: 8px 16px; color: var(--ink-3); }
+
+  .empty { padding: 60px 20px; text-align: center; color: var(--ink-3); }
+
+  /* Top users / pages sidebars */
+  .insights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 720px) {
+    .insights { grid-template-columns: 1fr; }
+    table { font-size: 12px; }
+    th, td { padding: 10px 8px; }
+  }
+  .insight-card {
+    padding: 18px 22px;
+    background: rgba(20,18,14,0.35);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+  }
+  .insight-card h3 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-bottom: 14px; }
+  .insight-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+  .insight-row:last-child { border-bottom: 0; }
+  .insight-row .key { color: var(--ink-2); }
+  .insight-row .n { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">Baden Uktus · <b>аудит</b></div>
+    <div class="topbar-meta">
+      <a href="reports.html">← Отчёты</a>
+      <span id="user-info"></span>
+      <button class="logout-btn" id="logout-btn">Выйти</button>
+    </div>
+  </div>
+
+  <h1>Лента <b>событий</b></h1>
+
+  <!-- Stats -->
+  <div class="stats" id="stats">
+    <div class="stat-card"><div class="stat-label">Сегодня</div><div class="stat-value" id="stat-today">—</div></div>
+    <div class="stat-card"><div class="stat-label">Вчера</div><div class="stat-value" id="stat-yesterday">—</div></div>
+    <div class="stat-card"><div class="stat-label">За неделю</div><div class="stat-value" id="stat-week">—</div></div>
+    <div class="stat-card"><div class="stat-label">Всего в БД</div><div class="stat-value" id="stat-total">—</div></div>
+  </div>
+
+  <!-- Insights -->
+  <div class="insights">
+    <div class="insight-card">
+      <h3>Топ-пользователи за неделю</h3>
+      <div id="top-users"></div>
+    </div>
+    <div class="insight-card">
+      <h3>Топ-страницы за неделю</h3>
+      <div id="top-pages"></div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <select id="filter-user">
+      <option value="">Все юзеры</option>
+      <option value="anastasia">Анастасия Ф.</option>
+      <option value="daniil">Даниил К.</option>
+      <option value="artem">Артем К.</option>
+      <option value="fnb">F&amp;B</option>
+      <option value="kadry">Кадры</option>
+    </select>
+    <select id="filter-type">
+      <option value="">Все события</option>
+      <option value="page_view">page_view</option>
+      <option value="chat_open">chat_open</option>
+      <option value="login_success">login_success</option>
+      <option value="anomaly_explain">anomaly_explain</option>
+    </select>
+    <input type="date" id="filter-since" title="С даты">
+    <input type="date" id="filter-until" title="По дату">
+    <button id="filter-apply">Применить</button>
+    <button id="filter-reset" class="secondary">Сбросить</button>
+  </div>
+
+  <!-- Events table -->
+  <div class="events">
+    <table>
+      <thead>
+        <tr>
+          <th>Время</th>
+          <th>Юзер</th>
+          <th>Роль</th>
+          <th>Событие</th>
+          <th>Страница</th>
+          <th>Детали</th>
+        </tr>
+      </thead>
+      <tbody id="events-tbody">
+        <tr><td colspan="6" class="empty">Загрузка...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/audit.js"></script>
+<script>
+  let currentOffset = 0;
+  const limit = 50;
+  let currentFilters = {};
+
+  document.getElementById('logout-btn').addEventListener('click', () => BadenAuth.logout());
+
+  async function init() {
+    // Auth: требуется permission=audit
+    let session;
+    try {
+      session = await BadenAuth.requireAuth({ permission: 'audit' });
+    } catch (e) { return; }
+
+    document.getElementById('user-info').textContent = session.user.name;
+
+    await loadStats();
+    await loadEvents();
+  }
+
+  async function loadStats() {
+    try {
+      const stats = await BadenAuth.apiGet('/api/audit/stats');
+      document.getElementById('stat-today').innerHTML = `<b>${stats.today.toLocaleString('ru')}</b>`;
+      document.getElementById('stat-yesterday').innerHTML = `<b>${stats.yesterday.toLocaleString('ru')}</b>`;
+      document.getElementById('stat-week').innerHTML = `<b>${stats.week.toLocaleString('ru')}</b>`;
+      document.getElementById('stat-total').innerHTML = `<b>${stats.total.toLocaleString('ru')}</b>`;
+
+      const tu = document.getElementById('top-users');
+      tu.innerHTML = stats.top_users_week.map(r =>
+        `<div class="insight-row"><span class="key">${escapeHtml(r.user_login || '—')}</span><span class="n">${r.n}</span></div>`
+      ).join('') || '<div class="empty" style="padding:10px">(пусто)</div>';
+
+      const tp = document.getElementById('top-pages');
+      tp.innerHTML = stats.top_pages_week.map(r =>
+        `<div class="insight-row"><span class="key">${escapeHtml(r.page || '—')}</span><span class="n">${r.n}</span></div>`
+      ).join('') || '<div class="empty" style="padding:10px">(пусто)</div>';
+    } catch (e) {
+      console.warn('[audit] stats load failed:', e);
+    }
+  }
+
+  async function loadEvents() {
+    const tbody = document.getElementById('events-tbody');
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Загрузка...</td></tr>';
+
+    const qs = new URLSearchParams();
+    qs.set('limit', limit);
+    qs.set('offset', currentOffset);
+    Object.entries(currentFilters).forEach(([k, v]) => { if (v) qs.set(k, v); });
+
+    try {
+      const data = await BadenAuth.apiGet('/api/audit/events?' + qs.toString());
+      if (!data.events || data.events.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Событий не найдено</td></tr>';
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      tbody.innerHTML = data.events.map(e => {
+        const ts = new Date(e.ts);
+        const tsStr = ts.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const role = e.user_role || '';
+        const meta = e.meta ? (typeof e.meta === 'object' ? JSON.stringify(e.meta) : String(e.meta)) : '';
+        return `<tr>
+          <td class="ts">${escapeHtml(tsStr)}</td>
+          <td class="user">${escapeHtml(e.user_login || '—')}</td>
+          <td>${role ? `<span class="role ${escapeHtml(role)}">${escapeHtml(role)}</span>` : '—'}</td>
+          <td><span class="type ${escapeHtml(e.event_type)}">${escapeHtml(e.event_type)}</span></td>
+          <td class="page">${escapeHtml(e.page || '—')}</td>
+          <td class="meta-cell" title="${escapeHtml(meta)}">${escapeHtml(meta)}</td>
+        </tr>`;
+      }).join('');
+
+      // Pagination
+      const pag = document.getElementById('pagination');
+      const totalPages = Math.ceil(data.total / limit);
+      const currentPage = Math.floor(currentOffset / limit) + 1;
+      pag.innerHTML = `
+        <button ${currentOffset === 0 ? 'disabled' : ''} onclick="prevPage()">← Назад</button>
+        <span class="info">Стр. ${currentPage} из ${totalPages} · всего ${data.total}</span>
+        <button ${(currentOffset + limit) >= data.total ? 'disabled' : ''} onclick="nextPage()">Вперёд →</button>
+      `;
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty">Ошибка: ${escapeHtml(e.message || e)}</td></tr>`;
+    }
+  }
+
+  window.prevPage = function() { currentOffset = Math.max(0, currentOffset - limit); loadEvents(); window.scrollTo(0, 0); };
+  window.nextPage = function() { currentOffset += limit; loadEvents(); window.scrollTo(0, 0); };
+
+  document.getElementById('filter-apply').addEventListener('click', () => {
+    currentFilters = {
+      user:  document.getElementById('filter-user').value,
+      type:  document.getElementById('filter-type').value,
+    };
+    const since = document.getElementById('filter-since').value;
+    const until = document.getElementById('filter-until').value;
+    if (since) currentFilters.since = since + 'T00:00:00';
+    if (until) currentFilters.until = until + 'T23:59:59';
+    currentOffset = 0;
+    loadEvents();
+  });
+  document.getElementById('filter-reset').addEventListener('click', () => {
+    document.getElementById('filter-user').value = '';
+    document.getElementById('filter-type').value = '';
+    document.getElementById('filter-since').value = '';
+    document.getElementById('filter-until').value = '';
+    currentFilters = {};
+    currentOffset = 0;
+    loadEvents();
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  init();
+</script>
+
+</body>
+</html>

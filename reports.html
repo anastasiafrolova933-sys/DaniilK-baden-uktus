@@ -751,6 +751,7 @@
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
   <button class="footer-link" id="install-btn" style="display:none" title="Установить как приложение">📱 Установить</button>
   <button class="footer-link" id="push-btn" style="display:none" title="Включить push-уведомления">🔔 Уведомления</button>
+  <a class="footer-link" id="audit-link" href="audit.html" style="display:none;text-decoration:none;color:inherit" title="Лента событий — кто что открывал">📋 Аудит</a>
   <span class="footer-link" id="user-name" style="opacity:.7;cursor:default" title="Текущий пользователь"></span>
   <button class="footer-link" onclick="logout()">Выйти</button>
 </div>
@@ -899,6 +900,7 @@
 
 <script src="js/api.js"></script>
 <script src="js/pwa.js"></script>
+<script src="js/audit.js"></script>
 <script>
 (function () {
   var HASH = 'dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95';
@@ -1196,6 +1198,12 @@
     if (session && session.user) {
       var u = document.getElementById('user-name');
       if (u) u.textContent = session.user.name;
+    }
+
+    // Показать ссылку на аудит admin-ам
+    if (session && session.permissions && session.permissions.audit) {
+      var a = document.getElementById('audit-link');
+      if (a) a.style.display = '';
     }
 
     // Фильтруем карточки по permissions — скрываем те, к которым нет доступа
