@@ -34,24 +34,51 @@
     if (document.getElementById(STYLE_ID)) return;
     const css = `
       tr.baden-anomaly { position: relative; }
+      tr.baden-anomaly.warning  > td { background: rgba(212, 184, 147, 0.10) !important; }
+      tr.baden-anomaly.critical > td { background: rgba(226, 72, 108, 0.13)  !important; }
       tr.baden-anomaly > td:first-child {
-        border-left: 3px solid #d4b893 !important;
+        border-left: 4px solid #d4b893 !important;
+        padding-left: 8px !important;
       }
-      .baden-anomaly-icon {
-        display: inline-block;
-        margin-left: 6px;
+      tr.baden-anomaly.critical > td:first-child {
+        border-left-color: #e2486c !important;
+      }
+      .baden-anomaly-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 10px;
+        padding: 3px 9px 3px 7px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         cursor: pointer;
-        font-size: 0.85em;
-        opacity: 0.85;
-        transition: transform 0.2s, opacity 0.2s;
         user-select: none;
+        transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+        vertical-align: middle;
+        white-space: nowrap;
+        line-height: 1.2;
       }
-      .baden-anomaly-icon:hover {
-        transform: scale(1.15);
-        opacity: 1;
+      .baden-anomaly-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
       }
-      .baden-anomaly-icon.critical { color: #e2486c; }
-      .baden-anomaly-icon.warning  { color: #d4b893; }
+      .baden-anomaly-badge.warning {
+        background: linear-gradient(180deg, #d4b893, #b9956a);
+        color: #1a1410;
+      }
+      .baden-anomaly-badge.critical {
+        background: linear-gradient(180deg, #e96586, #cc3a5e);
+        color: #fff;
+      }
+      .baden-anomaly-badge::before {
+        content: '⚠';
+        font-size: 1.05em;
+        line-height: 1;
+      }
+      .baden-anomaly-badge.critical::before { content: '⚠'; }
 
       .baden-anomaly-popup-backdrop {
         position: fixed; inset: 0; z-index: 99998;
@@ -254,20 +281,21 @@
   // ── Flag and click handler ───────────────────────────────────────────
   function flagAnomaly(point, meta) {
     point.row.classList.add('baden-anomaly');
+    point.row.classList.add(meta.critical ? 'critical' : 'warning');
 
-    // Иконка в первой ячейке (или ячейке даты)
-    const icon = document.createElement('span');
-    icon.className = 'baden-anomaly-icon ' + (meta.critical ? 'critical' : 'warning');
-    icon.textContent = '❗';
-    icon.title = `Аномалия (${meta.deviation} от медианы ${meta.dow})`;
-    icon.addEventListener('click', (e) => {
+    // Badge — кликабельный "АНОМАЛИЯ +56%"
+    const badge = document.createElement('span');
+    badge.className = 'baden-anomaly-badge ' + (meta.critical ? 'critical' : 'warning');
+    badge.textContent = (meta.critical ? 'КРИТ ' : 'АНОМ ') + meta.deviation;
+    badge.title = `Аномалия для ${meta.dow}: ${meta.deviation} от медианы. Клик — объяснение от Claude.`;
+    badge.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       showPopup(point, meta);
     });
-    // Вставляем в первую ячейку
     const target = point.row.cells[0];
-    if (target && !target.querySelector('.baden-anomaly-icon')) {
-      target.appendChild(icon);
+    if (target && !target.querySelector('.baden-anomaly-badge')) {
+      target.appendChild(badge);
     }
   }
 
