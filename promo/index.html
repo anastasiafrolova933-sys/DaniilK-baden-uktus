@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Календарь акций · Baden Уктус</title>
+<meta name="description" content="Календарь будних акций термального комплекса Baden Уктус: Термаль, СПА, проживание и F&B.">
+<link rel="icon" href="logo-dark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#13294f;        /* фон-герой */
+    --navy2:#154a88;       /* тёмно-синий брендбука */
+    --blue:#0857a0;        /* яркий */
+    --sky:#77bce8;         /* основной голубой */
+    --sky-2:#a9d7f2;       /* светлый */
+    --sky-3:#c8e6f7;       /* очень светлый */
+    --coral:#ef9f52;       /* тёплый акцент (рукописное слово, лучики) */
+    --coral-2:#e8843f;
+    --ink:#13294f;
+    --paper:#f4f9fd;
+    --white:#ffffff;
+    --c-thermal:#1466b0;
+    --c-spa:#1aa3ac;
+    --c-stay:#7c6bb2;
+    --c-food:#e2944a;
+    --shadow:0 10px 30px rgba(19,41,79,.10);
+    --shadow-sm:0 4px 14px rgba(19,41,79,.08);
+    --font:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --accent-font:'Caveat',cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);color:var(--ink);background:var(--paper);line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* ───────── HERO ───────── */
+  .hero{position:relative;overflow:hidden;background:
+        radial-gradient(120% 120% at 85% -10%, #1d3a68 0%, var(--navy) 55%, #0f2244 100%);
+        color:var(--white);padding:34px 0 54px}
+  .hero .wrap{position:relative;z-index:2}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:46px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand img{height:54px;width:auto;display:block}
+  .brand .sub{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--sky-2);font-weight:600}
+  .vol{font-size:12px;letter-spacing:.3em;color:var(--sky);font-weight:700;text-transform:uppercase;opacity:.9}
+  .hero h1{font-size:clamp(38px,7vw,76px);font-weight:900;line-height:.96;letter-spacing:-.02em;
+           text-transform:uppercase;color:var(--sky-3)}
+  .hero h1 .accent{font-family:var(--accent-font);font-weight:700;text-transform:none;color:var(--coral);
+           font-size:clamp(40px,7.4vw,82px);letter-spacing:0;display:inline-block;transform:rotate(-4deg);margin-left:6px}
+  .lead{margin-top:18px;max-width:560px;font-size:17px;color:var(--sky-2);font-weight:500}
+  .disc{display:inline-flex;align-items:center;gap:10px;margin-top:26px;background:rgba(239,159,82,.14);
+        border:1px solid rgba(239,159,82,.55);color:#ffd9b0;padding:11px 18px;border-radius:40px;
+        font-size:14px;font-weight:600}
+  .disc b{color:var(--coral)}
+  /* лучики-дудлы */
+  .ray{position:absolute;z-index:1;pointer-events:none;opacity:.9}
+  .ray.r1{top:60px;right:7%}
+  .ray.r2{bottom:30px;left:46%;transform:scale(.7)}
+  @media(max-width:720px){.ray.r1{right:-4%;top:30px;transform:scale(.7)}.ray.r2{display:none}}
+
+  /* ───────── FILTER BAR ───────── */
+  .filters{position:sticky;top:0;z-index:30;background:rgba(244,249,253,.92);backdrop-filter:blur(10px);
+           border-bottom:1px solid #dceaf5}
+  .filters .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 20px}
+  .chip{cursor:pointer;border:1.5px solid #cfe2f1;background:var(--white);color:var(--navy2);
+        font-family:var(--font);font-size:14px;font-weight:700;padding:9px 16px;border-radius:30px;
+        display:inline-flex;align-items:center;gap:8px;transition:.18s;white-space:nowrap}
+  .chip .dot{width:10px;height:10px;border-radius:50%;background:var(--c-thermal)}
+  .chip .n{font-size:12px;opacity:.6;font-weight:600}
+  .chip:hover{border-color:var(--sky);transform:translateY(-1px)}
+  .chip.active{color:#fff;border-color:transparent}
+  .chip[data-cat="all"].active{background:var(--navy2)}
+  .chip[data-cat="thermal"].active{background:var(--c-thermal)}
+  .chip[data-cat="spa"].active{background:var(--c-spa)}
+  .chip[data-cat="stay"].active{background:var(--c-stay)}
+  .chip[data-cat="food"].active{background:var(--c-food)}
+  .chip[data-cat="all"] .dot{background:var(--navy2)}
+  .chip[data-cat="thermal"] .dot{background:var(--c-thermal)}
+  .chip[data-cat="spa"] .dot{background:var(--c-spa)}
+  .chip[data-cat="stay"] .dot{background:var(--c-stay)}
+  .chip[data-cat="food"] .dot{background:var(--c-food)}
+  .chip.active .n{opacity:.85}
+
+  .ribbon{background:var(--navy2);color:var(--sky-2);text-align:center;font-size:13px;font-weight:600;
+          padding:8px 16px;letter-spacing:.01em}
+  .ribbon b{color:var(--coral)}
+
+  /* ───────── MONTH NOTE ───────── */
+  .monthnote{padding:30px 0 6px}
+  .monthnote h2{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--blue);font-weight:800}
+  .monthnote p{color:#56738f;font-size:15px;margin-top:6px;font-weight:500}
+
+  /* ───────── BOARD ───────── */
+  .board{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:18px 0 60px;align-items:start}
+  .day{background:transparent}
+  .day-h{position:sticky;top:58px;background:var(--paper);padding:8px 2px 12px;z-index:5}
+  .day-h .name{font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--navy2);font-size:15px}
+  .day-h .dates{font-size:11.5px;color:#7b93a8;font-weight:600;margin-top:2px}
+  .day-h .bar{height:3px;width:34px;background:var(--coral);border-radius:3px;margin-top:8px}
+  .cards{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+
+  .card{background:var(--white);border-radius:16px;padding:15px 15px 13px;box-shadow:var(--shadow-sm);
+        border:1px solid #e7f0f8;position:relative;transition:.18s;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cc,var(--c-thermal))}
+  .card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;text-transform:uppercase;
+         letter-spacing:.06em;color:var(--cc);background:var(--ccbg);padding:4px 9px;border-radius:20px}
+  .card h3{font-size:15px;font-weight:800;margin:9px 0 5px;color:var(--navy2);line-height:1.18}
+  .card .desc{font-size:13px;color:#4a627a;font-weight:500}
+  .card .when{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11.5px;font-weight:700;
+        color:var(--navy2);background:#eef6fc;padding:5px 10px;border-radius:8px}
+  .card .note{margin-top:10px;padding-top:9px;border-top:1px dashed #e0eaf3;font-size:10.5px;color:#9aabbb;
+        font-weight:600;display:flex;align-items:center;gap:5px}
+  .card.hide{display:none}
+  .day.empty .cards::after{content:"Нет акций в этой категории";color:#a9bccc;font-size:12px;font-weight:600;padding:6px 2px}
+
+  /* ───────── FOOTER ───────── */
+  footer{background:var(--navy);color:var(--sky-2);padding:38px 0;font-size:13px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center}
+  footer .accent{font-family:var(--accent-font);color:var(--coral);font-size:26px;transform:rotate(-3deg);display:inline-block}
+  footer .tag{background:rgba(119,188,232,.14);border:1px solid rgba(119,188,232,.4);padding:5px 12px;border-radius:20px;font-weight:600;font-size:12px}
+
+  /* ───────── RESPONSIVE ───────── */
+  @media(max-width:900px){
+    .board{grid-template-columns:repeat(2,1fr)}
+    .day-h{position:static}
+  }
+  @media(max-width:560px){
+    .board{grid-template-columns:1fr;gap:22px}
+    .topbar{margin-bottom:30px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <svg class="ray r1" width="120" height="120" viewBox="0 0 120 120" fill="none">
+    <g stroke="#ef9f52" stroke-width="6" stroke-linecap="round">
+      <line x1="60" y1="6" x2="60" y2="30"/><line x1="60" y1="90" x2="60" y2="114"/>
+      <line x1="6" y1="60" x2="30" y2="60"/><line x1="90" y1="60" x2="114" y2="60"/>
+      <line x1="22" y1="22" x2="39" y2="39"/><line x1="81" y1="81" x2="98" y2="98"/>
+      <line x1="98" y1="22" x2="81" y2="39"/><line x1="39" y1="81" x2="22" y2="98"/>
+    </g>
+  </svg>
+  <svg class="ray r2" width="90" height="90" viewBox="0 0 120 120" fill="none">
+    <g stroke="#77bce8" stroke-width="6" stroke-linecap="round" opacity=".5">
+      <line x1="60" y1="10" x2="60" y2="32"/><line x1="60" y1="88" x2="60" y2="110"/>
+      <line x1="10" y1="60" x2="32" y2="60"/><line x1="88" y1="60" x2="110" y2="60"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <img src="logo.png" alt="Baden">
+        <span class="sub">Термы · Уктус</span>
+      </div>
+      <span class="vol">Акции · 2026</span>
+    </div>
+    <h1>Календарь<br>акций <span class="accent">по будням</span></h1>
+    <p class="lead">Каждый будний день — свой повод заглянуть в Баден: Термаль, СПА, проживание и кухня. Всё распределено по дням недели.</p>
+    <div class="disc">❄ <span><b>Акции не суммируются</b> между собой и с другими спецпредложениями</span></div>
+  </div>
+</header>
+
+<!-- FILTERS -->
+<nav class="filters">
+  <div class="wrap" id="filterBar">
+    <button class="chip active" data-cat="all"><span class="dot"></span>Все <span class="n" id="n-all"></span></button>
+    <button class="chip" data-cat="thermal"><span class="dot"></span>Термаль <span class="n" id="n-thermal"></span></button>
+    <button class="chip" data-cat="spa"><span class="dot"></span>СПА <span class="n" id="n-spa"></span></button>
+    <button class="chip" data-cat="stay"><span class="dot"></span>Проживание <span class="n" id="n-stay"></span></button>
+    <button class="chip" data-cat="food"><span class="dot"></span>F&amp;B <span class="n" id="n-food"></span></button>
+  </div>
+</nav>
+<div class="ribbon">Все предложения действуют <b>только по будням</b> (Пн–Пт) и <b>не суммируются</b> друг с другом</div>
+
+<!-- MONTH NOTE -->
+<section class="wrap monthnote">
+  <h2>Июнь 2026 · будни</h2>
+  <p>Акции повторяются каждую неделю в свой день. Даты в шапке колонок — будние числа июня.</p>
+</section>
+
+<!-- BOARD -->
+<main class="wrap">
+  <div class="board" id="board"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="accent">еще пять минуточек…</div>
+      <div style="margin-top:8px;color:var(--sky)">Baden · Термальный комплекс · Екатеринбург, ул. Зимняя, 23</div>
+    </div>
+    <span class="tag">Тестовая страница · сверстано по брендбуку</span>
+  </div>
+</footer>
+
+<script>
+const CATS = {
+  thermal:{label:'Термаль', color:'#1466b0', bg:'#e7f1fb'},
+  spa:    {label:'СПА',      color:'#1aa3ac', bg:'#e2f6f6'},
+  stay:   {label:'Проживание',color:'#7c6bb2', bg:'#efebf8'},
+  food:   {label:'F&B',      color:'#e2944a', bg:'#fcf0e2'}
+};
+const DAYS = [
+  {name:'Понедельник', dates:'1 · 8 · 15 · 22 · 29 июня'},
+  {name:'Вторник',     dates:'2 · 9 · 16 · 23 · 30 июня'},
+  {name:'Среда',       dates:'3 · 10 · 17 · 24 июня'},
+  {name:'Четверг',     dates:'4 · 11 · 18 · 25 июня'},
+  {name:'Пятница',     dates:'5 · 12 · 19 · 26 июня'}
+];
+// day: 0=Пн … 4=Пт
+const PROMOS = [
+  // ── ПОНЕДЕЛЬНИК ──
+  {day:0,cat:'thermal',name:'Перезагрузка недели',desc:'Продление любого тарифа со скидкой 40%.',when:'весь день'},
+  {day:0,cat:'thermal',name:'Бодрый старт',desc:'Второй билет −30% при покупке до 13:00.',when:'до 13:00'},
+  {day:0,cat:'spa',name:'Мягкий старт',desc:'Массаж спины 30 мин −25% к билету в термы.',when:'по записи'},
+  {day:0,cat:'stay',name:'Понедельник-перезагрузка',desc:'Вторая ночь проживания −35% при заезде вс/пн.',when:'заезд вс–пн'},
+  {day:0,cat:'food',name:'Бизнес-ланч у воды',desc:'Горячее + напиток за 590 ₽.',when:'12:00–16:00'},
+  {day:0,cat:'food',name:'Кофе со штруделем',desc:'Кофе + венский штрудель за 350 ₽.',when:'весь день'},
+
+  // ── ВТОРНИК ──
+  {day:1,cat:'thermal',name:'Тёплый вторник',desc:'Два билета по цене полутора.',when:'весь день'},
+  {day:1,cat:'thermal',name:'Семейный вторник',desc:'Ребёнок до 12 лет бесплатно при 2 взрослых билетах.',when:'весь день'},
+  {day:1,cat:'spa',name:'Вторник для двоих',desc:'Парная СПА-программа для пары −20%.',when:'по записи'},
+  {day:1,cat:'stay',name:'Тихий вторник',desc:'Скидка 30% на проживание в будний заезд.',when:'заезд вт'},
+  {day:1,cat:'food',name:'Винный вторник',desc:'Бокал вина в подарок к ужину на двоих.',when:'после 18:00'},
+  {day:1,cat:'food',name:'Пицца-сет',desc:'Любая пицца + напиток −25%.',when:'весь день'},
+
+  // ── СРЕДА ──
+  {day:2,cat:'thermal',name:'Дневная среда −30%',desc:'Скидка 30% на любой тариф.',when:'13:00–18:00'},
+  {day:2,cat:'thermal',name:'Студенческая среда',desc:'−20% по студенческому билету.',when:'до 19:00'},
+  {day:2,cat:'spa',name:'Среда заботы',desc:'Альгинатная маска в подарок к СПА-программе.',when:'по записи'},
+  {day:2,cat:'stay',name:'Апгрейд среды',desc:'Бесплатное повышение категории номера.',when:'заезд ср'},
+  {day:2,cat:'food',name:'Семейная среда',desc:'Детское блюдо бесплатно к взрослому горячему.',when:'весь день'},
+  {day:2,cat:'food',name:'Happy hour у бассейна',desc:'Два коктейля по цене одного.',when:'15:00–17:00'},
+
+  // ── ЧЕТВЕРГ ──
+  {day:3,cat:'thermal',name:'Длинный четверг',desc:'Купи 2 часа — оставайся 3 часа.',when:'весь день'},
+  {day:3,cat:'thermal',name:'Льготный четверг',desc:'−15% для льготных категорий гостей.',when:'весь день'},
+  {day:3,cat:'spa',name:'Четверг-детокс',desc:'Скраб всего тела со скидкой 30%.',when:'по записи'},
+  {day:3,cat:'stay',name:'Четверг-побег',desc:'Ранний заезд с 12:00 — бесплатно.',when:'заезд чт'},
+  {day:3,cat:'food',name:'Гастро-четверг',desc:'Сет из 5 фирменных настоек за 890 ₽ в Немецком баре.',when:'после 17:00'},
+  {day:3,cat:'food',name:'Десерт в подарок',desc:'Десерт к ужину на двоих — бесплатно.',when:'после 18:00'},
+
+  // ── ПЯТНИЦА ──
+  {day:4,cat:'thermal',name:'Пятничный заплыв',desc:'Продление до закрытия — +1 час бесплатно.',when:'после 18:00'},
+  {day:4,cat:'thermal',name:'Приведи друга',desc:'Второй билет −50% по промокоду из бота.',when:'весь день'},
+  {day:4,cat:'spa',name:'Парная пятница',desc:'Парение + уход для двоих −20%.',when:'по записи'},
+  {day:4,cat:'stay',name:'Пятница-уикенд',desc:'Ранний check-in и поздний check-out в подарок.',when:'заезд пт'},
+  {day:4,cat:'food',name:'Афтепати',desc:'Пиво + закуски на компанию за 1290 ₽.',when:'после 17:00'},
+  {day:4,cat:'food',name:'Семейный ужин',desc:'Детям — лимонад и мороженое бесплатно.',when:'после 17:00'}
+];
+
+const board = document.getElementById('board');
+DAYS.forEach((d,di)=>{
+  const col = document.createElement('div');
+  col.className='day'; col.dataset.day=di;
+  col.innerHTML = `<div class="day-h"><div class="name">${d.name}</div><div class="dates">${d.dates}</div><div class="bar"></div></div><div class="cards"></div>`;
+  const cards = col.querySelector('.cards');
+  PROMOS.filter(p=>p.day===di).forEach(p=>{
+    const c = CATS[p.cat];
+    const el = document.createElement('article');
+    el.className='card'; el.dataset.cat=p.cat;
+    el.style.setProperty('--cc',c.color); el.style.setProperty('--ccbg',c.bg);
+    el.innerHTML = `<span class="badge">${c.label}</span>
+      <h3>${p.name}</h3>
+      <div class="desc">${p.desc}</div>
+      <div class="when">🕒 ${p.when}</div>
+      <div class="note">❄ не суммируется с другими акциями</div>`;
+    cards.appendChild(el);
+  });
+  board.appendChild(col);
+});
+
+// counts
+const counts = {all:PROMOS.length,thermal:0,spa:0,stay:0,food:0};
+PROMOS.forEach(p=>counts[p.cat]++);
+Object.keys(counts).forEach(k=>{const e=document.getElementById('n-'+k);if(e)e.textContent='('+counts[k]+')';});
+
+// filter
+document.getElementById('filterBar').addEventListener('click',e=>{
+  const btn=e.target.closest('.chip'); if(!btn)return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const cat=btn.dataset.cat;
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.toggle('hide', cat!=='all' && c.dataset.cat!==cat);
+  });
+  document.querySelectorAll('.day').forEach(col=>{
+    const vis=[...col.querySelectorAll('.card')].some(c=>!c.classList.contains('hide'));
+    col.classList.toggle('empty',!vis);
+  });
+});
+</script>
+</body>
+</html>
