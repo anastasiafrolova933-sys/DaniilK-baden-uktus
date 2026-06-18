@@ -24,11 +24,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;
-     -webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
 .tnum{font-variant-numeric:tabular-nums}
-a{color:inherit}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:
   radial-gradient(60% 50% at 82% 0%, rgba(59,143,212,.22), transparent 60%),
   radial-gradient(55% 45% at 8% 100%, rgba(239,159,82,.13), transparent 60%),
@@ -36,35 +34,23 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 
 /* HERO */
 .hero{position:relative;text-align:center;padding:62px 0 46px}
-.hero .logo{height:104px;width:auto;filter:drop-shadow(0 8px 30px rgba(8,20,40,.6));
-     opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) .05s forwards}
-.hero .kicker{margin-top:24px;font-size:12px;letter-spacing:.42em;text-transform:uppercase;
-     color:var(--sky);font-weight:700;opacity:0;animation:rise .8s var(--ease) .15s forwards}
-.hero h1{margin-top:12px;font-size:clamp(36px,7.4vw,82px);font-weight:900;line-height:.98;
-     letter-spacing:-.02em;text-transform:uppercase;
-     background:linear-gradient(180deg,#fff 0%,var(--sky-3) 55%,var(--sky) 100%);
-     -webkit-background-clip:text;background-clip:text;color:transparent;
+.hero .logo{height:104px;width:auto;filter:drop-shadow(0 8px 30px rgba(8,20,40,.6));opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) .05s forwards}
+.hero .kicker{margin-top:24px;font-size:12px;letter-spacing:.42em;text-transform:uppercase;color:var(--sky);font-weight:700;opacity:0;animation:rise .8s var(--ease) .15s forwards}
+.hero h1{margin-top:12px;font-size:clamp(36px,7.4vw,82px);font-weight:900;line-height:.98;letter-spacing:-.02em;text-transform:uppercase;
+     background:linear-gradient(180deg,#fff 0%,var(--sky-3) 55%,var(--sky) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
      opacity:0;animation:rise .9s var(--ease) .22s forwards}
-.hero h1 .scr{display:block;font-family:var(--script);font-weight:700;text-transform:none;letter-spacing:0;
-     font-size:clamp(32px,6vw,64px);
-     background:linear-gradient(90deg,var(--coral),var(--coral-2));-webkit-background-clip:text;background-clip:text;color:transparent;
-     transform:rotate(-3deg)}
-.hero .lead{max-width:560px;margin:18px auto 0;color:var(--text-dim);font-size:17px;font-weight:500;
-     opacity:0;animation:rise .9s var(--ease) .32s forwards}
+.hero h1 .scr{display:block;font-family:var(--script);font-weight:700;text-transform:none;letter-spacing:0;font-size:clamp(32px,6vw,64px);
+     background:linear-gradient(90deg,var(--coral),var(--coral-2));-webkit-background-clip:text;background-clip:text;color:transparent;transform:rotate(-3deg)}
+.hero .lead{max-width:560px;margin:18px auto 0;color:var(--text-dim);font-size:17px;font-weight:500;opacity:0;animation:rise .9s var(--ease) .32s forwards}
 .hero .disc{display:inline-flex;align-items:center;gap:9px;margin-top:24px;padding:11px 20px;border-radius:40px;
-     background:rgba(239,159,82,.1);border:1px solid rgba(239,159,82,.45);color:var(--coral-2);
-     font-size:13.5px;font-weight:600;opacity:0;animation:rise .9s var(--ease) .42s forwards}
+     background:rgba(239,159,82,.1);border:1px solid rgba(239,159,82,.45);color:var(--coral-2);font-size:13.5px;font-weight:600;opacity:0;animation:rise .9s var(--ease) .42s forwards}
 .hero .disc svg{flex:none}
 @keyframes rise{to{opacity:1;transform:none}}
 
 /* FILTER */
-.bar{position:sticky;top:0;z-index:40;margin-top:12px;
-     background:rgba(8,16,32,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-     border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.bar{position:sticky;top:0;z-index:40;margin-top:12px;background:rgba(8,16,32,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .bar .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:13px 22px;justify-content:center;max-width:1240px;margin:0 auto}
-.pill{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 16px;border-radius:30px;
-     font:700 13.5px var(--font);color:var(--sky-2);background:var(--surface);border:1px solid var(--border);
-     transition:transform .2s var(--ease),background .2s,border-color .2s,color .2s}
+.pill{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 16px;border-radius:30px;font:700 13.5px var(--font);color:var(--sky-2);background:var(--surface);border:1px solid var(--border);transition:transform .2s var(--ease),background .2s,border-color .2s,color .2s}
 .pill .dot{width:9px;height:9px;border-radius:50%;background:var(--sky);box-shadow:0 0 10px currentColor}
 .pill .n{font-weight:600;font-size:12px;opacity:.6}
 .pill:hover{transform:translateY(-2px);border-color:var(--border-strong)}
@@ -86,52 +72,44 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--text-dim);font-size:12px;font-weight:600}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:9px;height:9px;border-radius:50%}
-
 .dow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px}
 .dow div{text-align:center;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mute);padding:4px 0}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 
-.cell{position:relative;min-height:134px;border-radius:var(--r);padding:12px;
-     background:var(--surface);border:1px solid var(--border);overflow:hidden;
-     opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease),
-     border-color .25s,box-shadow .25s,filter .25s}
+.cell{position:relative;min-height:128px;border-radius:var(--r);padding:11px;background:var(--surface);border:1px solid var(--border);
+     display:flex;flex-direction:column;opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease),filter .25s}
 .cell.in{opacity:1;transform:none}
-.cell.promo{cursor:pointer;display:flex;flex-direction:column}
-.cell .date{display:flex;align-items:baseline;gap:7px}
+.cell .date{display:flex;align-items:baseline;gap:7px;margin-bottom:9px}
 .cell .num{font:800 18px var(--font);color:var(--sky-2);font-variant-numeric:tabular-nums}
 .cell .wd{display:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute)}
-.cell.promo::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cc);opacity:.9}
-.cell.promo:hover{transform:translateY(-4px) scale(1.015);border-color:var(--ccb);
-     box-shadow:0 18px 36px rgba(4,12,28,.55),0 0 0 1px var(--ccb),0 0 26px -6px var(--cc)}
-.cell.promo:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
-.cell .cat{position:absolute;top:13px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--cc);box-shadow:0 0 10px var(--cc)}
-.cell .tag{margin-top:11px;align-self:flex-start;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
-     color:var(--cc);background:var(--ccbg);padding:3px 8px;border-radius:20px}
-.cell .pname{margin-top:8px;font-size:13.5px;font-weight:700;line-height:1.2;color:var(--text)}
-.cell .pwhen{margin-top:auto;padding-top:8px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--cc)}
-.cell .pwhen svg{flex:none;opacity:.85}
-.cell.empty{background:transparent;border:1px dashed rgba(119,188,232,.06);min-height:0;opacity:1}
-.grid.filtering .cell.promo:not(.match){opacity:.16;filter:saturate(.4);pointer-events:none;transform:none;box-shadow:none}
-.grid.filtering .cell.promo.match{box-shadow:0 0 0 1px var(--ccb),0 0 22px -8px var(--cc)}
+.pitems{display:flex;flex-direction:column;gap:7px;flex:1}
+.pitem{display:block;width:100%;text-align:left;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid var(--border);
+     border-left:3px solid var(--cc);border-radius:11px;padding:9px 10px;color:var(--text);
+     transition:transform .18s var(--ease),background .2s,border-color .2s,box-shadow .2s}
+.pitem:hover{transform:translateY(-2px);background:rgba(255,255,255,.05);border-color:var(--cc);box-shadow:0 10px 24px rgba(4,12,28,.5),0 0 20px -8px var(--cc)}
+.pitem:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.pitem .ptag{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--cc);background:var(--ccbg);padding:3px 8px;border-radius:20px}
+.pitem .pn{display:block;margin-top:7px;font-size:12.5px;font-weight:700;line-height:1.2;color:var(--text)}
+.pitem .pw{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10.5px;font-weight:600;color:var(--cc)}
+.pitem .pw svg{flex:none;opacity:.85}
+.pitem.hide{display:none}
+.cell.empty{background:transparent;border:1px dashed rgba(119,188,232,.06);min-height:0}
+.cell.in.dim{opacity:.16;filter:saturate(.4)}
 
 /* MODAL */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px}
 .modal.open{display:flex}
 .modal .scrim{position:absolute;inset:0;background:rgba(4,9,20,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
 .modal.open .scrim{opacity:1}
-.sheet{position:relative;width:min(440px,100%);background:linear-gradient(180deg,var(--surface-2),rgba(14,28,56,.92));
-     border:1px solid var(--border-strong);border-radius:24px;padding:26px 24px 24px;
-     box-shadow:0 30px 80px rgba(2,7,18,.7);transform:scale(.92);opacity:0;transition:transform .26s var(--ease),opacity .26s}
+.sheet{position:relative;width:min(440px,100%);background:linear-gradient(180deg,var(--surface-2),rgba(14,28,56,.92));border:1px solid var(--border-strong);border-radius:24px;padding:26px 24px 24px;box-shadow:0 30px 80px rgba(2,7,18,.7);transform:scale(.92);opacity:0;transition:transform .26s var(--ease),opacity .26s}
 .modal.open .sheet{transform:scale(1);opacity:1}
-.sheet .close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
-     background:var(--surface);color:var(--sky-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.sheet .close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--sky-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
 .sheet .close:hover{border-color:var(--border-strong);color:#fff}
 .sheet .m-cat{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border-radius:30px}
 .sheet .m-date{margin-top:14px;font-size:12.5px;font-weight:600;color:var(--text-mute)}
-.sheet h3{margin-top:4px;font-size:25px;font-weight:800;line-height:1.1}
+.sheet h3{margin-top:4px;font-size:24px;font-weight:800;line-height:1.12}
 .sheet .m-desc{margin-top:12px;color:var(--text-dim);font-size:15px;font-weight:500}
-.sheet .m-when{margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
-     color:var(--text);background:rgba(119,188,232,.1);border:1px solid var(--border);padding:9px 14px;border-radius:12px}
+.sheet .m-when{margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text);background:rgba(119,188,232,.1);border:1px solid var(--border);padding:9px 14px;border-radius:12px}
 .sheet .m-note{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text-mute)}
 
 /* FOOTER */
@@ -141,26 +119,19 @@ footer .scr{font-family:var(--script);color:var(--coral);font-size:30px;transfor
 footer .meta{color:var(--text-mute);font-size:13px;margin-top:4px}
 footer .tag{font-size:12px;font-weight:600;color:var(--sky-2);background:var(--surface);border:1px solid var(--border);padding:7px 14px;border-radius:30px}
 
-/* ───── RESPONSIVE ───── */
+/* RESPONSIVE */
 @media(max-width:1000px){
   .dow{display:none}
   .grid{grid-template-columns:repeat(3,1fr)}
   .cell.empty{display:none}
   .cell .wd{display:inline}
 }
-@media(max-width:760px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
+@media(max-width:760px){ .grid{grid-template-columns:repeat(2,1fr)} }
 @media(max-width:560px){
   .wrap{padding:0 16px}
   .grid{gap:9px}
-  .cell{min-height:118px;padding:11px}
-  .cell .num{font-size:16px}
-  .cell .pname{font-size:13px}
-  .cell .pwhen{font-size:11px}
-  .cell .tag{font-size:9px}
-  .hero{padding:42px 0 30px}
-  .hero .logo{height:74px}
+  .cell{min-height:112px}
+  .hero{padding:42px 0 30px} .hero .logo{height:74px}
   .bar .row{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:11px 16px}
   .pill{flex:none}
   .legend{display:none}
@@ -209,35 +180,25 @@ footer .tag{font-size:12px;font-weight:600;color:var(--sky-2);background:var(--s
   </div>
   <div class="dow"><div>Понедельник</div><div>Вторник</div><div>Среда</div><div>Четверг</div><div>Пятница</div></div>
   <div class="grid" id="grid"></div>
-  <p style="margin-top:18px;color:var(--text-mute);font-size:13px;font-weight:500">
-    Нажмите на дату, чтобы открыть условия акции. Все предложения действуют только по будням.
-  </p>
+  <p style="margin-top:18px;color:var(--text-mute);font-size:13px;font-weight:500">Нажмите на акцию, чтобы открыть условия. В некоторые дни действует несколько акций. Все предложения — только по будням.</p>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
   <div class="scrim" data-close></div>
   <div class="sheet">
-    <button class="close" data-close aria-label="Закрыть">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
+    <button class="close" data-close aria-label="Закрыть"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="m-cat" id="m-cat"></span>
     <div class="m-date" id="m-date"></div>
     <h3 id="m-title"></h3>
     <p class="m-desc" id="m-desc"></p>
     <div class="m-when" id="m-when"></div>
-    <div class="m-note">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>
-      Акция не суммируется с другими предложениями
-    </div>
+    <div class="m-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>Акция не суммируется с другими предложениями</div>
   </div>
 </div>
 
 <footer>
   <div class="row">
-    <div>
-      <span class="scr">еще пять минуточек…</span>
-      <div class="meta">Baden · Термальный комплекс · Екатеринбург, ул. Зимняя, 23</div>
-    </div>
+    <div><span class="scr">еще пять минуточек…</span><div class="meta">Baden · Термальный комплекс · Екатеринбург, ул. Зимняя, 23</div></div>
     <span class="tag">Тестовая версия · по брендбуку Vol.1</span>
   </div>
 </footer>
@@ -249,59 +210,58 @@ const CATS={
   stay:{label:'Проживание',c:'#a98fe6',bg:'rgba(169,143,230,.16)'},
   food:{label:'F&B',c:'#f0a24e',bg:'rgba(240,162,78,.16)'}
 };
-// июнь 2026, только будни. На каждую дату — своя акция. F&B — реальные предложения.
+const SPA_DAY={c:'spa',n:'Массаж дня: «Нега» 2800 ₽',d:'Часовой массаж «Нега» за 2800 ₽ вместо 3800 ₽.',w:'каждую среду'};
+// июнь 2026, только будни. Дата → массив акций (на день может быть несколько). F&B и СПА — реальные офферы.
 const P={
-  1:{c:'thermal',n:'Перезагрузка недели',d:'Продление любого тарифа со скидкой 40% — растяни первый день недели.',w:'весь день'},
-  2:{c:'food',n:'Пицца Пепперони −20%',d:'Скидка 20% на фирменную пиццу Пепперони.',w:'в кафе'},
-  3:{c:'thermal',n:'Дневной релакс −30%',d:'Скидка 30% на любой тариф в спокойные дневные часы.',w:'13:00–18:00'},
-  4:{c:'food',n:'Баден Бургер 590 ₽',d:'Фирменный Баден Бургер — 590 ₽ вместо 690 ₽.',w:'в кафе'},
-  5:{c:'food',n:'Пенный напиток −20%',d:'Скидка 20% на разливные пенные напитки.',w:'в барах'},
-  8:{c:'stay',n:'Тихий понедельник',d:'Вторая ночь проживания со скидкой 35% при будничном заезде.',w:'заезд вс–пн'},
-  9:{c:'food',n:'Лимонады −20%',d:'Скидка 20% на все домашние лимонады.',w:'весь день'},
-  10:{c:'thermal',n:'Студенческая среда',d:'Скидка 20% по студенческому билету.',w:'до 19:00'},
-  11:{c:'thermal',n:'Длинный четверг',d:'Купи 2 часа купания — оставайся 3 часа.',w:'весь день'},
-  12:{c:'spa',n:'Парная пятница',d:'Авторское парение и СПА-уход для двоих со скидкой 20%.',w:'по записи'},
-  15:{c:'food',n:'Пицца Ветчина-Грибы −20%',d:'Скидка 20% на пиццу с ветчиной и грибами.',w:'в кафе'},
-  16:{c:'stay',n:'Загородный детокс',d:'Три ночи проживания по цене двух — побег за город.',w:'заезд пн'},
-  17:{c:'food',n:'Гренки чесночные −30%',d:'Скидка 30% на чесночные гренки к пенному.',w:'в барах'},
-  18:{c:'food',n:'Коктейли в Пулбаре −20%',d:'Скидка 20% на все коктейли в Пулбаре.',w:'Пулбар'},
-  19:{c:'thermal',n:'Приведи друга',d:'Второй билет со скидкой 50% по промокоду из бота лояльности.',w:'весь день'},
-  22:{c:'food',n:'Пицца Маргарита −20%',d:'Скидка 20% на классическую пиццу Маргарита.',w:'в кафе'},
-  23:{c:'thermal',n:'Тёплый вторник',d:'Два билета по цене полутора — самый уютный день недели.',w:'весь день'},
-  24:{c:'spa',n:'Мягкий старт',d:'Массаж спины со скидкой 25% к билету в термы.',w:'по записи'},
-  25:{c:'food',n:'Бадя Бокс 590 ₽',d:'Детский Бадя Бокс — 590 ₽ вместо 690 ₽.',w:'в кафе'},
-  26:{c:'food',n:'Все пасты −15%',d:'Скидка 15% на всю пасту в меню.',w:'в кафе'},
-  29:{c:'spa',n:'Понедельник заботы',d:'Альгинатная маска в подарок к любой СПА-программе.',w:'по записи'},
-  30:{c:'stay',n:'Последняя ночь июня',d:'Скидка 40% на проживание — закрой месяц с комфортом.',w:'заезд вт'}
+  1:[{c:'thermal',n:'Перезагрузка недели',d:'Продление любого тарифа со скидкой 40%.',w:'весь день'}],
+  2:[{c:'food',n:'Пицца Пепперони −20%',d:'Скидка 20% на фирменную пиццу Пепперони.',w:'в кафе'}],
+  3:[{c:'thermal',n:'Дневной релакс −30%',d:'Скидка 30% на любой тариф в дневные часы.',w:'13:00–18:00'}, SPA_DAY],
+  4:[{c:'food',n:'Баден Бургер 590 ₽',d:'Фирменный Баден Бургер — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
+  5:[{c:'food',n:'Пенный напиток −20%',d:'Скидка 20% на разливные пенные напитки.',w:'в барах'},
+     {c:'spa',n:'Знакомство с Баден-СПА',d:'Массаж ног + массаж спины за 2200 ₽. Выгода гостя 21%.',w:'по записи'}],
+  8:[{c:'stay',n:'Тихий понедельник',d:'Вторая ночь проживания со скидкой 35% при будничном заезде.',w:'заезд вс–пн'}],
+  9:[{c:'food',n:'Лимонады −20%',d:'Скидка 20% на все домашние лимонады.',w:'весь день'}],
+  10:[{c:'thermal',n:'Студенческая среда',d:'Скидка 30% по студенческому билету.',w:'до 19:00'}, SPA_DAY],
+  11:[{c:'thermal',n:'Длинный четверг',d:'Купи 2 часа купания — оставайся 3 часа.',w:'весь день'}],
+  12:[{c:'spa',n:'Массаж «Нега» для двоих — бесплатно',d:'Час массажа «Нега» для двоих в подарок при бронировании с проживанием.',w:'при проживании'}],
+  15:[{c:'food',n:'Пицца Ветчина-Грибы −20%',d:'Скидка 20% на пиццу с ветчиной и грибами.',w:'в кафе'}],
+  16:[{c:'stay',n:'Загородный детокс',d:'Три ночи проживания по цене двух — побег за город.',w:'заезд пн'}],
+  17:[{c:'food',n:'Гренки чесночные −30%',d:'Скидка 30% на чесночные гренки к пенному.',w:'в барах'}, SPA_DAY],
+  18:[{c:'food',n:'Коктейли в Пулбаре −20%',d:'Скидка 20% на все коктейли в Пулбаре.',w:'Пулбар'}],
+  19:[{c:'thermal',n:'Приведи друга',d:'Второй билет со скидкой 50% по промокоду из бота лояльности.',w:'весь день'}],
+  22:[{c:'food',n:'Пицца Маргарита −20%',d:'Скидка 20% на классическую пиццу Маргарита.',w:'в кафе'}],
+  23:[{c:'thermal',n:'Тёплый вторник',d:'Два билета по цене полутора.',w:'весь день'}],
+  24:[SPA_DAY],
+  25:[{c:'food',n:'Бадя Бокс 590 ₽',d:'Детский Бадя Бокс — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
+  26:[{c:'food',n:'Все пасты −15%',d:'Скидка 15% на всю пасту в меню.',w:'в кафе'}],
+  29:[{c:'spa',n:'День ухода за лицом',d:'К уходу с альгинатной маской гость бесплатно получает массаж рук.',w:'по записи'}],
+  30:[{c:'stay',n:'Последняя ночь июня',d:'Скидка 30% на проживание — закрой месяц с комфортом.',w:'заезд вт'}]
 };
 const WDS=['Пн','Вт','Ср','Чт','Пт'];
+const WDF=['Понедельник','Вторник','Среда','Четверг','Пятница'];
 const DATES=[1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26,29,30];
+const CLOCK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const grid=document.getElementById('grid');
 const counts={all:0,thermal:0,spa:0,stay:0,food:0};
 
 DATES.forEach(day=>{
-  const dow=(day-1)%7, p=P[day], cat=CATS[p.c];
-  counts[p.c]++;counts.all++;
-  const cell=document.createElement('button');
-  cell.className='cell promo match';cell.dataset.cat=p.c;cell.dataset.day=day;
-  cell.style.setProperty('--cc',cat.c);cell.style.setProperty('--ccb',cat.c);cell.style.setProperty('--ccbg',cat.bg);
-  cell.setAttribute('aria-label',`${WDS[dow]} ${day} июня — ${p.n}`);
-  cell.innerHTML=`<div class="date"><span class="wd">${WDS[dow]}</span><span class="num tnum">${day}</span></div><span class="cat"></span>
-    <span class="tag">${cat.label}</span>
-    <div class="pname">${p.n}</div>
-    <div class="pwhen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${p.w}</div>`;
-  grid.appendChild(cell);
+  const dow=(day-1)%7, promos=P[day]||[];
+  const cell=document.createElement('div'); cell.className='cell';
+  let inner=`<div class="date"><span class="wd">${WDS[dow]}</span><span class="num tnum">${day}</span></div><div class="pitems">`;
+  promos.forEach((p,i)=>{
+    const cat=CATS[p.c]; counts[p.c]++; counts.all++;
+    inner+=`<button class="pitem" data-cat="${p.c}" data-day="${day}" data-i="${i}" style="--cc:${cat.c};--ccbg:${cat.bg}" aria-label="${WDS[dow]} ${day} июня — ${p.n}">`+
+      `<span class="ptag">${cat.label}</span><span class="pn">${p.n}</span><span class="pw">${CLOCK}${p.w}</span></button>`;
+  });
+  inner+=`</div>`; cell.innerHTML=inner; grid.appendChild(cell);
 });
-// добить последнюю строку до 5 колонок (десктоп)
 const rem=(5-DATES.length%5)%5;
 for(let i=0;i<rem;i++){const e=document.createElement('div');e.className='cell empty in';grid.appendChild(e);}
 
 Object.keys(counts).forEach(k=>{const e=document.getElementById('n-'+k);if(e)e.textContent='('+counts[k]+')';});
 
-// scroll-reveal stagger + страховка
-const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){
-  const el=en.target,idx=[...grid.children].indexOf(el);
-  el.style.transitionDelay=Math.min(idx*28,340)+'ms';el.classList.add('in');io.unobserve(el);}});},{threshold:.08});
+// scroll-reveal + страховка
+const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){const el=en.target,idx=[...grid.children].indexOf(el);el.style.transitionDelay=Math.min(idx*28,340)+'ms';el.classList.add('in');io.unobserve(el);}});},{threshold:.06});
 [...grid.children].forEach(c=>{if(!c.classList.contains('empty'))io.observe(c);});
 setTimeout(()=>{[...grid.children].forEach(c=>c.classList.add('in'));},1400);
 
@@ -310,26 +270,27 @@ document.getElementById('filter').addEventListener('click',e=>{
   const b=e.target.closest('.pill');if(!b)return;
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));b.classList.add('on');
   const c=b.dataset.c;
-  grid.classList.toggle('filtering',c!=='all');
-  document.querySelectorAll('.cell.promo').forEach(cell=>cell.classList.toggle('match',c==='all'||cell.dataset.cat===c));
+  document.querySelectorAll('.pitem').forEach(it=>it.classList.toggle('hide', c!=='all'&&it.dataset.cat!==c));
+  document.querySelectorAll('.cell').forEach(cell=>{
+    if(cell.classList.contains('empty'))return;
+    const vis=[...cell.querySelectorAll('.pitem')].some(it=>!it.classList.contains('hide'));
+    cell.classList.toggle('dim', c!=='all' && !vis);
+  });
 });
 
 // modal
 const modal=document.getElementById('modal');
-const MNAME='июня';
-function openModal(day){
-  const p=P[day],cat=CATS[p.c],dow=(day-1)%7;
-  const mc=document.getElementById('m-cat');
-  mc.textContent=cat.label;mc.style.color=cat.c;mc.style.background=cat.bg;
-  document.getElementById('m-date').textContent=`${['Понедельник','Вторник','Среда','Четверг','Пятница'][dow]}, ${day} ${MNAME} 2026`;
+function openModal(day,p){
+  const cat=CATS[p.c],dow=(day-1)%7;
+  const mc=document.getElementById('m-cat');mc.textContent=cat.label;mc.style.color=cat.c;mc.style.background=cat.bg;
+  document.getElementById('m-date').textContent=`${WDF[dow]}, ${day} июня 2026`;
   document.getElementById('m-title').textContent=p.n;
   document.getElementById('m-desc').textContent=p.d;
   document.getElementById('m-when').innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${cat.c}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Условие: ${p.w}`;
-  modal.classList.add('open');document.body.style.overflow='hidden';
-  modal.querySelector('.close').focus();
+  modal.classList.add('open');document.body.style.overflow='hidden';modal.querySelector('.close').focus();
 }
 function closeModal(){modal.classList.remove('open');document.body.style.overflow='';}
-grid.addEventListener('click',e=>{const cell=e.target.closest('.cell.promo');if(cell&&cell.classList.contains('match'))openModal(+cell.dataset.day);});
+grid.addEventListener('click',e=>{const it=e.target.closest('.pitem');if(it&&!it.classList.contains('hide'))openModal(+it.dataset.day, P[+it.dataset.day][+it.dataset.i]);});
 modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 </script>
