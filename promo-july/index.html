@@ -31,6 +31,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
   radial-gradient(58% 48% at 82% 0%, rgba(59,143,212,.13), transparent 62%),
   radial-gradient(52% 42% at 8% 100%, rgba(239,159,82,.07), transparent 62%),
   linear-gradient(180deg,#0b0c10,#060608 62%);}
+#stars{position:fixed;inset:0;z-index:-1;pointer-events:none}
 
 .hero{position:relative;text-align:center;padding:62px 0 46px}
 .hero .logo{height:104px;width:auto;filter:drop-shadow(0 8px 30px rgba(8,20,40,.6));opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) .05s forwards}
@@ -85,7 +86,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
      transition:transform .18s var(--ease),background .2s,border-color .2s,box-shadow .2s}
 .pitem:hover{transform:translateY(-2px);background:rgba(255,255,255,.05);border-color:var(--cc);box-shadow:0 10px 24px rgba(4,12,28,.5),0 0 20px -8px var(--cc)}
 .pitem:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
-.pitem .ptag{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--cc);background:var(--ccbg);padding:3px 8px;border-radius:20px}
+.pitem .ptag{display:inline-block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--cc);padding-bottom:3px;border-bottom:1.5px solid var(--cc)}
 .pitem .pn{display:block;margin-top:7px;font-size:12.5px;font-weight:700;line-height:1.2;color:var(--text)}
 .pitem .pw{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10.5px;font-weight:600;color:var(--cc)}
 .pitem .pw svg{flex:none;opacity:.85}
@@ -133,6 +134,8 @@ footer .tag{font-size:12px;font-weight:600;color:var(--sky-2);background:var(--s
 </style>
 </head>
 <body>
+
+<canvas id="stars" aria-hidden="true"></canvas>
 
 <header class="hero">
   <div class="wrap">
@@ -284,6 +287,33 @@ function closeModal(){modal.classList.remove('open');document.body.style.overflo
 grid.addEventListener('click',e=>{const it=e.target.closest('.pitem');if(it&&!it.classList.contains('hide'))openModal(+it.dataset.day, P[+it.dataset.day][+it.dataset.i]);});
 modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// Фон-«созвездие» (2D canvas, брендовый синий + редкий коралл) — лёгкая замена WebGL-портала
+(function(){
+  const cv=document.getElementById('stars'); if(!cv) return;
+  const ctx=cv.getContext('2d'); let w,h,pts;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function init(){
+    w=cv.width=innerWidth; h=cv.height=innerHeight;
+    const n=Math.min(85,Math.round(w*h/17000));
+    pts=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.3+.5,coral:Math.random()<0.16}));
+  }
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of pts){
+      if(!reduce){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);
+      ctx.fillStyle=p.coral?'rgba(239,159,82,.6)':'rgba(119,188,232,.55)';ctx.fill();
+    }
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<125){ctx.strokeStyle='rgba(119,188,232,'+(.11*(1-d/125))+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+    }
+    if(!reduce) requestAnimationFrame(frame);
+  }
+  addEventListener('resize',init);
+  init(); frame();
+})();
 </script>
 </body>
 </html>
