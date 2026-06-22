@@ -82,14 +82,17 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 .cell .wd{display:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute)}
 .pitems{display:flex;flex-direction:column;gap:7px;flex:1}
 .pitem{display:block;width:100%;text-align:left;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid var(--border);
-     border-left:3px solid var(--cc);border-radius:11px;padding:9px 10px;color:var(--text);
+     border-left:3px solid var(--cc);border-radius:11px;padding:10px 11px;color:var(--text);
      transition:transform .18s var(--ease),background .2s,border-color .2s,box-shadow .2s}
 .pitem:hover{transform:translateY(-2px);background:rgba(255,255,255,.05);border-color:var(--cc);box-shadow:0 10px 24px rgba(4,12,28,.5),0 0 20px -8px var(--cc)}
 .pitem:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.pitem .phead{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;row-gap:6px}
 .pitem .ptag{display:inline-block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--cc);padding-bottom:3px;border-bottom:1.5px solid var(--cc)}
-.pitem .pn{display:block;margin-top:7px;font-size:12.5px;font-weight:700;line-height:1.2;color:var(--text)}
-.pitem .pw{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10.5px;font-weight:600;color:var(--cc)}
-.pitem .pw svg{flex:none;opacity:.85}
+.pitem .pchip{font-variant-numeric:tabular-nums;background:var(--cc);color:#06121f;font-weight:800;font-size:12.5px;line-height:1;padding:5px 10px;border-radius:20px;white-space:nowrap}
+.pitem .pn{display:block;margin-top:10px;font-size:15px;font-weight:800;line-height:1.18;letter-spacing:-.01em;color:var(--text)}
+.pitem .pw{display:flex;align-items:center;gap:5px;margin-top:9px;padding-top:8px;border-top:1px solid var(--border);font-size:10.5px;font-weight:600;color:var(--text-dim)}
+.pitem .pw svg{flex:none;opacity:.85;color:var(--sky)}
+.pitem .pw .pwas{text-decoration:line-through;color:var(--text-mute)}
 .pitem.hide{display:none}
 .cell.empty{background:transparent;border:1px dashed rgba(119,188,232,.06);min-height:0}
 .cell.in.dim{opacity:.16;filter:saturate(.4)}
@@ -105,6 +108,9 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 .sheet .m-cat{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border-radius:30px}
 .sheet .m-date{margin-top:14px;font-size:12.5px;font-weight:600;color:var(--text-mute)}
 .sheet h3{margin-top:4px;font-size:24px;font-weight:800;line-height:1.12}
+.sheet .m-val{margin-top:14px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sheet .m-val .v{font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.sheet .m-val .o{font-size:15px;font-weight:600;color:var(--text-mute);text-decoration:line-through}
 .sheet .m-desc{margin-top:12px;color:var(--text-dim);font-size:15px;font-weight:500}
 .sheet .m-when{margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text);background:rgba(119,188,232,.1);border:1px solid var(--border);padding:9px 14px;border-radius:12px}
 .sheet .m-note{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text-mute)}
@@ -126,6 +132,8 @@ footer .tag{font-size:12px;font-weight:600;color:var(--sky-2);background:var(--s
   .pill{flex:none}
   .legend{display:none}
   .sheet{padding:24px 20px 22px}
+  .pitem .pn{font-size:13.5px}
+  .pitem .pchip{font-size:11.5px;padding:4px 9px}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -182,6 +190,7 @@ footer .tag{font-size:12px;font-weight:600;color:var(--sky-2);background:var(--s
     <span class="m-cat" id="m-cat"></span>
     <div class="m-date" id="m-date"></div>
     <h3 id="m-title"></h3>
+    <div class="m-val" id="m-val"></div>
     <p class="m-desc" id="m-desc"></p>
     <div class="m-when" id="m-when"></div>
     <div class="m-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>Акция не суммируется с другими предложениями</div>
@@ -202,33 +211,33 @@ const CATS={
   stay:{label:'Проживание',c:'#a98fe6',bg:'rgba(169,143,230,.16)'},
   food:{label:'F&B',c:'#f0a24e',bg:'rgba(240,162,78,.16)'}
 };
-const SPA_DAY={c:'spa',n:'Массаж дня: «Нега» 2800 ₽',d:'Часовой массаж «Нега» за 2800 ₽ вместо 3800 ₽.',w:'каждую среду'};
-// июль 2026, только будни. Акции и условия — те же, что в июне.
+const SPA_DAY={c:'spa',n:'Массаж дня «Нега»',v:'2800 ₽',was:'3800 ₽',d:'Часовой массаж «Нега» за 2800 ₽ вместо 3800 ₽.',w:'каждую среду'};
+// июль 2026, только будни. Акции и условия — те же, что в июне. v — крупное значение в чипе, was — старая цена.
 const P={
-  1:[{c:'thermal',n:'Дневной релакс −30%',d:'Скидка 30% на любой тариф в дневные часы.',w:'13:00–18:00'}, SPA_DAY],
-  2:[{c:'thermal',n:'Длинный четверг',d:'Купи 2 часа купания — оставайся 3 часа.',w:'весь день'}],
-  3:[{c:'food',n:'Пенный напиток −20%',d:'Скидка 20% на разливные пенные напитки.',w:'в барах'},
-     {c:'spa',n:'Знакомство с Баден-СПА',d:'Массаж ног + массаж спины за 2200 ₽. Выгода гостя 21%.',w:'по записи'}],
-  6:[{c:'thermal',n:'Перезагрузка недели',d:'Продление любого тарифа со скидкой 40%.',w:'весь день'}],
-  7:[{c:'food',n:'Пицца Пепперони −20%',d:'Скидка 20% на фирменную пиццу Пепперони.',w:'в кафе'}],
-  8:[{c:'thermal',n:'Студенческая среда',d:'Скидка 30% по студенческому билету.',w:'до 19:00'}, SPA_DAY],
-  9:[{c:'food',n:'Баден Бургер 590 ₽',d:'Фирменный Баден Бургер — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
-  10:[{c:'spa',n:'Массаж «Нега» для двоих — бесплатно',d:'Час массажа «Нега» для двоих в подарок при бронировании с проживанием.',w:'при проживании'}],
-  13:[{c:'stay',n:'Тихий понедельник',d:'Вторая ночь проживания со скидкой 35% при будничном заезде.',w:'заезд вс–пн'}],
-  14:[{c:'food',n:'Лимонады −20%',d:'Скидка 20% на все домашние лимонады.',w:'весь день'}],
-  15:[{c:'food',n:'Гренки чесночные −30%',d:'Скидка 30% на чесночные гренки к пенному.',w:'в барах'}, SPA_DAY],
-  16:[{c:'food',n:'Коктейли в Пулбаре −20%',d:'Скидка 20% на все коктейли в Пулбаре.',w:'Пулбар'}],
-  17:[{c:'thermal',n:'Приведи друга',d:'Второй билет со скидкой 50% по промокоду из бота лояльности.',w:'весь день'}],
-  20:[{c:'food',n:'Пицца Ветчина-Грибы −20%',d:'Скидка 20% на пиццу с ветчиной и грибами.',w:'в кафе'}],
-  21:[{c:'stay',n:'Загородный детокс',d:'Три ночи проживания по цене двух — побег за город.',w:'заезд пн'}],
+  1:[{c:'thermal',n:'Дневной релакс',v:'−30%',d:'Скидка 30% на любой тариф в дневные часы.',w:'13:00–18:00'}, SPA_DAY],
+  2:[{c:'thermal',n:'Длинный четверг',v:'+1 час',d:'Купи 2 часа купания — оставайся 3 часа.',w:'весь день'}],
+  3:[{c:'food',n:'Пенный напиток',v:'−20%',d:'Скидка 20% на разливные пенные напитки.',w:'в барах'},
+     {c:'spa',n:'Знакомство с Баден-СПА',v:'2200 ₽',d:'Массаж ног + массаж спины за 2200 ₽. Выгода гостя 21%.',w:'по записи'}],
+  6:[{c:'thermal',n:'Перезагрузка недели',v:'−40%',d:'Продление любого тарифа со скидкой 40%.',w:'весь день'}],
+  7:[{c:'food',n:'Пицца Пепперони',v:'−20%',d:'Скидка 20% на фирменную пиццу Пепперони.',w:'в кафе'}],
+  8:[{c:'thermal',n:'Студенческая среда',v:'−30%',d:'Скидка 30% по студенческому билету.',w:'до 19:00'}, SPA_DAY],
+  9:[{c:'food',n:'Баден Бургер',v:'590 ₽',was:'690 ₽',d:'Фирменный Баден Бургер — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
+  10:[{c:'spa',n:'Массаж «Нега» для двоих',v:'В подарок',d:'Час массажа «Нега» для двоих в подарок при бронировании с проживанием.',w:'при проживании'}],
+  13:[{c:'stay',n:'Тихий понедельник',v:'−35%',d:'Вторая ночь проживания со скидкой 35% при будничном заезде.',w:'заезд вс–пн'}],
+  14:[{c:'food',n:'Домашние лимонады',v:'−20%',d:'Скидка 20% на все домашние лимонады.',w:'весь день'}],
+  15:[{c:'food',n:'Чесночные гренки',v:'−30%',d:'Скидка 30% на чесночные гренки к пенному.',w:'в барах'}, SPA_DAY],
+  16:[{c:'food',n:'Коктейли в Пулбаре',v:'−20%',d:'Скидка 20% на все коктейли в Пулбаре.',w:'Пулбар'}],
+  17:[{c:'thermal',n:'Приведи друга',v:'−50%',d:'Второй билет со скидкой 50% по промокоду из бота лояльности.',w:'весь день'}],
+  20:[{c:'food',n:'Пицца Ветчина-Грибы',v:'−20%',d:'Скидка 20% на пиццу с ветчиной и грибами.',w:'в кафе'}],
+  21:[{c:'stay',n:'Загородный детокс',v:'3 = 2',d:'Три ночи проживания по цене двух — побег за город.',w:'заезд пн'}],
   22:[SPA_DAY],
-  23:[{c:'food',n:'Бадя Бокс 590 ₽',d:'Детский Бадя Бокс — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
-  24:[{c:'food',n:'Все пасты −15%',d:'Скидка 15% на всю пасту в меню.',w:'в кафе'}],
-  27:[{c:'food',n:'Пицца Маргарита −20%',d:'Скидка 20% на классическую пиццу Маргарита.',w:'в кафе'}],
-  28:[{c:'thermal',n:'Тёплый вторник',d:'Два билета по цене полутора.',w:'весь день'}],
+  23:[{c:'food',n:'Бадя Бокс',v:'590 ₽',was:'690 ₽',d:'Детский Бадя Бокс — 590 ₽ вместо 690 ₽.',w:'в кафе'}],
+  24:[{c:'food',n:'Все пасты',v:'−15%',d:'Скидка 15% на всю пасту в меню.',w:'в кафе'}],
+  27:[{c:'food',n:'Пицца Маргарита',v:'−20%',d:'Скидка 20% на классическую пиццу Маргарита.',w:'в кафе'}],
+  28:[{c:'thermal',n:'Тёплый вторник',v:'2 = 1,5',d:'Два билета по цене полутора.',w:'весь день'}],
   29:[SPA_DAY],
-  30:[{c:'spa',n:'День ухода за лицом',d:'К уходу с альгинатной маской гость бесплатно получает массаж рук.',w:'по записи'}],
-  31:[{c:'stay',n:'Последняя ночь июля',d:'Скидка 30% на проживание — закрой месяц с комфортом.',w:'заезд пт'}]
+  30:[{c:'spa',n:'День ухода за лицом',v:'+ подарок',d:'К уходу с альгинатной маской гость бесплатно получает массаж рук.',w:'по записи'}],
+  31:[{c:'stay',n:'Последняя ночь июля',v:'−30%',d:'Скидка 30% на проживание — закрой месяц с комфортом.',w:'заезд пт'}]
 };
 const WDS=['Пн','Вт','Ср','Чт','Пт'];
 const WDF=['Понедельник','Вторник','Среда','Четверг','Пятница'];
@@ -247,8 +256,10 @@ DATES.forEach(day=>{
   let inner=`<div class="date"><span class="wd">${WDS[dw]}</span><span class="num tnum">${day}</span></div><div class="pitems">`;
   promos.forEach((p,i)=>{
     const cat=CATS[p.c]; counts[p.c]++; counts.all++;
-    inner+=`<button class="pitem" data-cat="${p.c}" data-day="${day}" data-i="${i}" style="--cc:${cat.c};--ccbg:${cat.bg}" aria-label="${WDS[dw]} ${day} июля — ${p.n}">`+
-      `<span class="ptag">${cat.label}</span><span class="pn">${p.n}</span><span class="pw">${CLOCK}${p.w}</span></button>`;
+    const foot=p.w+(p.was?` · <span class="pwas tnum">${p.was}</span>`:'');
+    inner+=`<button class="pitem" data-cat="${p.c}" data-day="${day}" data-i="${i}" style="--cc:${cat.c};--ccbg:${cat.bg}" aria-label="${WDS[dw]} ${day} июля — ${p.n}, ${p.v}">`+
+      `<span class="phead"><span class="ptag">${cat.label}</span><span class="pchip tnum">${p.v}</span></span>`+
+      `<span class="pn">${p.n}</span><span class="pw">${CLOCK}${foot}</span></button>`;
   });
   inner+=`</div>`; cell.innerHTML=inner; grid.appendChild(cell);
 });
@@ -279,6 +290,7 @@ function openModal(day,p){
   const mc=document.getElementById('m-cat');mc.textContent=cat.label;mc.style.color=cat.c;mc.style.background=cat.bg;
   document.getElementById('m-date').textContent=`${WDF[dw]}, ${day} ${MNAME} 2026`;
   document.getElementById('m-title').textContent=p.n;
+  document.getElementById('m-val').innerHTML=`<span class="v" style="color:${cat.c}">${p.v}</span>`+(p.was?`<span class="o">${p.was}</span>`:'');
   document.getElementById('m-desc').textContent=p.d;
   document.getElementById('m-when').innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${cat.c}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Условие: ${p.w}`;
   modal.classList.add('open');document.body.style.overflow='hidden';modal.querySelector('.close').focus();
@@ -288,26 +300,34 @@ grid.addEventListener('click',e=>{const it=e.target.closest('.pitem');if(it&&!it
 modal.addEventListener('click',e=>{if(e.target.hasAttribute('data-close'))closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-// Фон-«созвездие» (2D canvas, брендовый синий + редкий коралл) — лёгкая замена WebGL-портала
+// Фон-«созвездие» (2D canvas, брендовый синий + редкий коралл) — глубина (z-параллакс) + мягкое мерцание
 (function(){
   const cv=document.getElementById('stars'); if(!cv) return;
-  const ctx=cv.getContext('2d'); let w,h,pts;
+  const ctx=cv.getContext('2d'); let w,h,pts,t=0;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function init(){
     w=cv.width=innerWidth; h=cv.height=innerHeight;
-    const n=Math.min(85,Math.round(w*h/17000));
-    pts=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:Math.random()*1.3+.5,coral:Math.random()<0.16}));
+    const n=Math.min(78,Math.round(w*h/19000));
+    pts=Array.from({length:n},()=>{
+      const z=Math.random();                                  // глубина 0..1 (1 = ближе)
+      return {x:Math.random()*w,y:Math.random()*h,
+        vx:(Math.random()-.5)*(.05+z*.20),vy:(Math.random()-.5)*(.05+z*.20),
+        r:.5+z*1.7,z,base:.26+z*.5,tw:.5+Math.random()*1.3,ph:Math.random()*6.283,
+        coral:Math.random()<0.13};
+    });
   }
   function frame(){
+    if(!reduce)t+=0.016;
     ctx.clearRect(0,0,w,h);
     for(const p of pts){
       if(!reduce){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;}
+      const a=p.base*(reduce?1:(.6+.4*Math.sin(t*p.tw+p.ph)));  // мерцание
       ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);
-      ctx.fillStyle=p.coral?'rgba(239,159,82,.6)':'rgba(119,188,232,.55)';ctx.fill();
+      ctx.fillStyle=p.coral?'rgba(239,159,82,'+(a*1.1)+')':'rgba(119,188,232,'+a+')';ctx.fill();
     }
     for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
       const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
-      if(d<125){ctx.strokeStyle='rgba(119,188,232,'+(.11*(1-d/125))+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+      if(d<140){const o=.085*(1-d/140)*Math.min(a.z,b.z);ctx.strokeStyle='rgba(119,188,232,'+o+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
     }
     if(!reduce) requestAnimationFrame(frame);
   }
