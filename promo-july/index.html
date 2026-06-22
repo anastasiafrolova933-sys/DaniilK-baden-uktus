@@ -11,9 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#070f20; --bg2:#0b1a34; --bg3:#0e2348;
-  --surface:rgba(22,46,86,.46); --surface-2:rgba(28,56,102,.62);
-  --border:rgba(119,188,232,.16); --border-strong:rgba(119,188,232,.34);
+  --bg:#0a0a0c; --bg2:#0d0f14; --bg3:#11141c;
+  --surface:rgba(255,255,255,.04); --surface-2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.18);
   --navy:#154a88; --blue:#3b8fd4; --sky:#77bce8; --sky-2:#a9d7f2; --sky-3:#cfe8fa;
   --coral:#ef9f52; --coral-2:#f4b878;
   --text:#e9f3fc; --text-dim:#9db4cf; --text-mute:#6a83a1;
@@ -28,9 +28,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
 .tnum{font-variant-numeric:tabular-nums}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:
-  radial-gradient(60% 50% at 82% 0%, rgba(59,143,212,.22), transparent 60%),
-  radial-gradient(55% 45% at 8% 100%, rgba(239,159,82,.13), transparent 60%),
-  linear-gradient(180deg,#081328,#060d1c 60%);}
+  radial-gradient(58% 48% at 82% 0%, rgba(59,143,212,.13), transparent 62%),
+  radial-gradient(52% 42% at 8% 100%, rgba(239,159,82,.07), transparent 62%),
+  linear-gradient(180deg,#0b0c10,#060608 62%);}
 
 .hero{position:relative;text-align:center;padding:62px 0 46px}
 .hero .logo{height:104px;width:auto;filter:drop-shadow(0 8px 30px rgba(8,20,40,.6));opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) .05s forwards}
@@ -46,7 +46,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 .hero .disc svg{flex:none}
 @keyframes rise{to{opacity:1;transform:none}}
 
-.bar{position:sticky;top:0;z-index:40;margin-top:12px;background:rgba(8,16,32,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.bar{position:sticky;top:0;z-index:40;margin-top:12px;background:rgba(10,10,13,.76);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .bar .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:13px 22px;justify-content:center;max-width:1240px;margin:0 auto}
 .pill{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:9px 16px;border-radius:30px;font:700 13.5px var(--font);color:var(--sky-2);background:var(--surface);border:1px solid var(--border);transition:transform .2s var(--ease),background .2s,border-color .2s,color .2s}
 .pill .dot{width:9px;height:9px;border-radius:50%;background:var(--sky);box-shadow:0 0 10px currentColor}
@@ -97,7 +97,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-2;background:
 .modal.open{display:flex}
 .modal .scrim{position:absolute;inset:0;background:rgba(4,9,20,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
 .modal.open .scrim{opacity:1}
-.sheet{position:relative;width:min(440px,100%);background:linear-gradient(180deg,var(--surface-2),rgba(14,28,56,.92));border:1px solid var(--border-strong);border-radius:24px;padding:26px 24px 24px;box-shadow:0 30px 80px rgba(2,7,18,.7);transform:scale(.92);opacity:0;transition:transform .26s var(--ease),opacity .26s}
+.sheet{position:relative;width:min(440px,100%);background:linear-gradient(180deg,rgba(26,28,36,.96),rgba(14,15,20,.97));border:1px solid var(--border-strong);border-radius:24px;padding:26px 24px 24px;box-shadow:0 30px 80px rgba(2,7,18,.7);transform:scale(.92);opacity:0;transition:transform .26s var(--ease),opacity .26s}
 .modal.open .sheet{transform:scale(1);opacity:1}
 .sheet .close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--sky-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
 .sheet .close:hover{border-color:var(--border-strong);color:#fff}
