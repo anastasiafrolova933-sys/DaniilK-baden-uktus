@@ -11,7 +11,7 @@
   // Сервер чата (cloudflared URL). Меняется при перезапуске тоннеля.
   const SERVER_URL_KEY = 'baden_chat_server_url';
   // Дефолтный URL — заменим при первом запуске тоннеля и встроим в HTML
-  const DEFAULT_SERVER = 'https://bulk-inn-efficient-split.trycloudflare.com';
+  const DEFAULT_SERVER = 'https://fitness-spend-terrace-bench.trycloudflare.com';
 
   function getServerUrl() {
     // 1. data-server атрибут скрипта (если задан вручную)
