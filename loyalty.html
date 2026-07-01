@@ -384,6 +384,23 @@
   }
   .auth-btn-submit:hover { background: var(--accent); }
   .auth-error { font-size: 13px; color: var(--red); display: none; text-align: center; }
+
+  /* ── Period bar ── */
+  .period-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:16px; }
+  .period-title { font-size:0.82rem; color:var(--text2); font-weight:600; margin-right:2px; }
+  .preset-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text2); padding:6px 12px; border-radius:20px; cursor:pointer; font-size:0.8rem; transition:all .15s; }
+  .preset-btn:hover { color:var(--text); border-color:var(--accent2); }
+  .preset-btn.active { background:var(--accent2); border-color:var(--accent2); color:#fff; }
+  .period-sep { font-size:0.78rem; color:var(--text2); }
+  input.filter[type=date] { color-scheme:dark; }
+  .period-current { margin-left:auto; font-size:0.8rem; color:var(--accent); font-weight:600; }
+  .btn-export { background:var(--surface2); border:1px solid var(--border); color:var(--text2); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.82rem; white-space:nowrap; transition:all .15s; }
+  .btn-export:hover { color:var(--text); border-color:var(--accent2); }
+  /* Loyalty KPI mini-row inside a chart-card */
+  .loyalty-kpis { display:flex; gap:18px; margin-bottom:14px; flex-wrap:wrap; }
+  .loyalty-kpis > div { display:flex; flex-direction:column; }
+  .loyalty-kpis b { font-size:1.5rem; color:var(--accent); font-weight:800; line-height:1; }
+  .loyalty-kpis span { font-size:0.74rem; color:var(--text2); margin-top:3px; }
 </style>
 </head>
 <body>
@@ -414,9 +431,6 @@
     <span id="last-updated">Файлы не загружены</span>
   </div>
   <div class="header-right">
-    <select class="filter" id="global-month-filter" onchange="applyGlobalMonth()" title="Фильтр по месяцу — весь дашборд">
-      <option value="">📅 Все месяцы</option>
-    </select>
     <button class="btn-small" onclick="resetDashboard()">↺ Сбросить</button>
   </div>
 </header>
@@ -442,6 +456,20 @@
 <!-- Dashboard -->
 <div id="dashboard">
   <div class="container">
+    <!-- Период (глобальный фильтр по времени) -->
+    <div class="period-bar">
+      <span class="period-title">Период:</span>
+      <button class="preset-btn active" data-preset="all" onclick="setPreset('all', this)">Всё время</button>
+      <button class="preset-btn" data-preset="today" onclick="setPreset('today', this)">Сегодня</button>
+      <button class="preset-btn" data-preset="7d" onclick="setPreset('7d', this)">7 дней</button>
+      <button class="preset-btn" data-preset="30d" onclick="setPreset('30d', this)">30 дней</button>
+      <select class="filter" id="global-month-filter" onchange="onGlobalMonthChange()"><option value="">📅 Месяц…</option></select>
+      <span class="period-sep">·</span>
+      <input type="date" class="filter" id="range-from" onchange="onCustomRange()" title="С даты">
+      <input type="date" class="filter" id="range-to" onchange="onCustomRange()" title="По дату">
+      <span class="period-current" id="period-current"></span>
+    </div>
+
     <!-- Stats -->
     <div class="stats-grid" id="stats-grid"></div>
 
@@ -462,6 +490,7 @@
         <select class="filter" id="city-filter" onchange="filterGuests()"><option value="">Все города</option></select>
         <select class="filter" id="guest-month-filter" onchange="filterGuests()" title="Месяц регистрации"><option value="">Все месяцы</option></select>
         <span class="count-badge" id="guests-count">0 записей</span>
+        <button class="btn-export" onclick="exportCurrent('guests')" title="Скачать отфильтрованное в CSV (Excel)">⬇ CSV</button>
       </div>
       <div class="table-wrap">
         <table id="guests-table">
@@ -491,6 +520,7 @@
         </select>
         <select class="filter" id="visit-month-filter" onchange="filterVisits()"><option value="">Все месяцы</option></select>
         <span class="count-badge" id="visits-count">0 записей</span>
+        <button class="btn-export" onclick="exportCurrent('visits')" title="Скачать отфильтрованное в CSV (Excel)">⬇ CSV</button>
       </div>
       <div class="table-wrap">
         <table id="visits-table">
@@ -539,6 +569,7 @@
         <input class="search-box" type="text" placeholder="🔍 Поиск по имени или телефону..." oninput="filterSurveys()">
         <select class="filter" id="survey-month-filter" onchange="filterSurveys()"><option value="">Все месяцы</option></select>
         <span class="count-badge" id="surveys-count">0 записей</span>
+        <button class="btn-export" onclick="exportCurrent('surveys')" title="Скачать отфильтрованное в CSV (Excel)">⬇ CSV</button>
       </div>
       <div class="table-wrap">
         <table id="surveys-table">
@@ -585,7 +616,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '01.07.2026 10:35',
+  updatedAt: '01.07.2026 10:58',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -1336,6 +1367,37 @@ const sortState = { guests: {col:-1,asc:true}, visits: {col:-1,asc:true}, survey
 const pageState = { guests: 1, visits: 1, surveys: 1, reviews: 1 };
 const PAGE_SIZE = 50;
 
+// ── Глобальный период (диапазон дат) ──────────────────────────────────────────
+let gRange = { from: '', to: '' };            // 'YYYY-MM-DD' включительно; пусто = всё время
+const lastFiltered = { guests: [], visits: [], surveys: [] }; // для экспорта
+
+function inRange(dateStr) {
+  if (!gRange.from && !gRange.to) return true;
+  const d = (dateStr || '').slice(0, 10);
+  if (!d) return false;
+  if (gRange.from && d < gRange.from) return false;
+  if (gRange.to && d > gRange.to) return false;
+  return true;
+}
+function ddmmyyyy(iso) { return iso ? iso.split('-').reverse().join('.') : '…'; }
+function periodLabel() {
+  if (!gRange.from && !gRange.to) return '';
+  return ddmmyyyy(gRange.from) + ' – ' + ddmmyyyy(gRange.to);
+}
+// Короткая подпись периода: для целого месяца → «Июн 2026», иначе диапазон.
+function scopeLabel() {
+  if (!gRange.from && !gRange.to) return '';
+  if (gRange.from && gRange.to) {
+    const fm = gRange.from.slice(0, 7), tm = gRange.to.slice(0, 7);
+    if (fm === tm && gRange.from.slice(8) === '01') {
+      const [y, mo] = fm.split('-').map(Number);
+      const lastDay = new Date(y, mo, 0).getDate();
+      if (gRange.to.slice(8) === String(lastDay).padStart(2, '0')) return formatMonth(fm);
+    }
+  }
+  return periodLabel();
+}
+
 // ── CSV Parser ────────────────────────────────────────────────────────────────
 function parseCSV(text) {
   // Handle BOM
@@ -1442,15 +1504,15 @@ function resetDashboard() {
 }
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
-function buildStats(month) {
+function buildStats() {
   const today = new Date().toISOString().slice(0,10);
   const monthKey = today.slice(0,7);
-  const scoped = !!month;
+  const scoped = !!(gRange.from || gRange.to);
 
-  // Наборы, суженные под выбранный месяц (для scoped-режима)
-  const visitsIn  = scoped ? data.visits.filter(r => (r[4]||'').slice(0,7) === month) : data.visits;
-  const surveysIn = scoped ? data.surveys.filter(r => (r[5]||'').slice(0,7) === month) : data.surveys;
-  const guestsRegIn = scoped ? data.guests.filter(r => (r[7]||'').slice(0,7) === month) : data.guests;
+  // Наборы, суженные под выбранный период (для scoped-режима)
+  const visitsIn  = scoped ? data.visits.filter(r => inRange(r[4])) : data.visits;
+  const surveysIn = scoped ? data.surveys.filter(r => inRange(r[5])) : data.surveys;
+  const guestsRegIn = scoped ? data.guests.filter(r => inRange(r[7])) : data.guests;
 
   const totalGuests = data.guests.length;
   const activeGuests = data.guests.filter(r => r[8] === 'Да').length;
@@ -1493,8 +1555,8 @@ function buildStats(month) {
       { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка', cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
     ];
   } else {
-    // Режим выбранного месяца — цифры пересчитаны под него
-    const mL = formatMonth(month);
+    // Режим выбранного периода — цифры пересчитаны под него
+    const mL = scopeLabel();
     cards = [
       { val: totalGuests, label: 'Гостей всего (всё время)', cls: '' },
       { val: guestsRegIn.length, label: 'Новых гостей · ' + mL, cls: 'green' },
@@ -1545,21 +1607,69 @@ function buildGlobalMonthFilter() {
   sel.innerHTML = '<option value="">📅 Все месяцы</option>' + months.map(m => `<option value="${m}">${formatMonth(m)}</option>`).join('');
 }
 
-// Применяет выбранный в шапке месяц ко всему дашборду:
-// синхронизирует локальные селекторы вкладок и пересчитывает карточки.
-function applyGlobalMonth() {
-  const sel = document.getElementById('global-month-filter');
-  const m = sel ? sel.value : '';
-  ['guest-month-filter','visit-month-filter','survey-month-filter','top-month-filter'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = m;
-  });
-  buildStats(m);
+// Пересчитывает весь дашборд под текущий gRange.
+function applyGlobalPeriod() {
+  const pc = document.getElementById('period-current');
+  if (pc) pc.textContent = periodLabel();
+  buildStats();
   pageState.guests = 1; pageState.visits = 1; pageState.surveys = 1;
   filterGuests();
   filterVisits();
   filterSurveys();
   renderTop();
+  buildAnalytics();
+}
+
+function markPreset(preset) {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === preset));
+}
+// Синхронизирует локальные селекторы месяца на вкладках с глобальным периодом
+function syncTabMonths(m) {
+  ['guest-month-filter', 'visit-month-filter', 'survey-month-filter', 'top-month-filter'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = m;
+  });
+}
+
+// Пресеты периода: Всё / Сегодня / 7 дней / 30 дней
+function setPreset(kind, btn) {
+  markPreset(kind);
+  const gm = document.getElementById('global-month-filter'); if (gm) gm.value = '';
+  const rf = document.getElementById('range-from'), rt = document.getElementById('range-to');
+  const today = new Date();
+  const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+  if (kind === 'all') { gRange = { from: '', to: '' }; }
+  else if (kind === 'today') { const t = iso(today); gRange = { from: t, to: t }; }
+  else if (kind === '7d') { const s = new Date(today); s.setDate(s.getDate() - 6); gRange = { from: iso(s), to: iso(today) }; }
+  else if (kind === '30d') { const s = new Date(today); s.setDate(s.getDate() - 29); gRange = { from: iso(s), to: iso(today) }; }
+  if (rf) rf.value = gRange.from; if (rt) rt.value = gRange.to;
+  syncTabMonths('');
+  applyGlobalPeriod();
+}
+
+// Выбор конкретного месяца в шапке → диапазон = весь месяц
+function onGlobalMonthChange() {
+  const m = document.getElementById('global-month-filter').value;
+  const rf = document.getElementById('range-from'), rt = document.getElementById('range-to');
+  if (!m) { gRange = { from: '', to: '' }; markPreset('all'); }
+  else {
+    const [y, mo] = m.split('-').map(Number);
+    const lastDay = new Date(y, mo, 0).getDate();
+    gRange = { from: m + '-01', to: m + '-' + String(lastDay).padStart(2, '0') };
+    markPreset('__none__');
+  }
+  if (rf) rf.value = gRange.from; if (rt) rt.value = gRange.to;
+  syncTabMonths(m);
+  applyGlobalPeriod();
+}
+
+// Произвольный диапазон «с – по»
+function onCustomRange() {
+  const rf = document.getElementById('range-from').value, rt = document.getElementById('range-to').value;
+  markPreset('__none__');
+  const gm = document.getElementById('global-month-filter'); if (gm) gm.value = '';
+  gRange = { from: rf || '', to: rt || '' };
+  syncTabMonths('');
+  applyGlobalPeriod();
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -1578,7 +1688,7 @@ function renderTop() {
   const tbody = document.getElementById('top-body');
   const monthEl = document.getElementById('top-month-filter');
   const month = monthEl ? monthEl.value : '';
-  const visitsScope = month ? data.visits.filter(v => (v[4]||'').slice(0,7) === month) : data.visits;
+  const visitsScope = data.visits.filter(v => (!month || (v[4]||'').slice(0,7) === month) && inRange(v[4]));
   if (!visitsScope || !visitsScope.length) {
     tbody.innerHTML = '<tr><td colspan="8" class="no-data">Нет данных о визитах' + (month ? ' за ' + formatMonth(month) : '') + '</td></tr>';
     document.getElementById('top-count').textContent = '0 гостей';
@@ -1676,8 +1786,10 @@ function filterGuests() {
     const matchQ = !q || text.toLowerCase().includes(q);
     const matchCity = !city || r[4] === city;
     const matchMonth = !month || (r[7]||'').slice(0,7) === month;
-    return matchQ && matchCity && matchMonth;
+    const matchRange = inRange(r[7]);
+    return matchQ && matchCity && matchMonth && matchRange;
   });
+  lastFiltered.guests = filtered;
   document.getElementById('guests-count').textContent = filtered.length + ' записей';
   renderPaged('guests', filtered, renderGuestRow, 'guests-body', 'guests-pages');
 }
@@ -1706,8 +1818,10 @@ function filterVisits() {
     const noteHow = r[7] === 'by_qr' ? 'QR' : r[7] === 'by_phone' ? 'Телефон' : '';
     const matchHow = !how || noteHow === how;
     const matchMonth = !month || (r[4]||'').slice(0,7) === month;
-    return matchQ && matchHow && matchMonth;
+    const matchRange = inRange(r[4]);
+    return matchQ && matchHow && matchMonth && matchRange;
   });
+  lastFiltered.visits = filtered;
   document.getElementById('visits-count').textContent = filtered.length + ' записей';
   renderPaged('visits', filtered, renderVisitRow, 'visits-body', 'visits-pages');
 }
@@ -1741,8 +1855,10 @@ function filterSurveys() {
     const text = (r[2]||'') + (r[3]||'');
     const matchQ = !q || text.toLowerCase().includes(q);
     const matchMonth = !month || (r[5]||'').slice(0,7) === month;
-    return matchQ && matchMonth;
+    const matchRange = inRange(r[5]);
+    return matchQ && matchMonth && matchRange;
   });
+  lastFiltered.surveys = filtered;
   document.getElementById('surveys-count').textContent = filtered.length + ' записей';
   renderPaged('surveys', filtered, renderSurveyRow, 'surveys-body', 'surveys-pages');
 }
@@ -1772,126 +1888,150 @@ function renderSurveyRow(r) {
 
 // ── Analytics ─────────────────────────────────────────────────────────────────
 function buildAnalytics() {
+  const scoped = !!(gRange.from || gRange.to);
+  const vScope = scoped ? data.visits.filter(r => inRange(r[4])) : data.visits;
+  const gScope = scoped ? data.guests.filter(r => inRange(r[7])) : data.guests;
+  const sScope = scoped ? data.surveys.filter(r => inRange(r[5])) : data.surveys;
+  const suf = scoped ? ' · ' + scopeLabel() : '';
+  const norm = p => String(p||'').replace(/\D/g,'');
+  const bar = (label, val, max, color) => `
+        <div class="bar-item">
+          <span class="bar-label">${label}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${max?(val/max*100).toFixed(0):0}%${color?';background:'+color:''}"></div></div>
+          <span class="bar-val"${color?' style="color:'+color+'"':''}>${val}</span>
+        </div>`;
   let html = '';
 
-  // Visits by month
-  if (data.visits.length) {
-    const byMonth = {};
-    data.visits.forEach(r => {
-      const m = (r[4]||'').slice(0,7);
-      if (m) byMonth[m] = (byMonth[m]||0) + 1;
-    });
-    const months = Object.keys(byMonth).sort();
-    const maxV = Math.max(...Object.values(byMonth));
+  // ── Лояльность / повторные визиты (по периоду) ──
+  if (vScope.length) {
+    const byGuest = {};
+    vScope.forEach(v => { const p = norm(v[3]); if (p) byGuest[p] = (byGuest[p]||0) + 1; });
+    const counts = Object.values(byGuest);
+    const guestsN = counts.length;
+    const tiers = { '1':0, '2':0, '3':0, '4+':0 };
+    counts.forEach(c => { if (c >= 4) tiers['4+']++; else tiers[String(c)]++; });
+    const repeat = guestsN ? ((guestsN - tiers['1']) / guestsN * 100).toFixed(0) : 0;
+    const avg = guestsN ? (vScope.length / guestsN).toFixed(2) : 0;
+    const mxT = Math.max(tiers['1'], tiers['2'], tiers['3'], tiers['4+'], 1);
     html += `<div class="chart-card">
-      <h3>Визиты по месяцам</h3>
-      <div class="bar-list">` +
-      months.map(m => `
-        <div class="bar-item">
-          <span class="bar-label">${formatMonth(m)}</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${(byMonth[m]/maxV*100).toFixed(0)}%"></div></div>
-          <span class="bar-val">${byMonth[m]}</span>
-        </div>`).join('') +
-      `</div></div>`;
-
-    // By method
-    const qr = data.visits.filter(r => r[7]==='by_qr').length;
-    const ph = data.visits.filter(r => r[7]==='by_phone').length;
-    const tot = data.visits.length;
-    html += `<div class="chart-card">
-      <h3>Способ подтверждения</h3>
-      <div class="bar-list">
-        <div class="bar-item">
-          <span class="bar-label">QR-код</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${tot?(qr/tot*100).toFixed(0):0}%"></div></div>
-          <span class="bar-val">${qr}</span>
-        </div>
-        <div class="bar-item">
-          <span class="bar-label">Телефон</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${tot?(ph/tot*100).toFixed(0):0}%"></div></div>
-          <span class="bar-val">${ph}</span>
-        </div>
+      <h3>Лояльность / повторные визиты${suf}</h3>
+      <div class="loyalty-kpis">
+        <div><b>${repeat}%</b><span>вернулись (2+)</span></div>
+        <div><b>${avg}</b><span>визитов на гостя</span></div>
+        <div><b>${guestsN}</b><span>уникальных гостей</span></div>
       </div>
-    </div>`;
-
-    // Discount distribution
-    const byDisc = {};
-    data.visits.forEach(r => { const d = r[5]||'0'; byDisc[d] = (byDisc[d]||0)+1; });
-    const discKeys = Object.keys(byDisc).sort((a,b)=>parseInt(a)-parseInt(b));
-    const maxD = Math.max(...Object.values(byDisc));
-    html += `<div class="chart-card">
-      <h3>Распределение скидок</h3>
       <div class="bar-list">` +
-      discKeys.map(d => `
-        <div class="bar-item">
-          <span class="bar-label">Скидка ${d}%</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${(byDisc[d]/maxD*100).toFixed(0)}%"></div></div>
-          <span class="bar-val">${byDisc[d]}</span>
-        </div>`).join('') +
+      bar('1 визит · 5%', tiers['1'], mxT) +
+      bar('2 визита · 10%', tiers['2'], mxT) +
+      bar('3 визита · 15%', tiers['3'], mxT) +
+      bar('4+ визитов · 20%', tiers['4+'], mxT) +
       `</div></div>`;
   }
 
-  // Guests by city
-  if (data.guests.length) {
-    const byCity = {};
-    data.guests.forEach(r => {
-      const c = r[4]||'Не указан';
-      byCity[c] = (byCity[c]||0)+1;
-    });
-    const cities = Object.entries(byCity).sort((a,b) => b[1]-a[1]);
-    const maxC = cities[0]?.[1] || 1;
-    html += `<div class="chart-card">
-      <h3>Гости по городам</h3>
-      <div class="bar-list">` +
-      cities.map(([c,n]) => `
-        <div class="bar-item">
-          <span class="bar-label">${esc(c)}</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${(n/maxC*100).toFixed(0)}%"></div></div>
-          <span class="bar-val">${n}</span>
-        </div>`).join('') +
-      `</div></div>`;
-
-    // Registrations by month
-    const byRegMonth = {};
-    data.guests.forEach(r => {
-      const m = (r[7]||'').slice(0,7);
-      if (m) byRegMonth[m] = (byRegMonth[m]||0)+1;
-    });
-    const regMonths = Object.keys(byRegMonth).sort();
-    if (regMonths.length) {
-      const maxR = Math.max(...Object.values(byRegMonth));
+  // ── Новые vs вернувшиеся по месяцам (вся история) ──
+  {
+    const firstByGuest = {};
+    data.visits.forEach(v => { const p = norm(v[3]); const d = (v[4]||'').slice(0,10); if (!p||!d) return; if (!firstByGuest[p] || d < firstByGuest[p]) firstByGuest[p] = d; });
+    const byM = {};
+    data.visits.forEach(v => { const p = norm(v[3]); const m = (v[4]||'').slice(0,7); if (!p||!m) return; if (!byM[m]) byM[m] = { nw:new Set(), rt:new Set() }; if (firstByGuest[p] && firstByGuest[p].slice(0,7) === m) byM[m].nw.add(p); else byM[m].rt.add(p); });
+    const ms = Object.keys(byM).sort();
+    if (ms.length) {
+      const mx = Math.max(...ms.map(m => byM[m].nw.size + byM[m].rt.size), 1);
       html += `<div class="chart-card">
-        <h3>Регистрации по месяцам</h3>
+        <h3>Новые vs вернувшиеся (по месяцам)</h3>
         <div class="bar-list">` +
-        regMonths.map(m => `
+        ms.map(m => {
+          const nw = byM[m].nw.size, rt = byM[m].rt.size, tot = nw + rt;
+          const pctNew = tot ? (nw/tot*100).toFixed(0) : 0;
+          return `
           <div class="bar-item">
             <span class="bar-label">${formatMonth(m)}</span>
-            <div class="bar-track"><div class="bar-fill" style="width:${(byRegMonth[m]/maxR*100).toFixed(0)}%"></div></div>
-            <span class="bar-val">${byRegMonth[m]}</span>
-          </div>`).join('') +
-        `</div></div>`;
+            <div class="bar-track" title="Новые: ${nw} · Вернувшиеся: ${rt}"><div class="bar-fill" style="width:${(tot/mx*100).toFixed(0)}%;background:linear-gradient(90deg,var(--green) ${pctNew}%,var(--accent2) ${pctNew}%)"></div></div>
+            <span class="bar-val">${tot}</span>
+          </div>`;
+        }).join('') +
+        `</div><div style="font-size:.72rem;color:var(--text2);margin-top:8px">🟩 новые&nbsp;·&nbsp;🟫 вернувшиеся</div></div>`;
     }
   }
 
-  // Survey ratings
-  if (data.surveys.length) {
+  // ── Пиковая нагрузка: дни недели + часы (по периоду) ──
+  if (vScope.length) {
+    const dow = [0,0,0,0,0,0,0];
+    vScope.forEach(v => { const d = new Date((v[4]||'').replace(' ','T')); if (!isNaN(d)) dow[(d.getDay()+6)%7]++; });
+    const dn = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']; const mxd = Math.max(...dow, 1);
+    html += `<div class="chart-card"><h3>Визиты по дням недели${suf}</h3><div class="bar-list">` +
+      dn.map((nm,i) => bar(nm, dow[i], mxd)).join('') + `</div></div>`;
+
+    const byHour = {};
+    vScope.forEach(v => { const m = (v[4]||'').match(/\s(\d{2}):/); if (m) byHour[m[1]] = (byHour[m[1]]||0) + 1; });
+    const hk = Object.keys(byHour).sort();
+    if (hk.length) {
+      const mxh = Math.max(...Object.values(byHour), 1);
+      html += `<div class="chart-card"><h3>Визиты по часам${suf}</h3><div class="bar-list">` +
+        hk.map(h => bar(h + ':00', byHour[h], mxh)).join('') + `</div></div>`;
+    }
+  }
+
+  // ── Визиты по месяцам (вся история) ──
+  if (data.visits.length) {
+    const byMonth = {};
+    data.visits.forEach(r => { const m = (r[4]||'').slice(0,7); if (m) byMonth[m] = (byMonth[m]||0) + 1; });
+    const months = Object.keys(byMonth).sort();
+    const maxV = Math.max(...Object.values(byMonth), 1);
+    html += `<div class="chart-card"><h3>Визиты по месяцам</h3><div class="bar-list">` +
+      months.map(m => bar(formatMonth(m), byMonth[m], maxV)).join('') + `</div></div>`;
+  }
+
+  // ── Способ подтверждения + скидки (по периоду) ──
+  if (vScope.length) {
+    const qr = vScope.filter(r => r[7]==='by_qr').length;
+    const ph = vScope.filter(r => r[7]==='by_phone').length;
+    const tot = Math.max(vScope.length, 1);
+    html += `<div class="chart-card"><h3>Способ подтверждения${suf}</h3><div class="bar-list">` +
+      bar('QR-код', qr, tot) + bar('Телефон', ph, tot) + `</div></div>`;
+
+    const byDisc = {};
+    vScope.forEach(r => { const d = r[5]||'0'; byDisc[d] = (byDisc[d]||0)+1; });
+    const discKeys = Object.keys(byDisc).sort((a,b)=>parseInt(a)-parseInt(b));
+    const maxD = Math.max(...Object.values(byDisc), 1);
+    html += `<div class="chart-card"><h3>Распределение скидок${suf}</h3><div class="bar-list">` +
+      discKeys.map(d => bar('Скидка ' + d + '%', byDisc[d], maxD)).join('') + `</div></div>`;
+  }
+
+  // ── Гости по городам (по периоду регистрации) ──
+  if (gScope.length) {
+    const byCity = {};
+    gScope.forEach(r => { const c = r[4]||'Не указан'; byCity[c] = (byCity[c]||0)+1; });
+    const cities = Object.entries(byCity).sort((a,b) => b[1]-a[1]);
+    const maxC = cities[0] ? cities[0][1] : 1;
+    html += `<div class="chart-card"><h3>Гости по городам${suf}</h3><div class="bar-list">` +
+      cities.map(([c,n]) => bar(esc(c), n, maxC)).join('') + `</div></div>`;
+  }
+
+  // ── Регистрации по месяцам (вся история) ──
+  if (data.guests.length) {
+    const byRegMonth = {};
+    data.guests.forEach(r => { const m = (r[7]||'').slice(0,7); if (m) byRegMonth[m] = (byRegMonth[m]||0)+1; });
+    const regMonths = Object.keys(byRegMonth).sort();
+    if (regMonths.length) {
+      const maxR = Math.max(...Object.values(byRegMonth), 1);
+      html += `<div class="chart-card"><h3>Регистрации по месяцам</h3><div class="bar-list">` +
+        regMonths.map(m => bar(formatMonth(m), byRegMonth[m], maxR)).join('') + `</div></div>`;
+    }
+  }
+
+  // ── Опросы: средние оценки + Q3 (по периоду) ──
+  if (sScope.length) {
     const qLabels = ['Ресепшн','Скорость','Раздевалки','Бассейны/сауны','Зоны отдыха','Качество воды','Температура','Общая оценка'];
     const qCols   = [6,7,9,10,11,12,13,14];
     const avgs = qCols.map((col, i) => {
       let sum = 0, cnt = 0;
-      data.surveys.forEach(r => {
-        const v = parseFloat(r[col]);
-        if (!isNaN(v)) { sum += v; cnt++; }
-      });
+      sScope.forEach(r => { const v = parseFloat(r[col]); if (!isNaN(v)) { sum += v; cnt++; } });
       return { label: qLabels[i], avg: cnt ? sum/cnt : null };
     }).filter(x => x.avg !== null);
-
     if (avgs.length) {
-      html += `<div class="chart-card">
-        <h3>Средние оценки (из 5)</h3>
-        <div class="bar-list">` +
+      html += `<div class="chart-card"><h3>Средние оценки (из 5)${suf}</h3><div class="bar-list">` +
         avgs.map(({label, avg}) => {
-          const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg));
           const color = avg >= 4 ? 'var(--green)' : avg >= 3 ? 'var(--yellow)' : 'var(--red)';
           return `
             <div class="bar-item">
@@ -1899,35 +2039,51 @@ function buildAnalytics() {
               <div class="bar-track"><div class="bar-fill" style="width:${(avg/5*100).toFixed(0)}%;background:${color}"></div></div>
               <span class="bar-val" style="color:${color}">${avg.toFixed(1)}</span>
             </div>`;
-        }).join('') +
-        `</div></div>`;
+        }).join('') + `</div></div>`;
     }
-
-    // Q3 — персонал (yes/no)
-    const yesCount = data.surveys.filter(r => r[8]==='Да' || r[8]==='1').length;
-    const noCount = data.surveys.filter(r => r[8]==='Нет' || r[8]==='0').length;
+    const yesCount = sScope.filter(r => r[8]==='Да' || r[8]==='1').length;
+    const noCount = sScope.filter(r => r[8]==='Нет' || r[8]==='0').length;
     const q3total = yesCount + noCount;
     if (q3total > 0) {
-      html += `<div class="chart-card">
-        <h3>Q3: Персонал был вежлив?</h3>
-        <div class="bar-list">
-          <div class="bar-item">
-            <span class="bar-label">Да</span>
-            <div class="bar-track"><div class="bar-fill" style="width:${(yesCount/q3total*100).toFixed(0)}%;background:var(--green)"></div></div>
-            <span class="bar-val" style="color:var(--green)">${yesCount}</span>
-          </div>
-          <div class="bar-item">
-            <span class="bar-label">Нет</span>
-            <div class="bar-track"><div class="bar-fill" style="width:${(noCount/q3total*100).toFixed(0)}%;background:var(--red)"></div></div>
-            <span class="bar-val" style="color:var(--red)">${noCount}</span>
-          </div>
-        </div>
-      </div>`;
+      html += `<div class="chart-card"><h3>Q3: Персонал был вежлив?${suf}</h3><div class="bar-list">` +
+        bar('Да', yesCount, q3total, 'var(--green)') + bar('Нет', noCount, q3total, 'var(--red)') + `</div></div>`;
     }
   }
 
-  if (!html) html = '<div class="no-data" style="grid-column:1/-1">Загрузите CSV-файлы для отображения аналитики</div>';
+  if (!html) html = '<div class="no-data" style="grid-column:1/-1">Нет данных за выбранный период</div>';
   document.getElementById('analytics-grid').innerHTML = html;
+}
+
+// ── Экспорт текущей (отфильтрованной) вкладки в CSV (Excel) ────────────────────
+function downloadCSV(header, rows, filename) {
+  const cell = s => { s = String(s == null ? '' : s); return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = [header.map(cell).join(';')].concat(rows.map(r => r.map(cell).join(';'))).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function exportCurrent(type) {
+  const stamp = new Date().toISOString().slice(0, 10);
+  if (type === 'guests') {
+    downloadCSV(
+      ['ID', 'Имя', 'Телефон', 'Дата рождения', 'Город', 'Дата регистрации', 'Статус'],
+      (lastFiltered.guests || []).map(r => [r[0], r[1], r[2], r[3], r[4], (r[7]||'').slice(0,10), r[8] === 'Да' ? 'Активен' : 'Неактивен']),
+      `loyalty_guests_${stamp}.csv`);
+  } else if (type === 'visits') {
+    downloadCSV(
+      ['ID', 'Имя', 'Телефон', 'Дата визита', 'Скидка %', 'Дети', 'Способ'],
+      (lastFiltered.visits || []).map(r => [r[0], r[2], r[3], (r[4]||'').slice(0,16), r[5], r[8], r[7]==='by_qr'?'QR':r[7]==='by_phone'?'Телефон':'']),
+      `loyalty_visits_${stamp}.csv`);
+  } else if (type === 'surveys') {
+    downloadCSV(
+      ['ID', 'Имя', 'Телефон', 'Дата', 'Общая оценка', 'Отзыв'],
+      (lastFiltered.surveys || []).map(r => [r[0], r[2], r[3], (r[5]||'').slice(0,10), r[14], r[15]]),
+      `loyalty_surveys_${stamp}.csv`);
+  }
 }
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
@@ -2059,6 +2215,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202607011035" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202607011058" data-report="loyalty"></script>
 </body>
 </html>
