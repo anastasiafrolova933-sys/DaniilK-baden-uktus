@@ -414,6 +414,9 @@
     <span id="last-updated">Файлы не загружены</span>
   </div>
   <div class="header-right">
+    <select class="filter" id="global-month-filter" onchange="applyGlobalMonth()" title="Фильтр по месяцу — весь дашборд">
+      <option value="">📅 Все месяцы</option>
+    </select>
     <button class="btn-small" onclick="resetDashboard()">↺ Сбросить</button>
   </div>
 </header>
@@ -457,6 +460,7 @@
       <div class="toolbar">
         <input class="search-box" type="text" placeholder="🔍 Поиск по имени или телефону..." oninput="filterGuests()">
         <select class="filter" id="city-filter" onchange="filterGuests()"><option value="">Все города</option></select>
+        <select class="filter" id="guest-month-filter" onchange="filterGuests()" title="Месяц регистрации"><option value="">Все месяцы</option></select>
         <span class="count-badge" id="guests-count">0 записей</span>
       </div>
       <div class="table-wrap">
@@ -509,6 +513,7 @@
     <div class="panel" id="panel-top">
       <div class="toolbar">
         <span style="font-size:13px;color:var(--text2)">Топ-30 самых частых гостей по количеству визитов.</span>
+        <select class="filter" id="top-month-filter" onchange="renderTop()" title="Месяц визита"><option value="">Все месяцы</option></select>
         <span class="count-badge" id="top-count">0 гостей</span>
       </div>
       <div class="table-wrap">
@@ -580,7 +585,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '01.07.2026 09:32',
+  updatedAt: '01.07.2026 10:32',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -1036,6 +1041,8 @@ window.__preloaded = {
 456,Дарья,89082472611,2000-03-24,Пермь,812113171,HHY2QOWA,2026-07-01 08:51:51,Да
 457,Ромчик,89024006722,2000-10-26,Екатеринбург,5789795245,I737ZSSP,2026-07-01 08:58:42,Да
 458,Илья,89089151521,2000-03-24,Екатеринбург,461052021,J89978M1,2026-07-01 09:20:40,Да
+459,Гладких анна,89935076046,2026-07-01,Екатеринбург,,QX7693K1,2026-07-01 10:19:04,Да
+460,Дарья,89956610504,2002-10-28,Екатеринбург,5489350373,S34WAKM7,2026-07-01 10:30:33,Да
 `,
   visits:  `ID визита,ID гостя,Имя,Телефон,Дата визита,Скидка %,Кассир ID,Примечание,Дети
 3,1,Klimenko Daniil,89047298610,2026-05-25 11:16:08,5,15,,0
@@ -1273,6 +1280,8 @@ window.__preloaded = {
 245,380,Зубаирова Екатерина,89911537310,2026-06-28 13:50:46,5,11,by_phone,0
 246,381,Лукьянчиков Максим,89630510551,2026-06-28 13:51:53,5,11,by_phone,0
 247,382,Константин Жданов,89911336003,2026-06-28 14:20:42,5,9,by_phone,0
+248,15,Кристина Свалова,89022759502,2026-07-01 10:10:54,5,10,by_phone,0
+249,459,Гладких анна,89935076046,2026-07-01 10:19:30,5,12,by_phone,0
 `,
   surveys: `ID,ID гостя,Имя,Телефон,ID визита,Дата,Q1 Ресепшн,Q2 Скорость,Q3 Персонал,Q4 Раздевалки,Q5 Бассейны/сауны,Q6 Зоны отдыха,Q7 Качество воды,Q8 Температура,Q9 Общая оценка,Q10 Отзыв
 1,1,Klimenko Daniil,89047298610,5,2026-05-25 14:33:59,5,4,Да,4,5,5,5,5,5,Круто 
@@ -1407,8 +1416,11 @@ function buildDashboard() {
 
   buildStats();
   buildCityFilter();
+  buildGlobalMonthFilter();
+  buildMonthFilter('guests', 'guest-month-filter', 7);
   buildMonthFilter('visits', 'visit-month-filter', 4);
   buildMonthFilter('surveys', 'survey-month-filter', 5);
+  buildMonthFilter('visits', 'top-month-filter', 4);
   filterGuests();
   filterVisits();
   filterSurveys();
@@ -1430,48 +1442,72 @@ function resetDashboard() {
 }
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
-function buildStats() {
+function buildStats(month) {
   const today = new Date().toISOString().slice(0,10);
   const monthKey = today.slice(0,7);
+  const scoped = !!month;
+
+  // Наборы, суженные под выбранный месяц (для scoped-режима)
+  const visitsIn  = scoped ? data.visits.filter(r => (r[4]||'').slice(0,7) === month) : data.visits;
+  const surveysIn = scoped ? data.surveys.filter(r => (r[5]||'').slice(0,7) === month) : data.surveys;
+  const guestsRegIn = scoped ? data.guests.filter(r => (r[7]||'').slice(0,7) === month) : data.guests;
 
   const totalGuests = data.guests.length;
   const activeGuests = data.guests.filter(r => r[8] === 'Да').length;
-
-  const todayVisits = data.visits.filter(r => r[4] && r[4].slice(0,10) === today).length;
-  const monthVisits = data.visits.filter(r => r[4] && r[4].slice(0,7) === monthKey).length;
   const totalVisits = data.visits.length;
 
-  const qrVisits = data.visits.filter(r => r[7] === 'by_qr').length;
-  const phoneVisits = data.visits.filter(r => r[7] === 'by_phone').length;
+  const qrVisits = visitsIn.filter(r => r[7] === 'by_qr').length;
+  const phoneVisits = visitsIn.filter(r => r[7] === 'by_phone').length;
 
   // Дети: визитов с детьми + общее число детей со скидкой
-  const visitsWithKids = data.visits.filter(r => parseInt(r[8]||0) > 0).length;
-  const totalKids = data.visits.reduce((s, r) => s + parseInt(r[8]||0), 0);
-  const exceptions = data.visits.filter(r => parseInt(r[8]||0) > 1).length;
+  const visitsWithKids = visitsIn.filter(r => parseInt(r[8]||0) > 0).length;
+  const totalKids = visitsIn.reduce((s, r) => s + parseInt(r[8]||0), 0);
+  const exceptions = visitsIn.filter(r => parseInt(r[8]||0) > 1).length;
 
-  const totalSurveys = data.surveys.length;
+  const totalSurveys = surveysIn.length;
 
   // Avg rating
   let ratingSum = 0, ratingCount = 0;
-  data.surveys.forEach(r => {
+  surveysIn.forEach(r => {
     const v = parseFloat(r[14]);
     if (!isNaN(v)) { ratingSum += v; ratingCount++; }
   });
   const avgRating = ratingCount ? (ratingSum / ratingCount).toFixed(1) : '—';
 
-  const cards = [
-    { val: totalGuests, label: 'Гостей всего', cls: '' },
-    { val: activeGuests, label: 'Активных гостей', cls: '' },
-    { val: todayVisits, label: 'Визитов сегодня', cls: 'green' },
-    { val: monthVisits, label: 'Визитов в месяц', cls: 'yellow' },
-    { val: totalVisits, label: 'Визитов всего', cls: '' },
-    { val: qrVisits, label: 'Через QR', cls: '' },
-    { val: phoneVisits, label: 'Через телефон', cls: '' },
-    { val: visitsWithKids, label: '👶 Визитов с детьми', cls: '' },
-    { val: totalKids + (exceptions ? ` (искл: ${exceptions})` : ''), label: 'Детей со скидкой', cls: exceptions > 0 ? 'yellow' : '' },
-    { val: totalSurveys, label: 'Опросов заполнено', cls: '' },
-    { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка', cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
-  ];
+  let cards;
+  if (!scoped) {
+    // Режим «Все месяцы» — поведение прежнее, без изменений
+    const todayVisits = data.visits.filter(r => r[4] && r[4].slice(0,10) === today).length;
+    const monthVisits = data.visits.filter(r => r[4] && r[4].slice(0,7) === monthKey).length;
+    cards = [
+      { val: totalGuests, label: 'Гостей всего', cls: '' },
+      { val: activeGuests, label: 'Активных гостей', cls: '' },
+      { val: todayVisits, label: 'Визитов сегодня', cls: 'green' },
+      { val: monthVisits, label: 'Визитов в месяц', cls: 'yellow' },
+      { val: totalVisits, label: 'Визитов всего', cls: '' },
+      { val: qrVisits, label: 'Через QR', cls: '' },
+      { val: phoneVisits, label: 'Через телефон', cls: '' },
+      { val: visitsWithKids, label: '👶 Визитов с детьми', cls: '' },
+      { val: totalKids + (exceptions ? ` (искл: ${exceptions})` : ''), label: 'Детей со скидкой', cls: exceptions > 0 ? 'yellow' : '' },
+      { val: totalSurveys, label: 'Опросов заполнено', cls: '' },
+      { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка', cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
+    ];
+  } else {
+    // Режим выбранного месяца — цифры пересчитаны под него
+    const mL = formatMonth(month);
+    cards = [
+      { val: totalGuests, label: 'Гостей всего (всё время)', cls: '' },
+      { val: guestsRegIn.length, label: 'Новых гостей · ' + mL, cls: 'green' },
+      { val: visitsIn.length, label: 'Визитов · ' + mL, cls: 'yellow' },
+      { val: totalVisits, label: 'Визитов всего', cls: '' },
+      { val: qrVisits, label: 'Через QR · ' + mL, cls: '' },
+      { val: phoneVisits, label: 'Через телефон · ' + mL, cls: '' },
+      { val: visitsWithKids, label: '👶 Визитов с детьми · ' + mL, cls: '' },
+      { val: totalKids + (exceptions ? ` (искл: ${exceptions})` : ''), label: 'Детей со скидкой · ' + mL, cls: exceptions > 0 ? 'yellow' : '' },
+      { val: totalSurveys, label: 'Опросов · ' + mL, cls: '' },
+      { val: avgRating + (ratingCount ? ' / 5' : ''), label: 'Средняя оценка · ' + mL, cls: avgRating >= 4 ? 'green' : avgRating >= 3 ? 'yellow' : 'red' },
+    ];
+  }
 
   document.getElementById('stats-grid').innerHTML = cards.map(c => `
     <div class="stat-card ${c.cls}">
@@ -1492,7 +1528,38 @@ function buildMonthFilter(type, id, colIdx) {
   const arr = data[type];
   const months = [...new Set(arr.map(r => r[colIdx] ? r[colIdx].slice(0,7) : '').filter(Boolean))].sort().reverse();
   const sel = document.getElementById(id);
-  sel.innerHTML = '<option value="">Все месяцы</option>' + months.map(m => `<option>${m}</option>`).join('');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Все месяцы</option>' + months.map(m => `<option value="${m}">${formatMonth(m)}</option>`).join('');
+}
+
+// ── Глобальный фильтр по месяцу (шапка) ───────────────────────────────────────
+// Собирает объединение месяцев по всем источникам: регистрации, визиты, опросы.
+function buildGlobalMonthFilter() {
+  const set = new Set();
+  data.guests.forEach(r  => { const m=(r[7]||'').slice(0,7); if(m) set.add(m); });
+  data.visits.forEach(r  => { const m=(r[4]||'').slice(0,7); if(m) set.add(m); });
+  data.surveys.forEach(r => { const m=(r[5]||'').slice(0,7); if(m) set.add(m); });
+  const months = [...set].sort().reverse();
+  const sel = document.getElementById('global-month-filter');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">📅 Все месяцы</option>' + months.map(m => `<option value="${m}">${formatMonth(m)}</option>`).join('');
+}
+
+// Применяет выбранный в шапке месяц ко всему дашборду:
+// синхронизирует локальные селекторы вкладок и пересчитывает карточки.
+function applyGlobalMonth() {
+  const sel = document.getElementById('global-month-filter');
+  const m = sel ? sel.value : '';
+  ['guest-month-filter','visit-month-filter','survey-month-filter','top-month-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = m;
+  });
+  buildStats(m);
+  pageState.guests = 1; pageState.visits = 1; pageState.surveys = 1;
+  filterGuests();
+  filterVisits();
+  filterSurveys();
+  renderTop();
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -1509,14 +1576,17 @@ function showTab(name) {
 // ── Top-30 гостей по количеству визитов ───────────────────────────────────────
 function renderTop() {
   const tbody = document.getElementById('top-body');
-  if (!data.visits || !data.visits.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="no-data">Нет данных о визитах</td></tr>';
+  const monthEl = document.getElementById('top-month-filter');
+  const month = monthEl ? monthEl.value : '';
+  const visitsScope = month ? data.visits.filter(v => (v[4]||'').slice(0,7) === month) : data.visits;
+  if (!visitsScope || !visitsScope.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="no-data">Нет данных о визитах' + (month ? ' за ' + formatMonth(month) : '') + '</td></tr>';
     document.getElementById('top-count').textContent = '0 гостей';
     return;
   }
   const norm = p => String(p||'').replace(/\D/g,'');
   const agg = {};
-  for (const v of data.visits) {
+  for (const v of visitsScope) {
     const phone = norm(v[3]);
     if (!phone) continue;
     const date = (v[4]||'').slice(0,10);
@@ -1533,7 +1603,7 @@ function renderTop() {
   }
   const list = Object.values(agg).sort((a,b) => b.count - a.count || (b.last||'').localeCompare(a.last||''));
   const top = list.slice(0, 30);
-  document.getElementById('top-count').textContent = list.length + ' гостей в базе · показано топ-' + top.length;
+  document.getElementById('top-count').textContent = (month ? formatMonth(month) + ' · ' : '') + list.length + ' гостей · топ-' + top.length;
   const today = new Date();
   const fmtDate = s => s ? s.split('-').reverse().join('.') : '—';
   const daysFrom = s => {
@@ -1600,11 +1670,13 @@ function sortTable(type, col) {
 function filterGuests() {
   const q = document.querySelector('#panel-guests .search-box').value.toLowerCase();
   const city = document.getElementById('city-filter').value;
+  const month = document.getElementById('guest-month-filter').value;
   const filtered = data.guests.filter(r => {
     const text = (r[1]||'') + (r[2]||'');
     const matchQ = !q || text.toLowerCase().includes(q);
     const matchCity = !city || r[4] === city;
-    return matchQ && matchCity;
+    const matchMonth = !month || (r[7]||'').slice(0,7) === month;
+    return matchQ && matchCity && matchMonth;
   });
   document.getElementById('guests-count').textContent = filtered.length + ' записей';
   renderPaged('guests', filtered, renderGuestRow, 'guests-body', 'guests-pages');
@@ -1987,6 +2059,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202607010932" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202607011032" data-report="loyalty"></script>
 </body>
 </html>
