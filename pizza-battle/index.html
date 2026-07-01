@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Термальный батл — Baden Uktus</title>
+<meta name="description" content="Термальный батл — чемпионат по скоростному поеданию пиццы в Baden Uktus. Главный приз — год пиццы. Регистрация открыта.">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg2:#f5f5f7;
+    --ink:#1d1d1f;
+    --sub:#6e6e73;
+    --line:#e7e7ec;
+    --gold:#b0873f;
+    --green:#1a7f4b;
+    --red:#d0402c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.47;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 22px;}
+  .narrow{max-width:520px;margin-left:auto;margin-right:auto;}
+
+  /* Reveal */
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:1px solid rgba(0,0,0,.05);}
+  nav .in{max-width:680px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:10px;}
+  nav img{height:22px;opacity:.9;}
+  nav .brand{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+  nav a.link{margin-left:auto;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;
+    background:var(--ink);color:#fff;padding:7px 15px;border-radius:980px;transition:opacity .2s;}
+  nav a.link:hover{opacity:.85;}
+
+  /* Buttons */
+  .btn{display:inline-block;border:none;cursor:pointer;font-family:inherit;font-size:17px;font-weight:500;
+    letter-spacing:-.01em;padding:14px 30px;border-radius:980px;transition:opacity .2s,transform .1s;text-decoration:none;}
+  .btn:active{transform:scale(.98);}
+  .btn-dark{background:var(--ink);color:#fff;}
+  .btn-dark:hover{opacity:.88;}
+  .btn-dark:disabled{background:#c7c7cc;color:#fff;cursor:not-allowed;}
+  .btn-plain{background:transparent;color:var(--ink);padding:14px 8px;}
+  .btn-plain:hover{color:var(--gold);}
+
+  /* Hero */
+  .hero{text-align:center;padding:78px 22px 60px;}
+  .hero .mark{font-size:60px;line-height:1;margin-bottom:26px;display:inline-block;}
+  .hero h1{font-size:clamp(46px,12vw,76px);font-weight:700;letter-spacing:-.035em;line-height:.98;}
+  .hero .tagline{font-size:clamp(20px,5vw,26px);font-weight:500;color:var(--sub);letter-spacing:-.02em;margin-top:16px;}
+  .hero .meta{font-size:15px;color:var(--sub);margin-top:20px;letter-spacing:-.01em;}
+  .hero .cta{margin-top:32px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;}
+
+  /* Statement */
+  .statement{text-align:center;padding:70px 22px;background:var(--bg2);}
+  .statement h2{font-size:clamp(34px,8vw,52px);font-weight:700;letter-spacing:-.03em;line-height:1.04;}
+  .statement h2 .g{color:var(--gold);}
+  .statement p{font-size:19px;color:var(--sub);margin-top:16px;letter-spacing:-.01em;}
+
+  /* Generic section */
+  section{padding:64px 0;}
+  .kicker{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-align:center;}
+  .h-sec{font-size:clamp(30px,7vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1.05;text-align:center;margin-top:10px;}
+  .sub-sec{font-size:18px;color:var(--sub);text-align:center;margin-top:12px;letter-spacing:-.01em;}
+
+  /* Prizes */
+  .prizes{margin-top:40px;display:flex;flex-direction:column;gap:16px;}
+  .prize{background:var(--bg2);border-radius:24px;padding:34px 28px;text-align:center;}
+  .prize.first{background:linear-gradient(180deg,#faf6ee,#f3ead6);}
+  .prize .lab{font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--sub);}
+  .prize.first .lab{color:var(--gold);}
+  .prize .big{font-size:84px;font-weight:700;letter-spacing:-.04em;line-height:1;margin:8px 0 2px;}
+  .prize .big small{font-size:26px;font-weight:600;color:var(--sub);letter-spacing:-.02em;}
+  .prize .name{font-size:22px;font-weight:600;letter-spacing:-.02em;}
+  .prize .desc{font-size:16px;color:var(--sub);margin-top:8px;}
+  .fineprint{font-size:13px;color:var(--sub);text-align:center;margin-top:22px;line-height:1.5;}
+
+  /* Steps */
+  .steps{margin-top:44px;display:flex;flex-direction:column;gap:2px;}
+  .step{padding:26px 4px;border-top:1px solid var(--line);display:flex;gap:20px;align-items:flex-start;}
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step .no{font-size:19px;font-weight:600;color:var(--gold);min-width:30px;letter-spacing:-.01em;}
+  .step h3{font-size:21px;font-weight:600;letter-spacing:-.02em;}
+  .step p{font-size:16px;color:var(--sub);margin-top:5px;}
+
+  /* Timeline */
+  .timeline{margin-top:44px;position:relative;padding-left:26px;}
+  .timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:10px;width:1.5px;background:var(--line);}
+  .tl{position:relative;padding-bottom:26px;}
+  .tl:last-child{padding-bottom:0;}
+  .tl .dot{position:absolute;left:-24px;top:5px;width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid #c7c7cc;}
+  .tl.final .dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 5px rgba(176,135,63,.15);}
+  .tl .d-head{display:flex;align-items:baseline;gap:12px;justify-content:space-between;}
+  .tl .d-name{font-size:19px;font-weight:600;letter-spacing:-.02em;}
+  .tl.final .d-name{color:var(--gold);}
+  .tl .d-date{font-size:16px;font-weight:600;color:var(--sub);white-space:nowrap;}
+  .tl .d-desc{font-size:15px;color:var(--sub);margin-top:5px;max-width:440px;}
+
+  /* Facts */
+  .facts{margin-top:40px;display:flex;flex-direction:column;gap:2px;}
+  .factrow{padding:20px 4px;border-top:1px solid var(--line);font-size:16px;color:var(--ink);}
+  .factrow:last-child{border-bottom:1px solid var(--line);}
+  .factrow b{font-weight:600;}
+  .factrow .ft{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+
+  /* Form */
+  .form-sec{background:var(--bg2);}
+  .fcard{background:#fff;border-radius:26px;padding:34px 26px;margin-top:40px;}
+  .fg{margin-bottom:20px;}
+  .fl{font-size:14px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px;display:block;}
+  .req{color:var(--gold);}
+  .fi{width:100%;padding:15px 16px;border:1px solid transparent;border-radius:14px;background:var(--bg2);
+    font-size:17px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .2s,background .2s,box-shadow .2s;}
+  .fi:focus{background:#fff;border-color:var(--ink);box-shadow:0 0 0 4px rgba(29,29,31,.06);}
+  .fi::placeholder{color:#a0a0a8;}
+
+  .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .dopt{border:1px solid var(--line);border-radius:14px;padding:15px 14px;background:#fff;cursor:pointer;
+    text-align:left;font-family:inherit;transition:border-color .18s,background .18s;position:relative;}
+  .dopt:active{transform:scale(.99);}
+  .dopt.sel{border-color:var(--ink);background:#fafafa;}
+  .dopt .dd{font-size:18px;font-weight:600;letter-spacing:-.02em;}
+  .dopt .dw{font-size:13px;color:var(--sub);margin-top:2px;}
+  .dopt .dt{font-size:12px;color:var(--sub);margin-top:6px;}
+  .dopt .dc{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;transition:all .18s;}
+  .dopt.sel .dc{background:var(--ink);border-color:var(--ink);}
+
+  .chk{display:flex;gap:13px;align-items:flex-start;padding:16px 2px;cursor:pointer;}
+  .chk input{flex-shrink:0;width:22px;height:22px;margin-top:1px;accent-color:var(--ink);cursor:pointer;}
+  .chk .ct{font-size:14px;color:var(--sub);line-height:1.5;}
+  .chk .ct.age{font-size:15px;color:var(--ink);font-weight:500;}
+  .chk .ct a{color:var(--gold);text-decoration:underline;}
+  .divider{height:1px;background:var(--line);margin:6px 0;}
+
+  .ferr{color:var(--red);font-size:14px;text-align:center;min-height:18px;margin:6px 0 12px;}
+  .fsubmit{width:100%;padding:17px;border-radius:980px;border:none;background:var(--ink);color:#fff;
+    font-family:inherit;font-size:17px;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:opacity .2s;}
+  .fsubmit:not(:disabled):hover{opacity:.88;}
+  .fsubmit:disabled{background:#c7c7cc;cursor:not-allowed;}
+  .loader{display:inline-block;width:17px;height:17px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;
+    border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .success{text-align:center;padding:24px 6px;}
+  .success .em{font-size:64px;}
+  .success h2{font-size:34px;font-weight:700;letter-spacing:-.03em;margin-top:8px;}
+  .success p{font-size:17px;color:var(--sub);margin-top:10px;}
+  .success .det{font-size:15px;font-weight:600;color:var(--ink);margin-top:16px;}
+  .hidden{display:none!important;}
+
+  footer{text-align:center;font-size:12px;color:var(--sub);padding:40px 22px 48px;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="in">
+    <img src="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/logo-dark.png" alt="Baden">
+    <span class="brand">Термальный батл</span>
+    <a class="link" href="#reg">Заявиться</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="mark">🍕</span>
+  <h1>Термальный батл.</h1>
+  <div class="tagline">Чемпионат по скоростному<br>поеданию пиццы.</div>
+  <div class="meta">Отборы с 15 июля&nbsp;&nbsp;·&nbsp;&nbsp;Финал 26 августа</div>
+  <div class="cta">
+    <a class="btn btn-dark" href="#reg">Заявиться</a>
+    <a class="btn btn-plain" href="#prizes">Подробнее&nbsp;›</a>
+  </div>
+</header>
+
+<!-- STATEMENT -->
+<div class="statement">
+  <h2>Год пиццы <span class="g">победителю.</span></h2>
+  <p>Одна пицца каждую неделю — все 52 недели.</p>
+</div>
+
+<!-- PRIZES -->
+<section id="prizes" class="wrap rv">
+  <div class="kicker">Призовой фонд</div>
+  <h2 class="h-sec">За что играем</h2>
+  <div class="prizes narrow">
+    <div class="prize first">
+      <div class="lab">1 место</div>
+      <div class="big">52<small> пиццы</small></div>
+      <div class="name">Годовой запас</div>
+      <div class="desc">По одной пицце в неделю целый год.</div>
+    </div>
+    <div class="prize">
+      <div class="lab">2 место</div>
+      <div class="big">26<small> пицц</small></div>
+      <div class="name">Полугодовой запас</div>
+      <div class="desc">По одной пицце в неделю полгода.</div>
+    </div>
+  </div>
+  <p class="fineprint narrow">Призы выдаются именными купонами со сроком действия 1 год и 6 месяцев соответственно.</p>
+</section>
+
+<!-- HOW -->
+<section class="wrap rv">
+  <div class="kicker">Формат</div>
+  <h2 class="h-sec">Три этапа забега</h2>
+  <p class="sub-sec narrow">Каждый игровой день — с 14:00 до 16:00.</p>
+  <div class="steps narrow">
+    <div class="step"><div class="no">01</div><div><h3>Разминка</h3><p>Лёгкие конкурсы на скорость реакции для настроя.</p></div></div>
+    <div class="step"><div class="no">02</div><div><h3>Эстафета</h3><p>Командный этап — передача куска пиццы через препятствия.</p></div></div>
+    <div class="step"><div class="no">03</div><div><h3>Скоростное поедание</h3><p>Главный забег: кто быстрее съест порцию — 30 см, 8 кусков. Побеждает лучшее суммарное время.</p></div></div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="wrap rv">
+  <div class="kicker">Путь к финалу</div>
+  <h2 class="h-sec">Календарь турнира</h2>
+  <div class="timeline narrow">
+    <div class="tl"><span class="dot"></span>
+      <div class="d-head"><span class="d-name">Отборочные этапы</span><span class="d-date">15.07 – 05.08</span></div>
+      <div class="d-desc">Четыре дня (15.07 · 22.07 · 29.07 · 05.08). Две группы по 5 человек, из каждой выходит победитель — восемь финалистов отборов.</div>
+    </div>
+    <div class="tl"><span class="dot"></span>
+      <div class="d-head"><span class="d-name">Четвертьфинал</span><span class="d-date">12.08</span></div>
+      <div class="d-desc">Восемь победителей в одном забеге — четыре лучших.</div>
+    </div>
+    <div class="tl"><span class="dot"></span>
+      <div class="d-head"><span class="d-name">Полуфинал</span><span class="d-date">19.08</span></div>
+      <div class="d-desc">Четверо участников — двое финалистов.</div>
+    </div>
+    <div class="tl final"><span class="dot"></span>
+      <div class="d-head"><span class="d-name">Финал</span><span class="d-date">26.08</span></div>
+      <div class="d-desc">Двое сильнейших определяют чемпиона и призёра.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONDITIONS -->
+<section class="wrap rv">
+  <div class="kicker">Важно знать</div>
+  <h2 class="h-sec">Условия</h2>
+  <div class="facts narrow">
+    <div class="factrow"><div class="ft">Возраст</div>Только для совершеннолетних <b>(18+)</b> без медицинских противопоказаний к употреблению пиццы в больших объёмах.</div>
+    <div class="factrow"><div class="ft">Стоимость</div>Для участников — <b>бесплатно</b>. Группа поддержки оплачивает вход по тарифу дня.</div>
+    <div class="factrow"><div class="ft">Состав</div>Пицца стандартная, без копчёностей, орехов и других аллергенов. При аллергии — предупредите организаторов.</div>
+    <div class="factrow"><div class="ft">Отбор</div>Регистрация свободная. Из всех заявок мы случайно выберем участников и свяжемся по телефону.</div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section id="reg" class="form-sec rv">
+  <div class="wrap">
+    <div class="kicker">Поехали</div>
+    <h2 class="h-sec">Заявка на участие</h2>
+    <div class="fcard narrow">
+      <div id="form-body">
+        <div class="fg">
+          <label class="fl">Имя и фамилия <span class="req">*</span></label>
+          <input class="fi" id="f-name" type="text" placeholder="Иван Иванов" autocomplete="name">
+        </div>
+        <div class="fg">
+          <label class="fl">Телефон <span class="req">*</span></label>
+          <input class="fi" id="f-phone" type="tel" inputmode="tel" placeholder="+7 (999) 000-00-00" autocomplete="tel">
+        </div>
+        <div class="fg">
+          <label class="fl">Город</label>
+          <input class="fi" id="f-city" type="text" placeholder="Екатеринбург" autocomplete="address-level2">
+        </div>
+        <div class="fg">
+          <label class="fl">Дата отборочного этапа <span class="req">*</span></label>
+          <div class="dgrid" id="date-grid"></div>
+        </div>
+
+        <label class="chk">
+          <input type="checkbox" id="f-age">
+          <span class="ct age">Мне есть 18 лет, противопоказаний к участию нет</span>
+        </label>
+        <div class="divider"></div>
+        <label class="chk">
+          <input type="checkbox" id="f-consent">
+          <span class="ct">Я ознакомлен(а) и согласен(на) с
+            <a href="https://baden-uktus.ru/politika-konfidencialnosti-i-obrabotki-pd.-red.-1.0-1.docx" target="_blank" rel="noopener">Политикой конфиденциальности</a>
+            и даю согласие на обработку моих персональных данных ООО «УК «БАДЕН ГРУПП» в целях участия в турнире «Термальный батл».</span>
+        </label>
+
+        <div class="ferr" id="f-error"></div>
+        <button class="fsubmit" id="f-submit" disabled>Отправить заявку</button>
+      </div>
+
+      <div id="form-success" class="hidden">
+        <div class="success">
+          <div class="em">🍕</div>
+          <h2>Готово</h2>
+          <p>Заявка принята. Если вас выберут, мы позвоним по указанному телефону.</p>
+          <div class="det" id="success-detail"></div>
+        </div>
+        <button class="fsubmit" style="margin-top:8px" onclick="location.reload()">Заявить ещё участника</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  ООО «УК «БАДЕН ГРУПП» · Baden Uktus · Екатеринбург, ул. Зимняя, 23<br>
+  «Термальный батл» — чемпионат по скоростному поеданию пиццы
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  Заявки уходят в существующую таблицу такси/развоза («Заявки портала»),
+//  строки помечаются «🍕 ТУРНИР» в колонке «Подразделение».
+//  Вставьте сюда SHUTTLE_WEBHOOK_URL (из Netlify env или Apps Script деплоя).
+//  Пока не вставлен — форма покажет успех, но данные НЕ сохранятся (демо).
+const WEBHOOK_URL = "PASTE_SHUTTLE_WEBHOOK_URL_HERE";
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DATES = [
+  { id:"2026-07-15", label:"15 июля" },
+  { id:"2026-07-22", label:"22 июля" },
+  { id:"2026-07-29", label:"29 июля" },
+  { id:"2026-08-05", label:"5 августа" },
+];
+let selectedDate = "";
+
+function wd(iso){
+  const n=["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
+  return n[new Date(iso+"T12:00:00").getDay()];
+}
+document.getElementById("date-grid").innerHTML = DATES.map(d=>`
+  <button type="button" class="dopt" data-date="${d.id}">
+    <span class="dc">✓</span>
+    <div class="dd">${d.label}</div>
+    <div class="dw">${wd(d.id)}</div>
+    <div class="dt">14:00–16:00</div>
+  </button>`).join("");
+document.querySelectorAll(".dopt").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".dopt").forEach(x=>x.classList.remove("sel"));
+  b.classList.add("sel"); selectedDate=b.dataset.date; upd();
+}));
+
+const phoneEl=document.getElementById("f-phone");
+phoneEl.addEventListener("input",()=>{
+  let d=phoneEl.value.replace(/\D/g,"");
+  if(d.startsWith("8")) d="7"+d.slice(1);
+  if(!d.startsWith("7")) d="7"+d;
+  d=d.slice(0,11);
+  let o="+7";
+  if(d.length>1)o+=" ("+d.slice(1,4);
+  if(d.length>=4)o+=") "+d.slice(4,7);
+  if(d.length>=7)o+="-"+d.slice(7,9);
+  if(d.length>=9)o+="-"+d.slice(9,11);
+  phoneEl.value=o; upd();
+});
+
+function ready(){
+  const name=document.getElementById("f-name").value.trim();
+  const phoneOk=phoneEl.value.replace(/\D/g,"").length===11;
+  return name && phoneOk && selectedDate &&
+    document.getElementById("f-age").checked && document.getElementById("f-consent").checked;
+}
+function upd(){ document.getElementById("f-submit").disabled=!ready(); }
+document.getElementById("f-name").addEventListener("input",upd);
+document.getElementById("f-age").addEventListener("change",upd);
+document.getElementById("f-consent").addEventListener("change",upd);
+
+document.getElementById("f-submit").addEventListener("click",async()=>{
+  const err=document.getElementById("f-error"); err.textContent="";
+  const name=document.getElementById("f-name").value.trim();
+  const phone=phoneEl.value.trim();
+  const city=document.getElementById("f-city").value.trim();
+  if(!name){err.textContent="Введите имя и фамилию";return;}
+  if(phone.replace(/\D/g,"").length!==11){err.textContent="Введите корректный телефон";return;}
+  if(!selectedDate){err.textContent="Выберите дату этапа";return;}
+  if(!document.getElementById("f-age").checked){err.textContent="Подтвердите, что вам есть 18 лет";return;}
+  if(!document.getElementById("f-consent").checked){err.textContent="Подтвердите согласие с Политикой конфиденциальности";return;}
+
+  const dateLabel=(DATES.find(d=>d.id===selectedDate)||{}).label||selectedDate;
+  // Маппинг в колонки существующей таблицы «Заявки портала»
+  const payload={
+    fio:name,
+    department:"🍕 ТУРНИР",
+    position:"",
+    tripDate:selectedDate,
+    shiftEnd:"",
+    address:city,
+    phone:phone,
+    comment:"Термальный батл · этап "+dateLabel+" · 18+: да · согласие ПДн: да",
+  };
+  const btn=document.getElementById("f-submit");
+  btn.disabled=true; btn.innerHTML='<span class="loader"></span>Отправляем...';
+  try{
+    if(WEBHOOK_URL && !WEBHOOK_URL.startsWith("PASTE_")){
+      await fetch(WEBHOOK_URL,{method:"POST",mode:"no-cors",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+    }else{
+      await new Promise(r=>setTimeout(r,500));
+      console.warn("[pizza-battle] WEBHOOK_URL не настроен — данные не сохранены (демо).");
+    }
+    document.getElementById("success-detail").textContent=name+" · "+dateLabel;
+    document.getElementById("form-body").classList.add("hidden");
+    document.getElementById("form-success").classList.remove("hidden");
+    document.getElementById("reg").scrollIntoView({behavior:"smooth"});
+  }catch(e){
+    err.textContent="Не удалось отправить. Проверьте интернет и попробуйте ещё раз.";
+    btn.disabled=false; btn.textContent="Отправить заявку";
+  }
+});
+
+// Reveal on scroll
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
