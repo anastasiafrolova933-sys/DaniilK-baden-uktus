@@ -616,7 +616,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '01.07.2026 12:32',
+  updatedAt: '01.07.2026 12:51',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -1092,6 +1092,7 @@ window.__preloaded = {
 476,Василина,89326105320,2008-04-01,Екатеринбург,1478370545,0DMF5EOH,2026-07-01 12:11:18,Да
 477,Полина Шмотьева,89826005443,2008-03-05,Екатеринбург,1290936309,6A0V4DQ0,2026-07-01 12:13:02,Да
 478,София Валеева,89024438010,2008-06-30,Екатеринбург,1297728045,KTTQI2N3,2026-07-01 12:15:10,Да
+479,Хватков Григорий,89506482571,,Екатеринбург,,K6YDXDKG,2026-07-01 12:51:40,Да
 `,
   visits:  `ID визита,ID гостя,Имя,Телефон,Дата визита,Скидка %,Кассир ID,Примечание,Дети
 3,1,Klimenko Daniil,89047298610,2026-05-25 11:16:08,5,15,,0
@@ -1609,9 +1610,9 @@ function buildStats() {
 
 // ── City filter ───────────────────────────────────────────────────────────────
 function buildCityFilter() {
-  const cities = [...new Set(data.guests.map(r => r[4]).filter(Boolean))].sort();
+  const cities = [...new Set(data.guests.map(r => normCity(r[4])).filter(c => c && c !== 'Не указан'))].sort((a,b)=>a.localeCompare(b,'ru'));
   const sel = document.getElementById('city-filter');
-  sel.innerHTML = '<option value="">Все города</option>' + cities.map(c => `<option>${c}</option>`).join('');
+  sel.innerHTML = '<option value="">Все города</option>' + cities.map(c => `<option>${esc(c)}</option>`).join('');
 }
 
 function buildMonthFilter(type, id, colIdx) {
@@ -1758,7 +1759,7 @@ function renderTop() {
   };
   tbody.innerHTML = top.map((g, i) => {
     const guest = guestByPhone[g.phone];
-    const city = guest && guest[4] ? esc(guest[4]) : '—';
+    const city = guest && guest[4] && guest[4].trim() ? esc(normCity(guest[4])) : '—';
     const regDate = guest && guest[7] ? guest[7].slice(0,10) : '';
     const medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1);
     return `<tr>
@@ -1812,7 +1813,7 @@ function filterGuests() {
   const filtered = data.guests.filter(r => {
     const text = (r[1]||'') + (r[2]||'');
     const matchQ = !q || text.toLowerCase().includes(q);
-    const matchCity = !city || r[4] === city;
+    const matchCity = !city || normCity(r[4]) === city;
     const matchMonth = !month || (r[7]||'').slice(0,7) === month;
     const matchRange = inRange(r[7]);
     return matchQ && matchCity && matchMonth && matchRange;
@@ -1829,7 +1830,7 @@ function renderGuestRow(r) {
     <td><strong>${esc(r[1]||'')}</strong></td>
     <td>${esc(r[2]||'')}</td>
     <td>${r[3]||'—'}</td>
-    <td>${esc(r[4]||'—')}</td>
+    <td>${(r[4] && r[4].trim()) ? esc(normCity(r[4])) : '—'}</td>
     <td>${(r[7]||'').slice(0,10)}</td>
     <td><span class="badge ${active ? 'badge-green' : 'badge-red'}">${active ? 'Активен' : 'Неактивен'}</span></td>
   </tr>`;
@@ -2029,7 +2030,7 @@ function buildAnalytics() {
   // ── Гости по городам (по периоду регистрации) ──
   if (gScope.length) {
     const byCity = {};
-    gScope.forEach(r => { const c = r[4]||'Не указан'; byCity[c] = (byCity[c]||0)+1; });
+    gScope.forEach(r => { const c = normCity(r[4]); byCity[c] = (byCity[c]||0)+1; });
     const cities = Object.entries(byCity).sort((a,b) => b[1]-a[1]);
     const maxC = cities[0] ? cities[0][1] : 1;
     html += `<div class="chart-card"><h3>Гости по городам${suf}</h3><div class="bar-list">` +
@@ -2251,6 +2252,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202607011232" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202607011251" data-report="loyalty"></script>
 </body>
 </html>
