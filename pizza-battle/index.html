@@ -54,7 +54,9 @@
   /* Hero */
   .hero{text-align:center;padding:78px 22px 60px;}
   .hero .mark{font-size:60px;line-height:1;margin-bottom:26px;display:inline-block;}
-  .hero .mark-logo{height:66px;width:auto;margin-bottom:28px;display:inline-block;}
+  .hero .mark-logo{height:92px;width:auto;margin-bottom:30px;display:inline-block;}
+  .deadline{display:inline-flex;align-items:center;gap:7px;background:#fbf1dd;border:1px solid #ecd39a;
+    color:#8a5a12;font-size:15px;font-weight:600;letter-spacing:-.01em;padding:10px 18px;border-radius:980px;}
   .hero h1{font-size:clamp(46px,12vw,76px);font-weight:700;letter-spacing:-.035em;line-height:.98;}
   .hero .tagline{font-size:clamp(20px,5vw,26px);font-weight:500;color:var(--sub);letter-spacing:-.02em;margin-top:16px;}
   .hero .meta{font-size:15px;color:var(--sub);margin-top:20px;letter-spacing:-.01em;}
@@ -177,6 +179,7 @@
   <h1>Термальный батл.</h1>
   <div class="tagline">Чемпионат по скоростному<br>поеданию пиццы.</div>
   <div class="meta">Отборы с 15 июля&nbsp;&nbsp;·&nbsp;&nbsp;Финал 26 августа</div>
+  <div style="margin-top:22px"><span class="deadline">⏳ Регистрация открыта до 13 июля включительно</span></div>
   <div class="cta">
     <a class="btn btn-dark" href="#reg">Зарегистрироваться</a>
     <a class="btn btn-plain" href="#prizes">Подробнее&nbsp;›</a>
@@ -263,6 +266,7 @@
   <div class="wrap">
     <div class="kicker">Поехали</div>
     <h2 class="h-sec">Заявка на участие</h2>
+    <div style="text-align:center;margin-top:16px"><span class="deadline">⏳ Приём заявок — до 13 июля включительно</span></div>
     <div class="fcard narrow">
       <div id="form-body">
         <div class="fg">
@@ -322,7 +326,7 @@
 //  строки помечаются «🍕 ТУРНИР» в колонке «Подразделение».
 //  Вставьте сюда SHUTTLE_WEBHOOK_URL (из Netlify env или Apps Script деплоя).
 //  Пока не вставлен — форма покажет успех, но данные НЕ сохранятся (демо).
-const WEBHOOK_URL = "PASTE_SHUTTLE_WEBHOOK_URL_HERE";
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwhVmYOpnAl-4vzJtZXuuMgepCOm0XuxM5O4XuK033Jl2b1DllbdVT_ZeA_SpcMBT4bDw/exec";
 // ═══════════════════════════════════════════════════════════════════════════
 
 const DATES = [
