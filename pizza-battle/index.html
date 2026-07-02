@@ -57,6 +57,11 @@
   .hero .mark-logo{height:92px;width:auto;margin-bottom:30px;display:inline-block;}
   .deadline{display:inline-flex;align-items:center;gap:7px;background:#fbf1dd;border:1px solid #ecd39a;
     color:#8a5a12;font-size:15px;font-weight:600;letter-spacing:-.01em;padding:10px 18px;border-radius:980px;}
+  .process{margin:20px auto 0;display:flex;flex-direction:column;gap:2px;}
+  .pstep{display:flex;gap:16px;align-items:baseline;padding:13px 4px;border-top:1px solid var(--line);}
+  .pstep:last-child{border-bottom:1px solid var(--line);}
+  .pstep .pd{font-size:15px;font-weight:700;color:var(--gold);min-width:76px;letter-spacing:-.01em;}
+  .pstep .pt{font-size:16px;color:var(--ink);letter-spacing:-.01em;}
   .hero h1{font-size:clamp(46px,12vw,76px);font-weight:700;letter-spacing:-.035em;line-height:.98;}
   .hero .tagline{font-size:clamp(20px,5vw,26px);font-weight:500;color:var(--sub);letter-spacing:-.02em;margin-top:16px;}
   .hero .meta{font-size:15px;color:var(--sub);margin-top:20px;letter-spacing:-.01em;}
@@ -179,7 +184,7 @@
   <h1>Термальный батл.</h1>
   <div class="tagline">Чемпионат по скоростному<br>поеданию пиццы.</div>
   <div class="meta">Отборы с 15 июля&nbsp;&nbsp;·&nbsp;&nbsp;Финал 26 августа</div>
-  <div style="margin-top:22px"><span class="deadline">⏳ Регистрация открыта до 13 июля включительно</span></div>
+  <div style="margin-top:22px"><span class="deadline">⏳ Регистрация открыта до 10 июля включительно</span></div>
   <div class="cta">
     <a class="btn btn-dark" href="#reg">Зарегистрироваться</a>
     <a class="btn btn-plain" href="#prizes">Подробнее&nbsp;›</a>
@@ -266,7 +271,11 @@
   <div class="wrap">
     <div class="kicker">Поехали</div>
     <h2 class="h-sec">Заявка на участие</h2>
-    <div style="text-align:center;margin-top:16px"><span class="deadline">⏳ Приём заявок — до 13 июля включительно</span></div>
+    <div class="process narrow">
+      <div class="pstep"><span class="pd">до 10.07</span><span class="pt">Регистрация участников (включительно)</span></div>
+      <div class="pstep"><span class="pd">до 12.07</span><span class="pt">Случайный выбор участников из всех заявок</span></div>
+      <div class="pstep"><span class="pd">13.07</span><span class="pt">Уведомление выбранных — звонок по телефону</span></div>
+    </div>
     <div class="fcard narrow">
       <div id="form-body">
         <div class="fg">
