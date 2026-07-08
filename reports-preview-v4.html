@@ -1605,8 +1605,8 @@ vec3 modeHalo(vec2 uv, vec2 asp, float t){
   float mist = fbm(d * 3.0 + t * 0.01) * exp(-r * 2.2) * 0.12;
   if (uLight > 0.5){
     vec3 c = vec3(0.969, 0.961, 0.941);
-    c -= vec3(0.604, 0.474, 0.282) * ring * 0.35;
-    return c - mist * 0.3;
+    c = mix(c, vec3(0.769, 0.647, 0.478), ring * 0.5 + mist * 0.6);
+    return c;
   }
   vec3 c = vec3(0.043, 0.040, 0.037);
   return c + vec3(0.784, 0.663, 0.494) * (ring * 0.55 + core + mist);
@@ -1682,29 +1682,60 @@ void main(){
     { id: 6, name: 'Кинцуги', hint: 'Золотые прожилки на тёмном камне — искусство трещин' },
     { id: 7, name: 'Ореол',   hint: 'Дышащее золотое кольцо-солнце за логотипом' }
   ];
-  var saved = parseInt(localStorage.getItem('bbt_bg_v4') || '0', 10);
-  uniforms.uMode.value = (saved >= 0 && saved <= 7) ? saved : 0;
+  var saved = parseInt(localStorage.getItem('bbt_bg_v4') || '7', 10);   /* дефолт — Ореол */
+  uniforms.uMode.value = (saved >= 0 && saved <= 7) ? saved : 7;
 
   var css = document.createElement('style');
   css.textContent = [
-    '#bg-switch{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;gap:4px;align-items:center;flex-wrap:wrap;',
-    ' max-width:calc(100vw - 32px);padding:5px;border-radius:22px;background:rgba(18,16,14,0.72);border:1px solid rgba(200,169,126,0.25);',
-    ' backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,0.35);}',
-    '[data-theme="light"] #bg-switch{background:rgba(255,253,248,0.8);border-color:rgba(154,121,72,0.3);}',
-    '#bg-switch .bgs-label{font:500 10px/1 "DM Sans",sans-serif;letter-spacing:0.14em;text-transform:uppercase;',
-    ' color:rgba(200,169,126,0.75);padding:0 8px 0 12px;}',
-    '#bg-switch button{font:500 12.5px/1 "DM Sans",sans-serif;color:rgba(240,237,232,0.6);background:transparent;',
-    ' border:0;border-radius:999px;padding:9px 14px;cursor:pointer;min-height:32px;transition:all 220ms cubic-bezier(0.22,1,0.36,1);}',
-    '[data-theme="light"] #bg-switch button{color:rgba(40,34,26,0.6);}',
-    '#bg-switch button:hover{color:#f0ede8;}',
-    '[data-theme="light"] #bg-switch button:hover{color:#28221a;}',
-    '#bg-switch button.on{background:linear-gradient(135deg,#c8a97e,#a8804d);color:#141210;font-weight:600;}',
-    '#bg-switch button:focus-visible{outline:2px solid #c8a97e;outline-offset:2px;}',
-    '#preview-tag{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:900;pointer-events:none;',
+    /* — кнопка «Фон» и попап выбора — */
+    '#bg-btn{display:inline-flex!important;align-items:center;gap:7px;}',
+    '#bg-btn .dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#e8cb9a,#a8804d);box-shadow:0 0 6px rgba(200,169,126,.8);}',
+    '#bg-pop{position:fixed;top:64px;right:20px;z-index:950;width:256px;padding:8px;border-radius:16px;',
+    ' background:rgba(20,18,15,0.92);border:1px solid rgba(200,169,126,0.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+    ' box-shadow:0 24px 64px rgba(0,0,0,0.5);opacity:0;transform:translateY(-6px);pointer-events:none;transition:all 240ms cubic-bezier(0.22,1,0.36,1);}',
+    '#bg-pop.open{opacity:1;transform:none;pointer-events:auto;}',
+    '[data-theme="light"] #bg-pop{background:rgba(255,253,248,0.96);border-color:rgba(154,121,72,0.25);box-shadow:0 24px 64px rgba(60,45,20,0.18);}',
+    '#bg-pop .row{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px 12px;cursor:pointer;font-family:inherit;}',
+    '#bg-pop .row:hover{background:rgba(200,169,126,0.08);}',
+    '#bg-pop .row .nm{font:600 13px/1.2 "DM Sans",sans-serif;color:rgba(240,237,232,0.85);}',
+    '#bg-pop .row .hn{font:400 10.5px/1.35 "DM Sans",sans-serif;color:rgba(240,237,232,0.35);margin-top:2px;}',
+    '[data-theme="light"] #bg-pop .row .nm{color:rgba(40,34,26,0.85);}',
+    '[data-theme="light"] #bg-pop .row .hn{color:rgba(40,34,26,0.4);}',
+    '#bg-pop .row.on{background:rgba(200,169,126,0.13);}',
+    '#bg-pop .row.on .nm{color:#c8a97e;}',
+    /* — верхняя панель: стеклянная пилюля — */
+    '.top-actions{top:calc(12px + env(safe-area-inset-top,0px))!important;right:16px!important;gap:4px!important;padding:6px 8px;border-radius:999px;',
+    ' background:rgba(18,16,14,0.6);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}',
+    '[data-theme="light"] .top-actions{background:rgba(255,253,248,0.78);border-color:rgba(60,45,20,0.12);}',
+    '.top-actions .footer-link{font-size:11px;padding:7px 11px;border-radius:999px;transition:all 200ms;}',
+    '.top-actions .footer-link:hover{color:#c8a97e;background:rgba(200,169,126,0.08);}',
+    /* — бренд-бар слева сверху — */
+    '#brand-bar{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:24px;z-index:70;display:flex;align-items:center;gap:11px;}',
+    '#brand-bar img{height:30px;width:auto;}',
+    '#brand-bar .logo-l{display:none;}',
+    '[data-theme="light"] #brand-bar .logo-d{display:none;}',
+    '[data-theme="light"] #brand-bar .logo-l{display:block;}',
+    '#brand-bar .wm{font:600 11px/1.3 "DM Sans",sans-serif;letter-spacing:0.24em;text-transform:uppercase;color:#c8a97e;}',
+    '#brand-bar .wm span{display:block;font-weight:400;letter-spacing:0.18em;color:rgba(240,237,232,0.35);font-size:9px;margin-top:3px;}',
+    '[data-theme="light"] #brand-bar .wm span{color:rgba(40,34,26,0.4);}',
+    /* — герой: компактнее, курсивный подзаголовок, золотая линия — */
+    '.hero img{height:170px;}',
+    '.hero-rule{width:52px;height:1px;margin:24px auto 0;background:linear-gradient(90deg,transparent,#c8a97e,transparent);}',
+    '.hero-kicker{margin-top:14px;font-family:Cormorant,serif;font-style:italic;font-weight:400;font-size:21px;color:#c8a97e;letter-spacing:0.05em;}',
+    '.hero-sub{margin-top:12px!important;}',
+    /* — карточки: золотая линия сверху при наведении — */
+    '.card{position:relative;}',
+    '.card::after{content:"";position:absolute;top:0;left:18px;right:18px;height:1px;',
+    ' background:linear-gradient(90deg,transparent,rgba(200,169,126,0.75),transparent);transform:scaleX(0);transition:transform 420ms cubic-bezier(0.22,1,0.36,1);}',
+    '.card:hover::after{transform:scaleX(1);}',
+    '.section-label{color:rgba(200,169,126,0.6)!important;}',
+    '.section-label::after{background:linear-gradient(90deg,rgba(200,169,126,0.35),transparent)!important;}',
+    /* — бейдж превью: вниз по центру — */
+    '#preview-tag{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:900;pointer-events:none;',
     ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.22em;text-transform:uppercase;color:#c8a97e;',
     ' padding:8px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);backdrop-filter:blur(8px);}',
-    '@media(max-width:700px){#bg-switch{left:8px;right:8px;max-width:none;bottom:10px;justify-content:center;}',
-    ' #bg-switch .bgs-label{display:none;} #bg-switch button{font-size:11.5px;padding:8px 10px;}}'
+    '@media(max-width:700px){#brand-bar .wm{display:none;} #brand-bar{top:12px;left:12px;} .top-actions{right:8px!important;}',
+    ' #bg-pop{right:8px;left:8px;width:auto;top:58px;} .hero img{height:132px;} .hero-kicker{font-size:18px;}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -1713,24 +1744,56 @@ void main(){
   tag.textContent = 'Превью дизайна · v4';
   document.body.appendChild(tag);
 
-  var sw = document.createElement('div');
-  sw.id = 'bg-switch';
-  sw.setAttribute('role', 'group');
-  sw.setAttribute('aria-label', 'Вариант фона');
-  sw.innerHTML = '<span class="bgs-label">Фон</span>' + MODES.map(function(m){
-    return '<button type="button" data-mode="' + m.id + '" title="' + m.hint + '"' +
-      (m.id === uniforms.uMode.value ? ' class="on"' : '') + '>' + m.name + '</button>';
-  }).join('');
-  document.body.appendChild(sw);
+  // — бренд-бар: логотип + словесный знак —
+  var bb = document.createElement('div');
+  bb.id = 'brand-bar';
+  bb.innerHTML = '<img class="logo-d" src="logo.png" alt=""><img class="logo-l" src="logo-dark.png" alt="">' +
+    '<div class="wm">Баден·Баден<span>Термы Уктус · отчёты</span></div>';
+  document.body.appendChild(bb);
 
+  // — герой: золотая линия + курсивный подзаголовок —
+  var heroImg = document.querySelector('.hero img');
+  if (heroImg) {
+    var rule = document.createElement('div'); rule.className = 'hero-rule';
+    var kick = document.createElement('div'); kick.className = 'hero-kicker';
+    kick.textContent = 'Портал управленческой отчётности';
+    heroImg.after(rule, kick);
+  }
+
+  // — убрать эмодзи из кнопок верхней панели (типографика вместо пиктограмм) —
+  ['install-btn', 'push-btn', 'audit-link'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.textContent = el.textContent.replace(/^[^Ѐ-ӿA-Za-z]+/, '');
+  });
+
+  // — кнопка «Фон» в верхней панели + попап с режимами —
   var fadeTo = null;
-  sw.addEventListener('click', function(e){
-    var b = e.target.closest('button'); if (!b) return;
+  var ta = document.getElementById('top-actions');
+  var bgBtn = document.createElement('button');
+  bgBtn.className = 'footer-link'; bgBtn.id = 'bg-btn'; bgBtn.type = 'button';
+  bgBtn.title = 'Вариант фона'; bgBtn.setAttribute('aria-haspopup', 'menu');
+  function btnLabel(){ bgBtn.innerHTML = '<span class="dot"></span>Фон · ' + MODES[uniforms.uMode.value].name; }
+  btnLabel();
+  if (ta) ta.insertBefore(bgBtn, ta.firstChild);
+
+  var pop = document.createElement('div');
+  pop.id = 'bg-pop'; pop.setAttribute('role', 'menu');
+  pop.innerHTML = MODES.map(function(m){
+    return '<button type="button" class="row' + (m.id === uniforms.uMode.value ? ' on' : '') + '" data-mode="' + m.id + '">' +
+      '<div class="nm">' + m.name + '</div><div class="hn">' + m.hint + '</div></button>';
+  }).join('');
+  document.body.appendChild(pop);
+
+  bgBtn.addEventListener('click', function(e){ e.stopPropagation(); pop.classList.toggle('open'); });
+  document.addEventListener('click', function(e){ if (!pop.contains(e.target)) pop.classList.remove('open'); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') pop.classList.remove('open'); });
+  pop.addEventListener('click', function(e){
+    var b = e.target.closest('.row'); if (!b) return;
     var mode = parseInt(b.dataset.mode, 10);
-    if (mode === uniforms.uMode.value) return;
-    sw.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
+    pop.querySelectorAll('.row').forEach(function(x){ x.classList.toggle('on', x === b); });
     localStorage.setItem('bbt_bg_v4', String(mode));
-    fadeTo = mode; // мягкий кроссфейд в цикле рендера
+    if (mode !== uniforms.uMode.value) fadeTo = mode;   // мягкий кроссфейд в цикле рендера
+    setTimeout(function(){ pop.classList.remove('open'); }, 180);
   });
 
   // ---------- Рендер ----------
@@ -1745,7 +1808,7 @@ void main(){
       // кроссфейд между режимами
       if (fadeTo !== null) {
         uniforms.uFade.value -= 0.06;
-        if (uniforms.uFade.value <= 0) { uniforms.uMode.value = fadeTo; fadeTo = null; }
+        if (uniforms.uFade.value <= 0) { uniforms.uMode.value = fadeTo; fadeTo = null; btnLabel(); }
       } else if (uniforms.uFade.value < 1) {
         uniforms.uFade.value = Math.min(1, uniforms.uFade.value + 0.04);
       }
