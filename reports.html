@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отчёты — Baden Uktus</title>
 
+<!-- BADEN_UI_V4_REDIRECT: если пользователь выбрал новый дизайн — уводим на V4 (?classic=1 всегда оставляет классику) -->
+<script>(function(){try{if(localStorage.getItem('bbt_ui')==='v4'&&location.search.indexOf('classic')===-1)location.replace('reports-preview-v4.html');}catch(e){}})();</script>
+<!-- /BADEN_UI_V4_REDIRECT -->
+
 <!-- 3D libs from CDN -->
 <script type="importmap">
 {
@@ -748,6 +752,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
     </span>
   </button>
+  <button class="footer-link" id="ui-v4-btn" title="Переключиться на новый дизайн портала (фон «Ореол», док, список отчётов)" onclick="try{localStorage.setItem('bbt_ui','v4')}catch(e){};window.location.href='reports-preview-v4.html'" style="color:var(--accent)">✦ Новый дизайн</button>
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
   <button class="footer-link" id="install-btn" style="display:none" title="Установить как приложение">📱 Установить</button>
   <button class="footer-link" id="push-btn" style="display:none" title="Включить push-уведомления">🔔 Уведомления</button>

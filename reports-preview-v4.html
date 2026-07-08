@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Отчёты — Baden Uktus · Превью дизайна v4</title>
+<title>Отчёты — Baden Uktus · V4</title>
+
 
 <!-- 3D libs from CDN -->
 <script type="importmap">
@@ -1363,11 +1364,11 @@
 })();
 </script>
 
-<!-- ── PREVIEW v4: термальный шейдер-фон (вода / пар / шёлк) вместо графа-«звёзд» ── -->
+<!-- ── V4: фон «Ореол» (дышащее золотое кольцо) + док + редакторский список отчётов ── -->
 <script type="module">
 import * as THREE from 'three';
 
-(function initThermalBG() {
+(function initHaloBG() {
   var canvas = document.getElementById('webgl-bg');
   if (!canvas || !window.WebGLRenderingContext) return;
 
@@ -1389,20 +1390,16 @@ import * as THREE from 'three';
     uRes:    { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     uMouse:  { value: new THREE.Vector2(0, 0) },
     uScroll: { value: 0 },
-    uMode:   { value: 0 },     // 0 вода · 1 пар · 2 шёлк
-    uLight:  { value: 0 },     // 0 тёмная тема · 1 светлая
-    uQual:   { value: isMobile ? 0 : 1 },
-    uFade:   { value: 1 }      // кроссфейд при смене режима
+    uLight:  { value: 0 },
+    uQual:   { value: isMobile ? 0 : 1 }
   };
 
   var frag = `
 precision highp float;
 uniform float uTime; uniform vec2 uRes; uniform vec2 uMouse;
-uniform float uScroll; uniform int uMode; uniform float uLight;
-uniform int uQual; uniform float uFade;
+uniform float uScroll; uniform float uLight; uniform int uQual;
 varying vec2 vUv;
 
-/* ---------- шум ---------- */
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
 float noise(vec2 p){
   vec2 i = floor(p), f = fract(p);
@@ -1423,237 +1420,49 @@ float fbm(vec2 p){
   return v;
 }
 
-/* ---------- палитра Baden: тёмный янтарь → золото → крем ---------- */
-vec3 ramp(float t){
-  vec3 c1 = vec3(0.047, 0.043, 0.039);   /* фон #0c0b0a */
-  vec3 c2 = vec3(0.176, 0.141, 0.098);   /* тёмная бронза */
-  vec3 c3 = vec3(0.545, 0.427, 0.267);   /* бронза #8b6d44 */
-  vec3 c4 = vec3(0.784, 0.663, 0.494);   /* золото #c8a97e */
-  vec3 c5 = vec3(0.976, 0.929, 0.816);   /* крем-свет */
-  vec3 c = mix(c1, c2, smoothstep(0.00, 0.35, t));
-  c = mix(c, c3, smoothstep(0.35, 0.62, t));
-  c = mix(c, c4, smoothstep(0.62, 0.85, t));
-  c = mix(c, c5, smoothstep(0.85, 1.00, t));
-  return c;
-}
-/* светлая тема: крем-фон, бронзовые узоры */
-vec3 rampLight(float t){
-  vec3 c1 = vec3(0.969, 0.961, 0.941);
-  vec3 c2 = vec3(0.914, 0.882, 0.827);
-  vec3 c3 = vec3(0.769, 0.678, 0.545);
-  vec3 c4 = vec3(0.604, 0.474, 0.282);
-  vec3 c = mix(c1, c2, smoothstep(0.0, 0.45, t));
-  c = mix(c, c3, smoothstep(0.45, 0.8, t));
-  c = mix(c, c4, smoothstep(0.8, 1.0, t));
-  return c;
-}
-
-/* ---------- РЕЖИМ 0: вода — золотые каустики ---------- */
-float caustic(vec2 uv, float t){
-  vec2 p = mod(uv * 6.28318, 6.28318) - 250.0;
-  vec2 i = p;
-  float c = 1.0;
-  float inten = 0.005;
-  int it = uQual == 1 ? 4 : 3;
-  for (int n = 0; n < 4; n++){
-    if (n >= it) break;
-    float tt = t * (1.0 - (3.5 / float(n + 1)));
-    i = p + vec2(cos(tt - i.x) + sin(tt + i.y), sin(tt - i.y) + cos(tt + i.x));
-    c += 1.0 / length(vec2(p.x / (sin(i.x + tt) / inten), p.y / (cos(i.y + tt) / inten)));
-  }
-  c /= float(it);
-  c = 1.17 - pow(c, 1.4);
-  return pow(abs(c), 8.0);
-}
-vec3 modeWater(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp;
-  p += uMouse * 0.03;                       /* лёгкий параллакс */
-  p *= 1.0 + uScroll * 0.25;                /* медленный зум при скролле */
-  float c  = caustic(p * 0.9  + vec2(0.0, uScroll * 0.4), t * 0.18);
-  float c2 = caustic(p * 1.7 + vec2(3.1, 1.7), t * 0.12 + 2.0);
-  float glow = c * 0.85 + c2 * 0.35;
-  /* глубина: снизу темнее, сверху лёгкое свечение поверхности */
-  float depth = smoothstep(-0.1, 1.15, uv.y) * 0.22;
-  float v = clamp(glow * 0.75 + depth * 0.35, 0.0, 1.0);
-  return uLight > 0.5 ? rampLight(v * 0.8) : ramp(v);
-}
-
-/* ---------- РЕЖИМ 1: пар над водой ---------- */
-vec3 modeSteam(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp * 2.1;
-  p += uMouse * 0.05;
-  /* два слоя пара, поднимаются с разной скоростью */
-  float s1 = fbm(p * 1.1 + vec2(t * 0.02,  -t * 0.055));
-  float s2 = fbm(p * 2.3 + vec2(-t * 0.03, -t * 0.11) + 7.0);
-  float steam = s1 * 0.72 + s2 * 0.42;
-  steam = smoothstep(0.32, 1.05, steam);
-  /* тёплая подсветка от воды снизу */
-  float under = pow(1.0 - clamp(uv.y + uScroll * 0.15, 0.0, 1.0), 2.4);
-  float v = clamp(steam * (0.35 + under * 0.85) + under * 0.28, 0.0, 1.0);
-  return uLight > 0.5 ? rampLight(v * 0.75) : ramp(v);
-}
-
-/* ---------- РЕЖИМ 2: шёлк — текучие золотые потоки ---------- */
-vec3 modeSilk(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp * 1.6;
-  p += uMouse * 0.06;
-  p.y += uScroll * 0.5;
-  float tt = t * 0.045;
-  vec2 q = vec2(fbm(p + tt), fbm(p + vec2(5.2, 1.3) - tt));
-  vec2 r = vec2(fbm(p + 2.6 * q + vec2(1.7, 9.2) + tt * 1.4),
-                fbm(p + 2.6 * q + vec2(8.3, 2.8) - tt));
-  float f = fbm(p + 2.4 * r);
-  /* тонкие световые нити по гребням потока */
-  float ridge = pow(clamp(f * 1.35 - length(q) * 0.35, 0.0, 1.0), 2.2);
-  float v = clamp(f * f * 1.15 + ridge * 0.55, 0.0, 1.0) * 0.82;
-  return uLight > 0.5 ? rampLight(v * 0.85) : ramp(v);
-}
-
-/* ---------- РЕЖИМ 3: минимал — матовый графит, сатин, золотая линия ---------- */
-vec3 modeMinimal(vec2 uv, vec2 asp, float t){
-  /* сатиновый блик проходит по диагонали раз в ~80 секунд */
-  float sweep = fract((uv.x * 0.6 + uv.y * 0.4) * 0.8 - t * 0.012);
-  float sheen = exp(-pow((sweep - 0.5) * 7.0, 2.0));
-  float glow = pow(clamp(1.0 - distance(uv, vec2(0.5, 1.12)), 0.0, 1.0), 3.0);
-  float grain = hash(uv * uRes * 0.5 + floor(t * 24.0)) - 0.5;
-  if (uLight > 0.5){
-    vec3 c = mix(vec3(0.960, 0.951, 0.929), vec3(0.978, 0.971, 0.955), uv.y);
-    c += (glow * 0.020 + sheen * 0.014);
-    float hairL = exp(-abs(uv.y - 0.24) * 420.0);
-    c -= vec3(0.604, 0.474, 0.282) * hairL * 0.05;
-    return c + grain * 0.012;
-  }
-  vec3 c = mix(vec3(0.040, 0.037, 0.034), vec3(0.068, 0.062, 0.054), uv.y);
-  c += vec3(0.784, 0.663, 0.494) * (glow * 0.045 + sheen * 0.028);
-  float hair = exp(-abs(uv.y - 0.24) * 420.0);   /* тонкая золотая линия горизонта */
-  c += vec3(0.784, 0.663, 0.494) * hair * 0.10;
-  return c + grain * 0.018;
-}
-
-/* ---------- РЕЖИМ 4: линии — золотые изолинии рельефа ---------- */
-vec3 modeContour(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp * 0.9 + uMouse * 0.02;
-  p.y += uScroll * 0.3;
-  float n = fbm(p * 1.15 + vec2(0.0, t * 0.008)) + t * 0.004;  /* рельеф медленно «дышит» */
-  float levels = 14.0;
-  float iso = abs(fract(n * levels) - 0.5);
-  float line = 1.0 - smoothstep(0.018, 0.062, iso);
-  float major = step(mod(floor(n * levels), 5.0), 0.5);        /* каждая 5-я линия ярче */
-  float inten = line * (0.10 + 0.28 * major);
-  if (uLight > 0.5){
-    return mix(vec3(0.969, 0.961, 0.941), vec3(0.604, 0.474, 0.282), inten * 0.75);
-  }
-  vec3 c = vec3(0.045, 0.042, 0.039);
-  return c + vec3(0.784, 0.663, 0.494) * inten;
-}
-
-/* ---------- РЕЖИМ 5: лагуна — изумрудная вода, золотые отблески ---------- */
-vec3 rampLagoon(float v){
-  vec3 c1 = vec3(0.012, 0.055, 0.051);
-  vec3 c2 = vec3(0.031, 0.180, 0.157);
-  vec3 c3 = vec3(0.106, 0.412, 0.345);
-  vec3 c4 = vec3(0.290, 0.663, 0.553);
-  vec3 c = mix(c1, c2, smoothstep(0.0, 0.4, v));
-  c = mix(c, c3, smoothstep(0.4, 0.75, v));
-  c = mix(c, c4, smoothstep(0.75, 1.0, v));
-  return c;
-}
-vec3 modeLagoon(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp * 0.8 + uMouse * 0.04;
-  /* вертикальные «шторы» света, как сияние под водой */
-  float curtain = fbm(vec2(p.x * 1.4 + t * 0.02, p.y * 0.35 - t * 0.05));
-  float depth = 1.0 - uv.y * 0.55 + uScroll * 0.2;
-  float v = clamp(curtain * depth * 1.25, 0.0, 1.0);
-  float sparkle = pow(clamp(curtain * 1.35 - 0.45, 0.0, 1.0), 5.0);
-  if (uLight > 0.5){
-    vec3 lc = mix(vec3(0.969, 0.961, 0.941), vec3(0.749, 0.878, 0.839), v * 0.7);
-    return lc + vec3(0.604, 0.474, 0.282) * sparkle * 0.15;
-  }
-  return rampLagoon(v) + vec3(0.784, 0.663, 0.494) * sparkle * 0.35;
-}
-
-/* ---------- РЕЖИМ 6: кинцуги — золотые прожилки на тёмном камне ---------- */
-vec3 modeKintsugi(vec2 uv, vec2 asp, float t){
-  vec2 p = uv * asp * 1.1 + uMouse * 0.03;
-  p.y += uScroll * 0.4;
-  float n1 = fbm(p * 1.6 + vec2(t * 0.006, 0.0));
-  float vein = pow(smoothstep(0.93, 0.998, 1.0 - abs(2.0 * n1 - 1.0)), 2.2);
-  float n2 = fbm(p * 3.4 + 11.0 - vec2(0.0, t * 0.004));
-  float vein2 = pow(smoothstep(0.955, 1.0, 1.0 - abs(2.0 * n2 - 1.0)), 2.5) * 0.6;
-  float stone = fbm(p * 2.2) * 0.05;                        /* фактура камня */
-  float glint = 0.7 + 0.3 * sin(t * 0.35 + n1 * 12.0);      /* золото мерцает */
-  if (uLight > 0.5){
-    vec3 c = vec3(0.965, 0.957, 0.937) - stone * 0.35;
-    return mix(c, vec3(0.604, 0.474, 0.282), clamp(vein * 0.85 + vein2 * 0.5, 0.0, 1.0) * 0.8);
-  }
-  vec3 c = vec3(0.050, 0.047, 0.044) + stone;
-  vec3 gold = vec3(0.851, 0.694, 0.463);
-  c += gold * vein * 0.85 * glint;
-  c += gold * vein2 * 0.38;
-  return c;
-}
-
-/* ---------- РЕЖИМ 7: ореол — дышащее золотое кольцо-солнце ---------- */
-vec3 modeHalo(vec2 uv, vec2 asp, float t){
+void main(){
+  vec2 uv = vUv;
   vec2 d = uv - vec2(0.5, 0.62);
   d.x *= uRes.x / uRes.y;
   d += uMouse * vec2(0.02, 0.015);
   float r = length(d);
-  float breath = 0.30 + sin(t * 0.22) * 0.012 + uScroll * 0.10;
+  float breath = 0.30 + sin(uTime * 0.22) * 0.012 + uScroll * 0.10;
   float ring = exp(-pow((r - breath) * 26.0, 2.0));
   float core = pow(clamp(1.0 - r / breath, 0.0, 1.0), 2.4) * 0.35;
-  float mist = fbm(d * 3.0 + t * 0.01) * exp(-r * 2.2) * 0.12;
-  if (uLight > 0.5){
-    vec3 c = vec3(0.969, 0.961, 0.941);
-    c = mix(c, vec3(0.769, 0.647, 0.478), ring * 0.5 + mist * 0.6);
-    return c;
-  }
-  vec3 c = vec3(0.043, 0.040, 0.037);
-  return c + vec3(0.784, 0.663, 0.494) * (ring * 0.55 + core + mist);
-}
+  float mist = fbm(d * 3.0 + uTime * 0.01) * exp(-r * 2.2) * 0.12;
 
-void main(){
-  vec2 uv = vUv;
-  vec2 asp = vec2(uRes.x / uRes.y, 1.0) * 2.2;
   vec3 col;
-  if      (uMode == 0) col = modeWater   (uv, asp, uTime);
-  else if (uMode == 1) col = modeSteam   (uv, asp, uTime);
-  else if (uMode == 2) col = modeSilk    (uv, asp, uTime);
-  else if (uMode == 3) col = modeMinimal (uv, asp, uTime);
-  else if (uMode == 4) col = modeContour (uv, asp, uTime);
-  else if (uMode == 5) col = modeLagoon  (uv, asp, uTime);
-  else if (uMode == 6) col = modeKintsugi(uv, asp, uTime);
-  else                 col = modeHalo    (uv, asp, uTime);
+  if (uLight > 0.5){
+    col = vec3(0.969, 0.961, 0.941);
+    col = mix(col, vec3(0.769, 0.647, 0.478), ring * 0.5 + mist * 0.6);
+  } else {
+    col = vec3(0.043, 0.040, 0.037);
+    col += vec3(0.784, 0.663, 0.494) * (ring * 0.55 + core + mist);
+  }
 
-  /* виньетка — фон остаётся вторым планом, карточки читаются */
-  float d = distance(uv, vec2(0.5, 0.42));
-  col *= 1.0 - smoothstep(0.35, 1.05, d) * (uLight > 0.5 ? 0.12 : 0.55);
-  /* общий уровень: фон не должен спорить с контентом */
-  col = mix(uLight > 0.5 ? vec3(0.969, 0.961, 0.941) : vec3(0.047, 0.045, 0.043), col, uFade * (uLight > 0.5 ? 0.9 : 0.85));
+  /* виньетка: фон остаётся вторым планом */
+  float vd = distance(uv, vec2(0.5, 0.42));
+  col *= 1.0 - smoothstep(0.35, 1.05, vd) * (uLight > 0.5 ? 0.10 : 0.5);
   gl_FragColor = vec4(col, 1.0);
 }`;
 
   var vert = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }';
-  var mesh = new THREE.Mesh(
+  scene.add(new THREE.Mesh(
     new THREE.PlaneGeometry(2, 2),
     new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vert, fragmentShader: frag })
-  );
-  scene.add(mesh);
+  ));
 
-  // ---------- Resize ----------
   window.addEventListener('resize', function(){
     renderer.setSize(window.innerWidth, window.innerHeight, false);
     uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
   }, { passive: true });
 
-  // ---------- Тема ----------
   function syncTheme(){
     uniforms.uLight.value = document.documentElement.getAttribute('data-theme') === 'light' ? 1 : 0;
   }
   new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   syncTheme();
 
-  // ---------- Скролл (плавный, как в проде — Lenis) ----------
   if (typeof Lenis !== 'undefined' && !prefersReduced) {
     var lenis = new Lenis({ duration: 1.05, smoothWheel: true, smoothTouch: false,
       easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
@@ -1664,43 +1473,15 @@ void main(){
     uniforms.uScroll.value = Math.max(0, Math.min(1, window.scrollY / maxScroll));
   }, { passive: true });
 
-  // ---------- Мышь ----------
   var mTx = 0, mTy = 0;
   window.addEventListener('pointermove', function(e){
     mTx = (e.clientX / window.innerWidth - 0.5) * 2;
     mTy = (e.clientY / window.innerHeight - 0.5) * 2;
   }, { passive: true });
 
-  // ---------- Переключатель режимов (только на превью) ----------
-  var MODES = [
-    { id: 0, name: 'Вода',    hint: 'Золотые каустики — свет на дне термального бассейна' },
-    { id: 1, name: 'Пар',     hint: 'Восходящий пар с тёплой подсветкой от воды' },
-    { id: 2, name: 'Шёлк',    hint: 'Текучие золотые потоки' },
-    { id: 3, name: 'Минимал', hint: 'Классика: матовый графит, сатиновый блик, тонкая линия золота' },
-    { id: 4, name: 'Линии',   hint: 'Золотые изолинии — медленно дышащий рельеф' },
-    { id: 5, name: 'Лагуна',  hint: 'Изумрудная вода ночной лагуны с золотыми отблесками' },
-    { id: 6, name: 'Кинцуги', hint: 'Золотые прожилки на тёмном камне — искусство трещин' },
-    { id: 7, name: 'Ореол',   hint: 'Дышащее золотое кольцо-солнце за логотипом' }
-  ];
-  var saved = parseInt(localStorage.getItem('bbt_bg_v4') || '7', 10);   /* дефолт — Ореол */
-  uniforms.uMode.value = (saved >= 0 && saved <= 7) ? saved : 7;
-
+  // ---------- Стили V4: док, бренд-бар, герой, список отчётов ----------
   var css = document.createElement('style');
   css.textContent = [
-    /* — попап выбора фона: открывается из дока вверх — */
-    '#bg-pop{position:fixed;bottom:76px;left:50%;z-index:950;width:280px;padding:8px;border-radius:16px;',
-    ' background:rgba(20,18,15,0.94);border:1px solid rgba(200,169,126,0.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
-    ' box-shadow:0 24px 64px rgba(0,0,0,0.5);opacity:0;transform:translateX(-50%) translateY(8px);pointer-events:none;transition:all 240ms cubic-bezier(0.22,1,0.36,1);}',
-    '#bg-pop.open{opacity:1;transform:translateX(-50%);pointer-events:auto;}',
-    '[data-theme="light"] #bg-pop{background:rgba(255,253,248,0.96);border-color:rgba(154,121,72,0.25);box-shadow:0 24px 64px rgba(60,45,20,0.18);}',
-    '#bg-pop .row{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px 12px;cursor:pointer;font-family:inherit;}',
-    '#bg-pop .row:hover{background:rgba(200,169,126,0.08);}',
-    '#bg-pop .row .nm{font:600 13px/1.2 "DM Sans",sans-serif;color:rgba(240,237,232,0.85);}',
-    '#bg-pop .row .hn{font:400 10.5px/1.35 "DM Sans",sans-serif;color:rgba(240,237,232,0.35);margin-top:2px;}',
-    '[data-theme="light"] #bg-pop .row .nm{color:rgba(40,34,26,0.85);}',
-    '[data-theme="light"] #bg-pop .row .hn{color:rgba(40,34,26,0.4);}',
-    '#bg-pop .row.on{background:rgba(200,169,126,0.13);}',
-    '#bg-pop .row.on .nm{color:#c8a97e;}',
     /* — старую верхнюю панель прячем: всё уехало в док — */
     '.top-actions{display:none!important;}',
     /* — док внизу по центру — */
@@ -1737,19 +1518,19 @@ void main(){
     '#brand-bar .wm{font:600 11px/1.3 "DM Sans",sans-serif;letter-spacing:0.24em;text-transform:uppercase;color:#c8a97e;}',
     '#brand-bar .wm span{display:block;font-weight:400;letter-spacing:0.18em;color:rgba(240,237,232,0.35);font-size:9px;margin-top:3px;}',
     '[data-theme="light"] #brand-bar .wm span{color:rgba(40,34,26,0.4);}',
-    /* — герой: компактнее, курсивный подзаголовок, золотая линия — */
+    /* — герой — */
     '.hero img{height:170px;}',
     '.hero-rule{width:52px;height:1px;margin:24px auto 0;background:linear-gradient(90deg,transparent,#c8a97e,transparent);}',
     '.hero-kicker{margin-top:14px;font-family:Cormorant,serif;font-style:italic;font-weight:400;font-size:21px;color:#c8a97e;letter-spacing:0.05em;}',
     '.hero-sub{margin-top:12px!important;}',
-    /* — карточки: золотая линия сверху при наведении — */
+    /* — карточки (Проекты): золотая линия при ховере — */
     '.card{position:relative;}',
     '.card::after{content:"";position:absolute;top:0;left:18px;right:18px;height:1px;',
     ' background:linear-gradient(90deg,transparent,rgba(200,169,126,0.75),transparent);transform:scaleX(0);transition:transform 420ms cubic-bezier(0.22,1,0.36,1);}',
     '.card:hover::after{transform:scaleX(1);}',
     '.section-label{color:rgba(200,169,126,0.6)!important;}',
     '.section-label::after{background:linear-gradient(90deg,rgba(200,169,126,0.35),transparent)!important;}',
-    /* — отчёты: редакторский список-индекс вместо сетки карточек — */
+    /* — отчёты: редакторский список-индекс — */
     '.cards.rlist{display:block!important;}',
     '.rlist .card{display:grid!important;grid-template-columns:150px minmax(220px,300px) 1fr 160px;align-items:center;gap:28px;',
     ' background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;',
@@ -1772,30 +1553,39 @@ void main(){
     '.rlist .card:hover .card-num,.rlist .card:hover .card-desc,.rlist .card:hover .card-meta{transform:none!important;}',
     '@media(max-width:820px){.rlist .card{grid-template-columns:1fr!important;gap:8px;padding:24px 10px!important;}',
     ' .rlist .card-meta{flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin-top:6px!important;}}',
-    /* — бейдж превью: справа сверху (низ занят доком) — */
-    '#preview-tag{position:fixed;top:16px;right:16px;z-index:900;pointer-events:none;',
-    ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.22em;text-transform:uppercase;color:#c8a97e;',
-    ' padding:8px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);backdrop-filter:blur(8px);}',
+    /* — кнопка «Классическая версия» справа сверху — */
+    '#ver-btn{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:900;cursor:pointer;',
+    ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.18em;text-transform:uppercase;color:rgba(240,237,232,0.55);',
+    ' padding:9px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);',
+    ' backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 220ms;}',
+    '#ver-btn:hover{color:#c8a97e;border-color:#c8a97e;}',
+    '[data-theme="light"] #ver-btn{background:rgba(255,253,248,0.8);color:rgba(40,34,26,0.6);}',
     '@media(max-width:700px){#brand-bar .wm{display:none;} #brand-bar{top:12px;left:12px;}',
     ' #dock{gap:2px;padding:6px 8px;} #dock .dk{width:36px;height:36px;} #dock #user-name{display:none;}',
-    ' #bg-pop{width:min(300px,calc(100vw - 24px));} #preview-tag{top:12px;right:10px;padding:7px 12px;}',
+    ' #ver-btn{top:12px;right:10px;padding:8px 12px;letter-spacing:0.12em;}',
     ' .hero img{height:132px;} .hero-kicker{font-size:18px;}}'
   ].join('');
   document.head.appendChild(css);
 
-  var tag = document.createElement('div');
-  tag.id = 'preview-tag';
-  tag.textContent = 'Превью дизайна · v4';
-  document.body.appendChild(tag);
+  // — кнопка возврата на классическую версию —
+  var vb = document.createElement('button');
+  vb.id = 'ver-btn'; vb.type = 'button';
+  vb.textContent = 'Классическая версия';
+  vb.title = 'Вернуться на классический дизайн портала';
+  vb.addEventListener('click', function(){
+    try { localStorage.setItem('bbt_ui', 'classic'); } catch(e) {}
+    window.location.href = 'reports.html?classic=1';
+  });
+  document.body.appendChild(vb);
 
-  // — бренд-бар: логотип + словесный знак —
+  // — бренд-бар —
   var bb = document.createElement('div');
   bb.id = 'brand-bar';
   bb.innerHTML = '<img class="logo-d" src="logo.png" alt=""><img class="logo-l" src="logo-dark.png" alt="">' +
     '<div class="wm">Баден·Баден<span>Термы Уктус · отчёты</span></div>';
   document.body.appendChild(bb);
 
-  // — отчёты: первая сетка (bento) становится списком-индексом —
+  // — отчёты: bento-сетка становится списком-индексом —
   var repGrid = document.querySelector('.cards.bento');
   if (repGrid) repGrid.classList.add('rlist');
 
@@ -1808,8 +1598,7 @@ void main(){
     heroImg.after(rule, kick);
   }
 
-  // — док внизу по центру: все сервисные кнопки в одном месте —
-  var fadeTo = null;
+  // — док внизу по центру —
   var ta = document.getElementById('top-actions');
   var dock = document.createElement('div');
   dock.id = 'dock';
@@ -1818,29 +1607,17 @@ void main(){
   document.body.appendChild(dock);
 
   var IC = {
-    ring: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none" opacity=".85"/></svg>',
     install: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>',
     bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 6.5 2.5 8H3.5C3.5 15.5 6 15 6 9"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>',
     audit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>',
     exit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'
   };
 
-  // кнопка «Фон» (иконка-кольцо, имя режима — в тултипе)
-  var bgBtn = document.createElement('button');
-  bgBtn.className = 'dk'; bgBtn.id = 'bg-btn'; bgBtn.type = 'button';
-  bgBtn.setAttribute('aria-haspopup', 'menu');
-  bgBtn.innerHTML = IC.ring;
-  function btnLabel(){ bgBtn.dataset.tip = 'Фон · ' + MODES[uniforms.uMode.value].name; }
-  btnLabel();
-  dock.appendChild(bgBtn);
-
-  // живые элементы переносим как есть — слушатели и state сохраняются
   var themePill = document.getElementById('theme-pill');
   if (themePill) dock.appendChild(themePill);
   var cmdk = document.getElementById('open-cmdk');
   if (cmdk) { cmdk.classList.add('dk'); cmdk.dataset.tip = 'Поиск и команды · Ctrl+K'; dock.appendChild(cmdk); }
 
-  // кнопки с динамическими подписями — через прокси, оригиналы остаются в скрытой панели
   function proxy(id, tip, icon){
     var orig = document.getElementById(id); if (!orig) return;
     var b = document.createElement('button');
@@ -1861,47 +1638,17 @@ void main(){
   var lo = ta ? ta.querySelector('button[onclick*="logout"]') : null;
   if (lo) { lo.classList.add('dk'); lo.dataset.tip = 'Выйти'; lo.innerHTML = IC.exit; dock.appendChild(lo); }
 
-  // док появляется тогда же, когда портал показывал верхнюю панель (после входа)
   function gateDock(){ dock.style.display = (ta && ta.style.display !== 'none') ? 'flex' : 'none'; }
   if (ta) new MutationObserver(gateDock).observe(ta, { attributes: true, attributeFilter: ['style'] });
   gateDock();
-
-  var pop = document.createElement('div');
-  pop.id = 'bg-pop'; pop.setAttribute('role', 'menu');
-  pop.innerHTML = MODES.map(function(m){
-    return '<button type="button" class="row' + (m.id === uniforms.uMode.value ? ' on' : '') + '" data-mode="' + m.id + '">' +
-      '<div class="nm">' + m.name + '</div><div class="hn">' + m.hint + '</div></button>';
-  }).join('');
-  document.body.appendChild(pop);
-
-  bgBtn.addEventListener('click', function(e){ e.stopPropagation(); pop.classList.toggle('open'); });
-  document.addEventListener('click', function(e){ if (!pop.contains(e.target)) pop.classList.remove('open'); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') pop.classList.remove('open'); });
-  pop.addEventListener('click', function(e){
-    var b = e.target.closest('.row'); if (!b) return;
-    var mode = parseInt(b.dataset.mode, 10);
-    pop.querySelectorAll('.row').forEach(function(x){ x.classList.toggle('on', x === b); });
-    localStorage.setItem('bbt_bg_v4', String(mode));
-    if (mode !== uniforms.uMode.value) fadeTo = mode;   // мягкий кроссфейд в цикле рендера
-    setTimeout(function(){ pop.classList.remove('open'); }, 180);
-  });
 
   // ---------- Рендер ----------
   var clock = new THREE.Clock();
   function tick(){
     if (!document.hidden) {
-      var t = clock.getElapsedTime();
-      uniforms.uTime.value = t;
-      // сглаживание мыши
+      uniforms.uTime.value = clock.getElapsedTime();
       uniforms.uMouse.value.x += (mTx - uniforms.uMouse.value.x) * 0.04;
       uniforms.uMouse.value.y += (mTy - uniforms.uMouse.value.y) * 0.04;
-      // кроссфейд между режимами
-      if (fadeTo !== null) {
-        uniforms.uFade.value -= 0.06;
-        if (uniforms.uFade.value <= 0) { uniforms.uMode.value = fadeTo; fadeTo = null; btnLabel(); }
-      } else if (uniforms.uFade.value < 1) {
-        uniforms.uFade.value = Math.min(1, uniforms.uFade.value + 0.04);
-      }
       renderer.render(scene, camera);
     }
     if (!prefersReduced) requestAnimationFrame(tick);
