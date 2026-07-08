@@ -1509,13 +1509,121 @@ vec3 modeSilk(vec2 uv, vec2 asp, float t){
   return uLight > 0.5 ? rampLight(v * 0.85) : ramp(v);
 }
 
+/* ---------- РЕЖИМ 3: минимал — матовый графит, сатин, золотая линия ---------- */
+vec3 modeMinimal(vec2 uv, vec2 asp, float t){
+  /* сатиновый блик проходит по диагонали раз в ~80 секунд */
+  float sweep = fract((uv.x * 0.6 + uv.y * 0.4) * 0.8 - t * 0.012);
+  float sheen = exp(-pow((sweep - 0.5) * 7.0, 2.0));
+  float glow = pow(clamp(1.0 - distance(uv, vec2(0.5, 1.12)), 0.0, 1.0), 3.0);
+  float grain = hash(uv * uRes * 0.5 + floor(t * 24.0)) - 0.5;
+  if (uLight > 0.5){
+    vec3 c = mix(vec3(0.960, 0.951, 0.929), vec3(0.978, 0.971, 0.955), uv.y);
+    c += (glow * 0.020 + sheen * 0.014);
+    float hairL = exp(-abs(uv.y - 0.24) * 420.0);
+    c -= vec3(0.604, 0.474, 0.282) * hairL * 0.05;
+    return c + grain * 0.012;
+  }
+  vec3 c = mix(vec3(0.040, 0.037, 0.034), vec3(0.068, 0.062, 0.054), uv.y);
+  c += vec3(0.784, 0.663, 0.494) * (glow * 0.045 + sheen * 0.028);
+  float hair = exp(-abs(uv.y - 0.24) * 420.0);   /* тонкая золотая линия горизонта */
+  c += vec3(0.784, 0.663, 0.494) * hair * 0.10;
+  return c + grain * 0.018;
+}
+
+/* ---------- РЕЖИМ 4: линии — золотые изолинии рельефа ---------- */
+vec3 modeContour(vec2 uv, vec2 asp, float t){
+  vec2 p = uv * asp * 0.9 + uMouse * 0.02;
+  p.y += uScroll * 0.3;
+  float n = fbm(p * 1.15 + vec2(0.0, t * 0.008)) + t * 0.004;  /* рельеф медленно «дышит» */
+  float levels = 14.0;
+  float iso = abs(fract(n * levels) - 0.5);
+  float line = 1.0 - smoothstep(0.018, 0.062, iso);
+  float major = step(mod(floor(n * levels), 5.0), 0.5);        /* каждая 5-я линия ярче */
+  float inten = line * (0.10 + 0.28 * major);
+  if (uLight > 0.5){
+    return mix(vec3(0.969, 0.961, 0.941), vec3(0.604, 0.474, 0.282), inten * 0.75);
+  }
+  vec3 c = vec3(0.045, 0.042, 0.039);
+  return c + vec3(0.784, 0.663, 0.494) * inten;
+}
+
+/* ---------- РЕЖИМ 5: лагуна — изумрудная вода, золотые отблески ---------- */
+vec3 rampLagoon(float v){
+  vec3 c1 = vec3(0.012, 0.055, 0.051);
+  vec3 c2 = vec3(0.031, 0.180, 0.157);
+  vec3 c3 = vec3(0.106, 0.412, 0.345);
+  vec3 c4 = vec3(0.290, 0.663, 0.553);
+  vec3 c = mix(c1, c2, smoothstep(0.0, 0.4, v));
+  c = mix(c, c3, smoothstep(0.4, 0.75, v));
+  c = mix(c, c4, smoothstep(0.75, 1.0, v));
+  return c;
+}
+vec3 modeLagoon(vec2 uv, vec2 asp, float t){
+  vec2 p = uv * asp * 0.8 + uMouse * 0.04;
+  /* вертикальные «шторы» света, как сияние под водой */
+  float curtain = fbm(vec2(p.x * 1.4 + t * 0.02, p.y * 0.35 - t * 0.05));
+  float depth = 1.0 - uv.y * 0.55 + uScroll * 0.2;
+  float v = clamp(curtain * depth * 1.25, 0.0, 1.0);
+  float sparkle = pow(clamp(curtain * 1.35 - 0.45, 0.0, 1.0), 5.0);
+  if (uLight > 0.5){
+    vec3 lc = mix(vec3(0.969, 0.961, 0.941), vec3(0.749, 0.878, 0.839), v * 0.7);
+    return lc + vec3(0.604, 0.474, 0.282) * sparkle * 0.15;
+  }
+  return rampLagoon(v) + vec3(0.784, 0.663, 0.494) * sparkle * 0.35;
+}
+
+/* ---------- РЕЖИМ 6: кинцуги — золотые прожилки на тёмном камне ---------- */
+vec3 modeKintsugi(vec2 uv, vec2 asp, float t){
+  vec2 p = uv * asp * 1.1 + uMouse * 0.03;
+  p.y += uScroll * 0.4;
+  float n1 = fbm(p * 1.6 + vec2(t * 0.006, 0.0));
+  float vein = pow(smoothstep(0.93, 0.998, 1.0 - abs(2.0 * n1 - 1.0)), 2.2);
+  float n2 = fbm(p * 3.4 + 11.0 - vec2(0.0, t * 0.004));
+  float vein2 = pow(smoothstep(0.955, 1.0, 1.0 - abs(2.0 * n2 - 1.0)), 2.5) * 0.6;
+  float stone = fbm(p * 2.2) * 0.05;                        /* фактура камня */
+  float glint = 0.7 + 0.3 * sin(t * 0.35 + n1 * 12.0);      /* золото мерцает */
+  if (uLight > 0.5){
+    vec3 c = vec3(0.965, 0.957, 0.937) - stone * 0.35;
+    return mix(c, vec3(0.604, 0.474, 0.282), clamp(vein * 0.85 + vein2 * 0.5, 0.0, 1.0) * 0.8);
+  }
+  vec3 c = vec3(0.050, 0.047, 0.044) + stone;
+  vec3 gold = vec3(0.851, 0.694, 0.463);
+  c += gold * vein * 0.85 * glint;
+  c += gold * vein2 * 0.38;
+  return c;
+}
+
+/* ---------- РЕЖИМ 7: ореол — дышащее золотое кольцо-солнце ---------- */
+vec3 modeHalo(vec2 uv, vec2 asp, float t){
+  vec2 d = uv - vec2(0.5, 0.62);
+  d.x *= uRes.x / uRes.y;
+  d += uMouse * vec2(0.02, 0.015);
+  float r = length(d);
+  float breath = 0.30 + sin(t * 0.22) * 0.012 + uScroll * 0.10;
+  float ring = exp(-pow((r - breath) * 26.0, 2.0));
+  float core = pow(clamp(1.0 - r / breath, 0.0, 1.0), 2.4) * 0.35;
+  float mist = fbm(d * 3.0 + t * 0.01) * exp(-r * 2.2) * 0.12;
+  if (uLight > 0.5){
+    vec3 c = vec3(0.969, 0.961, 0.941);
+    c -= vec3(0.604, 0.474, 0.282) * ring * 0.35;
+    return c - mist * 0.3;
+  }
+  vec3 c = vec3(0.043, 0.040, 0.037);
+  return c + vec3(0.784, 0.663, 0.494) * (ring * 0.55 + core + mist);
+}
+
 void main(){
   vec2 uv = vUv;
   vec2 asp = vec2(uRes.x / uRes.y, 1.0) * 2.2;
   vec3 col;
-  if      (uMode == 0) col = modeWater(uv, asp, uTime);
-  else if (uMode == 1) col = modeSteam(uv, asp, uTime);
-  else                 col = modeSilk (uv, asp, uTime);
+  if      (uMode == 0) col = modeWater   (uv, asp, uTime);
+  else if (uMode == 1) col = modeSteam   (uv, asp, uTime);
+  else if (uMode == 2) col = modeSilk    (uv, asp, uTime);
+  else if (uMode == 3) col = modeMinimal (uv, asp, uTime);
+  else if (uMode == 4) col = modeContour (uv, asp, uTime);
+  else if (uMode == 5) col = modeLagoon  (uv, asp, uTime);
+  else if (uMode == 6) col = modeKintsugi(uv, asp, uTime);
+  else                 col = modeHalo    (uv, asp, uTime);
 
   /* виньетка — фон остаётся вторым планом, карточки читаются */
   float d = distance(uv, vec2(0.5, 0.42));
@@ -1565,17 +1673,22 @@ void main(){
 
   // ---------- Переключатель режимов (только на превью) ----------
   var MODES = [
-    { id: 0, name: 'Вода',  hint: 'Золотые каустики — свет на дне термального бассейна' },
-    { id: 1, name: 'Пар',   hint: 'Восходящий пар с тёплой подсветкой от воды' },
-    { id: 2, name: 'Шёлк',  hint: 'Текучие золотые потоки' }
+    { id: 0, name: 'Вода',    hint: 'Золотые каустики — свет на дне термального бассейна' },
+    { id: 1, name: 'Пар',     hint: 'Восходящий пар с тёплой подсветкой от воды' },
+    { id: 2, name: 'Шёлк',    hint: 'Текучие золотые потоки' },
+    { id: 3, name: 'Минимал', hint: 'Классика: матовый графит, сатиновый блик, тонкая линия золота' },
+    { id: 4, name: 'Линии',   hint: 'Золотые изолинии — медленно дышащий рельеф' },
+    { id: 5, name: 'Лагуна',  hint: 'Изумрудная вода ночной лагуны с золотыми отблесками' },
+    { id: 6, name: 'Кинцуги', hint: 'Золотые прожилки на тёмном камне — искусство трещин' },
+    { id: 7, name: 'Ореол',   hint: 'Дышащее золотое кольцо-солнце за логотипом' }
   ];
   var saved = parseInt(localStorage.getItem('bbt_bg_v4') || '0', 10);
-  uniforms.uMode.value = (saved >= 0 && saved <= 2) ? saved : 0;
+  uniforms.uMode.value = (saved >= 0 && saved <= 7) ? saved : 0;
 
   var css = document.createElement('style');
   css.textContent = [
-    '#bg-switch{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;gap:4px;align-items:center;',
-    ' padding:5px;border-radius:999px;background:rgba(18,16,14,0.72);border:1px solid rgba(200,169,126,0.25);',
+    '#bg-switch{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;gap:4px;align-items:center;flex-wrap:wrap;',
+    ' max-width:calc(100vw - 32px);padding:5px;border-radius:22px;background:rgba(18,16,14,0.72);border:1px solid rgba(200,169,126,0.25);',
     ' backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,0.35);}',
     '[data-theme="light"] #bg-switch{background:rgba(255,253,248,0.8);border-color:rgba(154,121,72,0.3);}',
     '#bg-switch .bgs-label{font:500 10px/1 "DM Sans",sans-serif;letter-spacing:0.14em;text-transform:uppercase;',
@@ -1590,7 +1703,8 @@ void main(){
     '#preview-tag{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:900;pointer-events:none;',
     ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.22em;text-transform:uppercase;color:#c8a97e;',
     ' padding:8px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);backdrop-filter:blur(8px);}',
-    '@media(max-width:700px){#bg-switch{left:50%;transform:translateX(-50%);bottom:12px;} #bg-switch .bgs-label{display:none;}}'
+    '@media(max-width:700px){#bg-switch{left:8px;right:8px;max-width:none;bottom:10px;justify-content:center;}',
+    ' #bg-switch .bgs-label{display:none;} #bg-switch button{font-size:11.5px;padding:8px 10px;}}'
   ].join('');
   document.head.appendChild(css);
 
