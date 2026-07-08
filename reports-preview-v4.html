@@ -1687,13 +1687,11 @@ void main(){
 
   var css = document.createElement('style');
   css.textContent = [
-    /* — кнопка «Фон» и попап выбора — */
-    '#bg-btn{display:inline-flex!important;align-items:center;gap:7px;}',
-    '#bg-btn .dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#e8cb9a,#a8804d);box-shadow:0 0 6px rgba(200,169,126,.8);}',
-    '#bg-pop{position:fixed;top:64px;right:20px;z-index:950;width:256px;padding:8px;border-radius:16px;',
-    ' background:rgba(20,18,15,0.92);border:1px solid rgba(200,169,126,0.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
-    ' box-shadow:0 24px 64px rgba(0,0,0,0.5);opacity:0;transform:translateY(-6px);pointer-events:none;transition:all 240ms cubic-bezier(0.22,1,0.36,1);}',
-    '#bg-pop.open{opacity:1;transform:none;pointer-events:auto;}',
+    /* — попап выбора фона: открывается из дока вверх — */
+    '#bg-pop{position:fixed;bottom:76px;left:50%;z-index:950;width:280px;padding:8px;border-radius:16px;',
+    ' background:rgba(20,18,15,0.94);border:1px solid rgba(200,169,126,0.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+    ' box-shadow:0 24px 64px rgba(0,0,0,0.5);opacity:0;transform:translateX(-50%) translateY(8px);pointer-events:none;transition:all 240ms cubic-bezier(0.22,1,0.36,1);}',
+    '#bg-pop.open{opacity:1;transform:translateX(-50%);pointer-events:auto;}',
     '[data-theme="light"] #bg-pop{background:rgba(255,253,248,0.96);border-color:rgba(154,121,72,0.25);box-shadow:0 24px 64px rgba(60,45,20,0.18);}',
     '#bg-pop .row{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px 12px;cursor:pointer;font-family:inherit;}',
     '#bg-pop .row:hover{background:rgba(200,169,126,0.08);}',
@@ -1703,12 +1701,33 @@ void main(){
     '[data-theme="light"] #bg-pop .row .hn{color:rgba(40,34,26,0.4);}',
     '#bg-pop .row.on{background:rgba(200,169,126,0.13);}',
     '#bg-pop .row.on .nm{color:#c8a97e;}',
-    /* — верхняя панель: стеклянная пилюля — */
-    '.top-actions{top:calc(12px + env(safe-area-inset-top,0px))!important;right:16px!important;gap:4px!important;padding:6px 8px;border-radius:999px;',
-    ' background:rgba(18,16,14,0.6);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}',
-    '[data-theme="light"] .top-actions{background:rgba(255,253,248,0.78);border-color:rgba(60,45,20,0.12);}',
-    '.top-actions .footer-link{font-size:11px;padding:7px 11px;border-radius:999px;transition:all 200ms;}',
-    '.top-actions .footer-link:hover{color:#c8a97e;background:rgba(200,169,126,0.08);}',
+    /* — старую верхнюю панель прячем: всё уехало в док — */
+    '.top-actions{display:none!important;}',
+    /* — док внизу по центру — */
+    '#dock{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:940;',
+    ' display:none;align-items:center;gap:4px;padding:7px 10px;border-radius:18px;',
+    ' background:rgba(18,16,14,0.72);border:1px solid rgba(200,169,126,0.2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);',
+    ' box-shadow:0 16px 48px rgba(0,0,0,0.45);}',
+    '[data-theme="light"] #dock{background:rgba(255,253,248,0.85);border-color:rgba(154,121,72,0.25);box-shadow:0 16px 48px rgba(60,45,20,0.15);}',
+    '#dock .dk{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;',
+    ' color:rgba(240,237,232,0.6);background:transparent;border:0;cursor:pointer;position:relative;font-family:inherit;',
+    ' transition:all 200ms cubic-bezier(0.22,1,0.36,1);}',
+    '[data-theme="light"] #dock .dk{color:rgba(40,34,26,0.55);}',
+    '#dock .dk:hover{color:#c8a97e;background:rgba(200,169,126,0.1);transform:translateY(-2px);}',
+    '#dock .dk svg{width:17px;height:17px;}',
+    '#dock .dk::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 11px);left:50%;transform:translateX(-50%);',
+    ' white-space:nowrap;font:500 10.5px/1 "DM Sans",sans-serif;letter-spacing:0.04em;color:#f0ede8;',
+    ' background:rgba(20,18,15,0.95);border:1px solid rgba(200,169,126,0.2);padding:6px 10px;border-radius:8px;',
+    ' opacity:0;pointer-events:none;transition:opacity 160ms;}',
+    '#dock .dk:hover::after{opacity:1;}',
+    '[data-theme="light"] #dock .dk::after{background:rgba(255,253,248,0.98);color:#28221a;border-color:rgba(154,121,72,0.3);}',
+    '#open-cmdk.dk{font:600 11px/1 "DM Sans",sans-serif;letter-spacing:0.02em;}',
+    '#dock .dk-sep{width:1px;height:20px;background:rgba(255,255,255,0.1);margin:0 4px;}',
+    '[data-theme="light"] #dock .dk-sep{background:rgba(60,45,20,0.15);}',
+    '#dock #user-name{font:500 10.5px/1 "DM Sans",sans-serif;letter-spacing:0.06em;color:rgba(240,237,232,0.4)!important;',
+    ' opacity:1!important;padding:0 8px;text-transform:uppercase;}',
+    '[data-theme="light"] #dock #user-name{color:rgba(40,34,26,0.45)!important;}',
+    '#dock .theme-pill{margin:0 2px;}',
     /* — бренд-бар слева сверху — */
     '#brand-bar{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:24px;z-index:70;display:flex;align-items:center;gap:11px;}',
     '#brand-bar img{height:30px;width:auto;}',
@@ -1730,12 +1749,14 @@ void main(){
     '.card:hover::after{transform:scaleX(1);}',
     '.section-label{color:rgba(200,169,126,0.6)!important;}',
     '.section-label::after{background:linear-gradient(90deg,rgba(200,169,126,0.35),transparent)!important;}',
-    /* — бейдж превью: вниз по центру — */
-    '#preview-tag{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:900;pointer-events:none;',
+    /* — бейдж превью: справа сверху (низ занят доком) — */
+    '#preview-tag{position:fixed;top:16px;right:16px;z-index:900;pointer-events:none;',
     ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.22em;text-transform:uppercase;color:#c8a97e;',
     ' padding:8px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);backdrop-filter:blur(8px);}',
-    '@media(max-width:700px){#brand-bar .wm{display:none;} #brand-bar{top:12px;left:12px;} .top-actions{right:8px!important;}',
-    ' #bg-pop{right:8px;left:8px;width:auto;top:58px;} .hero img{height:132px;} .hero-kicker{font-size:18px;}}'
+    '@media(max-width:700px){#brand-bar .wm{display:none;} #brand-bar{top:12px;left:12px;}',
+    ' #dock{gap:2px;padding:6px 8px;} #dock .dk{width:36px;height:36px;} #dock #user-name{display:none;}',
+    ' #bg-pop{width:min(300px,calc(100vw - 24px));} #preview-tag{top:12px;right:10px;padding:7px 12px;}',
+    ' .hero img{height:132px;} .hero-kicker{font-size:18px;}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -1760,21 +1781,63 @@ void main(){
     heroImg.after(rule, kick);
   }
 
-  // — убрать эмодзи из кнопок верхней панели (типографика вместо пиктограмм) —
-  ['install-btn', 'push-btn', 'audit-link'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.textContent = el.textContent.replace(/^[^Ѐ-ӿA-Za-z]+/, '');
-  });
-
-  // — кнопка «Фон» в верхней панели + попап с режимами —
+  // — док внизу по центру: все сервисные кнопки в одном месте —
   var fadeTo = null;
   var ta = document.getElementById('top-actions');
+  var dock = document.createElement('div');
+  dock.id = 'dock';
+  dock.setAttribute('role', 'toolbar');
+  dock.setAttribute('aria-label', 'Действия портала');
+  document.body.appendChild(dock);
+
+  var IC = {
+    ring: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none" opacity=".85"/></svg>',
+    install: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 6.5 2.5 8H3.5C3.5 15.5 6 15 6 9"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>',
+    audit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>',
+    exit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'
+  };
+
+  // кнопка «Фон» (иконка-кольцо, имя режима — в тултипе)
   var bgBtn = document.createElement('button');
-  bgBtn.className = 'footer-link'; bgBtn.id = 'bg-btn'; bgBtn.type = 'button';
-  bgBtn.title = 'Вариант фона'; bgBtn.setAttribute('aria-haspopup', 'menu');
-  function btnLabel(){ bgBtn.innerHTML = '<span class="dot"></span>Фон · ' + MODES[uniforms.uMode.value].name; }
+  bgBtn.className = 'dk'; bgBtn.id = 'bg-btn'; bgBtn.type = 'button';
+  bgBtn.setAttribute('aria-haspopup', 'menu');
+  bgBtn.innerHTML = IC.ring;
+  function btnLabel(){ bgBtn.dataset.tip = 'Фон · ' + MODES[uniforms.uMode.value].name; }
   btnLabel();
-  if (ta) ta.insertBefore(bgBtn, ta.firstChild);
+  dock.appendChild(bgBtn);
+
+  // живые элементы переносим как есть — слушатели и state сохраняются
+  var themePill = document.getElementById('theme-pill');
+  if (themePill) dock.appendChild(themePill);
+  var cmdk = document.getElementById('open-cmdk');
+  if (cmdk) { cmdk.classList.add('dk'); cmdk.dataset.tip = 'Поиск и команды · Ctrl+K'; dock.appendChild(cmdk); }
+
+  // кнопки с динамическими подписями — через прокси, оригиналы остаются в скрытой панели
+  function proxy(id, tip, icon){
+    var orig = document.getElementById(id); if (!orig) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'dk'; b.dataset.tip = tip; b.innerHTML = icon;
+    b.addEventListener('click', function(){ orig.click(); });
+    function sync(){ b.style.display = orig.style.display === 'none' ? 'none' : 'inline-flex'; }
+    new MutationObserver(sync).observe(orig, { attributes: true, attributeFilter: ['style'] });
+    sync();
+    dock.appendChild(b);
+  }
+  proxy('install-btn', 'Установить как приложение', IC.install);
+  proxy('push-btn', 'Push-уведомления', IC.bell);
+  proxy('audit-link', 'Аудит — кто что открывал', IC.audit);
+
+  var sep = document.createElement('span'); sep.className = 'dk-sep'; dock.appendChild(sep);
+  var un = document.getElementById('user-name');
+  if (un) dock.appendChild(un);
+  var lo = ta ? ta.querySelector('button[onclick*="logout"]') : null;
+  if (lo) { lo.classList.add('dk'); lo.dataset.tip = 'Выйти'; lo.innerHTML = IC.exit; dock.appendChild(lo); }
+
+  // док появляется тогда же, когда портал показывал верхнюю панель (после входа)
+  function gateDock(){ dock.style.display = (ta && ta.style.display !== 'none') ? 'flex' : 'none'; }
+  if (ta) new MutationObserver(gateDock).observe(ta, { attributes: true, attributeFilter: ['style'] });
+  gateDock();
 
   var pop = document.createElement('div');
   pop.id = 'bg-pop'; pop.setAttribute('role', 'menu');
