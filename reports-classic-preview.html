@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Отчёты — Baden Uktus · Classic Minimal</title>
+<title>Отчёты — Baden Uktus · Эмблема</title>
 
 
 <!-- 3D libs from CDN -->
@@ -1364,12 +1364,11 @@
 })();
 </script>
 
-<!-- ── CLASSIC MINIMAL: редизайн классики в стиле Apple — 3 варианта (эмблема / дыхание / графит) ── -->
+<!-- ── CLASSIC MINIMAL «ЭМБЛЕМА»: Apple-редизайн классики. Группы отчётов по варианту 2 + live-цифры ── -->
 <script>
-(function initAppleMinimal(){
+(function initEmblema(){
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // плавный скролл как на проде
   if (typeof Lenis !== 'undefined' && !prefersReduced) {
     var lenis = new Lenis({ duration: 1.05, smoothWheel: true, smoothTouch: false,
       easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
@@ -1378,127 +1377,113 @@
 
   var css = document.createElement('style');
   css.textContent = [
-    /* ===== база: типографика и чистота ===== */
-    'body.amode{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif!important;}',
-    'body.amode #webgl-bg,body.amode #scene-overlay{display:none!important;}',
-    /* ===== фоны трёх вариантов ===== */
-    '.abg{position:fixed;inset:0;z-index:-2;pointer-events:none;display:none;overflow:hidden;}',
-    'body.am-1 #abg1{display:block;} body.am-2 #abg2{display:block;} body.am-3 #abg3{display:block;}',
-    '#abg1{background:#fafaf8;}',
+    /* ===== база ===== */
+    'body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif!important;}',
+    '#webgl-bg,#scene-overlay{display:none!important;}',
+    /* ===== фон: дышащая эмблема ===== */
+    '#abg1{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;background:#fafaf8;}',
     '#abg1 img{position:absolute;left:50%;top:36%;width:min(74vw,880px);transform:translate(-50%,-50%);',
     ' filter:blur(70px) sepia(.55) saturate(1.7) brightness(1.05);opacity:.4;will-change:transform;',
     ' animation:abreath 16s ease-in-out infinite;}',
     '@keyframes abreath{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.07);}}',
-    '#abg2{background:#fbfbfd;}',
-    '#abg2 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform;}',
-    '#abg2 .b1{width:52vw;height:52vw;left:-8vw;top:-14vh;background:radial-gradient(circle,#e8d5b5,transparent 65%);animation:adrift1 46s ease-in-out infinite alternate;}',
-    '#abg2 .b2{width:44vw;height:44vw;right:-10vw;top:18vh;background:radial-gradient(circle,#f4d9cf,transparent 65%);animation:adrift2 58s ease-in-out infinite alternate;}',
-    '#abg2 .b3{width:48vw;height:48vw;left:24vw;bottom:-24vh;background:radial-gradient(circle,#d9e4e8,transparent 65%);animation:adrift3 70s ease-in-out infinite alternate;}',
-    '@keyframes adrift1{to{transform:translate(14vw,10vh) scale(1.12);}}',
-    '@keyframes adrift2{to{transform:translate(-12vw,14vh) scale(0.92);}}',
-    '@keyframes adrift3{to{transform:translate(-10vw,-12vh) scale(1.08);}}',
-    '#abg3{background:#0a0a0b;}',
-    '#abg3 img{position:absolute;left:50%;top:36%;width:min(70vw,820px);transform:translate(-50%,-50%);',
-    ' filter:blur(80px) brightness(1.4);opacity:.16;will-change:transform;animation:abreath 18s ease-in-out infinite;}',
-    '#abg3::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(0,0,0,.5));}',
-    '@media(prefers-reduced-motion:reduce){#abg1 img,#abg3 img,#abg2 .blob{animation:none!important;}}',
-    /* ===== верхний нав-бар ===== */
+    '@media(prefers-reduced-motion:reduce){#abg1 img{animation:none!important;}}',
+    /* ===== нав-бар ===== */
     '#anav{position:fixed;top:0;left:0;right:0;height:52px;z-index:930;display:flex;align-items:center;justify-content:space-between;',
     ' padding:0 max(22px,env(safe-area-inset-left));background:rgba(251,251,253,.72);',
     ' backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(0,0,0,.07);}',
-    'body.am-3 #anav{background:rgba(12,12,13,.72);border-color:rgba(255,255,255,.09);}',
     '#anav .nb{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600;letter-spacing:.01em;color:#1d1d1f;}',
-    'body.am-3 #anav .nb{color:#f5f5f7;}',
     '#anav .nb img{height:22px;width:auto;}',
-    '#anav .nb .lg-d{display:none;} body.am-3 #anav .nb .lg-l{display:none;} body.am-3 #anav .nb .lg-d{display:block;}',
     '#anav .nb span{color:#86868b;font-weight:400;}',
-    '#anav-right{display:flex;align-items:center;gap:6px;}',
-    /* верхние действия внутри бара */
-    'body.amode .top-actions{position:static!important;top:auto!important;right:auto!important;gap:2px!important;}',
-    'body.amode .top-actions .footer-link{font-size:12px;color:#515154;padding:6px 10px;border-radius:8px;transition:all .2s;}',
-    'body.am-3 .top-actions .footer-link{color:#a1a1a6;}',
-    'body.amode .top-actions .footer-link:hover{color:#1d1d1f;background:rgba(0,0,0,.05);}',
-    'body.am-3 .top-actions .footer-link:hover{color:#f5f5f7;background:rgba(255,255,255,.08);}',
-    'body.amode #ui-v4-btn{display:none!important;}',
-    '#a-back{font-size:12px;color:#a8804d;cursor:pointer;background:none;border:0;padding:6px 10px;border-radius:8px;font-family:inherit;transition:background .2s;}',
-    '#a-back:hover{background:rgba(168,128,77,.08);}',
+    '#anav-right{display:flex;align-items:center;gap:2px;}',
+    '.top-actions{display:none!important;}',
+    /* иконки-кнопки нав-бара */
+    '.ni{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;',
+    ' color:#515154;background:transparent;border:0;cursor:pointer;position:relative;font-family:inherit;transition:all .2s;}',
+    '.ni:hover{color:#1d1d1f;background:rgba(0,0,0,.05);}',
+    '.ni svg{width:16px;height:16px;}',
+    '.ni::after{content:attr(data-tip);position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);',
+    ' white-space:nowrap;font:500 10.5px/1 inherit;letter-spacing:.03em;color:#1d1d1f;background:rgba(251,251,253,.98);',
+    ' border:1px solid rgba(0,0,0,.08);padding:6px 10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.1);',
+    ' opacity:0;pointer-events:none;transition:opacity .15s;z-index:5;}',
+    '.ni:hover::after{opacity:1;}',
+    '#nav-user{font-size:12px;color:#86868b;padding:0 8px 0 12px;white-space:nowrap;}',
+    '.nsep{width:1px;height:18px;background:rgba(0,0,0,.1);margin:0 6px;}',
+    /* меню «Дизайн» */
+    '#ver-btn{display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:12px;font-weight:500;color:#515154;',
+    ' background:transparent;border:0;border-radius:9px;padding:8px 11px;cursor:pointer;transition:all .2s;}',
+    '#ver-btn:hover{color:#1d1d1f;background:rgba(0,0,0,.05);}',
+    '#ver-btn svg{width:11px;height:11px;transition:transform .25s;}',
+    '#ver-btn.open svg{transform:rotate(180deg);}',
+    '#ver-menu{position:fixed;top:58px;right:14px;z-index:960;min-width:210px;padding:6px;border-radius:14px;',
+    ' background:rgba(251,251,253,.97);border:1px solid rgba(0,0,0,.08);box-shadow:0 20px 56px rgba(0,0,0,.16);',
+    ' backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);',
+    ' opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s cubic-bezier(.22,1,.36,1);}',
+    '#ver-menu.open{opacity:1;transform:none;pointer-events:auto;}',
+    '#ver-menu .vm{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:transparent;',
+    ' border:0;border-radius:9px;padding:9px 12px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:#1d1d1f;transition:background .15s;}',
+    '#ver-menu .vm:hover{background:rgba(0,0,0,.05);}',
+    '#ver-menu .vm .d{display:block;font-size:10.5px;font-weight:400;color:#86868b;margin-top:2px;}',
+    '#ver-menu .vm .chk{color:#a8804d;font-weight:700;}',
     /* ===== герой ===== */
-    'body.amode #main{padding-top:64px;}',
-    'body.amode .hero{margin-bottom:70px;}',
-    'body.amode .hero img{height:54px!important;animation:none!important;filter:none!important;}',
-    'body.amode .hero-sub{display:none!important;}',
+    '#main{padding-top:64px;}',
+    '.hero{margin-bottom:56px;}',
+    '.hero img{height:54px!important;animation:none!important;filter:none!important;}',
+    '.hero-sub{display:none!important;}',
     '#a-title{font-size:clamp(42px,6vw,72px);font-weight:700;letter-spacing:-0.032em;line-height:1.05;margin-top:28px;color:#1d1d1f;}',
-    'body.am-3 #a-title{color:#f5f5f7;}',
     '#a-sub{font-size:clamp(17px,2vw,22px);font-weight:400;letter-spacing:-0.01em;color:#86868b;margin-top:12px;}',
     /* ===== секции ===== */
-    'body.amode .section-label{font-size:24px!important;font-weight:700!important;letter-spacing:-0.02em!important;',
-    ' text-transform:none!important;color:#1d1d1f!important;opacity:1!important;margin-bottom:18px;}',
-    'body.am-3 .section-label{color:#f5f5f7!important;}',
-    'body.amode .section-label::after{display:none!important;}',
+    '.section-label{font-size:24px!important;font-weight:700!important;letter-spacing:-0.02em!important;',
+    ' text-transform:none!important;color:#1d1d1f!important;opacity:1!important;margin-bottom:14px;}',
+    '.section-label::after{display:none!important;}',
+    /* ===== группы отчётов (вариант 2) ===== */
+    '.grp{grid-column:1/-1!important;display:flex;align-items:center;gap:9px;margin:18px 0 0;',
+    ' font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#86868b;}',
+    '.grp::before{content:"";width:5px;height:5px;border-radius:50%;background:#a8804d;}',
+    '.grp:first-child{margin-top:0;}',
+    '@media(min-width:601px){.cards.bento .card.g2{grid-column:span 2!important;grid-row:auto!important;}}',
+    '.cards.bento .card:first-child{grid-column:auto;grid-row:auto;min-height:180px;}',
     /* ===== карточки ===== */
-    'body.amode .card{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:20px!important;',
+    '.card{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:20px!important;',
     ' box-shadow:0 1px 2px rgba(0,0,0,.03),0 14px 34px -14px rgba(0,0,0,.10)!important;',
     ' backdrop-filter:blur(22px) saturate(180%)!important;-webkit-backdrop-filter:blur(22px) saturate(180%)!important;',
     ' transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,background .3s!important;}',
-    'body.amode .card:hover{transform:translateY(-5px)!important;background:rgba(255,255,255,.82)!important;',
+    '.card:hover{transform:translateY(-5px)!important;background:rgba(255,255,255,.82)!important;',
     ' box-shadow:0 2px 4px rgba(0,0,0,.03),0 28px 56px -16px rgba(0,0,0,.16)!important;border-color:rgba(0,0,0,.08)!important;}',
-    'body.am-3 .card{background:rgba(28,28,30,.62)!important;border-color:rgba(255,255,255,.08)!important;',
-    ' box-shadow:0 1px 2px rgba(0,0,0,.3),0 14px 34px -14px rgba(0,0,0,.5)!important;}',
-    'body.am-3 .card:hover{background:rgba(38,38,40,.75)!important;border-color:rgba(255,255,255,.14)!important;}',
-    'body.amode .card::before,body.amode .card::after{display:none!important;}',
-    'body.amode .card:hover .card-num,body.amode .card:hover .card-title,body.amode .card:hover .card-desc,',
-    'body.amode .card:hover .card-meta{transform:none!important;}',
-    'body.amode .card:hover .card-arrow{transform:translateX(5px)!important;}',
-    'body.amode .card-num{font-family:inherit!important;font-style:normal!important;font-size:11px!important;',
+    '.card::before,.card::after{display:none!important;}',
+    '.card:hover .card-num,.card:hover .card-title,.card:hover .card-desc,.card:hover .card-meta{transform:none!important;}',
+    '.card:hover .card-arrow{transform:translateX(5px)!important;}',
+    '.card-num{font-family:inherit!important;font-style:normal!important;font-size:11px!important;',
     ' font-weight:600!important;letter-spacing:.08em!important;text-transform:uppercase;color:#a8804d!important;opacity:1!important;}',
-    'body.amode .card-num::before{display:none!important;}',
-    'body.amode .card-title{font-weight:600!important;letter-spacing:-0.02em!important;color:#1d1d1f!important;}',
-    'body.am-3 .card-title{color:#f5f5f7!important;}',
-    'body.amode .card-desc{color:#6e6e73!important;line-height:1.5!important;}',
-    'body.am-3 .card-desc{color:#a1a1a6!important;}',
-    'body.amode .card-status{color:#86868b!important;}',
-    'body.amode .card-arrow{color:#a8804d!important;transition:transform .35s cubic-bezier(.22,1,.36,1)!important;}',
-    /* ===== AI-блок и футер ===== */
-    'body.amode .ai-block{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:24px!important;',
+    '.card-num::before{display:none!important;}',
+    '.card-title{font-weight:600!important;letter-spacing:-0.02em!important;color:#1d1d1f!important;}',
+    '.card-desc{color:#6e6e73!important;line-height:1.5!important;}',
+    '.card-status{color:#86868b!important;}',
+    '.card-arrow{color:#a8804d!important;transition:transform .35s cubic-bezier(.22,1,.36,1)!important;}',
+    '.cards.bento .card:first-child .card-title{font-size:20px;}',
+    /* live-цифры */
+    '.kpi-val{font-size:32px;font-weight:700;letter-spacing:-0.025em;color:#1d1d1f;margin:8px 0 2px;font-variant-numeric:tabular-nums;}',
+    '.kpi-val.warn{color:#bf4800;}',
+    '.kpi-lbl{font-size:12px;color:#86868b;margin-bottom:10px;}',
+    '.card.feat .kpi-val{font-size:44px;}',
+    /* ===== AI-блок, футер, reveal ===== */
+    '.ai-block{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:24px!important;',
     ' backdrop-filter:blur(22px) saturate(180%)!important;}',
-    'body.am-3 .ai-block{background:rgba(28,28,30,.62)!important;border-color:rgba(255,255,255,.08)!important;}',
-    'body.amode .ai-heading{font-family:inherit!important;font-style:normal!important;font-weight:700!important;letter-spacing:-0.02em!important;color:#1d1d1f!important;}',
-    'body.am-3 .ai-heading{color:#f5f5f7!important;}',
-    'body.amode .ai-sub{color:#6e6e73!important;} body.am-3 .ai-sub{color:#a1a1a6!important;}',
-    'body.amode .ai-btn{background:#a8804d!important;color:#fff!important;border:0!important;border-radius:999px!important;font-weight:600!important;}',
-    'body.amode .footer,body.amode .footer-text{color:#86868b!important;border-color:rgba(0,0,0,.07)!important;}',
-    'body.am-3 .footer{border-color:rgba(255,255,255,.09)!important;}',
-    /* ===== мягкое появление вместо 3D-вылета ===== */
-    'body.amode .reveal-3d.pre{opacity:0;transform:translateY(22px)!important;}',
-    'body.amode .reveal-3d.in{opacity:1;transform:none!important;}',
-    /* ===== переключатель вариантов ===== */
-    '#astyle{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:940;',
-    ' display:flex;align-items:center;gap:3px;padding:5px;border-radius:999px;background:rgba(251,251,253,.8);',
-    ' border:1px solid rgba(0,0,0,.08);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);',
-    ' box-shadow:0 10px 34px rgba(0,0,0,.14);}',
-    'body.am-3 #astyle{background:rgba(22,22,24,.8);border-color:rgba(255,255,255,.1);}',
-    '#astyle .lbl{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#a8804d;padding:0 8px 0 12px;}',
-    '#astyle button{font-family:inherit;font-size:12.5px;font-weight:500;color:#515154;background:transparent;border:0;',
-    ' border-radius:999px;padding:8px 15px;cursor:pointer;transition:all .25s cubic-bezier(.22,1,.36,1);}',
-    'body.am-3 #astyle button{color:#a1a1a6;}',
-    '#astyle button:hover{color:#1d1d1f;} body.am-3 #astyle button:hover{color:#f5f5f7;}',
-    '#astyle button.on{background:#1d1d1f;color:#fff;font-weight:600;}',
-    'body.am-3 #astyle button.on{background:#f5f5f7;color:#0a0a0b;}',
-    '@media(max-width:700px){#anav .nb span{display:none;} #a-title{margin-top:20px;}',
-    ' #astyle .lbl{display:none;} #astyle button{padding:8px 12px;font-size:12px;}}'
+    '.ai-heading{font-family:inherit!important;font-style:normal!important;font-weight:700!important;letter-spacing:-0.02em!important;color:#1d1d1f!important;}',
+    '.ai-sub{color:#6e6e73!important;}',
+    '.ai-btn{background:#a8804d!important;color:#fff!important;border:0!important;border-radius:999px!important;font-weight:600!important;}',
+    '.footer,.footer-text{color:#86868b!important;border-color:rgba(0,0,0,.07)!important;}',
+    '.reveal-3d.pre{opacity:0;transform:translateY(22px)!important;}',
+    '.reveal-3d.in{opacity:1;transform:none!important;}',
+    '@media(max-width:700px){#anav .nb span{display:none;} #a-title{margin-top:20px;} #nav-user{display:none;}',
+    ' #ver-btn .vt{display:none;} #ver-menu{right:8px;left:8px;min-width:0;}}'
   ].join('');
   document.head.appendChild(css);
 
-  // ---------- фоновые слои ----------
-  var b1 = document.createElement('div'); b1.id='abg1'; b1.className='abg';
-  b1.innerHTML = '<img src="logo-dark.png" alt="">';
-  var b2 = document.createElement('div'); b2.id='abg2'; b2.className='abg';
-  b2.innerHTML = '<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>';
-  var b3 = document.createElement('div'); b3.id='abg3'; b3.className='abg';
-  b3.innerHTML = '<img src="logo.png" alt="">';
-  document.body.prepend(b1, b2, b3);
-
-  // параллакс фона за курсором — лёгкий 3D-эффект
+  // ---------- фон ----------
+  var bg = document.createElement('div');
+  bg.id = 'abg1';
+  bg.innerHTML = '<img src="logo-dark.png" alt="">';
+  document.body.prepend(bg);
   if (!prefersReduced) {
     var px = 0, py = 0, tx = 0, ty = 0;
     window.addEventListener('pointermove', function(e){
@@ -1507,65 +1492,149 @@
     }, { passive: true });
     (function par(){
       px += (tx - px) * 0.04; py += (ty - py) * 0.04;
-      var t = 'translate(' + (px * 14) + 'px,' + (py * 10) + 'px)';
-      b1.style.transform = t; b2.style.transform = t; b3.style.transform = t;
+      bg.style.transform = 'translate(' + (px * 14) + 'px,' + (py * 10) + 'px)';
       requestAnimationFrame(par);
     })();
   }
+  document.documentElement.setAttribute('data-theme', 'light');
 
   // ---------- нав-бар ----------
   var nav = document.createElement('div');
   nav.id = 'anav';
-  nav.innerHTML = '<div class="nb"><img class="lg-l" src="logo-dark.png" alt=""><img class="lg-d" src="logo.png" alt="">' +
-    'Баден·Баден <span>· Отчёты</span></div><div id="anav-right"></div>';
+  nav.innerHTML = '<div class="nb"><img src="logo-dark.png" alt="">Баден·Баден <span>· Отчёты</span></div><div id="anav-right"></div>';
   document.body.appendChild(nav);
-  var navRight = nav.querySelector('#anav-right');
-  var back = document.createElement('button');
-  back.id = 'a-back'; back.type = 'button'; back.textContent = 'К текущему дизайну';
-  back.addEventListener('click', function(){ window.location.href = 'reports.html?classic=1'; });
-  navRight.appendChild(back);
+  var right = nav.querySelector('#anav-right');
+
+  var IC = {
+    chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 6.5 2.5 8H3.5C3.5 15.5 6 15 6 9"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>',
+    install: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>',
+    audit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8.5 6h12M8.5 12h12M8.5 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>',
+    exit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>'
+  };
+
+  // «Дизайн» — переключатель версий портала
+  var vb = document.createElement('button');
+  vb.id = 'ver-btn'; vb.type = 'button';
+  vb.innerHTML = '<span class="vt">Дизайн · Эмблема</span>' + IC.chev;
+  right.appendChild(vb);
+  var vm = document.createElement('div');
+  vm.id = 'ver-menu';
+  function verRow(name, desc, chk, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'vm';
+    b.innerHTML = '<span>' + name + '<span class="d">' + desc + '</span></span>' + (chk ? '<span class="chk">✓</span>' : '');
+    if (fn) b.addEventListener('click', fn);
+    return b;
+  }
+  vm.appendChild(verRow('Основной', 'классический тёмный с золотом', false, function(){
+    try { localStorage.setItem('bbt_ui', 'classic'); } catch(e) {}
+    window.location.href = 'reports.html?classic=1';
+  }));
+  vm.appendChild(verRow('Ореол', 'тёмный, дышащее золотое кольцо', false, function(){
+    try { localStorage.setItem('bbt_ui', 'v4'); } catch(e) {}
+    window.location.href = 'reports-preview-v4.html';
+  }));
+  vm.appendChild(verRow('Эмблема', 'светлый минимализм', true, function(){
+    try { localStorage.setItem('bbt_ui', 'minimal'); } catch(e) {}
+    vm.classList.remove('open'); vb.classList.remove('open');
+  }));
+  document.body.appendChild(vm);
+  vb.addEventListener('click', function(e){ e.stopPropagation(); vm.classList.toggle('open'); vb.classList.toggle('open'); });
+  document.addEventListener('click', function(e){ if (!vm.contains(e.target)) { vm.classList.remove('open'); vb.classList.remove('open'); } });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { vm.classList.remove('open'); vb.classList.remove('open'); } });
+
+  // иконки: живые кнопки переносим, динамические — через прокси.
+  // Всё «после входа» живёт в одном контейнере, который включается вместе со старой панелью.
   var ta = document.getElementById('top-actions');
-  if (ta) navRight.appendChild(ta);
+  var authWrap = document.createElement('div');
+  authWrap.style.cssText = 'display:none;align-items:center;gap:2px;';
+  right.appendChild(authWrap);
+
+  var cmdk = document.getElementById('open-cmdk');
+  if (cmdk) { cmdk.className = 'ni'; cmdk.dataset.tip = 'Поиск и команды · Ctrl+K'; cmdk.innerHTML = IC.search; authWrap.appendChild(cmdk); }
+  function proxy(id, tip, icon){
+    var orig = document.getElementById(id); if (!orig) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'ni'; b.dataset.tip = tip; b.innerHTML = icon;
+    b.addEventListener('click', function(){ orig.click(); });
+    function sync(){ b.style.display = orig.style.display === 'none' ? 'none' : 'inline-flex'; }
+    new MutationObserver(sync).observe(orig, { attributes: true, attributeFilter: ['style'] });
+    sync();
+    authWrap.appendChild(b);
+  }
+  proxy('install-btn', 'Установить как приложение', IC.install);
+  proxy('push-btn', 'Push-уведомления', IC.bell);
+  proxy('audit-link', 'Аудит — кто что открывал', IC.audit);
+
+  var nsep = document.createElement('span'); nsep.className = 'nsep'; authWrap.appendChild(nsep);
+  var un = document.getElementById('user-name');
+  if (un) { un.id = 'nav-user'; authWrap.appendChild(un); }
+  var lo = ta ? ta.querySelector('button[onclick*="logout"]') : null;
+  if (lo) { lo.className = 'ni'; lo.dataset.tip = 'Выйти'; lo.innerHTML = IC.exit; authWrap.appendChild(lo); }
+
+  function gate(){ authWrap.style.display = (ta && ta.style.display !== 'none') ? 'flex' : 'none'; }
+  if (ta) new MutationObserver(gate).observe(ta, { attributes: true, attributeFilter: ['style'] });
+  gate();
 
   // ---------- герой ----------
   var heroImg = document.querySelector('.hero img');
   if (heroImg) {
+    heroImg.src = 'logo-dark.png';
     var t1 = document.createElement('div'); t1.id = 'a-title'; t1.textContent = 'Отчёты.';
     var t2 = document.createElement('div'); t2.id = 'a-sub';
     t2.textContent = 'Все данные Терм Уктус — финансы, гости, прогнозы. Ясно и по делу.';
     heroImg.after(t1, t2);
   }
 
-  // ---------- переключатель 3 вариантов ----------
-  var VARIANTS = [
-    { id: 1, name: 'Эмблема', hint: 'Размытый логотип Бадена дышит за контентом' },
-    { id: 2, name: 'Дыхание', hint: 'Тёплые цветовые пятна медленно плывут по белому' },
-    { id: 3, name: 'Графит',  hint: 'Тёмный Pro: серебро на графите, логотип-свечение' }
-  ];
-  function apply(v){
-    document.body.classList.add('amode');
-    document.body.classList.remove('am-1', 'am-2', 'am-3');
-    document.body.classList.add('am-' + v);
-    document.documentElement.setAttribute('data-theme', v === 3 ? 'dark' : 'light');
-    if (heroImg) heroImg.src = v === 3 ? 'logo.png' : 'logo-dark.png';   /* тёмный логотип на светлом */
-    try { localStorage.setItem('bbt_apple', String(v)); } catch(e) {}
-    if (sw) sw.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', +x.dataset.v === v); });
+  // ---------- отчёты: вариант 2 — Пульс / Деньги и команда / Гости ----------
+  var grid = document.querySelector('.cards.bento');
+  var byHref = {};
+  if (grid) {
+    grid.querySelectorAll('a.card').forEach(function(a){ byHref[a.getAttribute('href')] = a; });
+    function grp(t){ var d = document.createElement('div'); d.className = 'grp'; d.textContent = t; return d; }
+    var plan = [
+      ['Пульс · каждый день', ['forecast.html', 'sales.html']],
+      ['Деньги и команда · месяц', ['finance.html', 'staff.html']],
+      ['Гости · стратегия', ['attendance.html', 'loyalty.html']]
+    ];
+    var n = 1;
+    plan.forEach(function(g){
+      grid.appendChild(grp(g[0]));
+      g[1].forEach(function(h){
+        var c = byHref[h]; if (!c) return;
+        c.classList.add('g2');
+        var num = c.querySelector('.card-num');
+        if (num) num.textContent = (n < 10 ? '0' : '') + n;
+        n++;
+        grid.appendChild(c);
+      });
+    });
+    var feat = byHref['forecast.html'];
+    if (feat) feat.classList.add('feat');
   }
-  var saved = parseInt((function(){ try { return localStorage.getItem('bbt_apple'); } catch(e) { return null; } })() || '1', 10);
-  if (!(saved >= 1 && saved <= 3)) saved = 1;
 
-  var sw = document.createElement('div');
-  sw.id = 'astyle';
-  sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Вариант стиля');
-  sw.innerHTML = '<span class="lbl">Стиль</span>' + VARIANTS.map(function(v){
-    return '<button type="button" data-v="' + v.id + '" title="' + v.hint + '">' + v.name + '</button>';
-  }).join('');
-  document.body.appendChild(sw);
-  sw.addEventListener('click', function(e){
-    var b = e.target.closest('button'); if (!b) return;
-    apply(+b.dataset.v);
-  });
-  apply(saved);
+  // ---------- живые цифры из live.json ----------
+  function addKpi(href, val, lbl, warn){
+    var a = byHref[href]; if (!a) return;
+    var num = a.querySelector('.card-num'); if (!num) return;
+    var v = document.createElement('div'); v.className = 'kpi-val' + (warn ? ' warn' : ''); v.textContent = val;
+    var l = document.createElement('div'); l.className = 'kpi-lbl'; l.textContent = lbl;
+    num.after(v, l);
+  }
+  addKpi('attendance.html', '−15,9%', 'отток гостей за скользящие 12 мес', true);
+  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    if (L.forecast && L.forecast.guests)
+      addKpi('forecast.html', '~' + L.forecast.guests + ' гостей',
+        'прогноз на сегодня · ~' + String(L.forecast.revenueMln).replace('.', ',') + ' млн ₽');
+    if (L.finance && L.finance.totalRub)
+      addKpi('finance.html', (L.finance.totalRub / 1e6).toFixed(2).replace('.', ',') + ' млн ₽',
+        'поступления за ' + (L.finance.yesterday || 'вчера'));
+    var st = L.reports && L.reports.staff;
+    if (st && st.tag)
+      addKpi('staff.html', st.tag.replace(/^[^0-9A-Za-zА-Яа-яЁё]+\s*/, ''), 'штат сейчас', st.status === 'warn');
+  }).catch(function(){});
 })();
 </script>
 

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отчёты — Baden Uktus</title>
 
-<!-- BADEN_UI_V4_REDIRECT: если пользователь выбрал новый дизайн — уводим на V4 (?classic=1 всегда оставляет классику) -->
-<script>(function(){try{if(localStorage.getItem('bbt_ui')==='v4'&&location.search.indexOf('classic')===-1)location.replace('reports-preview-v4.html');}catch(e){}})();</script>
+<!-- BADEN_UI_V4_REDIRECT: если пользователь выбрал другую версию дизайна — уводим на неё (?classic=1 всегда оставляет основную) -->
+<script>(function(){try{var m={v4:'reports-preview-v4.html',minimal:'reports-classic-preview.html'};var u=m[localStorage.getItem('bbt_ui')];if(u&&location.search.indexOf('classic')===-1)location.replace(u);}catch(e){}})();</script>
 <!-- /BADEN_UI_V4_REDIRECT -->
 
 <!-- 3D libs from CDN -->
@@ -752,7 +752,17 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
     </span>
   </button>
-  <button class="footer-link" id="ui-v4-btn" title="Переключиться на новый дизайн портала (фон «Ореол», док, список отчётов)" onclick="try{localStorage.setItem('bbt_ui','v4')}catch(e){};window.location.href='reports-preview-v4.html'" style="color:var(--accent)">✦ Новый дизайн</button>
+  <!-- BADEN_UI_VER_MENU -->
+  <div id="ui-ver-wrap" style="position:relative;display:inline-flex">
+    <button class="footer-link" id="ui-v4-btn" title="Версия дизайна портала" style="color:var(--accent)" onclick="var m=document.getElementById('ui-ver-menu');m.style.display=m.style.display==='none'?'block':'none';event.stopPropagation()">✦ Дизайн</button>
+    <div id="ui-ver-menu" style="display:none;position:absolute;top:28px;right:0;z-index:999;min-width:170px;background:rgba(20,18,15,0.96);border:1px solid rgba(200,169,126,0.3);border-radius:12px;padding:6px;backdrop-filter:blur(12px);box-shadow:0 16px 48px rgba(0,0,0,0.4)">
+      <button class="footer-link" style="display:block;width:100%;text-align:left;padding:9px 12px;color:var(--accent);border-radius:8px" onclick="try{localStorage.setItem('bbt_ui','classic')}catch(e){};document.getElementById('ui-ver-menu').style.display='none'">✓ Основной</button>
+      <button class="footer-link" style="display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px" onclick="try{localStorage.setItem('bbt_ui','v4')}catch(e){};window.location.href='reports-preview-v4.html'">Ореол</button>
+      <button class="footer-link" style="display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px" onclick="try{localStorage.setItem('bbt_ui','minimal')}catch(e){};window.location.href='reports-classic-preview.html'">Эмблема</button>
+    </div>
+  </div>
+  <script>document.addEventListener('click',function(e){var m=document.getElementById('ui-ver-menu');if(m&&!document.getElementById('ui-ver-wrap').contains(e.target))m.style.display='none'});</script>
+  <!-- /BADEN_UI_VER_MENU -->
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
   <button class="footer-link" id="install-btn" style="display:none" title="Установить как приложение">📱 Установить</button>
   <button class="footer-link" id="push-btn" style="display:none" title="Включить push-уведомления">🔔 Уведомления</button>
