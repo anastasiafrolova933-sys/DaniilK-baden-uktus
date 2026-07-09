@@ -1943,5 +1943,144 @@ import * as THREE from 'three';
   }
 })();
 </script>
+
+<!-- BADEN_LIVE_META: живые цифры на карточках, свежесть данных, лента «Сегодня» (общий слой для всех версий дизайна) -->
+<style>
+.kpi-live{margin:4px 0 10px;}
+.kpi-live .kpi-val{font-size:30px;font-weight:700;letter-spacing:-0.02em;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.15;}
+.kpi-live.warn .kpi-val{color:#d97742;}
+.kpi-live .kpi-lbl{font-size:11.5px;color:var(--text-3);margin-top:3px;}
+.kpi-live svg{display:block;margin-top:8px;opacity:.75;}
+.stale-badge{color:#d97742;font-weight:600;margin-right:4px;}
+#today-strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 34px;padding:15px 20px;
+ background:var(--surface);border:1px solid var(--border);border-radius:16px;font-size:13px;color:var(--text-2);}
+#today-strip .ts-date{font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);font-weight:600;white-space:nowrap;}
+#today-strip .ts-line b{color:var(--text);font-weight:600;}
+#today-strip .ts-flags{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#d97742;}
+#today-strip .ts-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;white-space:nowrap;}
+#today-strip .ts-right a{color:var(--accent);text-decoration:none;}
+#today-strip .ts-right a:hover{text-decoration:underline;}
+@media(max-width:700px){#today-strip{gap:8px 14px;padding:13px 16px;} #today-strip .ts-right{margin-left:0;}}
+</style>
+<script>
+(function liveMeta(){
+  var fm = function(v){ return String(v).replace('.', ','); };
+  var mln = function(rub){ return fm((rub / 1e6).toFixed(2)) + ' млн ₽'; };
+
+  // счётчик открытий отчётов (для быстрых ссылок «часто открываете»)
+  function freq(){ try { return JSON.parse(localStorage.getItem('bbt_freq') || '{}'); } catch(e) { return {}; } }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('.cards a.card'); if (!a) return;
+    var h = a.getAttribute('href'); if (!h || h.indexOf('http') === 0) return;
+    try { var f = freq(); f[h] = (f[h] || 0) + 1; localStorage.setItem('bbt_freq', JSON.stringify(f)); } catch(e2) {}
+  }, true);
+
+  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    var rlist = document.querySelector('.cards.rlist');
+    function card(href){ return document.querySelector('.cards a.card[href="' + href + '"]'); }
+    function put(href, val, lbl, warn, extraHtml){
+      var a = card(href); if (!a) return;
+      if (a.querySelector('.kpi-live')) return;
+      var box = document.createElement('div');
+      box.className = 'kpi-live' + (warn ? ' warn' : '');
+      box.innerHTML = '<div class="kpi-val">' + val + '</div><div class="kpi-lbl">' + lbl + '</div>' + (extraHtml || '');
+      if (rlist && rlist.contains(a)) { var m = a.querySelector('.card-meta'); if (m) { m.prepend(box); return; } }
+      var num = a.querySelector('.card-num');
+      if (num) num.after(box); else a.prepend(box);
+    }
+    function spark(arr, w, h){
+      if (!arr || arr.length < 2) return '';
+      var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), rng = (mx - mn) || 1;
+      var pts = arr.map(function(v, i){
+        return (i * w / (arr.length - 1)).toFixed(1) + ',' + (h - 2 - (v - mn) / rng * (h - 4)).toFixed(1);
+      }).join(' ');
+      return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">' +
+        '<polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.85"/></svg>';
+    }
+
+    // ── живые цифры на карточках ──
+    if (L.forecast && L.forecast.guests)
+      put('forecast.html', '~' + L.forecast.guests + ' гостей', 'прогноз на сегодня · ~' + fm(L.forecast.revenueMln) + ' млн ₽');
+    if (L.thermal && L.thermal.guests) {
+      var d = L.thermal.revenueDeltaWeek;
+      put('sales.html', fm(L.thermal.revenueMln) + ' млн ₽',
+        'выручка вчера · ' + L.thermal.guests + ' гостей' + (d != null ? ' · ' + (d >= 0 ? '+' : '−') + fm(Math.abs(d)) + '% к нед.' : ''),
+        d != null && d < -15);
+    }
+    if (L.finance && L.finance.totalRub)
+      put('finance.html', mln(L.finance.totalRub), 'поступления за ' + (L.finance.yesterday || 'вчера'));
+    if (L.staff) {
+      var c = L.staff.critical && L.staff.critical[0];
+      if (c) put('staff.html', c.name + ': дефицит ' + c.deficit + ' чел.', 'укомплектованность ' + fm(c.filled) + '%', true);
+      else put('staff.html', '100%', 'укомплектованность штата');
+    }
+    if (L.attendance)
+      put('attendance.html', fm(L.attendance.yoy12).replace('-', '−') + '%',
+        'отток гостей за скользящие 12 мес', L.attendance.yoy12 < -10, spark(L.attendance.spark30, 96, 26));
+
+    // ── свежесть данных: бейдж на карточке, если отчёт не обновился к своему слоту ──
+    var SLOTS = { finance: [10, 18], sales: [10, 18], forecast: [10, 18], staff: [10, 18], attendance: [10.34, 18.34], loyalty: 'hourly' };
+    var staleNames = [];
+    Object.keys(SLOTS).forEach(function(key){
+      var meta = L.reports && L.reports[key];
+      if (!meta || !meta.lastUpdate) return;
+      var last = new Date(meta.lastUpdate), now = new Date(), expected = null, GRACE = 60 * 60000;
+      if (SLOTS[key] === 'hourly') { expected = new Date(now - 2 * 3600000); }
+      else {
+        for (var off = 0; off <= 1; off++) SLOTS[key].forEach(function(hh){
+          var dd = new Date(now); dd.setDate(dd.getDate() - off);
+          dd.setHours(Math.floor(hh), Math.round(hh % 1 * 100), 0, 0);
+          if (dd.getTime() + GRACE <= now.getTime() && (!expected || dd > expected)) expected = dd;
+        });
+      }
+      if (expected && last < expected) {
+        var a = card(key + '.html'); if (!a) return;
+        var st = a.querySelector('.card-status');
+        if (st && !st.querySelector('.stale-badge')) {
+          st.insertAdjacentHTML('afterbegin', '<span class="stale-badge" title="Последнее обновление: ' + last.toLocaleString('ru-RU') + '">⚠</span> ');
+          staleNames.push(a.querySelector('.card-title') ? a.querySelector('.card-title').textContent : key);
+        }
+      }
+    });
+
+    // ── лента «Сегодня» над отчётами ──
+    var firstLabel = document.querySelector('#main .section-label');
+    if (firstLabel) {
+      var flags = [];
+      if (staleNames.length) flags.push('⚠ не обновилось: ' + staleNames.join(', '));
+      if (L.staff && L.staff.critical) L.staff.critical.slice(0, 2).forEach(function(c2){
+        flags.push('⚠ ' + c2.name + ': укомплект. ' + fm(c2.filled) + '%, дефицит ' + c2.deficit);
+      });
+      if (L.attendance && L.attendance.yoy12 < -10) flags.push('⚠ отток ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 мес');
+      if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
+        flags.push('⚠ выручка вчера −' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к прошлой неделе');
+
+      var yPart = L.thermal && L.thermal.guests
+        ? 'Вчера <b>' + L.thermal.guests + ' гостей</b> · <b>' + fm(L.thermal.revenueMln) + ' млн ₽</b>'
+        : (L.finance && L.finance.totalRub ? 'Вчера поступило <b>' + mln(L.finance.totalRub) + '</b>' : '');
+      var tPart = L.forecast && L.forecast.guests
+        ? 'сегодня ждём <b>~' + L.forecast.guests + '</b> · <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>' : '';
+      var line = [yPart, tPart].filter(Boolean).join(' — ');
+
+      var f = freq(), tops = Object.keys(f).filter(function(h){ return f[h] >= 3 && card(h); })
+        .sort(function(a2, b2){ return f[b2] - f[a2]; }).slice(0, 2);
+      var quick = tops.map(function(h){
+        var t = card(h).querySelector('.card-title');
+        return '<a href="' + h + '">' + (t ? t.textContent : h) + '</a>';
+      }).join('');
+
+      var strip = document.createElement('div');
+      strip.id = 'today-strip';
+      strip.innerHTML =
+        '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '</span>' +
+        (line ? '<span class="ts-line">' + line + '</span>' : '') +
+        (flags.length ? '<span class="ts-flags">' + flags.join('<span style="opacity:.4">·</span>') + '</span>' : '') +
+        '<span class="ts-right">' + quick + '<a href="owner.html">Экран собственника →</a></span>';
+      firstLabel.before(strip);
+    }
+  }).catch(function(){});
+})();
+</script>
+<!-- /BADEN_LIVE_META -->
 </body>
 </html>
