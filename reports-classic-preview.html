@@ -1089,6 +1089,17 @@
     {g:'Тема', ic:'🌓', t:'Авто (по системе)', s:'следует за настройкой ОС', k:'theme auto авто', act:'theme:auto'},
     {g:'Действия', ic:'🚪', t:'Выйти', s:'разлогиниться', k:'logout выйти signout', act:'logout'}
   ];
+  // BADEN_CMDK_LIVE: экран собственника + живые цифры в палитре
+  CMDK_ITEMS.push({g:'Отчёты', ic:'📌', t:'Экран собственника', s:'все ключевые цифры на одном экране', k:'экран собственника сводка owner главное все цифры одним взглядом', h:'owner.html'});
+  try { fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    function num(t, s, k, h){ CMDK_ITEMS.push({g:'Цифры', ic:'🔢', t:t, s:s, k:k, h:h}); }
+    function fm(v){ return String(v).replace('.', ','); }
+    if (L.thermal && L.thermal.guests) num('Гости вчера: ' + L.thermal.guests, fm(L.thermal.revenueMln) + ' млн ₽ · чек ' + L.thermal.checkRub + ' ₽', 'гости вчера выручка чек посещаемость', 'sales.html');
+    if (L.finance && L.finance.totalRub) num('Поступления вчера: ' + fm((L.finance.totalRub/1e6).toFixed(2)) + ' млн ₽', 'касса + расчётный счёт за ' + L.finance.yesterday, 'выручка деньги касса поступления вчера бддс', 'finance.html');
+    if (L.forecast && L.forecast.guests) num('Прогноз сегодня: ~' + L.forecast.guests + ' гостей', '~' + fm(L.forecast.revenueMln) + ' млн ₽ выручки', 'прогноз сегодня гости выручка', 'forecast.html');
+    if (L.attendance) num('Отток за 12 мес: ' + fm(L.attendance.yoy12).replace('-', '−') + '%', 'скользящий год · ' + L.attendance.q12.toLocaleString('ru-RU') + ' визитов/12 мес', 'отток посещаемость статистика визиты churn', 'attendance.html');
+    if (L.staff && L.staff.critical && L.staff.critical.length) { var c = L.staff.critical[0]; num('Дефицит штата: ' + c.name + ' — ' + c.deficit + ' чел.', 'укомплектованность ' + fm(c.filled) + '%', 'штат дефицит фот люди укомплектованность', 'staff.html'); }
+  }).catch(function(){}); } catch(e) {}
 
   function fuzzy(q, item) {
     if (!q) return 1;
@@ -1460,11 +1471,10 @@
     '.card-status{color:#86868b!important;}',
     '.card-arrow{color:#a8804d!important;transition:transform .35s cubic-bezier(.22,1,.36,1)!important;}',
     '.cards.bento .card:first-child .card-title{font-size:20px;}',
-    /* live-цифры */
-    '.kpi-val{font-size:32px;font-weight:700;letter-spacing:-0.025em;color:#1d1d1f;margin:8px 0 2px;font-variant-numeric:tabular-nums;}',
-    '.kpi-val.warn{color:#bf4800;}',
-    '.kpi-lbl{font-size:12px;color:#86868b;margin-bottom:10px;}',
-    '.card.feat .kpi-val{font-size:44px;}',
+    /* live-цифры рисует общий слой BADEN_LIVE_META; здесь — акцент фичи и светлая лента «Сегодня» */
+    '.card.feat .kpi-live .kpi-val{font-size:44px;}',
+    '#today-strip{background:rgba(255,255,255,.66)!important;border-color:rgba(0,0,0,.06)!important;',
+    ' backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);}',
     /* ===== AI-блок, футер, reveal ===== */
     '.ai-block{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:24px!important;',
     ' backdrop-filter:blur(22px) saturate(180%)!important;}',
@@ -1615,26 +1625,6 @@
     if (feat) feat.classList.add('feat');
   }
 
-  // ---------- живые цифры из live.json ----------
-  function addKpi(href, val, lbl, warn){
-    var a = byHref[href]; if (!a) return;
-    var num = a.querySelector('.card-num'); if (!num) return;
-    var v = document.createElement('div'); v.className = 'kpi-val' + (warn ? ' warn' : ''); v.textContent = val;
-    var l = document.createElement('div'); l.className = 'kpi-lbl'; l.textContent = lbl;
-    num.after(v, l);
-  }
-  addKpi('attendance.html', '−15,9%', 'отток гостей за скользящие 12 мес', true);
-  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
-    if (L.forecast && L.forecast.guests)
-      addKpi('forecast.html', '~' + L.forecast.guests + ' гостей',
-        'прогноз на сегодня · ~' + String(L.forecast.revenueMln).replace('.', ',') + ' млн ₽');
-    if (L.finance && L.finance.totalRub)
-      addKpi('finance.html', (L.finance.totalRub / 1e6).toFixed(2).replace('.', ',') + ' млн ₽',
-        'поступления за ' + (L.finance.yesterday || 'вчера'));
-    var st = L.reports && L.reports.staff;
-    if (st && st.tag)
-      addKpi('staff.html', st.tag.replace(/^[^0-9A-Za-zА-Яа-яЁё]+\s*/, ''), 'штат сейчас', st.status === 'warn');
-  }).catch(function(){});
 })();
 </script>
 
@@ -1935,5 +1925,144 @@ import * as THREE from 'three';
   }
 })();
 </script>
+
+<!-- BADEN_LIVE_META: живые цифры на карточках, свежесть данных, лента «Сегодня» (общий слой для всех версий дизайна) -->
+<style>
+.kpi-live{margin:4px 0 10px;}
+.kpi-live .kpi-val{font-size:30px;font-weight:700;letter-spacing:-0.02em;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.15;}
+.kpi-live.warn .kpi-val{color:#d97742;}
+.kpi-live .kpi-lbl{font-size:11.5px;color:var(--text-3);margin-top:3px;}
+.kpi-live svg{display:block;margin-top:8px;opacity:.75;}
+.stale-badge{color:#d97742;font-weight:600;margin-right:4px;}
+#today-strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 34px;padding:15px 20px;
+ background:var(--surface);border:1px solid var(--border);border-radius:16px;font-size:13px;color:var(--text-2);}
+#today-strip .ts-date{font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);font-weight:600;white-space:nowrap;}
+#today-strip .ts-line b{color:var(--text);font-weight:600;}
+#today-strip .ts-flags{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#d97742;}
+#today-strip .ts-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;white-space:nowrap;}
+#today-strip .ts-right a{color:var(--accent);text-decoration:none;}
+#today-strip .ts-right a:hover{text-decoration:underline;}
+@media(max-width:700px){#today-strip{gap:8px 14px;padding:13px 16px;} #today-strip .ts-right{margin-left:0;}}
+</style>
+<script>
+(function liveMeta(){
+  var fm = function(v){ return String(v).replace('.', ','); };
+  var mln = function(rub){ return fm((rub / 1e6).toFixed(2)) + ' млн ₽'; };
+
+  // счётчик открытий отчётов (для быстрых ссылок «часто открываете»)
+  function freq(){ try { return JSON.parse(localStorage.getItem('bbt_freq') || '{}'); } catch(e) { return {}; } }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('.cards a.card'); if (!a) return;
+    var h = a.getAttribute('href'); if (!h || h.indexOf('http') === 0) return;
+    try { var f = freq(); f[h] = (f[h] || 0) + 1; localStorage.setItem('bbt_freq', JSON.stringify(f)); } catch(e2) {}
+  }, true);
+
+  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    var rlist = document.querySelector('.cards.rlist');
+    function card(href){ return document.querySelector('.cards a.card[href="' + href + '"]'); }
+    function put(href, val, lbl, warn, extraHtml){
+      var a = card(href); if (!a) return;
+      if (a.querySelector('.kpi-live')) return;
+      var box = document.createElement('div');
+      box.className = 'kpi-live' + (warn ? ' warn' : '');
+      box.innerHTML = '<div class="kpi-val">' + val + '</div><div class="kpi-lbl">' + lbl + '</div>' + (extraHtml || '');
+      if (rlist && rlist.contains(a)) { var m = a.querySelector('.card-meta'); if (m) { m.prepend(box); return; } }
+      var num = a.querySelector('.card-num');
+      if (num) num.after(box); else a.prepend(box);
+    }
+    function spark(arr, w, h){
+      if (!arr || arr.length < 2) return '';
+      var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), rng = (mx - mn) || 1;
+      var pts = arr.map(function(v, i){
+        return (i * w / (arr.length - 1)).toFixed(1) + ',' + (h - 2 - (v - mn) / rng * (h - 4)).toFixed(1);
+      }).join(' ');
+      return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">' +
+        '<polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.85"/></svg>';
+    }
+
+    // ── живые цифры на карточках ──
+    if (L.forecast && L.forecast.guests)
+      put('forecast.html', '~' + L.forecast.guests + ' гостей', 'прогноз на сегодня · ~' + fm(L.forecast.revenueMln) + ' млн ₽');
+    if (L.thermal && L.thermal.guests) {
+      var d = L.thermal.revenueDeltaWeek;
+      put('sales.html', fm(L.thermal.revenueMln) + ' млн ₽',
+        'выручка вчера · ' + L.thermal.guests + ' гостей' + (d != null ? ' · ' + (d >= 0 ? '+' : '−') + fm(Math.abs(d)) + '% к нед.' : ''),
+        d != null && d < -15);
+    }
+    if (L.finance && L.finance.totalRub)
+      put('finance.html', mln(L.finance.totalRub), 'поступления за ' + (L.finance.yesterday || 'вчера'));
+    if (L.staff) {
+      var c = L.staff.critical && L.staff.critical[0];
+      if (c) put('staff.html', c.name + ': дефицит ' + c.deficit + ' чел.', 'укомплектованность ' + fm(c.filled) + '%', true);
+      else put('staff.html', '100%', 'укомплектованность штата');
+    }
+    if (L.attendance)
+      put('attendance.html', fm(L.attendance.yoy12).replace('-', '−') + '%',
+        'отток гостей за скользящие 12 мес', L.attendance.yoy12 < -10, spark(L.attendance.spark30, 96, 26));
+
+    // ── свежесть данных: бейдж на карточке, если отчёт не обновился к своему слоту ──
+    var SLOTS = { finance: [10, 18], sales: [10, 18], forecast: [10, 18], staff: [10, 18], attendance: [10.34, 18.34], loyalty: 'hourly' };
+    var staleNames = [];
+    Object.keys(SLOTS).forEach(function(key){
+      var meta = L.reports && L.reports[key];
+      if (!meta || !meta.lastUpdate) return;
+      var last = new Date(meta.lastUpdate), now = new Date(), expected = null, GRACE = 60 * 60000;
+      if (SLOTS[key] === 'hourly') { expected = new Date(now - 2 * 3600000); }
+      else {
+        for (var off = 0; off <= 1; off++) SLOTS[key].forEach(function(hh){
+          var dd = new Date(now); dd.setDate(dd.getDate() - off);
+          dd.setHours(Math.floor(hh), Math.round(hh % 1 * 100), 0, 0);
+          if (dd.getTime() + GRACE <= now.getTime() && (!expected || dd > expected)) expected = dd;
+        });
+      }
+      if (expected && last < expected) {
+        var a = card(key + '.html'); if (!a) return;
+        var st = a.querySelector('.card-status');
+        if (st && !st.querySelector('.stale-badge')) {
+          st.insertAdjacentHTML('afterbegin', '<span class="stale-badge" title="Последнее обновление: ' + last.toLocaleString('ru-RU') + '">⚠</span> ');
+          staleNames.push(a.querySelector('.card-title') ? a.querySelector('.card-title').textContent : key);
+        }
+      }
+    });
+
+    // ── лента «Сегодня» над отчётами ──
+    var firstLabel = document.querySelector('#main .section-label');
+    if (firstLabel) {
+      var flags = [];
+      if (staleNames.length) flags.push('⚠ не обновилось: ' + staleNames.join(', '));
+      if (L.staff && L.staff.critical) L.staff.critical.slice(0, 2).forEach(function(c2){
+        flags.push('⚠ ' + c2.name + ': укомплект. ' + fm(c2.filled) + '%, дефицит ' + c2.deficit);
+      });
+      if (L.attendance && L.attendance.yoy12 < -10) flags.push('⚠ отток ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 мес');
+      if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
+        flags.push('⚠ выручка вчера −' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к прошлой неделе');
+
+      var yPart = L.thermal && L.thermal.guests
+        ? 'Вчера <b>' + L.thermal.guests + ' гостей</b> · <b>' + fm(L.thermal.revenueMln) + ' млн ₽</b>'
+        : (L.finance && L.finance.totalRub ? 'Вчера поступило <b>' + mln(L.finance.totalRub) + '</b>' : '');
+      var tPart = L.forecast && L.forecast.guests
+        ? 'сегодня ждём <b>~' + L.forecast.guests + '</b> · <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>' : '';
+      var line = [yPart, tPart].filter(Boolean).join(' — ');
+
+      var f = freq(), tops = Object.keys(f).filter(function(h){ return f[h] >= 3 && card(h); })
+        .sort(function(a2, b2){ return f[b2] - f[a2]; }).slice(0, 2);
+      var quick = tops.map(function(h){
+        var t = card(h).querySelector('.card-title');
+        return '<a href="' + h + '">' + (t ? t.textContent : h) + '</a>';
+      }).join('');
+
+      var strip = document.createElement('div');
+      strip.id = 'today-strip';
+      strip.innerHTML =
+        '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '</span>' +
+        (line ? '<span class="ts-line">' + line + '</span>' : '') +
+        (flags.length ? '<span class="ts-flags">' + flags.join('<span style="opacity:.4">·</span>') + '</span>' : '') +
+        '<span class="ts-right">' + quick + '<a href="owner.html">Экран собственника →</a></span>';
+      firstLabel.before(strip);
+    }
+  }).catch(function(){});
+})();
+</script>
+<!-- /BADEN_LIVE_META -->
 </body>
 </html>

@@ -1089,6 +1089,17 @@
     {g:'Тема', ic:'🌓', t:'Авто (по системе)', s:'следует за настройкой ОС', k:'theme auto авто', act:'theme:auto'},
     {g:'Действия', ic:'🚪', t:'Выйти', s:'разлогиниться', k:'logout выйти signout', act:'logout'}
   ];
+  // BADEN_CMDK_LIVE: экран собственника + живые цифры в палитре
+  CMDK_ITEMS.push({g:'Отчёты', ic:'📌', t:'Экран собственника', s:'все ключевые цифры на одном экране', k:'экран собственника сводка owner главное все цифры одним взглядом', h:'owner.html'});
+  try { fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    function num(t, s, k, h){ CMDK_ITEMS.push({g:'Цифры', ic:'🔢', t:t, s:s, k:k, h:h}); }
+    function fm(v){ return String(v).replace('.', ','); }
+    if (L.thermal && L.thermal.guests) num('Гости вчера: ' + L.thermal.guests, fm(L.thermal.revenueMln) + ' млн ₽ · чек ' + L.thermal.checkRub + ' ₽', 'гости вчера выручка чек посещаемость', 'sales.html');
+    if (L.finance && L.finance.totalRub) num('Поступления вчера: ' + fm((L.finance.totalRub/1e6).toFixed(2)) + ' млн ₽', 'касса + расчётный счёт за ' + L.finance.yesterday, 'выручка деньги касса поступления вчера бддс', 'finance.html');
+    if (L.forecast && L.forecast.guests) num('Прогноз сегодня: ~' + L.forecast.guests + ' гостей', '~' + fm(L.forecast.revenueMln) + ' млн ₽ выручки', 'прогноз сегодня гости выручка', 'forecast.html');
+    if (L.attendance) num('Отток за 12 мес: ' + fm(L.attendance.yoy12).replace('-', '−') + '%', 'скользящий год · ' + L.attendance.q12.toLocaleString('ru-RU') + ' визитов/12 мес', 'отток посещаемость статистика визиты churn', 'attendance.html');
+    if (L.staff && L.staff.critical && L.staff.critical.length) { var c = L.staff.critical[0]; num('Дефицит штата: ' + c.name + ' — ' + c.deficit + ' чел.', 'укомплектованность ' + fm(c.filled) + '%', 'штат дефицит фот люди укомплектованность', 'staff.html'); }
+  }).catch(function(){}); } catch(e) {}
 
   function fuzzy(q, item) {
     if (!q) return 1;
@@ -1553,13 +1564,29 @@ void main(){
     '.rlist .card:hover .card-num,.rlist .card:hover .card-desc,.rlist .card:hover .card-meta{transform:none!important;}',
     '@media(max-width:820px){.rlist .card{grid-template-columns:1fr!important;gap:8px;padding:24px 10px!important;}',
     ' .rlist .card-meta{flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin-top:6px!important;}}',
-    /* — кнопка «Классическая версия» справа сверху — */
-    '#ver-btn{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:900;cursor:pointer;',
+    /* — кнопка и меню «Дизайн» справа сверху — */
+    '#ver-btn{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:960;cursor:pointer;',
     ' font:600 10px/1 "DM Sans",sans-serif;letter-spacing:0.18em;text-transform:uppercase;color:rgba(240,237,232,0.55);',
     ' padding:9px 16px;border-radius:999px;background:rgba(18,16,14,0.6);border:1px solid rgba(200,169,126,0.3);',
     ' backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 220ms;}',
     '#ver-btn:hover{color:#c8a97e;border-color:#c8a97e;}',
     '[data-theme="light"] #ver-btn{background:rgba(255,253,248,0.8);color:rgba(40,34,26,0.6);}',
+    '#ver-menu{position:fixed;top:calc(54px + env(safe-area-inset-top,0px));right:16px;z-index:960;min-width:210px;padding:6px;',
+    ' border-radius:14px;background:rgba(20,18,15,0.95);border:1px solid rgba(200,169,126,0.25);',
+    ' backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 20px 56px rgba(0,0,0,0.5);',
+    ' opacity:0;transform:translateY(-6px);pointer-events:none;transition:all 220ms cubic-bezier(0.22,1,0.36,1);}',
+    '#ver-menu.open{opacity:1;transform:none;pointer-events:auto;}',
+    '#ver-menu .vm{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:transparent;',
+    ' border:0;border-radius:9px;padding:9px 12px;cursor:pointer;font:500 13px/1.3 "DM Sans",sans-serif;color:rgba(240,237,232,0.85);transition:background 150ms;}',
+    '#ver-menu .vm:hover{background:rgba(200,169,126,0.1);}',
+    '#ver-menu .vm .d{display:block;font-size:10.5px;font-weight:400;color:rgba(240,237,232,0.4);margin-top:2px;}',
+    '#ver-menu .vm .chk{color:#c8a97e;font-weight:700;}',
+    /* — живые цифры в списке отчётов (общий слой BADEN_LIVE_META) — */
+    '.rlist .kpi-live{text-align:right;margin:0 0 2px;}',
+    '.rlist .kpi-live .kpi-val{font-size:19px!important;color:#c8a97e!important;}',
+    '.rlist .kpi-live.warn .kpi-val{color:#e08a5a!important;}',
+    '.rlist .kpi-live .kpi-lbl{font-size:10.5px!important;}',
+    '.rlist .kpi-live svg{margin:6px 0 0 auto;}',
     '@media(max-width:700px){#brand-bar .wm{display:none;} #brand-bar{top:12px;left:12px;}',
     ' #dock{gap:2px;padding:6px 8px;} #dock .dk{width:36px;height:36px;} #dock #user-name{display:none;}',
     ' #ver-btn{top:12px;right:10px;padding:8px 12px;letter-spacing:0.12em;}',
@@ -1567,16 +1594,37 @@ void main(){
   ].join('');
   document.head.appendChild(css);
 
-  // — кнопка возврата на классическую версию —
+  // — меню «Дизайн»: переключение трёх версий портала —
   var vb = document.createElement('button');
   vb.id = 'ver-btn'; vb.type = 'button';
-  vb.textContent = 'Классическая версия';
-  vb.title = 'Вернуться на классический дизайн портала';
-  vb.addEventListener('click', function(){
+  vb.textContent = 'Дизайн · Ореол';
+  vb.setAttribute('aria-haspopup', 'menu');
+  document.body.appendChild(vb);
+  var vm = document.createElement('div');
+  vm.id = 'ver-menu';
+  function verRow(name, desc, chk, fn){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'vm';
+    b.innerHTML = '<span>' + name + '<span class="d">' + desc + '</span></span>' + (chk ? '<span class="chk">✓</span>' : '');
+    b.addEventListener('click', fn);
+    return b;
+  }
+  vm.appendChild(verRow('Основной', 'классический тёмный с золотом', false, function(){
     try { localStorage.setItem('bbt_ui', 'classic'); } catch(e) {}
     window.location.href = 'reports.html?classic=1';
-  });
-  document.body.appendChild(vb);
+  }));
+  vm.appendChild(verRow('Ореол', 'тёмный, дышащее золотое кольцо', true, function(){
+    try { localStorage.setItem('bbt_ui', 'v4'); } catch(e) {}
+    vm.classList.remove('open');
+  }));
+  vm.appendChild(verRow('Эмблема', 'светлый минимализм', false, function(){
+    try { localStorage.setItem('bbt_ui', 'minimal'); } catch(e) {}
+    window.location.href = 'reports-classic-preview.html';
+  }));
+  document.body.appendChild(vm);
+  vb.addEventListener('click', function(e){ e.stopPropagation(); vm.classList.toggle('open'); });
+  document.addEventListener('click', function(e){ if (!vm.contains(e.target)) vm.classList.remove('open'); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') vm.classList.remove('open'); });
 
   // — бренд-бар —
   var bb = document.createElement('div');
@@ -1955,5 +2003,144 @@ import * as THREE from 'three';
   }
 })();
 </script>
+
+<!-- BADEN_LIVE_META: живые цифры на карточках, свежесть данных, лента «Сегодня» (общий слой для всех версий дизайна) -->
+<style>
+.kpi-live{margin:4px 0 10px;}
+.kpi-live .kpi-val{font-size:30px;font-weight:700;letter-spacing:-0.02em;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.15;}
+.kpi-live.warn .kpi-val{color:#d97742;}
+.kpi-live .kpi-lbl{font-size:11.5px;color:var(--text-3);margin-top:3px;}
+.kpi-live svg{display:block;margin-top:8px;opacity:.75;}
+.stale-badge{color:#d97742;font-weight:600;margin-right:4px;}
+#today-strip{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 34px;padding:15px 20px;
+ background:var(--surface);border:1px solid var(--border);border-radius:16px;font-size:13px;color:var(--text-2);}
+#today-strip .ts-date{font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);font-weight:600;white-space:nowrap;}
+#today-strip .ts-line b{color:var(--text);font-weight:600;}
+#today-strip .ts-flags{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#d97742;}
+#today-strip .ts-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;white-space:nowrap;}
+#today-strip .ts-right a{color:var(--accent);text-decoration:none;}
+#today-strip .ts-right a:hover{text-decoration:underline;}
+@media(max-width:700px){#today-strip{gap:8px 14px;padding:13px 16px;} #today-strip .ts-right{margin-left:0;}}
+</style>
+<script>
+(function liveMeta(){
+  var fm = function(v){ return String(v).replace('.', ','); };
+  var mln = function(rub){ return fm((rub / 1e6).toFixed(2)) + ' млн ₽'; };
+
+  // счётчик открытий отчётов (для быстрых ссылок «часто открываете»)
+  function freq(){ try { return JSON.parse(localStorage.getItem('bbt_freq') || '{}'); } catch(e) { return {}; } }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('.cards a.card'); if (!a) return;
+    var h = a.getAttribute('href'); if (!h || h.indexOf('http') === 0) return;
+    try { var f = freq(); f[h] = (f[h] || 0) + 1; localStorage.setItem('bbt_freq', JSON.stringify(f)); } catch(e2) {}
+  }, true);
+
+  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    var rlist = document.querySelector('.cards.rlist');
+    function card(href){ return document.querySelector('.cards a.card[href="' + href + '"]'); }
+    function put(href, val, lbl, warn, extraHtml){
+      var a = card(href); if (!a) return;
+      if (a.querySelector('.kpi-live')) return;
+      var box = document.createElement('div');
+      box.className = 'kpi-live' + (warn ? ' warn' : '');
+      box.innerHTML = '<div class="kpi-val">' + val + '</div><div class="kpi-lbl">' + lbl + '</div>' + (extraHtml || '');
+      if (rlist && rlist.contains(a)) { var m = a.querySelector('.card-meta'); if (m) { m.prepend(box); return; } }
+      var num = a.querySelector('.card-num');
+      if (num) num.after(box); else a.prepend(box);
+    }
+    function spark(arr, w, h){
+      if (!arr || arr.length < 2) return '';
+      var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), rng = (mx - mn) || 1;
+      var pts = arr.map(function(v, i){
+        return (i * w / (arr.length - 1)).toFixed(1) + ',' + (h - 2 - (v - mn) / rng * (h - 4)).toFixed(1);
+      }).join(' ');
+      return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">' +
+        '<polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.85"/></svg>';
+    }
+
+    // ── живые цифры на карточках ──
+    if (L.forecast && L.forecast.guests)
+      put('forecast.html', '~' + L.forecast.guests + ' гостей', 'прогноз на сегодня · ~' + fm(L.forecast.revenueMln) + ' млн ₽');
+    if (L.thermal && L.thermal.guests) {
+      var d = L.thermal.revenueDeltaWeek;
+      put('sales.html', fm(L.thermal.revenueMln) + ' млн ₽',
+        'выручка вчера · ' + L.thermal.guests + ' гостей' + (d != null ? ' · ' + (d >= 0 ? '+' : '−') + fm(Math.abs(d)) + '% к нед.' : ''),
+        d != null && d < -15);
+    }
+    if (L.finance && L.finance.totalRub)
+      put('finance.html', mln(L.finance.totalRub), 'поступления за ' + (L.finance.yesterday || 'вчера'));
+    if (L.staff) {
+      var c = L.staff.critical && L.staff.critical[0];
+      if (c) put('staff.html', c.name + ': дефицит ' + c.deficit + ' чел.', 'укомплектованность ' + fm(c.filled) + '%', true);
+      else put('staff.html', '100%', 'укомплектованность штата');
+    }
+    if (L.attendance)
+      put('attendance.html', fm(L.attendance.yoy12).replace('-', '−') + '%',
+        'отток гостей за скользящие 12 мес', L.attendance.yoy12 < -10, spark(L.attendance.spark30, 96, 26));
+
+    // ── свежесть данных: бейдж на карточке, если отчёт не обновился к своему слоту ──
+    var SLOTS = { finance: [10, 18], sales: [10, 18], forecast: [10, 18], staff: [10, 18], attendance: [10.34, 18.34], loyalty: 'hourly' };
+    var staleNames = [];
+    Object.keys(SLOTS).forEach(function(key){
+      var meta = L.reports && L.reports[key];
+      if (!meta || !meta.lastUpdate) return;
+      var last = new Date(meta.lastUpdate), now = new Date(), expected = null, GRACE = 60 * 60000;
+      if (SLOTS[key] === 'hourly') { expected = new Date(now - 2 * 3600000); }
+      else {
+        for (var off = 0; off <= 1; off++) SLOTS[key].forEach(function(hh){
+          var dd = new Date(now); dd.setDate(dd.getDate() - off);
+          dd.setHours(Math.floor(hh), Math.round(hh % 1 * 100), 0, 0);
+          if (dd.getTime() + GRACE <= now.getTime() && (!expected || dd > expected)) expected = dd;
+        });
+      }
+      if (expected && last < expected) {
+        var a = card(key + '.html'); if (!a) return;
+        var st = a.querySelector('.card-status');
+        if (st && !st.querySelector('.stale-badge')) {
+          st.insertAdjacentHTML('afterbegin', '<span class="stale-badge" title="Последнее обновление: ' + last.toLocaleString('ru-RU') + '">⚠</span> ');
+          staleNames.push(a.querySelector('.card-title') ? a.querySelector('.card-title').textContent : key);
+        }
+      }
+    });
+
+    // ── лента «Сегодня» над отчётами ──
+    var firstLabel = document.querySelector('#main .section-label');
+    if (firstLabel) {
+      var flags = [];
+      if (staleNames.length) flags.push('⚠ не обновилось: ' + staleNames.join(', '));
+      if (L.staff && L.staff.critical) L.staff.critical.slice(0, 2).forEach(function(c2){
+        flags.push('⚠ ' + c2.name + ': укомплект. ' + fm(c2.filled) + '%, дефицит ' + c2.deficit);
+      });
+      if (L.attendance && L.attendance.yoy12 < -10) flags.push('⚠ отток ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 мес');
+      if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
+        flags.push('⚠ выручка вчера −' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к прошлой неделе');
+
+      var yPart = L.thermal && L.thermal.guests
+        ? 'Вчера <b>' + L.thermal.guests + ' гостей</b> · <b>' + fm(L.thermal.revenueMln) + ' млн ₽</b>'
+        : (L.finance && L.finance.totalRub ? 'Вчера поступило <b>' + mln(L.finance.totalRub) + '</b>' : '');
+      var tPart = L.forecast && L.forecast.guests
+        ? 'сегодня ждём <b>~' + L.forecast.guests + '</b> · <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>' : '';
+      var line = [yPart, tPart].filter(Boolean).join(' — ');
+
+      var f = freq(), tops = Object.keys(f).filter(function(h){ return f[h] >= 3 && card(h); })
+        .sort(function(a2, b2){ return f[b2] - f[a2]; }).slice(0, 2);
+      var quick = tops.map(function(h){
+        var t = card(h).querySelector('.card-title');
+        return '<a href="' + h + '">' + (t ? t.textContent : h) + '</a>';
+      }).join('');
+
+      var strip = document.createElement('div');
+      strip.id = 'today-strip';
+      strip.innerHTML =
+        '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '</span>' +
+        (line ? '<span class="ts-line">' + line + '</span>' : '') +
+        (flags.length ? '<span class="ts-flags">' + flags.join('<span style="opacity:.4">·</span>') + '</span>' : '') +
+        '<span class="ts-right">' + quick + '<a href="owner.html">Экран собственника →</a></span>';
+      firstLabel.before(strip);
+    }
+  }).catch(function(){});
+})();
+</script>
+<!-- /BADEN_LIVE_META -->
 </body>
 </html>

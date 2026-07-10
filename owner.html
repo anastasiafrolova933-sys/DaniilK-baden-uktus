@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Экран собственника — Baden Uktus</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--ink:#1d1d1f;--ink2:#6e6e73;--ink3:#86868b;--bronze:#a8804d;--warn:#bf4800;--line:rgba(0,0,0,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{visibility:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif;
+ background:#fafaf8;color:var(--ink);font-size:15px;line-height:1.5;min-height:100vh}
+#bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+#bg img{position:absolute;left:50%;top:34%;width:min(74vw,880px);transform:translate(-50%,-50%);
+ filter:blur(70px) sepia(.55) saturate(1.7) brightness(1.05);opacity:.35;animation:breath 16s ease-in-out infinite}
+@keyframes breath{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.07)}}
+@media(prefers-reduced-motion:reduce){#bg img{animation:none}}
+nav{position:fixed;top:0;left:0;right:0;height:52px;z-index:50;display:flex;align-items:center;justify-content:space-between;
+ padding:0 22px;background:rgba(251,251,253,.72);backdrop-filter:blur(20px) saturate(180%);
+ -webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--line)}
+nav .nb{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600}
+nav .nb img{height:22px}
+nav .nb span{color:var(--ink3);font-weight:400}
+nav a{font-size:12px;color:var(--bronze);text-decoration:none;padding:7px 11px;border-radius:8px;transition:background .2s}
+nav a:hover{background:rgba(168,128,77,.08)}
+.wrap{max-width:1080px;margin:0 auto;padding:96px 22px 60px}
+h1{font-size:clamp(36px,5vw,58px);font-weight:700;letter-spacing:-.032em;line-height:1.05}
+.sub{font-size:clamp(15px,1.8vw,19px);color:var(--ink3);margin-top:10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:44px}
+a.tile{display:block;background:rgba(255,255,255,.66);border:1px solid rgba(0,0,0,.06);border-radius:20px;
+ padding:22px 24px;text-decoration:none;color:inherit;backdrop-filter:blur(22px) saturate(180%);
+ -webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:0 1px 2px rgba(0,0,0,.03),0 14px 34px -14px rgba(0,0,0,.10);
+ transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,background .3s}
+a.tile:hover{transform:translateY(-5px);background:rgba(255,255,255,.82);
+ box-shadow:0 2px 4px rgba(0,0,0,.03),0 28px 56px -16px rgba(0,0,0,.16)}
+.tl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bronze)}
+.tv{font-size:38px;font-weight:700;letter-spacing:-.025em;margin-top:10px;font-variant-numeric:tabular-nums;line-height:1.1}
+.tv.warn{color:var(--warn)}
+.td{font-size:12.5px;color:var(--ink3);margin-top:6px}
+.td b{color:var(--ink2);font-weight:600}
+.td .up{color:#1a7f37;font-weight:600}.td .down{color:var(--warn);font-weight:600}
+.tile svg{display:block;margin-top:12px;color:var(--bronze);opacity:.8}
+#flags{margin-top:40px}
+#flags h2{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
+#flags .fl{display:flex;gap:10px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line);
+ font-size:14px;color:var(--ink2)}
+#flags .fl:first-of-type{border-top:1px solid var(--line)}
+#flags .fl .ic{color:var(--warn);font-weight:700}
+#flags .ok{color:#1a7f37;font-size:14px}
+footer{margin-top:56px;font-size:12px;color:var(--ink3)}
+@media(max-width:700px){.wrap{padding-top:82px}.tv{font-size:32px}}
+</style>
+<script src="js/api.js"></script>
+<script>
+(function(){
+  if (window.BadenAuth) {
+    BadenAuth.requireAuth({ permission: 'finance', verify: false }).then(function(s){
+      if (s) document.documentElement.style.visibility = 'visible';
+    }).catch(function(){ /* redirect уже произошёл */ });
+  } else {
+    document.documentElement.style.visibility = 'visible';
+  }
+})();
+</script>
+</head>
+<body>
+<div id="bg"><img src="logo-dark.png" alt=""></div>
+<nav>
+  <div class="nb"><img src="logo-dark.png" alt="">Баден·Баден <span>· Экран собственника</span></div>
+  <a href="reports.html">← Портал отчётов</a>
+</nav>
+<div class="wrap">
+  <h1>Всё главное.</h1>
+  <div class="sub" id="sub">Ключевые цифры комплекса — одним взглядом.</div>
+  <div class="tiles" id="tiles"></div>
+  <div id="flags"></div>
+  <footer id="ft"></footer>
+</div>
+<script>
+(function(){
+  var fm = function(v){ return String(v).replace('.', ','); };
+  var mln = function(rub){ return fm((rub / 1e6).toFixed(2)) + ' млн ₽'; };
+  function delta(d, invert){
+    if (d == null) return '';
+    var good = invert ? d <= 0 : d >= 0;
+    return ' <span class="' + (good ? 'up' : 'down') + '">' + (d >= 0 ? '+' : '−') + fm(Math.abs(d)) + '%</span> к нед.';
+  }
+  function spark(arr, w, h){
+    if (!arr || arr.length < 2) return '';
+    var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr), rng = (mx - mn) || 1;
+    var pts = arr.map(function(v, i){
+      return (i * w / (arr.length - 1)).toFixed(1) + ',' + (h - 2 - (v - mn) / rng * (h - 4)).toFixed(1);
+    }).join(' ');
+    return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '"><polyline points="' + pts +
+      '" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  }
+  function tile(href, label, value, desc, warn, extra){
+    return '<a class="tile" href="' + href + '"><div class="tl">' + label + '</div>' +
+      '<div class="tv' + (warn ? ' warn' : '') + '">' + value + '</div>' +
+      '<div class="td">' + desc + '</div>' + (extra || '') + '</a>';
+  }
+
+  fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
+    document.getElementById('sub').textContent =
+      'Ключевые цифры на ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
+
+    var t = [];
+    if (L.thermal && L.thermal.guests) {
+      t.push(tile('sales.html', 'Гости вчера', L.thermal.guests,
+        'термальный комплекс' + delta(L.thermal.guestsDeltaWeek)));
+      t.push(tile('sales.html', 'Выручка вчера', fm(L.thermal.revenueMln) + ' млн ₽',
+        'средний чек <b>' + L.thermal.checkRub + ' ₽</b>' + delta(L.thermal.revenueDeltaWeek)));
+    }
+    if (L.finance && L.finance.totalRub)
+      t.push(tile('finance.html', 'Поступления вчера', mln(L.finance.totalRub),
+        'касса <b>' + mln(L.finance.kassaRub) + '</b> · р/с <b>' + mln(L.finance.rsRub) + '</b>'));
+    if (L.forecast && L.forecast.guests)
+      t.push(tile('forecast.html', 'Прогноз на сегодня', '~' + L.forecast.guests + ' гостей',
+        'ожидаемая выручка <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>'));
+    if (L.attendance)
+      t.push(tile('attendance.html', 'Отток за 12 мес', fm(L.attendance.yoy12).replace('-', '−') + '%',
+        L.attendance.q12.toLocaleString('ru-RU') + ' визитов за скользящий год · последние 30 дней:',
+        L.attendance.yoy12 < -10, spark(L.attendance.spark30, 220, 34)));
+    if (L.staff) {
+      var c = L.staff.critical && L.staff.critical[0];
+      if (c) t.push(tile('staff.html', 'Штат', c.name + ' − ' + c.deficit + ' чел.',
+        'укомплектованность <b>' + fm(c.filled) + '%</b> · текучесть <b>' + fm(c.turnover) + '%</b>', true));
+      else t.push(tile('staff.html', 'Штат', '100%', 'все подразделения укомплектованы'));
+    }
+    document.getElementById('tiles').innerHTML = t.join('');
+
+    var flags = [];
+    if (L.staff && L.staff.critical) L.staff.critical.forEach(function(c2){
+      flags.push(c2.name + ': укомплектованность ' + fm(c2.filled) + '%, дефицит ' + c2.deficit + ' чел., текучесть ' + fm(c2.turnover) + '%');
+    });
+    if (L.attendance && L.attendance.yoy12 < -10)
+      flags.push('Отток гостей ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 месяцев — подробности в «Статистике посещений»');
+    if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
+      flags.push('Выручка вчера просела на ' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к той же дате прошлой недели');
+    var fl = document.getElementById('flags');
+    fl.innerHTML = '<h2>Красные флаги</h2>' + (flags.length
+      ? flags.map(function(f){ return '<div class="fl"><span class="ic">⚠</span><span>' + f + '</span></div>'; }).join('')
+      : '<div class="ok">Все показатели в норме — тревожных сигналов нет.</div>');
+
+    document.getElementById('ft').textContent =
+      'Данные: live.json, обновляется в 10:00 и 18:00 · сформировано ' + new Date(L.generatedAt).toLocaleString('ru-RU');
+  }).catch(function(){
+    document.getElementById('tiles').innerHTML = '<div style="color:#86868b">Не удалось загрузить live.json — попробуйте обновить страницу.</div>';
+  });
+})();
+</script>
+</body>
+</html>
