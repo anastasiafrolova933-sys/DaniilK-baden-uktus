@@ -1498,9 +1498,12 @@ import * as THREE from 'three';
   function syncTheme(){
     var light = document.documentElement.getAttribute('data-theme') === 'light';
     scene.fog.color.set(light ? 0xf7f5f0 : 0x0c0c0c);
-    pointsMat.color.set(light ? 0x8b6d44 : 0xffffff);
-    pointsMat.opacity = light ? 0.55 : 0.9;
-    glowMat.opacity = light ? 0.05 : 0.10;
+    /* на светлом аддитивное свечение невидимо — переключаемся на обычное смешивание тёмной бронзой */
+    pointsMat.blending = light ? THREE.NormalBlending : THREE.AdditiveBlending;
+    pointsMat.color.set(light ? 0x6b5433 : 0xffffff);
+    pointsMat.opacity = light ? 0.6 : 0.9;
+    pointsMat.needsUpdate = true;
+    glowMat.opacity = light ? 0 : 0.10;
   }
   new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   syncTheme();
@@ -1535,7 +1538,7 @@ import * as THREE from 'three';
       var s = 1 + Math.sin(t * 0.5) * 0.012;
       group.scale.setScalar(s * (1 - scroll * 0.25));
       group.position.z = -scroll * 4;
-      pointsMat.opacity = (document.documentElement.getAttribute('data-theme') === 'light' ? 0.55 : 0.9) * (1 - scroll * 0.35);
+      pointsMat.opacity = (document.documentElement.getAttribute('data-theme') === 'light' ? 0.6 : 0.9) * (1 - scroll * 0.35);
       renderer.render(scene, camera);
     }
     if (!prefersReduced) requestAnimationFrame(tick);
@@ -1957,7 +1960,7 @@ import * as THREE from 'three';
         'отток гостей за скользящие 12 мес', L.attendance.yoy12 < -10, spark(L.attendance.spark30, 96, 26));
 
     // ── свежесть данных: бейдж на карточке, если отчёт не обновился к своему слоту ──
-    var SLOTS = { finance: [10, 18], sales: [10, 18], forecast: [10, 18], staff: [10, 18], attendance: [10.34, 18.34], loyalty: 'hourly' };
+    var SLOTS = { finance: [10, 18], sales: [10, 18], forecast: [10, 18], staff: [10, 18], attendance: [10.20, 18.20], loyalty: [10, 18] };
     var staleNames = [];
     Object.keys(SLOTS).forEach(function(key){
       var meta = L.reports && L.reports[key];
@@ -1965,9 +1968,11 @@ import * as THREE from 'three';
       var last = new Date(meta.lastUpdate), now = new Date(), expected = null, GRACE = 60 * 60000;
       if (SLOTS[key] === 'hourly') { expected = new Date(now - 2 * 3600000); }
       else {
-        for (var off = 0; off <= 1; off++) SLOTS[key].forEach(function(hh){
-          var dd = new Date(now); dd.setDate(dd.getDate() - off);
-          dd.setHours(Math.floor(hh), Math.round(hh % 1 * 100), 0, 0);
+        /* расписание задано по Москве (UTC+3) — считаем слоты в UTC, а не в поясе зрителя */
+        var MSK = 3;
+        for (var off = 0; off <= 2; off++) SLOTS[key].forEach(function(hh){
+          var dd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - off,
+            Math.floor(hh) - MSK, Math.round(hh % 1 * 100), 0, 0));
           if (dd.getTime() + GRACE <= now.getTime() && (!expected || dd > expected)) expected = dd;
         });
       }
