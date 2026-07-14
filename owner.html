@@ -118,10 +118,17 @@ footer{margin-top:56px;font-size:12px;color:var(--ink3)}
     if (L.forecast && L.forecast.guests)
       t.push(tile('forecast.html', 'Прогноз на сегодня', '~' + L.forecast.guests + ' гостей',
         'ожидаемая выручка <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>'));
+    var pf = L.attendance && L.attendance.planfact;
+    if (pf && pf.pct != null)
+      t.push(tile('forecast.html', 'План месяца · Термаль', fm(pf.pct) + '%',
+        'факт <b>' + fm(pf.factMln) + '</b> из <b>' + fm(pf.planMtdMln) + ' млн ₽</b> к ' +
+        pf.throughDate.split('-').reverse().join('.') + ' · план месяца <b>' + fm(pf.planMonthMln) + ' млн ₽</b>',
+        pf.pct < 90));
     if (L.attendance)
       t.push(tile('attendance.html', 'Отток за 12 мес', fm(L.attendance.yoy12).replace('-', '−') + '%',
-        L.attendance.q12.toLocaleString('ru-RU') + ' визитов за скользящий год · последние 30 дней:',
-        L.attendance.yoy12 < -10, spark(L.attendance.spark30, 220, 34)));
+        L.attendance.q12.toLocaleString('ru-RU') + ' визитов за скользящий год · последние ' +
+        (L.attendance.spark90 ? '90' : '30') + ' дней:',
+        L.attendance.yoy12 < -10, spark(L.attendance.spark90 || L.attendance.spark30, 220, 34)));
     if (L.staff) {
       var c = L.staff.critical && L.staff.critical[0];
       if (c) t.push(tile('staff.html', 'Штат', c.name + ' − ' + c.deficit + ' чел.',
@@ -138,6 +145,8 @@ footer{margin-top:56px;font-size:12px;color:var(--ink3)}
       flags.push('Отток гостей ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 месяцев — подробности в «Статистике посещений»');
     if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
       flags.push('Выручка вчера просела на ' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к той же дате прошлой недели');
+    if (pf && pf.pct != null && pf.pct < 90)
+      flags.push('Отставание от плана месяца: ' + fm(pf.pct) + '% (' + fm(pf.factMln) + ' из ' + fm(pf.planMtdMln) + ' млн ₽)');
     var fl = document.getElementById('flags');
     fl.innerHTML = '<h2>Красные флаги</h2>' + (flags.length
       ? flags.map(function(f){ return '<div class="fl"><span class="ic">⚠</span><span>' + f + '</span></div>'; }).join('')
