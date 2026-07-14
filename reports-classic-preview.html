@@ -849,6 +849,16 @@
         <span class="card-arrow">→</span>
       </div>
     </a>
+
+    <a class="card reveal-3d anim-up delay-8" href="owner.html" data-permission="finance">
+      <div class="card-num">07</div>
+      <div class="card-title">Экран собственника</div>
+      <div class="card-desc">Все ключевые цифры одним взглядом: гости, выручка, поступления, прогноз, отток, штат и красные флаги</div>
+      <div class="card-meta">
+        <span class="card-status">живые цифры</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
   </div>
 
   <div class="section-label anim-up delay-3">ИИ-аналитик</div>
@@ -1452,6 +1462,7 @@
     '.grp::before{content:"";width:5px;height:5px;border-radius:50%;background:#a8804d;}',
     '.grp:first-child{margin-top:0;}',
     '@media(min-width:601px){.cards.bento .card.g2{grid-column:span 2!important;grid-row:auto!important;}}',
+    '.cards.bento .card[href="owner.html"]{grid-column:1/-1!important;min-height:0!important;}',
     '.cards.bento .card:first-child{grid-column:auto;grid-row:auto;min-height:180px;}',
     /* ===== карточки ===== */
     '.card{background:rgba(255,255,255,.66)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:20px!important;',
@@ -1605,6 +1616,7 @@
     grid.querySelectorAll('a.card').forEach(function(a){ byHref[a.getAttribute('href')] = a; });
     function grp(t){ var d = document.createElement('div'); d.className = 'grp'; d.textContent = t; return d; }
     var plan = [
+      ['Сводка', ['owner.html']],
       ['Пульс · каждый день', ['forecast.html', 'sales.html']],
       ['Деньги и команда · месяц', ['finance.html', 'staff.html']],
       ['Гости · стратегия', ['attendance.html', 'loyalty.html']]
@@ -1982,12 +1994,13 @@ import * as THREE from 'three';
 
     // ── живые цифры на карточках ──
     if (L.forecast && L.forecast.guests)
-      put('forecast.html', '~' + L.forecast.guests + ' гостей', 'прогноз на сегодня · ~' + fm(L.forecast.revenueMln) + ' млн ₽');
+      put('forecast.html', '~' + L.forecast.guests + ' гостей', 'прогноз на сегодня · ~' + fm(L.forecast.revenueMln) + ' млн ₽',
+        false, spark(L.attendance && L.attendance.spark30, 96, 26));
     if (L.thermal && L.thermal.guests) {
       var d = L.thermal.revenueDeltaWeek;
       put('sales.html', fm(L.thermal.revenueMln) + ' млн ₽',
         'выручка вчера · ' + L.thermal.guests + ' гостей' + (d != null ? ' · ' + (d >= 0 ? '+' : '−') + fm(Math.abs(d)) + '% к нед.' : ''),
-        d != null && d < -15);
+        d != null && d < -15, spark(L.attendance && L.attendance.sparkRev30, 96, 26));
     }
     if (L.finance && L.finance.totalRub)
       put('finance.html', mln(L.finance.totalRub), 'поступления за ' + (L.finance.yesterday || 'вчера'));
@@ -2056,11 +2069,23 @@ import * as THREE from 'three';
       var strip = document.createElement('div');
       strip.id = 'today-strip';
       strip.innerHTML =
-        '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '</span>' +
+        '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '<span id="ts-weather"></span></span>' +
         (line ? '<span class="ts-line">' + line + '</span>' : '') +
         (flags.length ? '<span class="ts-flags">' + flags.join('<span style="opacity:.4">·</span>') + '</span>' : '') +
         '<span class="ts-right">' + quick + '<a href="owner.html">Экран собственника →</a></span>';
       firstLabel.before(strip);
+
+      /* погода на Уктусе — трафик термы напрямую зависит от неё */
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=56.76&longitude=60.61&current=temperature_2m,weather_code&timezone=Asia%2FYekaterinburg')
+        .then(function(r){ return r.json(); }).then(function(w){
+          var c = w && w.current; if (!c) return;
+          var codes = {0:'ясно',1:'малооблачно',2:'облачно',3:'пасмурно',45:'туман',48:'туман',51:'морось',53:'морось',55:'морось',
+            61:'дождь',63:'дождь',65:'ливень',66:'дождь',67:'дождь',71:'снег',73:'снег',75:'снег',77:'снег',
+            80:'ливень',81:'ливень',82:'ливень',85:'снег',86:'снег',95:'гроза',96:'гроза',99:'гроза'};
+          var t = Math.round(c.temperature_2m);
+          var el = document.getElementById('ts-weather');
+          if (el) el.textContent = ' · ' + (t > 0 ? '+' : '') + t + '° ' + (codes[c.weather_code] || '');
+        }).catch(function(){});
     }
   }).catch(function(){});
 })();
