@@ -76,23 +76,11 @@
   var p=prompt("Введите пароль:");
   if(!p){window.location.href="about:blank";return;}
   s(p).then(function(h){if(h===H){localStorage.setItem("bbt_ok",H);document.documentElement.style.visibility="";}else{alert("Неверный пароль");window.location.reload();}});
-})();
-(function(){
-  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.innerHTML=v;};
-  const n=D.length;
-  const att=D.filter(x=>x.st==='ok').length;
-  const prog=n?Math.round(D.reduce((s,x)=>s+(x.prog||0),0)/n):0;
-  const wa=D.filter(x=>x.avg!=null);
-  const avg=wa.length?Math.round(wa.reduce((s,x)=>s+x.avg,0)/wa.length):0;
-  const act=D.filter(x=>x.daysAgo!=null && x.daysAgo<=7).length;
-  set('t-total',n); set('t-att',att); set('t-prog',prog+'<small>%</small>');
-  set('t-avg',avg+'<small>%</small>'); set('t-act',act);
-})();
-</script>
+})();</script>
 <div class="wrap">
   <div class="eyebrow"><span class="dot"></span>Портал отчётов · Обучение</div>
   <h1>Обучение спасателей</h1>
-  <div class="sub">Прогресс, попытки и ошибки по 15 спасателям · обновлено 22.07.2026 14:33 · трек «Спасатель / Медик-спасатель»</div>
+  <div class="sub">Прогресс, попытки и ошибки по 15 спасателям · обновлено 22.07.2026 14:36 · трек «Спасатель / Медик-спасатель»</div>
 
   <div class="grid-tiles">
     <div class="card tile"><div class="k">Спасателей</div><div class="v" id="t-total">15</div></div>
@@ -191,6 +179,18 @@ document.getElementById('rows').addEventListener('click', ev=>{
     </div>`;
   det.scrollIntoView({behavior:'smooth',block:'nearest'});
 });
+
+(function(){
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.innerHTML=v;};
+  const n=D.length;
+  const att=D.filter(x=>x.st==='ok').length;
+  const prog=n?Math.round(D.reduce((s,x)=>s+(x.prog||0),0)/n):0;
+  const wa=D.filter(x=>x.avg!=null);
+  const avg=wa.length?Math.round(wa.reduce((s,x)=>s+x.avg,0)/wa.length):0;
+  const act=D.filter(x=>x.daysAgo!=null && x.daysAgo<=7).length;
+  set('t-total',n); set('t-att',att); set('t-prog',prog+'<small>%</small>');
+  set('t-avg',avg+'<small>%</small>'); set('t-act',act);
+})();
 </script>
 </body>
 </html>
