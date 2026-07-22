@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Обучение спасателей — отчёт</title>
+<style>
+  :root{
+    --bg:#0e0e11; --surface:#17171c; --surface2:#1e1e25; --border:#2a2a33; --border2:#3a3a45;
+    --text:#ecedf2; --muted:#9a9aa6; --muted2:#6f6f7a;
+    --gold:#c9a86a; --gold-dim:#8a744a;
+    --ok:#34d399; --warn:#fbbf24; --err:#f87171; --brand:#5aa2ff;
+    --ok-bg:rgba(52,211,153,.12); --warn-bg:rgba(251,191,36,.12); --err-bg:rgba(248,113,113,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:28px 20px 60px}
+  a{color:inherit}
+  .mock{display:inline-block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:3px 10px;margin-bottom:14px}
+  h1{font-size:26px;font-weight:650;letter-spacing:-.02em;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;text-transform:uppercase;
+    letter-spacing:.09em;color:var(--gold);font-weight:600;margin-bottom:10px}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px}
+  .grid-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:22px 0}
+  .tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2)}
+  .tile .v{font-size:26px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+  .tile .v small{font-size:15px;color:var(--muted);font-weight:500}
+  .sec-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:26px 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);
+    font-weight:600;padding:8px 10px;border-bottom:1px solid var(--border)}
+  td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle}
+  tbody tr{cursor:pointer;transition:background .12s}
+  tbody tr:hover{background:var(--surface2)}
+  .num{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);
+    display:grid;place-items:center;font-weight:600;font-size:12px;color:var(--gold)}
+  .who{display:flex;align-items:center;gap:10px}
+  .bar{height:7px;border-radius:99px;background:var(--surface2);overflow:hidden;min-width:90px}
+  .bar > i{display:block;height:100%;background:var(--gold);border-radius:99px}
+  .badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:7px;font-variant-numeric:tabular-nums}
+  .b-ok{color:var(--ok);background:var(--ok-bg)} .b-warn{color:var(--warn);background:var(--warn-bg)}
+  .b-err{color:var(--err);background:var(--err-bg)} .b-none{color:var(--muted2)}
+  .status{font-size:12px;font-weight:600}
+  .s-ok{color:var(--ok)} .s-proc{color:var(--gold)} .s-bad{color:var(--err)}
+  .tnum{font-variant-numeric:tabular-nums}
+  .two{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:start;margin-top:8px}
+  .err-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+  .err-row:last-child{border-bottom:0}
+  .err-row .q{flex:1;min-width:0;font-size:13px}
+  .err-bar{width:120px;height:7px;border-radius:99px;background:var(--surface2);overflow:hidden}
+  .err-bar > i{display:block;height:100%;background:var(--err);border-radius:99px}
+  .err-pct{width:46px;text-align:right;font-variant-numeric:tabular-nums;color:var(--err);font-weight:600;font-size:12px}
+  #detail{margin-top:16px;display:none}
+  #detail.on{display:block}
+  .d-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .d-attempt{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .d-attempt:last-child{border-bottom:0}
+  .chip{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:1px 7px;margin:2px 4px 2px 0;display:inline-block}
+  .foot{color:var(--muted2);font-size:12px;margin-top:26px;line-height:1.6}
+  @media(max-width:820px){.grid-tiles{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}
+    .hide-sm{display:none}}
+</style>
+</head>
+<body>
+<!-- BADEN_AUTH_GUARD_TRAINING (пароль портала baden2026 / bbt_ok) -->
+<script>(function(){
+  var H="dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95";
+  function s(p){var b=new TextEncoder().encode(p);return crypto.subtle.digest("SHA-256",b).then(function(a){return Array.from(new Uint8Array(a)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")});}
+  if(localStorage.getItem("bbt_ok")===H){return;}
+  document.documentElement.style.visibility="hidden";
+  var p=prompt("Введите пароль:");
+  if(!p){window.location.href="about:blank";return;}
+  s(p).then(function(h){if(h===H){localStorage.setItem("bbt_ok",H);document.documentElement.style.visibility="";}else{alert("Неверный пароль");window.location.reload();}});
+})();
+(function(){
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.innerHTML=v;};
+  const n=D.length;
+  const att=D.filter(x=>x.st==='ok').length;
+  const prog=n?Math.round(D.reduce((s,x)=>s+(x.prog||0),0)/n):0;
+  const wa=D.filter(x=>x.avg!=null);
+  const avg=wa.length?Math.round(wa.reduce((s,x)=>s+x.avg,0)/wa.length):0;
+  const act=D.filter(x=>x.daysAgo!=null && x.daysAgo<=7).length;
+  set('t-total',n); set('t-att',att); set('t-prog',prog+'<small>%</small>');
+  set('t-avg',avg+'<small>%</small>'); set('t-act',act);
+})();
+</script>
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>Портал отчётов · Обучение</div>
+  <h1>Обучение спасателей</h1>
+  <div class="sub">Прогресс, попытки и ошибки по 15 спасателям · обновлено 22.07.2026 14:33 · трек «Спасатель / Медик-спасатель»</div>
+
+  <div class="grid-tiles">
+    <div class="card tile"><div class="k">Спасателей</div><div class="v" id="t-total">15</div></div>
+    <div class="card tile"><div class="k">Аттестованы</div><div class="v"><span id="t-att">6</span><small> / 15</small></div></div>
+    <div class="card tile"><div class="k">Средний прогресс</div><div class="v" id="t-prog">71<small>%</small></div></div>
+    <div class="card tile"><div class="k">Средний балл</div><div class="v" id="t-avg">76<small>%</small></div></div>
+    <div class="card tile"><div class="k">Активны за 7 дней</div><div class="v" id="t-act">12</div></div>
+  </div>
+
+  <div class="sec-title">Спасатели · нажми строку для деталей</div>
+  <div class="card" style="padding:6px 6px 2px">
+    <table>
+      <thead><tr>
+        <th>Спасатель</th><th>Прогресс</th><th>Первая помощь</th><th class="hide-sm">Знание комплекса</th>
+        <th class="hide-sm">Попыток</th><th>Ср. балл</th><th class="hide-sm">Активность</th><th>Статус</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div id="detail" class="card"></div>
+
+  <div class="sec-title">Топ ошибок команды</div>
+  <div class="card">
+    <div id="errs"></div>
+  </div>
+
+  <div class="foot">
+    Так будет выглядеть отчёт на портале отчётов (доступ по паролю портала, роль руководителя). Данные — примерные, для согласования состава и вида.
+    В бою цифры считаются из <b>training.db</b> на ПК (как в системе лояльности) и обновляются по расписанию.
+  </div>
+</div>
+
+<script>
+// ── Примерные данные (в проде — из training.db) ─────────────────────────────
+const D = [{"no": 1, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 2, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 3, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 4, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 5, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 6, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 7, "prog": 0, "fa": 67, "cx": null, "att": 1, "avg": 67, "last": "—", "daysAgo": null, "st": "proc", "detail": {"tests": [{"name": "Тест: первая помощь", "best": 67, "tries": 1, "pass": 80, "dates": "—"}], "wrong": ["Первая помощь при травматическом шоке"]}}, {"no": 8, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 9, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 10, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 11, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 12, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 13, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 14, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 15, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}];
+
+const TOP_ERRORS = [{"q": "Первая помощь при травматическом шоке", "pct": 100}];
+
+const scoreBadge = (v, pass=80) => {
+  if(v==null) return '<span class="badge b-none">—</span>';
+  const cls = v>=pass?'b-ok':(v>=pass*0.7?'b-warn':'b-err');
+  return `<span class="badge ${cls}">${v}%</span>`;
+};
+const statusLabel = s => s==='ok'?'<span class="status s-ok">✓ аттестован</span>'
+  : s==='proc'?'<span class="status s-proc">в процессе</span>'
+  : '<span class="status s-bad">отстаёт</span>';
+
+document.getElementById('rows').innerHTML = D.map(r=>`
+  <tr data-no="${r.no}">
+    <td><div class="who"><div class="num">${r.no}</div><div>Спасатель ${r.no}</div></div></td>
+    <td><div style="display:flex;align-items:center;gap:8px">
+      <div class="bar" style="flex:1"><i style="width:${r.prog}%"></i></div>
+      <span class="tnum" style="color:var(--muted);width:34px">${r.prog}%</span></div></td>
+    <td>${scoreBadge(r.fa)}</td>
+    <td class="hide-sm">${scoreBadge(r.cx)}</td>
+    <td class="hide-sm tnum">${r.att}</td>
+    <td>${scoreBadge(r.avg)}</td>
+    <td class="hide-sm" style="color:var(--muted)">${r.last}</td>
+    <td>${statusLabel(r.st)}</td>
+  </tr>`).join('');
+
+document.getElementById('errs').innerHTML = TOP_ERRORS.map(e=>`
+  <div class="err-row">
+    <div class="q">${e.q}</div>
+    <div class="err-bar"><i style="width:${e.pct}%"></i></div>
+    <div class="err-pct">${e.pct}%</div>
+  </div>`).join('');
+
+const det = document.getElementById('detail');
+document.getElementById('rows').addEventListener('click', ev=>{
+  const tr = ev.target.closest('tr'); if(!tr) return;
+  const r = D.find(x=>x.no==tr.dataset.no);
+  if(!r.detail){
+    det.className='card on';
+    det.innerHTML = `<div class="d-head"><b>Спасатель ${r.no}</b><span style="color:var(--muted);font-size:12px">детализация появится, когда сотрудник пройдёт тесты</span></div>
+      <div style="color:var(--muted);font-size:13px">Прогресс ${r.prog}% · попыток ${r.att} · ср. балл ${r.avg}% · активность: ${r.last}</div>`;
+    det.scrollIntoView({behavior:'smooth',block:'nearest'}); return;
+  }
+  const d=r.detail;
+  det.className='card on';
+  det.innerHTML = `
+    <div class="d-head"><b>Спасатель ${r.no} — детализация</b>
+      <span style="color:var(--muted);font-size:12px">прогресс ${r.prog}% · ср. балл ${r.avg}%</span></div>
+    <div class="two">
+      <div>
+        <div class="sec-title" style="margin-top:0">Тесты и попытки</div>
+        ${d.tests.map(t=>`<div class="d-attempt">
+          <span>${t.name} <span style="color:var(--muted2)">· ${t.tries} попытк(и) · ${t.dates}</span></span>
+          <span>${scoreBadge(t.best,t.pass)}</span></div>`).join('')}
+      </div>
+      <div>
+        <div class="sec-title" style="margin-top:0">Часто ошибается</div>
+        ${d.wrong.map(w=>`<span class="chip">${w}</span>`).join('')}
+      </div>
+    </div>`;
+  det.scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+</script>
+</body>
+</html>
