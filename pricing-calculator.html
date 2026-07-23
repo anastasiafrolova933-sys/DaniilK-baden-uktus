@@ -230,14 +230,27 @@
       </div>
 
       <h3 style="margin-top:22px">База отсчёта</h3>
-      <div class="field">
-        <label>Визиты в год <b></b></label>
-        <input type="number" id="baseV" value="371086" step="1000">
+      <div id="yearBase">
+        <div class="field">
+          <label>Визиты в год <b></b></label>
+          <input type="number" id="baseV" value="371086" step="1000">
+        </div>
+        <div class="field">
+          <label>Средний чек, ₽ <b></b></label>
+          <input type="number" id="baseP" value="1646" step="10">
+          <div class="hint">По умолчанию — 2025 (последний полный год). В посегментном режиме база берётся из таблицы сегментов.</div>
+        </div>
       </div>
-      <div class="field">
-        <label>Средний чек, ₽ <b></b></label>
-        <input type="number" id="baseP" value="1646" step="10">
-        <div class="hint">По умолчанию — 2025 (последний полный год). В посегментном режиме база берётся из таблицы сегментов.</div>
+      <div id="monthBase" class="hidden">
+        <div class="field">
+          <label>Визиты за <span class="mbName"></span> <b></b></label>
+          <input type="number" id="monthV" step="500">
+        </div>
+        <div class="field">
+          <label>Ср.чек за <span class="mbName"></span>, ₽ <b></b></label>
+          <input type="number" id="monthP" step="10">
+          <div class="hint">Автозаполнено по сезону — <b>поменяй и посмотри, как будет</b>. Сброс при смене месяца.</div>
+        </div>
       </div>
       <div class="presets">
         <button id="presetOpt">Макс. выручка</button>
@@ -371,8 +384,8 @@ function trendFactor(){
 function visitsAt(x,V0,e){return Math.max(0,V0*(1+e*(x-1)));}
 function optRatio(e){return e<0?(1-1/e)/2:null;}
 
-function computeSimple(){
-  const V0=+$("baseV").value, P0=+$("baseP").value, e=+$("elast").value;
+function computeSimple(base){
+  const V0=base.V0, P0=base.P0, e=+$("elast").value;
   let x;
   if(mode==="price"){ x=1+ +$("priceChange").value/100; }
   else { const tr=1+ +$("visChange").value/100; x=(e!==0)?1+(tr-1)/e:1; }
@@ -381,13 +394,14 @@ function computeSimple(){
   return {x,P,Vprice,Vfinal,R,R0,V0,P0,e,dVprice:(Vprice/V0-1)*100,dV:(Vfinal/V0-1)*100,dP:(x-1)*100,dR:(R/R0-1)*100,tf};
 }
 
-function computeSegments(){
+function computeSegments(sf){
+  sf=sf||1;
   let V0=0,R0=0,Vp=0,Rp=0;
   const rows=segState.map(s=>{
-    const np=s.p+s.d, ratio=s.p>0?np/s.p:1;
-    const nv=Math.max(0,s.v*(1+s.e*(ratio-1)));
-    V0+=s.v; R0+=s.v*s.p; Vp+=nv; Rp+=np*nv;
-    return {...s, np, nv, dV:(s.v>0?(nv/s.v-1)*100:0), rev0:s.v*s.p, rev1:np*nv};
+    const v=s.v*sf, np=s.p+s.d, ratio=s.p>0?np/s.p:1;
+    const nv=Math.max(0,v*(1+s.e*(ratio-1)));
+    V0+=v; R0+=v*s.p; Vp+=nv; Rp+=np*nv;
+    return {...s, v, np, nv, dV:(v>0?(nv/v-1)*100:0), rev0:v*s.p, rev1:np*nv};
   });
   const tf=trendFactor();
   const Vfinal=Vp*tf, R=Rp*tf;
@@ -407,23 +421,25 @@ function render(){
   $("trLbl").textContent=(+$("trend").value)+"%";
   $("hzLbl").textContent=$("horizon").value;
 
-  const s = bigMode==="simple"?computeSimple():computeSegments();
-  const f=periodFactor(), pm=(period==="month");
+  const pm=(period==="month"), sf=pm?DATA.season[selMonth]:1;
+  const s   = bigMode==="simple" ? computeSimple(effBase())    : computeSegments(sf);
+  const ann = bigMode==="simple" ? computeSimple(annualBase()) : computeSegments(1);
 
   $("kVisT").textContent="Гостепоток / "+(pm?DATA.months[selMonth]:"год");
   $("kRevT").textContent="Выручка / "+(pm?DATA.months[selMonth]:"год");
-  $("periodHint").textContent=pm?("≈ "+(DATA.season[selMonth]*100).toFixed(1)+"% годового объёма"):"";
-  $("kVis").textContent=fmt(s.Vfinal*f); $("kVisD").innerHTML=spanDelta(s.dV);
+  $("periodHint").textContent=pm?("≈ "+(DATA.season[selMonth]*100).toFixed(1)+"% года"):"";
+  $("kVis").textContent=fmt(s.Vfinal); $("kVisD").innerHTML=spanDelta(s.dV);
   $("kChk").textContent=fmt(s.P)+" ₽"; $("kChkD").innerHTML=spanDelta(s.dP);
-  $("kRev").textContent=fmtM(s.R*f)+" млн ₽"; $("kRevD").innerHTML=spanDelta(s.dR);
+  $("kRev").textContent=fmtM(s.R)+" млн ₽"; $("kRevD").innerHTML=spanDelta(s.dR);
 
   buildComment(s);
-  drawIdx(s);
-  if(bigMode==="simple") drawRev();
-  drawSeason(s);
-  if(bigMode==="segment") renderSegTable(s,f);
+  drawIdx(ann);
+  if(bigMode==="simple") drawRev(effBase());
+  drawSeason(ann,s);
+  if(bigMode==="segment") renderSegTable(s);
 }
-function periodFactor(){ return period==="month" ? DATA.season[selMonth] : 1; }
+function effBase(){ return period==="month" ? {V0:+$("monthV").value,P0:+$("monthP").value} : {V0:+$("baseV").value,P0:+$("baseP").value}; }
+function annualBase(){ return {V0:+$("baseV").value,P0:+$("baseP").value}; }
 
 function spanDelta(d){return `<span class="${d>=0?'up':'down'}">${pct(d)} к базе</span>`;}
 
@@ -434,8 +450,8 @@ function buildComment(s){
     const td=(s.tf-1)*100;
     html+=`<p><span class="tag r">ТРЕНД</span> Структурный спад ещё <b>${pct(td)}</b> за ${$("horizon").value} мес. Итог по потоку <b>${pct(s.dV)}</b> — ${Math.abs(td)>Math.abs(s.dVprice)?"<b>основной удар даёт тренд, не цена</b>":"цена и тренд соизмеримы"}.</p>`;
   }
-  const rc=s.dR>=0?"g":"r", f=periodFactor(), per=period==="month"?("/"+DATA.months[selMonth]):"/год";
-  html+=`<p><span class="tag ${rc}">ВЫРУЧКА</span> <b>${pct(s.dR)}</b> → <b>${fmtM(s.R*f)} млн ₽ ${per}</b>. ${s.dR>=0&&s.dV<0?"Рост чека перекрывает падение потока.":(s.dR<0?"Падение потока сильнее роста чека.":"")}</p>`;
+  const rc=s.dR>=0?"g":"r", per=period==="month"?("/"+DATA.months[selMonth]):"/год";
+  html+=`<p><span class="tag ${rc}">ВЫРУЧКА</span> <b>${pct(s.dR)}</b> → <b>${fmtM(s.R)} млн ₽ ${per}</b>. ${s.dR>=0&&s.dV<0?"Рост чека перекрывает падение потока.":(s.dR<0?"Падение потока сильнее роста чека.":"")}</p>`;
   if(bigMode==="segment"){
     html+=`<p><span class="tag n">СЕГМЕНТЫ</span> Реальный +300 ₽ по входным = блендед <b>${pct(s.dP)}</b> к чеку. Льготный сегмент чувствительнее — там % прибавки выше.</p>`;
   } else {
@@ -487,9 +503,9 @@ function buildIdxTable(v,p,r){
   </tbody>`;
 }
 
-function drawRev(){
-  const V0=+$("baseV").value,P0=+$("baseP").value,e=+$("elast").value,cur=+$("priceChange").value,f=periodFactor();
-  const revAt=d=>{const x=1+d/100; return +((x*P0*visitsAt(x,V0,e)/1e6)*f).toFixed(2);};
+function drawRev(base){
+  const V0=base.V0,P0=base.P0,e=+$("elast").value,cur=+$("priceChange").value;
+  const revAt=d=>{const x=1+d/100; return +((x*P0*visitsAt(x,V0,e))/1e6).toFixed(2);};
   const xs=[],rev=[];
   for(let d=-30;d<=60;d+=2){xs.push(d);rev.push(revAt(d));}
   const ox=optRatio(e), od=ox!==null?clamp((ox-1)*100,-30,60):null;
@@ -502,8 +518,9 @@ function drawRev(){
   revChart=new Chart($("revChart"),{type:"line",data,options:opts});
 }
 
-function drawSeason(s){
-  const proj=DATA.season.map(w=>+(s.Vfinal*w/1000).toFixed(1));
+function drawSeason(ann,s){
+  const proj=DATA.season.map(w=>+(ann.Vfinal*w/1000).toFixed(1));
+  if(period==="month") proj[selMonth]=+(s.Vfinal/1000).toFixed(1);
   const data={labels:DATA.months,datasets:[
     {label:"2024",data:DATA.monthly[2024],borderColor:getVar("--dim"),backgroundColor:getVar("--dim"),borderWidth:1.5,pointRadius:0,tension:.3},
     {label:"2025",data:DATA.monthly[2025],borderColor:getVar("--brand"),backgroundColor:getVar("--brand"),borderWidth:2,pointRadius:0,tension:.3},
@@ -515,19 +532,18 @@ function drawSeason(s){
   seasonChart=new Chart($("seasonChart"),{type:"line",data,options:opts});
 }
 
-function renderSegTable(s,f){
-  f=f||1;
+function renderSegTable(s){
   const tb=$("segTable").querySelector("tbody"), tf=$("segTable").querySelector("tfoot");
   tb.innerHTML=s.rows.map((r,i)=>`<tr>
     <td>${r.n}</td>
-    <td>${fmt(r.v*f)}</td>
+    <td>${fmt(r.v)}</td>
     <td>${fmt(r.p)} ₽</td>
     <td><input type="number" data-i="${i}" data-k="d" value="${r.d}" step="50"></td>
     <td><input type="number" data-i="${i}" data-k="e" value="${r.e}" step="0.05"></td>
     <td class="${r.dV<0?'cellneg':'cellpos'}">${pct(r.dV)}</td>
     <td class="${r.rev1>=r.rev0?'cellpos':'cellneg'}">${pct((r.rev1/r.rev0-1)*100)}</td>
   </tr>`).join("");
-  tf.innerHTML=`<tr><td>Итого</td><td>${fmt(s.Vp*f)}</td><td>${fmt(s.P)} ₽</td><td colspan="2"></td>
+  tf.innerHTML=`<tr><td>Итого</td><td>${fmt(s.Vp)}</td><td>${fmt(s.P)} ₽</td><td colspan="2"></td>
     <td class="${s.dVprice<0?'cellneg':'cellpos'}">${pct(s.dVprice)}</td>
     <td class="${s.dR>=0?'cellpos':'cellneg'}">${pct(s.dR)}</td></tr>`;
   tb.querySelectorAll("input").forEach(inp=>inp.oninput=()=>{
@@ -588,19 +604,30 @@ $("presetOpt").onclick=()=>{
 $("segHike").onclick=()=>{segState=DATA.segments.map(s=>({...s}));render();};
 $("segFreeze").onclick=()=>{segState=segState.map(s=>({...s,d:0}));render();};
 
-// период: год / месяц
+// период: год / месяц + редактируемая база месяца
+function fillMonthBase(){
+  const ab=annualBase();
+  $("monthV").value=Math.round(ab.V0*DATA.season[selMonth]);
+  $("monthP").value=Math.round(ab.P0);
+  document.querySelectorAll(".mbName").forEach(el=>el.textContent=DATA.months[selMonth]);
+}
 (function(){
   const sel=$("monthSel");
   sel.innerHTML=DATA.months.map((m,i)=>`<option value="${i}"${i===selMonth?" selected":""}>${m}</option>`).join("");
-  sel.onchange=()=>{selMonth=+sel.value;render();};
+  sel.onchange=()=>{selMonth=+sel.value; fillMonthBase(); render();};
   document.querySelectorAll("#period button").forEach(b=>b.onclick=()=>{
     period=b.dataset.p;
     document.querySelectorAll("#period button").forEach(x=>x.classList.toggle("on",x===b));
     sel.classList.toggle("hidden",period!=="month");
+    $("yearBase").classList.toggle("hidden",period==="month");
+    $("monthBase").classList.toggle("hidden",period!=="month");
+    if(period==="month") fillMonthBase();
     render();
   });
+  ["monthV","monthP"].forEach(id=>$(id).addEventListener("input",render));
 })();
 
+fillMonthBase();
 buildStruct();
 render();
 </script>
