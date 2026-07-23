@@ -277,8 +277,8 @@
       <div class="comment"><h3>Что это значит</h3><div id="commentBody"></div></div>
 
       <div class="chartcard">
-        <h3>Индексы: визиты · чек · выручка (2023 = 100)</h3>
-        <p class="cap">История по годам + твой сценарий последней точкой.</p>
+        <h3 id="idxTitle">Индексы: визиты · чек · выручка (2023 = 100)</h3>
+        <p class="cap" id="idxCap">История по годам + твой сценарий последней точкой.</p>
         <div class="chartbox"><canvas id="idxChart"></canvas></div>
         <div class="legend">
           <span><i style="background:var(--vis)"></i>Визиты</span>
@@ -433,7 +433,7 @@ function render(){
   $("kRev").textContent=fmtM(s.R)+" млн ₽"; $("kRevD").innerHTML=spanDelta(s.dR);
 
   buildComment(s);
-  drawIdx(ann);
+  drawIdx(s);
   if(bigMode==="simple") drawRev(effBase());
   drawSeason(ann,s);
   if(bigMode==="segment") renderSegTable(s);
@@ -466,11 +466,15 @@ function buildComment(s){
 }
 
 function drawIdx(s){
+  const pm=(period==="month"), w=pm?DATA.season[selMonth]:1, mn=DATA.months[selMonth];
   const yrs=[2023,2024,2025];
-  const vRaw=yrs.map(y=>DATA.fy[y].v).concat(s.Vfinal);
+  const vRaw=yrs.map(y=>DATA.fy[y].v*w).concat(s.Vfinal);
   const pRaw=yrs.map(y=>DATA.fy[y].p).concat(s.P);
-  const rRaw=yrs.map(y=>DATA.fy[y].v*DATA.fy[y].p).concat(s.R);
-  const vI=vRaw.map(x=>x/BASE23.v*100), pI=pRaw.map(x=>x/BASE23.p*100), rI=rRaw.map(x=>x/BASE23.r*100);
+  const rRaw=yrs.map(y=>DATA.fy[y].v*w*DATA.fy[y].p).concat(s.R);
+  const b0={v:DATA.fy[2023].v*w, p:DATA.fy[2023].p, r:DATA.fy[2023].v*w*DATA.fy[2023].p};
+  const vI=vRaw.map(x=>x/b0.v*100), pI=pRaw.map(x=>x/b0.p*100), rI=rRaw.map(x=>x/b0.r*100);
+  $("idxTitle").textContent="Индексы: визиты · чек · выручка (2023"+(pm?" · "+mn:"")+" = 100)";
+  $("idxCap").textContent=pm?("За "+mn+" по годам (история — оценка по сезону) + твой сценарий."):"История по годам + твой сценарий последней точкой.";
   const data={labels:["2023","2024","2025","Сценарий"],datasets:[
     ser("Визиты",vI,getVar("--vis"),vRaw,x=>fmt(x)),
     ser("Средний чек",pI,getVar("--chk"),pRaw,x=>fmt(x)+" ₽"),
