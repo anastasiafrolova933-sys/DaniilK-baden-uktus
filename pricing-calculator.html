@@ -182,6 +182,7 @@
           <button data-m="price" class="on">Задать цену →</button>
           <button data-m="visits">Задать поток →</button>
         </div>
+        <div class="hint hidden" id="monthPriceNote" style="margin:-8px 0 14px;color:var(--brand)">В режиме «Месяц» цену задаёшь полем «Ср.чек за месяц» ниже — визиты реагируют сами.</div>
         <div class="field" id="fPrice">
           <label>Изменение среднего чека <b><span id="pcLbl">+15%</span></b></label>
           <input type="range" id="priceChange" min="-30" max="60" step="1" value="15">
@@ -249,7 +250,7 @@
         <div class="field">
           <label>Ср.чек за <span class="mbName"></span>, ₽ <b></b></label>
           <input type="number" id="monthP" step="10">
-          <div class="hint">Автозаполнено по сезону — <b>поменяй и посмотри, как будет</b>. Сброс при смене месяца.</div>
+          <div class="hint" id="monthSrcHint"></div>
         </div>
       </div>
       <div class="presets">
@@ -377,6 +378,7 @@ const getVar=v=>getComputedStyle(document.documentElement).getPropertyValue(v).t
 
 let bigMode="simple", mode="price", period="year", selMonth=8;
 let segState=DATA.segments.map(s=>({...s}));
+let CB=null, refCheck=1646;   // CB = реальные помесячные данные (calc_baseline.json); refCheck — опорный чек месяца
 
 function trendFactor(){
   return $("trendOn").checked ? (1 + (+$("trend").value/100)*(+$("horizon").value/12)) : 1;
@@ -384,11 +386,14 @@ function trendFactor(){
 function visitsAt(x,V0,e){return Math.max(0,V0*(1+e*(x-1)));}
 function optRatio(e){return e<0?(1-1/e)/2:null;}
 
-function computeSimple(base){
-  const V0=base.V0, P0=base.P0, e=+$("elast").value;
-  let x;
-  if(mode==="price"){ x=1+ +$("priceChange").value/100; }
-  else { const tr=1+ +$("visChange").value/100; x=(e!==0)?1+(tr-1)/e:1; }
+// ценовой коэффициент x = новая цена / базовая
+function priceRatio(){
+  if(period==="month") return refCheck>0 ? (+$("monthP").value)/refCheck : 1;
+  if(mode==="price") return 1 + (+$("priceChange").value)/100;
+  const e=+$("elast").value, tr=1+ (+$("visChange").value)/100; return e!==0 ? 1+(tr-1)/e : 1;
+}
+function computeSimple(V0,P0,x){
+  const e=+$("elast").value;
   const Vprice=visitsAt(x,V0,e), tf=trendFactor(), Vfinal=Math.max(0,Vprice*tf);
   const P=P0*x, R=P*Vfinal, R0=V0*P0;
   return {x,P,Vprice,Vfinal,R,R0,V0,P0,e,dVprice:(Vprice/V0-1)*100,dV:(Vfinal/V0-1)*100,dP:(x-1)*100,dR:(R/R0-1)*100,tf};
@@ -421,9 +426,9 @@ function render(){
   $("trLbl").textContent=(+$("trend").value)+"%";
   $("hzLbl").textContent=$("horizon").value;
 
-  const pm=(period==="month"), sf=pm?DATA.season[selMonth]:1;
-  const s   = bigMode==="simple" ? computeSimple(effBase())    : computeSegments(sf);
-  const ann = bigMode==="simple" ? computeSimple(annualBase()) : computeSegments(1);
+  const pm=(period==="month"), sf=pm?DATA.season[selMonth]:1, x=priceRatio();
+  const s   = bigMode==="simple" ? computeSimple(pm?+$("monthV").value:+$("baseV").value, pm?refCheck:+$("baseP").value, x) : computeSegments(sf);
+  const ann = bigMode==="simple" ? computeSimple(+$("baseV").value, +$("baseP").value, x) : computeSegments(1);
 
   $("kVisT").textContent="Гостепоток / "+(pm?DATA.months[selMonth]:"год");
   $("kRevT").textContent="Выручка / "+(pm?DATA.months[selMonth]:"год");
@@ -434,7 +439,7 @@ function render(){
 
   buildComment(s);
   drawIdx(s);
-  if(bigMode==="simple") drawRev(effBase());
+  if(bigMode==="simple") drawRev(pm?{V0:+$("monthV").value,P0:refCheck}:{V0:+$("baseV").value,P0:+$("baseP").value}, (x-1)*100);
   drawSeason(ann,s);
   if(bigMode==="segment") renderSegTable(s);
 }
@@ -507,8 +512,8 @@ function buildIdxTable(v,p,r){
   </tbody>`;
 }
 
-function drawRev(base){
-  const V0=base.V0,P0=base.P0,e=+$("elast").value,cur=+$("priceChange").value;
+function drawRev(base,cur){
+  const V0=base.V0,P0=base.P0,e=+$("elast").value;
   const revAt=d=>{const x=1+d/100; return +((x*P0*visitsAt(x,V0,e))/1e6).toFixed(2);};
   const xs=[],rev=[];
   for(let d=-30;d<=60;d+=2){xs.push(d);rev.push(revAt(d));}
@@ -570,6 +575,15 @@ function buildStruct(){
     <div class="pr">${g.p?fmt(g.p)+" ₽":"—"} · ${(g.v/tot*100).toFixed(1)}%</div></div>`).join("");
 }
 
+function updateVis(){
+  const pm=(period==="month"), simple=(bigMode==="simple");
+  $("yearBase").classList.toggle("hidden", pm);
+  $("monthBase").classList.toggle("hidden", !(pm&&simple));
+  $("mode").classList.toggle("hidden", pm);
+  $("fPrice").classList.toggle("hidden", pm||mode!=="price");
+  $("fVisits").classList.toggle("hidden", pm||mode!=="visits");
+  const n=$("monthPriceNote"); if(n) n.classList.toggle("hidden", !pm);
+}
 // events
 document.querySelectorAll("#bigMode button").forEach(b=>b.onclick=()=>{
   bigMode=b.dataset.b;
@@ -578,14 +592,12 @@ document.querySelectorAll("#bigMode button").forEach(b=>b.onclick=()=>{
   $("segmentControls").classList.toggle("hidden",bigMode!=="segment");
   $("segCard").classList.toggle("hidden",bigMode!=="segment");
   $("revCard").classList.toggle("hidden",bigMode!=="simple");
-  render();
+  updateVis(); render();
 });
 document.querySelectorAll("#mode button").forEach(b=>b.onclick=()=>{
   mode=b.dataset.m;
   document.querySelectorAll("#mode button").forEach(x=>x.classList.toggle("on",x===b));
-  $("fPrice").classList.toggle("hidden",mode!=="price");
-  $("fVisits").classList.toggle("hidden",mode!=="visits");
-  render();
+  updateVis(); render();
 });
 ["priceChange","visChange","elast","trend","horizon","trendOn","baseV","baseP"].forEach(id=>$(id).addEventListener("input",render));
 document.querySelectorAll(".presets [data-el]").forEach(b=>b.onclick=()=>{$("elHist").checked=false;$("elast").disabled=false;$("elast").value=b.dataset.el;render();});
@@ -602,7 +614,10 @@ $("trHist").onchange=()=>{
 
 $("presetOpt").onclick=()=>{
   const e=+$("elast").value,ox=optRatio(e);
-  if(ox!==null){mode="price";document.querySelector('#mode [data-m=price]').click();$("priceChange").value=Math.round(clamp((ox-1)*100,-30,60));}
+  if(ox!==null){
+    if(period==="month"){ $("monthP").value=Math.round(refCheck*ox); }
+    else { mode="price"; document.querySelector('#mode [data-m=price]').click(); $("priceChange").value=Math.round(clamp((ox-1)*100,-30,60)); }
+  }
   render();
 };
 $("segHike").onclick=()=>{segState=DATA.segments.map(s=>({...s}));render();};
@@ -610,10 +625,13 @@ $("segFreeze").onclick=()=>{segState=segState.map(s=>({...s,d:0}));render();};
 
 // период: год / месяц + редактируемая база месяца
 function fillMonthBase(){
-  const ab=annualBase();
-  $("monthV").value=Math.round(ab.V0*DATA.season[selMonth]);
-  $("monthP").value=Math.round(ab.P0);
+  let v,chk,src;
+  const cbm = CB && CB.latestForMonth && CB.latestForMonth[selMonth+1];
+  if(cbm){ v=Math.round(cbm.v); chk=Math.round(cbm.chk); src="факт "+cbm.yr; }
+  else { const ab=annualBase(); v=Math.round(ab.V0*DATA.season[selMonth]); chk=Math.round(ab.P0); src="оценка по сезону"; }
+  $("monthV").value=v; $("monthP").value=chk; refCheck=chk;
   document.querySelectorAll(".mbName").forEach(el=>el.textContent=DATA.months[selMonth]);
+  const h=$("monthSrcHint"); if(h) h.textContent="Источник: "+src+" · подними чек → визиты упадут по эластичности.";
 }
 (function(){
   const sel=$("monthSel");
@@ -623,15 +641,15 @@ function fillMonthBase(){
     period=b.dataset.p;
     document.querySelectorAll("#period button").forEach(x=>x.classList.toggle("on",x===b));
     sel.classList.toggle("hidden",period!=="month");
-    $("yearBase").classList.toggle("hidden",period==="month");
-    $("monthBase").classList.toggle("hidden",period!=="month");
     if(period==="month") fillMonthBase();
-    render();
+    updateVis(); render();
   });
   ["monthV","monthP"].forEach(id=>$(id).addEventListener("input",render));
 })();
 
+fetch("calc_baseline.json").then(r=>r.json()).then(j=>{CB=j; fillMonthBase(); render();}).catch(()=>{});
 fillMonthBase();
+updateVis();
 buildStruct();
 render();
 </script>
