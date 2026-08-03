@@ -67,20 +67,11 @@
 </style>
 </head>
 <body>
-<!-- BADEN_AUTH_GUARD_TRAINING (пароль портала baden2026 / bbt_ok) -->
-<script>(function(){
-  var H="dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95";
-  function s(p){var b=new TextEncoder().encode(p);return crypto.subtle.digest("SHA-256",b).then(function(a){return Array.from(new Uint8Array(a)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")});}
-  if(localStorage.getItem("bbt_ok")===H){return;}
-  document.documentElement.style.visibility="hidden";
-  var p=prompt("Введите пароль:");
-  if(!p){window.location.href="about:blank";return;}
-  s(p).then(function(h){if(h===H){localStorage.setItem("bbt_ok",H);document.documentElement.style.visibility="";}else{alert("Неверный пароль");window.location.reload();}});
-})();</script>
+<!-- Отчёт открытый (пароль убран по решению владельца 2026-08-03) -->
 <div class="wrap">
   <div class="eyebrow"><span class="dot"></span>Портал отчётов · Обучение</div>
   <h1>Обучение спасателей</h1>
-  <div class="sub">Прогресс, попытки и ошибки по спасательной службе (16 чел.) · обновлено 03.08.2026 14:08 · трек «Спасатель / Медик-спасатель»</div>
+  <div class="sub">Прогресс, попытки и ошибки по спасательной службе (16 чел.) · обновлено 03.08.2026 14:26 · трек «Спасатель / Медик-спасатель»</div>
 
   <div class="grid-tiles">
     <div class="card tile"><div class="k">Сотрудников</div><div class="v" id="t-total">16</div></div>
