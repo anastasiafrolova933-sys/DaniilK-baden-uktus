@@ -80,21 +80,21 @@
 <div class="wrap">
   <div class="eyebrow"><span class="dot"></span>Портал отчётов · Обучение</div>
   <h1>Обучение спасателей</h1>
-  <div class="sub">Прогресс, попытки и ошибки по 15 спасателям · обновлено 03.08.2026 13:08 · трек «Спасатель / Медик-спасатель»</div>
+  <div class="sub">Прогресс, попытки и ошибки по спасательной службе (16 чел.) · обновлено 03.08.2026 13:38 · трек «Спасатель / Медик-спасатель»</div>
 
   <div class="grid-tiles">
-    <div class="card tile"><div class="k">Спасателей</div><div class="v" id="t-total">15</div></div>
-    <div class="card tile"><div class="k">Аттестованы</div><div class="v"><span id="t-att">6</span><small> / 15</small></div></div>
+    <div class="card tile"><div class="k">Сотрудников</div><div class="v" id="t-total">16</div></div>
+    <div class="card tile"><div class="k">Аттестованы</div><div class="v" id="t-att">6<small> / 16</small></div></div>
     <div class="card tile"><div class="k">Средний прогресс</div><div class="v" id="t-prog">71<small>%</small></div></div>
     <div class="card tile"><div class="k">Средний балл</div><div class="v" id="t-avg">76<small>%</small></div></div>
     <div class="card tile"><div class="k">Активны за 7 дней</div><div class="v" id="t-act">12</div></div>
   </div>
 
-  <div class="sec-title">Спасатели · нажми строку для деталей</div>
+  <div class="sec-title">Сотрудники · нажми строку для деталей</div>
   <div class="card" style="padding:6px 6px 2px">
     <table>
       <thead><tr>
-        <th>Спасатель</th><th>Прогресс</th><th>Первая помощь</th><th class="hide-sm">Знание комплекса</th>
+        <th>Сотрудник</th><th>Прогресс</th><th>Первая помощь</th><th class="hide-sm">Знание комплекса</th>
         <th class="hide-sm">Попыток</th><th>Ср. балл</th><th class="hide-sm">Активность</th><th>Статус</th>
       </tr></thead>
       <tbody id="rows"></tbody>
@@ -116,7 +116,7 @@
 
 <script>
 // ── Примерные данные (в проде — из training.db) ─────────────────────────────
-const D = [{"no": 1, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 2, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 3, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 4, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 5, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 6, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 7, "prog": 0, "fa": 67, "cx": null, "att": 1, "avg": 67, "last": "—", "daysAgo": null, "st": "proc", "detail": {"tests": [{"name": "Тест: первая помощь", "best": 67, "tries": 1, "pass": 80, "dates": "—"}], "wrong": ["Первая помощь при травматическом шоке"]}}, {"no": 8, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 9, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 10, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 11, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 12, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 13, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 14, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 15, "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}];
+const D = [{"no": 1, "name": "Комиссарова Ксения", "pos": "Ст. спасатель", "ini": "КК", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 2, "name": "Ананьин Иван", "pos": "Ст. спасатель", "ini": "АИ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 3, "name": "Шамов Данил", "pos": "Спасатель", "ini": "ШД", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 4, "name": "Ахмедов Камиль", "pos": "Спасатель", "ini": "АК", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 5, "name": "Узянова Ульяна", "pos": "Спасатель", "ini": "УУ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 6, "name": "Бударин Михаил", "pos": "Спасатель", "ini": "БМ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 7, "name": "Кухарев Сергей", "pos": "Спасатель", "ini": "КС", "prog": 0, "fa": 67, "cx": null, "att": 1, "avg": 67, "last": "—", "daysAgo": null, "st": "proc", "detail": {"tests": [{"name": "Тест: первая помощь", "best": 67, "tries": 1, "pass": 80, "dates": "—"}], "wrong": ["Первая помощь при травматическом шоке"]}}, {"no": 8, "name": "Кременев Максим", "pos": "Спасатель", "ini": "КМ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 9, "name": "Клачкова Александра", "pos": "Спасатель", "ini": "КА", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 10, "name": "Жихарев Яков", "pos": "Спасатель", "ini": "ЖЯ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 11, "name": "Немченко Александр", "pos": "Спасатель", "ini": "НА", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 12, "name": "Литвин Алексей", "pos": "Спасатель", "ini": "ЛА", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 13, "name": "Коскин Владислав", "pos": "Спасатель", "ini": "КВ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 14, "name": "Пузин Глеб", "pos": "Спасатель", "ini": "ПГ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 15, "name": "Попов Владимир", "pos": "Спасатель", "ini": "ПВ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}, {"no": 16, "name": "Сапожникова Любовь", "pos": "Медик", "ini": "СЛ", "prog": 0, "fa": null, "cx": null, "att": 0, "avg": null, "last": "—", "daysAgo": null, "st": "bad"}];
 
 const TOP_ERRORS = [{"q": "Первая помощь при травматическом шоке", "pct": 100}];
 
@@ -131,7 +131,9 @@ const statusLabel = s => s==='ok'?'<span class="status s-ok">✓ аттесто�
 
 document.getElementById('rows').innerHTML = D.map(r=>`
   <tr data-no="${r.no}">
-    <td><div class="who"><div class="num">${r.no}</div><div>Спасатель ${r.no}</div></div></td>
+    <td><div class="who"><div class="num">${r.ini||r.no}</div>
+      <div><div>${r.name||('Спасатель '+r.no)}</div>
+      <div style="color:var(--muted2);font-size:11px">${r.pos||''}</div></div></div></td>
     <td><div style="display:flex;align-items:center;gap:8px">
       <div class="bar" style="flex:1"><i style="width:${r.prog}%"></i></div>
       <span class="tnum" style="color:var(--muted);width:34px">${r.prog}%</span></div></td>
@@ -156,14 +158,14 @@ document.getElementById('rows').addEventListener('click', ev=>{
   const r = D.find(x=>x.no==tr.dataset.no);
   if(!r.detail){
     det.className='card on';
-    det.innerHTML = `<div class="d-head"><b>Спасатель ${r.no}</b><span style="color:var(--muted);font-size:12px">детализация появится, когда сотрудник пройдёт тесты</span></div>
+    det.innerHTML = `<div class="d-head"><b>${r.name||('Спасатель '+r.no)}</b><span style="color:var(--muted);font-size:12px">детализация появится, когда сотрудник пройдёт тесты</span></div>
       <div style="color:var(--muted);font-size:13px">Прогресс ${r.prog}% · попыток ${r.att} · ср. балл ${r.avg}% · активность: ${r.last}</div>`;
     det.scrollIntoView({behavior:'smooth',block:'nearest'}); return;
   }
   const d=r.detail;
   det.className='card on';
   det.innerHTML = `
-    <div class="d-head"><b>Спасатель ${r.no} — детализация</b>
+    <div class="d-head"><b>${r.name||('Спасатель '+r.no)} — детализация</b>
       <span style="color:var(--muted);font-size:12px">прогресс ${r.prog}% · ср. балл ${r.avg}%</span></div>
     <div class="two">
       <div>
@@ -188,7 +190,7 @@ document.getElementById('rows').addEventListener('click', ev=>{
   const wa=D.filter(x=>x.avg!=null);
   const avg=wa.length?Math.round(wa.reduce((s,x)=>s+x.avg,0)/wa.length):0;
   const act=D.filter(x=>x.daysAgo!=null && x.daysAgo<=7).length;
-  set('t-total',n); set('t-att',att); set('t-prog',prog+'<small>%</small>');
+  set('t-total',n); set('t-att',att+'<small> / '+n+'</small>'); set('t-prog',prog+'<small>%</small>');
   set('t-avg',avg+'<small>%</small>'); set('t-act',act);
 })();
 </script>
