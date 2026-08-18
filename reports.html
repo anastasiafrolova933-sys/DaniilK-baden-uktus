@@ -448,6 +448,40 @@
     transition: color var(--d-fast) var(--ease), transform var(--d-fast) var(--ease);
   }
   .card:hover .card-arrow { color: var(--accent); transform: translateX(4px); }
+
+  /* ── Карточка без доступа: остаётся на месте, но заблокирована ────────── */
+  .card-locked {
+    cursor: not-allowed;
+    border-style: dashed;
+    border-color: var(--border);
+    background: rgba(22,20,18,0.35);
+    filter: grayscale(0.75);
+  }
+  :root[data-theme="light"] .card-locked { background: rgba(255,255,255,0.45); }
+  .card-locked:hover {
+    background: rgba(22,20,18,0.35);
+    border-color: var(--border);
+    box-shadow: none;
+  }
+  :root[data-theme="light"] .card-locked:hover { background: rgba(255,255,255,0.45); }
+  .card-locked::before,
+  .card-locked::after { opacity: 0 !important; animation: none !important; }
+  .card-locked .card-num,
+  .card-locked .card-title,
+  .card-locked .card-desc { opacity: 0.42; }
+  .card-lock {
+    margin-top: var(--s-5);
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 13px;
+    white-space: nowrap;
+  }
+  .card-lock::before { content: '🔒'; font-size: 11px; filter: grayscale(1); }
+
   @media (max-width: 900px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
     .cards.bento .card:first-child { grid-column: span 2; grid-row: auto; min-height: 220px; }
@@ -1016,7 +1050,7 @@
   // ── 3D tilt + spotlight on cards (framer-motion-style) ──
   function attachCardCursor() {
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('.card').forEach(function(c){
+    document.querySelectorAll('.card:not(.card-locked)').forEach(function(c){
       var raf = 0, tx = 0, ty = 0;
       function apply(){
         c.style.transform = 'perspective(900px) rotateX(' + ty + 'deg) rotateY(' + tx + 'deg) translateZ(0)';
@@ -1164,9 +1198,13 @@
   }
   function esc(s) { return String(s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
 
+  // Страницы, закрытые для текущего юзера — заполняется в showMain() по permissions.
+  var LOCKED_HREFS = {};
+
   function renderCmdk(q) {
     var results = document.getElementById('cmdk-results');
-    var scored = CMDK_ITEMS.map(function(it){ return {it: it, s: fuzzy(q, it)}; })
+    var scored = CMDK_ITEMS.filter(function(it){ return !(it.h && LOCKED_HREFS[it.h]); })
+                            .map(function(it){ return {it: it, s: fuzzy(q, it)}; })
                             .filter(function(x){ return x.s > 0; })
                             .sort(function(a,b){ return b.s - a.s; });
     if (!scored.length) {
@@ -1279,6 +1317,30 @@
     if (trigger) trigger.addEventListener('click', open);
   }
 
+  // Превращает карточку в «доступ закрыт»: снимает ссылку, гасит контент, вешает плашку.
+  function lockCard(card) {
+    card.classList.add('card-locked');
+    card.removeAttribute('href');
+    card.removeAttribute('target');
+    card.setAttribute('aria-disabled', 'true');
+    card.setAttribute('tabindex', '-1');
+    card.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
+
+    var badge = document.createElement('span');
+    badge.className = 'card-lock';
+    badge.textContent = 'Доступ закрыт';
+
+    var meta = card.querySelector('.card-meta');
+    if (meta) {
+      meta.innerHTML = '';
+      meta.appendChild(badge);
+    } else {
+      var arrow = card.querySelector('.card-arrow');
+      if (arrow) arrow.parentNode.removeChild(arrow);
+      card.appendChild(badge);
+    }
+  }
+
   function showMain(session) {
     // Скрываем оба auth-блока (старый и новый flow вместе уживаются)
     var oldOverlay = document.getElementById('auth-overlay');
@@ -1299,13 +1361,14 @@
       if (a) a.style.display = '';
     }
 
-    // Фильтруем карточки по permissions — скрываем те, к которым нет доступа
+    // Карточки без доступа не прячем — показываем заблокированными с плашкой «доступ закрыт»
     if (session && session.permissions) {
       document.querySelectorAll('[data-permission]').forEach(function(card) {
         var perm = card.getAttribute('data-permission');
-        if (!session.permissions[perm]) {
-          card.style.display = 'none';
-        }
+        if (session.permissions[perm]) return;
+        var href = card.getAttribute('href');
+        if (href) LOCKED_HREFS[href] = 1;   // убираем и из палитры ⌘K
+        lockCard(card);
       });
     }
 
@@ -2030,6 +2093,15 @@ import * as THREE from 'three';
     try { var f = freq(); f[h] = (f[h] || 0) + 1; localStorage.setItem('bbt_freq', JSON.stringify(f)); } catch(e2) {}
   }, true);
 
+  // Права текущего юзера: лента «Сегодня» не должна показывать цифры из закрытых отчётов.
+  // Неизвестный ключ (старая сессия в localStorage) считаем разрешённым — как было раньше.
+  function can(perm){
+    try {
+      var s = JSON.parse(localStorage.getItem('baden_session') || 'null');
+      return !s || !s.permissions || s.permissions[perm] !== false;
+    } catch (e) { return true; }
+  }
+
   fetch('live.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(L){
     var rlist = document.querySelector('.cards.rlist');
     function card(href){ return document.querySelector('.cards a.card[href="' + href + '"]'); }
@@ -2106,19 +2178,19 @@ import * as THREE from 'three';
     if (firstLabel) {
       var flags = [];
       if (staleNames.length) flags.push('⚠ не обновилось: ' + staleNames.join(', '));
-      if (L.staff && L.staff.critical) L.staff.critical.slice(0, 2).forEach(function(c2){
+      if (can('staff') && L.staff && L.staff.critical) L.staff.critical.slice(0, 2).forEach(function(c2){
         flags.push('⚠ ' + c2.name + ': укомплект. ' + fm(c2.filled) + '%, дефицит ' + c2.deficit);
       });
-      if (L.attendance && L.attendance.yoy12 < -10) flags.push('⚠ отток ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 мес');
-      if (L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
+      if (can('sales') && L.attendance && L.attendance.yoy12 < -10) flags.push('⚠ отток ' + fm(L.attendance.yoy12).replace('-', '−') + '% за 12 мес');
+      if (can('sales') && L.thermal && L.thermal.revenueDeltaWeek != null && L.thermal.revenueDeltaWeek < -15)
         flags.push('⚠ выручка вчера −' + fm(Math.abs(L.thermal.revenueDeltaWeek)) + '% к прошлой неделе');
 
-      var yPart = L.thermal && L.thermal.guests
+      var yPart = (can('sales') && L.thermal && L.thermal.guests)
         ? 'Вчера <b>' + L.thermal.guests + ' гостей</b> · <b>' + fm(L.thermal.revenueMln) + ' млн ₽</b>'
-        : (L.finance && L.finance.totalRub ? 'Вчера поступило <b>' + mln(L.finance.totalRub) + '</b>' : '');
-      var tPart = L.forecast && L.forecast.guests
+        : (can('finance') && L.finance && L.finance.totalRub ? 'Вчера поступило <b>' + mln(L.finance.totalRub) + '</b>' : '');
+      var tPart = (can('forecast') && L.forecast && L.forecast.guests)
         ? 'сегодня ждём <b>~' + L.forecast.guests + '</b> · <b>~' + fm(L.forecast.revenueMln) + ' млн ₽</b>' : '';
-      var pf = L.attendance && L.attendance.planfact;
+      var pf = can('sales') && L.attendance && L.attendance.planfact;
       var pPart = pf && pf.pct != null
         ? 'месяц: <b>' + fm(pf.factMln) + ' млн ₽</b> · <b>' + fm(pf.pct) + '% плана</b>' : '';
       if (pf && pf.pct != null && pf.pct < 90)
@@ -2138,7 +2210,7 @@ import * as THREE from 'three';
         '<span class="ts-date">Сегодня · ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '<span id="ts-weather"></span></span>' +
         (line ? '<span class="ts-line">' + line + '</span>' : '') +
         (flags.length ? '<span class="ts-flags">' + flags.join('<span style="opacity:.4">·</span>') + '</span>' : '') +
-        '<span class="ts-right">' + quick + '<a href="owner.html">Экран собственника →</a></span>';
+        '<span class="ts-right">' + quick + (can('finance') ? '<a href="owner.html">Экран собственника →</a>' : '') + '</span>';
       firstLabel.before(strip);
 
       /* погода на Уктусе — трафик термы напрямую зависит от неё */
