@@ -6,7 +6,15 @@
 <title>Отчёты — Baden Uktus</title>
 
 <!-- BADEN_UI_V4_REDIRECT: если пользователь выбрал другую версию дизайна — уводим на неё (?classic=1 всегда оставляет основную) -->
-<script>(function(){try{var m={v4:'reports-preview-v4.html',minimal:'reports-classic-preview.html'};var u=m[localStorage.getItem('bbt_ui')];if(u&&location.search.indexOf('classic')===-1)location.replace(u);}catch(e){}})();</script>
+<script>(function(){try{
+  /* BADEN_FORCED_UI: логины, которым версия дизайна назначена жёстко — меню выбора им не показываем */
+  var FORCED={drozhzhina:'v4'};
+  var s=JSON.parse(localStorage.getItem('baden_session')||'null');
+  var forced=(s&&s.user&&FORCED[s.user.login])||null;
+  var m={v4:'reports-preview-v4.html',minimal:'reports-classic-preview.html'};
+  var u=m[forced||localStorage.getItem('bbt_ui')];
+  if(u&&location.search.indexOf('classic')===-1)location.replace(u);
+}catch(e){}})();</script>
 <!-- /BADEN_UI_V4_REDIRECT -->
 
 <!-- 3D libs: self-hosted (быстрее и не зависим от CDN) -->
@@ -795,7 +803,10 @@
       <button class="footer-link" style="display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px" onclick="try{localStorage.setItem('bbt_ui','minimal')}catch(e){};window.location.href='reports-classic-preview.html'">Эмблема</button>
     </div>
   </div>
-  <script>document.addEventListener('click',function(e){var m=document.getElementById('ui-ver-menu');if(m&&!document.getElementById('ui-ver-wrap').contains(e.target))m.style.display='none'});</script>
+  <script>document.addEventListener('click',function(e){var m=document.getElementById('ui-ver-menu');if(m&&!document.getElementById('ui-ver-wrap').contains(e.target))m.style.display='none'});
+  /* кому дизайн назначен жёстко (см. BADEN_FORCED_UI выше) — прячем сам переключатель */
+  (function(){try{var F={drozhzhina:1};var s=JSON.parse(localStorage.getItem('baden_session')||'null');
+    if(s&&s.user&&F[s.user.login]){var w=document.getElementById('ui-ver-wrap');if(w)w.style.display='none';}}catch(e){}})();</script>
   <!-- /BADEN_UI_VER_MENU -->
   <button class="footer-link" id="open-cmdk" title="Поиск и команды (Ctrl/⌘+K)">⌘K</button>
   <button class="footer-link" id="install-btn" style="display:none" title="Установить как приложение">📱 Установить</button>
@@ -936,35 +947,35 @@
   <div class="section-label anim-up delay-5">Проекты</div>
 
   <div class="cards">
-    <a class="card card-project anim-up delay-5" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener">
+    <a class="card card-project anim-up delay-5" href="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/" target="_blank" rel="noopener" data-permission="projects">
       <div class="card-num">01</div>
       <div class="card-title">Baden-Baden · Главный сайт</div>
       <div class="card-desc">Премиум-лендинг термального комплекса: тарифы, СПА, ауфгуссы, меню 5 площадок, проживание, акции, контакты</div>
       <div class="card-arrow">↗</div>
     </a>
 
-    <a class="card card-project anim-up delay-6" href="https://t.me/BadenLoyalty_bot" target="_blank" rel="noopener">
+    <a class="card card-project anim-up delay-6" href="https://t.me/BadenLoyalty_bot" target="_blank" rel="noopener" data-permission="projects">
       <div class="card-num">02</div>
       <div class="card-title">@BadenLoyalty_bot · Лояльность</div>
       <div class="card-desc">Гостевой бот программы лояльности: регистрация, накопление визитов, скидки до 20%, QR-карта в Telegram</div>
       <div class="card-arrow">↗</div>
     </a>
 
-    <a class="card card-project anim-up delay-7" href="presentation.html" target="_blank" rel="noopener">
+    <a class="card card-project anim-up delay-7" href="presentation.html" target="_blank" rel="noopener" data-permission="projects">
       <div class="card-num">03</div>
       <div class="card-title">Цифровая экосистема · Презентация</div>
       <div class="card-desc">15 слайдов: архитектура системы, 5 дашбордов, 2 Telegram-бота, AI-аналитик, автоматизация, бизнес-эффект</div>
       <div class="card-arrow">↗</div>
     </a>
 
-    <a class="card card-project anim-up delay-8" href="https://baden-inside.netlify.app" target="_blank" rel="noopener">
+    <a class="card card-project anim-up delay-8" href="https://baden-inside.netlify.app" target="_blank" rel="noopener" data-permission="projects">
       <div class="card-num">04</div>
       <div class="card-title">Baden Inside · Портал сотрудников</div>
       <div class="card-desc">Внутренний портал СПиР: 3D-оргструктура, заявления через Claude, развоз, плюшки, ИИ-консультант по регламентам, чек-листы смен, PWA с push-уведомлениями</div>
       <div class="card-arrow">↗</div>
     </a>
 
-    <a class="card reveal-3d anim-up delay-8" href="training-report.html">
+    <a class="card reveal-3d anim-up delay-8" href="training-report.html" data-permission="projects">
       <div class="card-num">08</div>
       <div class="card-title">Обучение спасателей</div>
       <div class="card-desc">Прогресс, попытки, средний балл и топ-ошибки по спасателям; детализация по человеку. Данные с портала обучения</div>
@@ -1201,9 +1212,21 @@
   // Страницы, закрытые для текущего юзера — заполняется в showMain() по permissions.
   var LOCKED_HREFS = {};
 
+  // Логины с жёстко назначенной версией дизайна (дублирует BADEN_FORCED_UI в <head>):
+  // им не показываем ни меню «✦ Дизайн», ни пункты смены версии в палитре ⌘K.
+  var FORCED_UI = { drozhzhina: 'v4' };
+  function forcedUi() {
+    try {
+      var s = JSON.parse(localStorage.getItem('baden_session') || 'null');
+      return (s && s.user && FORCED_UI[s.user.login]) || null;
+    } catch (e) { return null; }
+  }
+
   function renderCmdk(q) {
     var results = document.getElementById('cmdk-results');
+    var noUiSwitch = !!forcedUi();
     var scored = CMDK_ITEMS.filter(function(it){ return !(it.h && LOCKED_HREFS[it.h]); })
+                            .filter(function(it){ return !(noUiSwitch && it.act && it.act.indexOf('ui:') === 0); })
                             .map(function(it){ return {it: it, s: fuzzy(q, it)}; })
                             .filter(function(x){ return x.s > 0; })
                             .sort(function(a,b){ return b.s - a.s; });
@@ -1365,7 +1388,9 @@
     if (session && session.permissions) {
       document.querySelectorAll('[data-permission]').forEach(function(card) {
         var perm = card.getAttribute('data-permission');
-        if (session.permissions[perm]) return;
+        // Только явный false закрывает. Неизвестный ключ = сессия в localStorage старше,
+        // чем последний новый permission — не запираем человека до перелогина.
+        if (session.permissions[perm] !== false) return;
         var href = card.getAttribute('href');
         if (href) LOCKED_HREFS[href] = 1;   // убираем и из палитры ⌘K
         lockCard(card);
