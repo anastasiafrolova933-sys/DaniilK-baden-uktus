@@ -1007,13 +1007,25 @@
     var eff = mode === 'auto' ? (mql.matches ? 'light' : 'dark') : mode;
     root.setAttribute('data-theme', eff);
     localStorage.setItem('bbt_theme', mode);
+    // Флаг «авто выбрали руками» — отличает осознанное «Авто (по системе)» из ⌘K
+    // от старого молчаливого дефолта, который писал 'auto' при первом заходе.
+    if (mode === 'auto') localStorage.setItem('bbt_theme_auto', '1');
+    else localStorage.removeItem('bbt_theme_auto');
     // Sync pill state (data-eff highlights the active segment)
     var pill = document.getElementById('theme-pill');
     if (pill) pill.setAttribute('data-eff', eff);
   }
-  applyTheme(localStorage.getItem('bbt_theme') || 'auto');
+  // По умолчанию портал тёмный. Явный выбор (тёмная/светлая, а также «Авто» с флагом)
+  // уважаем; голое 'auto' в хранилище — наследие старого дефолта, переводим на тёмную.
+  function initialTheme() {
+    var t = localStorage.getItem('bbt_theme');
+    if (t === 'dark' || t === 'light') return t;
+    if (t === 'auto' && localStorage.getItem('bbt_theme_auto') === '1') return 'auto';
+    return 'dark';
+  }
+  applyTheme(initialTheme());
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(){
-    if ((localStorage.getItem('bbt_theme') || 'auto') === 'auto') applyTheme('auto');
+    if (localStorage.getItem('bbt_theme') === 'auto') applyTheme('auto');
   });
 
   // Pill click — toggles dark ↔ light (overrides auto-mode if it was on)
