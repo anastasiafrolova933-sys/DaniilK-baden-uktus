@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#EFEDE8">
+<title>Baden Uktus · Neo — портал отчётов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="neo.css?v=4">
+</head>
+<body>
+
+<!-- радужная дымка на фоне, как в референсе -->
+<div class="aura" aria-hidden="true">
+  <span class="aura__blob aura__blob--rose"></span>
+  <span class="aura__blob aura__blob--lime"></span>
+  <span class="aura__blob aura__blob--sky"></span>
+</div>
+
+<a class="lab-badge" href="../index.html">черновик дизайна <b>· к песочнице</b></a>
+
+<main class="shell">
+
+  <!-- ── шапка ─────────────────────────────────────────────────────────── -->
+  <header class="top">
+    <div class="top__left">
+      <span class="mark" aria-hidden="true"></span>
+      <button class="ico ico--ghost" type="button" aria-label="Меню">
+        <svg viewBox="0 0 24 24"><path d="M4 8h16M4 13h11M4 18h7"/></svg>
+      </button>
+    </div>
+    <div class="top__right">
+      <button class="ico ico--ghost" type="button" aria-label="ИИ-аналитик">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5a7.5 7.5 0 0 0-7.5 7.5v3.2A2.8 2.8 0 0 0 7.3 18h.9v-5h-2"/><path d="M19.5 15.2V12A7.5 7.5 0 0 0 12 4.5"/><path d="M19.5 15.2A2.8 2.8 0 0 1 16.7 18h-.9v-5h2"/></svg>
+      </button>
+      <span class="avatar" aria-hidden="true">Д</span>
+    </div>
+  </header>
+
+  <!-- ── герой ─────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <h1 class="hero__hi">Привет, Даниил!<br><i>Посмотрим, как идут дела</i></h1>
+
+    <div class="hero__row">
+      <div class="hero__score">
+        <div class="hero__delta" id="planDelta">— п.п. к плану дня</div>
+        <div class="hero__big"><span id="planPct">0</span><span class="hero__unit">%</span></div>
+        <div class="hero__cap" id="planCap">плана месяца · обновлено —</div>
+      </div>
+      <button class="select" type="button" id="segSelect">
+        Термаль
+        <svg viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- шкала выполнения плана: три полосы + маркер -->
+    <div class="bands" id="bands">
+      <div class="band band--red"><i></i><i></i><i></i><span class="band__pip"></span></div>
+      <div class="band band--amber"><i></i><i></i><i></i><span class="band__pip"></span></div>
+      <div class="band band--green"><i></i><i></i><i></i><span class="band__pip"></span></div>
+      <span class="bands__marker" id="bandsMarker"><span class="bands__flag"></span><span class="bands__stem"></span></span>
+      <div class="bands__scale"><span>отстаём</span><span>в графике</span><span>с опережением</span></div>
+    </div>
+  </section>
+
+  <!-- ── плавающая плашка «требуют внимания» ───────────────────────────── -->
+  <button class="alert" type="button" id="alertPill">
+    <span class="ico ico--ghost ico--sm" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M13 3 6 13.5h5L10.5 21 18 10.5h-5L13 3Z"/></svg>
+    </span>
+    Требуют внимания
+    <span class="alert__count" id="alertCount">0</span>
+    <span class="ico ico--solid ico--sm" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>
+    </span>
+  </button>
+
+  <!-- ── карточка с графиком ───────────────────────────────────────────── -->
+  <section class="panel">
+    <div class="panel__head">
+      <span class="ico ico--ghost" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="8"/></svg>
+      </span>
+      <h2>Выручка по дням</h2>
+      <span class="ico ico--soft" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>
+      </span>
+    </div>
+    <div class="chart" id="chart"></div>
+    <div class="legend">
+      <span class="legend__item is-on"><i></i>Выручка, млн ₽</span>
+      <span class="legend__item"><i></i>Гости <small>(в масштабе выручки)</small></span>
+    </div>
+  </section>
+
+  <!-- ── фильтры ───────────────────────────────────────────────────────── -->
+  <nav class="pills" id="pills" aria-label="Фильтр отчётов">
+    <button class="pill is-on" type="button" data-filter="all">Все отчёты</button>
+    <button class="pill" type="button" data-filter="money">Деньги</button>
+    <button class="pill" type="button" data-filter="guests">Гости</button>
+    <button class="pill" type="button" data-filter="people">Персонал</button>
+  </nav>
+
+  <!-- ── плитки отчётов ────────────────────────────────────────────────── -->
+  <section class="tiles" id="tiles"></section>
+
+</main>
+
+<!-- ── док ─────────────────────────────────────────────────────────────── -->
+<div class="dock" id="dock">
+  <svg class="dock__skin" id="dockSkin" aria-hidden="true">
+    <defs>
+      <linearGradient id="dockFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#F6F4F0"/>
+      </linearGradient>
+    </defs>
+    <path id="dockPath" fill="url(#dockFill)" stroke="rgba(22,22,26,0.10)" stroke-width="1"/>
+  </svg>
+  <div class="dock__bead" id="dockBead"><svg viewBox="0 0 24 24" id="beadIcon"></svg></div>
+  <span class="dock__label" id="dockLabel"></span>
+  <div class="dock__tabs" id="dockTabs" role="tablist" aria-label="Отчёты"></div>
+</div>
+
+<script src="neo.js?v=4"></script>
+</body>
+</html>
