@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#EFEDE8">
+<title>Вход — Baden Uktus · Neo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="neo.css?v=10">
+</head>
+<body data-page="login">
+
+<div class="aura" aria-hidden="true">
+  <span class="aura__blob aura__blob--rose"></span>
+  <span class="aura__blob aura__blob--lime"></span>
+  <span class="aura__blob aura__blob--sky"></span>
+</div>
+
+<a class="lab-badge" href="../index.html">черновик дизайна <b>· к песочнице</b></a>
+
+<main class="gate">
+  <div class="gate__card">
+
+    <div class="gate__brand">
+      <span class="mark" aria-hidden="true"></span>
+      <span>Baden Uktus · <b>отчёты</b></span>
+    </div>
+
+    <h1 class="gate__title">Вход</h1>
+    <p class="gate__sub">Выбери себя и введи пароль</p>
+
+    <div class="gate__users" id="users"></div>
+
+    <form id="gateForm" autocomplete="on" novalidate>
+      <label class="gate__field" for="pwd">
+        <svg class="gate__ico" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+        <input id="pwd" type="password" placeholder="Пароль" autocomplete="current-password">
+        <button class="gate__eye" type="button" id="eye" aria-label="Показать пароль">
+          <svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg>
+        </button>
+        <svg class="gate__ok" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7"/></svg>
+      </label>
+
+      <div class="gate__socket" id="socket">
+        <button class="gate__cta" id="cta" type="submit" aria-disabled="true">
+          <span class="gate__dot"></span>Войти
+        </button>
+      </div>
+
+      <div class="gate__hint" id="hint"></div>
+      <div class="gate__keys"><kbd>Tab</kbd> дотягивается · <kbd>Enter</kbd> отправляет</div>
+    </form>
+
+    <a class="gate__skip" href="index.html">Посмотреть черновик без входа →</a>
+  </div>
+</main>
+
+<script src="../../js/api.js"></script>
+<script src="neo.js?v=10"></script>
+</body>
+</html>

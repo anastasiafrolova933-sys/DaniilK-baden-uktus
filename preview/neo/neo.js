@@ -104,22 +104,40 @@
       '<span class="who__role">' + WHO.role + '</span>' +
       (WHO.live ? '' : '<svg viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></svg>');
     btn.title = WHO.live ? 'Живая сессия портала' : 'Демо-режим: посмотреть глазами другой роли';
+    if (WHO.live) btn.classList.add('who--live');
     host.appendChild(btn);
-    if (WHO.live) { btn.classList.add('who--live'); return; }
 
     var menu = document.createElement('div');
     menu.className = 'who__menu';
-    Object.keys(ROLES).forEach(function (k) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'who__item' + (ROLES[k].role === WHO.role ? ' is-on' : '');
-      b.innerHTML = ROLES[k].name + '<span>' + ROLES[k].role + '</span>';
-      b.addEventListener('click', function () {
-        try { localStorage.setItem('neo_role', k); } catch (e) {}
-        location.reload();
+
+    if (WHO.live) {
+      var out = document.createElement('button');
+      out.type = 'button';
+      out.className = 'who__item';
+      out.innerHTML = 'Выйти<span>сессия портала</span>';
+      out.addEventListener('click', function () {
+        try { localStorage.removeItem('baden_session'); } catch (e) {}
+        location.href = 'login.html';
       });
-      menu.appendChild(b);
-    });
+      menu.appendChild(out);
+    } else {
+      Object.keys(ROLES).forEach(function (k) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'who__item' + (ROLES[k].role === WHO.role ? ' is-on' : '');
+        b.innerHTML = ROLES[k].name + '<span>' + ROLES[k].role + '</span>';
+        b.addEventListener('click', function () {
+          try { localStorage.setItem('neo_role', k); } catch (e) {}
+          location.reload();
+        });
+        menu.appendChild(b);
+      });
+      var go = document.createElement('a');
+      go.className = 'who__item who__item--go';
+      go.href = 'login.html';
+      go.innerHTML = 'Войти по-настоящему<span>→</span>';
+      menu.appendChild(go);
+    }
     host.appendChild(menu);
     btn.addEventListener('click', function (e) { e.stopPropagation(); host.classList.toggle('is-open'); });
     document.addEventListener('click', function () { host.classList.remove('is-open'); });
@@ -859,11 +877,156 @@
     buildDock();
   }
 
-  fetch('../../live.json?t=' + Date.now())
-    .then(function (r) { return r.json(); })
-    .then(function (d) { L = d; render(); })
-    .catch(function (e) {
-      var host = document.getElementById('tiles') || document.body;
-      host.innerHTML = '<div class="chart__empty">Не удалось загрузить live.json — ' + e.message + '</div>';
+  /* ═══════════════ Экран входа ════════════════════════════════════════ */
+
+  // Список тот же, что на боевом входе. Пароли, само собой, только на сервере.
+  var GATE_USERS = [
+    { login: 'anastasia',  name: 'Анастасия Ф.',       role: 'admin' },
+    { login: 'daniil',     name: 'Даниил К.',          role: 'admin' },
+    { login: 'artem',      name: 'Артем К.',           role: 'manager' },
+    { login: 'fnb',        name: 'F&B',                role: 'fnb' },
+    { login: 'kadry',      name: 'Кадры',              role: 'hr' },
+    { login: 'drozhzhina', name: 'Дрожжина Анастасия', role: 'finsales' }
+  ];
+
+  // api.js ищет api_url.json рядом со страницей или в корне репозитория и из
+  // двухуровневой preview/neo/ не находит. Кладём адрес в его же кэш заранее.
+  function ensureApiUrl() {
+    try {
+      var c = JSON.parse(localStorage.getItem('baden_api_url') || 'null');
+      if (c && c.url && Date.now() - c.ts < 4 * 60 * 1000) return Promise.resolve();
+    } catch (e) {}
+    return fetch('../../api_url.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.url) localStorage.setItem('baden_api_url', JSON.stringify({ url: j.url, ts: Date.now() }));
+      })
+      .catch(function () {});
+  }
+
+  function initGate() {
+    var form = document.getElementById('gateForm');
+    var pwd = document.getElementById('pwd');
+    var cta = document.getElementById('cta');
+    var socket = document.getElementById('socket');
+    var hint = document.getElementById('hint');
+    var eye = document.getElementById('eye');
+    var host = document.getElementById('users');
+    var chosen = null;
+
+    // если уже вошли — незачем показывать форму
+    if (window.BadenAuth && BadenAuth.getSession()) { location.replace('index.html'); return; }
+
+    var last = null;
+    try { last = localStorage.getItem('baden_last_login'); } catch (e) {}
+
+    GATE_USERS.forEach(function (u) {
+      var b = document.createElement('button');
+      b.className = 'gate__user';
+      b.type = 'button';
+      b.dataset.login = u.login;
+      b.innerHTML = '<b>' + u.name + '</b><span>' + u.role + '</span>';
+      b.addEventListener('click', function () {
+        chosen = u.login;
+        host.querySelectorAll('.gate__user').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+        sync();
+        pwd.focus();
+      });
+      host.appendChild(b);
+      if (u.login === last) setTimeout(function () { b.click(); }, 0);
     });
+
+    function ready() { return !!chosen && pwd.value.length >= 4; }
+    function sync() {
+      var r = ready();
+      document.body.classList.toggle('is-ready', r);
+      pwd.parentNode.classList.toggle('is-ok', pwd.value.length >= 4);
+      cta.setAttribute('aria-disabled', r ? 'false' : 'true');
+      hint.className = 'gate__hint';
+      if (r) { hint.textContent = ''; tx = 0; ty = 0; run(); }
+      else if (!chosen) hint.textContent = 'Сначала выбери себя в списке';
+      else hint.textContent = pwd.value.length ? 'Пароль — от 4 символов' : 'Осталось ввести пароль';
+    }
+    pwd.addEventListener('input', sync);
+
+    eye.addEventListener('click', function () {
+      var show = pwd.type === 'password';
+      pwd.type = show ? 'text' : 'password';
+      eye.setAttribute('aria-label', show ? 'Скрыть пароль' : 'Показать пароль');
+    });
+
+    // кнопка уворачивается от мыши, пока форма не готова (пальцем и с клавиатуры — нет)
+    var tx = 0, ty = 0, cx = 0, cy = 0, vx = 0, vy = 0, raf = 0;
+    function frame() {
+      vx += (tx - cx) * 0.2; vx *= 0.72; cx += vx;
+      vy += (ty - cy) * 0.2; vy *= 0.72; cy += vy;
+      cta.style.transform = 'translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+      if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1 ||
+          Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1) raf = requestAnimationFrame(frame);
+      else { raf = 0; if (!tx && !ty) cta.style.transform = ''; }
+    }
+    function run() { if (REDUCED) { cta.style.transform = ''; return; } if (!raf) raf = requestAnimationFrame(frame); }
+
+    if (matchMedia('(pointer: fine)').matches && !REDUCED) {
+      socket.addEventListener('pointermove', function (e) {
+        if (ready()) return;
+        var s = socket.getBoundingClientRect(), b = cta.getBoundingClientRect();
+        var dx = (b.left + b.width / 2) - e.clientX, dy = (b.top + b.height / 2) - e.clientY;
+        var dist = Math.hypot(dx, dy) || 1;
+        if (dist > b.width * 0.6) return;
+        var push = (b.width * 0.6 - dist) * 1.4;
+        var freeX = (s.width - b.width) / 2 - 6, freeY = (s.height - b.height) / 2 - 5;
+        tx = clamp(cx + dx / dist * push, -freeX, freeX);
+        ty = clamp(cy + dy / dist * push, -freeY, freeY);
+        if (Math.abs(tx) >= freeX - 0.5) ty = clamp(ty + (dy > 0 ? push : -push), -freeY, freeY);
+        run();
+      });
+      socket.addEventListener('pointerleave', function () { tx = 0; ty = 0; run(); });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!ready()) {
+        sync();
+        hint.className = 'gate__hint is-warn';
+        socket.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' },
+                        { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }],
+                       { duration: REDUCED ? 1 : 260, easing: 'ease-out' });
+        return;
+      }
+      if (!window.BadenAuth) { hint.className = 'gate__hint is-warn'; hint.textContent = 'api.js не загрузился'; return; }
+
+      cta.classList.add('is-busy');
+      hint.className = 'gate__hint';
+      hint.textContent = 'Заходим…';
+      ensureApiUrl().then(function () {
+        return BadenAuth.login(chosen, pwd.value);
+      }).then(function (r) {
+        try { localStorage.setItem('baden_last_login', chosen); localStorage.removeItem('neo_role'); } catch (e2) {}
+        hint.className = 'gate__hint is-ok';
+        hint.textContent = 'Добро пожаловать, ' + r.user.name;
+        setTimeout(function () { location.href = 'index.html'; }, 420);
+      }).catch(function (err) {
+        cta.classList.remove('is-busy');
+        hint.className = 'gate__hint is-warn';
+        hint.textContent = err.message || 'Не удалось войти';
+      });
+    });
+
+    sync();
+  }
+
+  /* ═══════════════ Запуск ═════════════════════════════════════════════ */
+  if (PAGE === 'login') {
+    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', initGate);
+    else initGate();
+  } else {
+    fetch('../../live.json?t=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) { L = d; render(); })
+      .catch(function (e) {
+        var host = document.getElementById('tiles') || document.body;
+        host.innerHTML = '<div class="chart__empty">Не удалось загрузить live.json — ' + e.message + '</div>';
+      });
+  }
 })();
