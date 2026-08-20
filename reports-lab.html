@@ -2244,7 +2244,7 @@ import * as THREE from 'three';
 </script>
 <!-- /BADEN_LIVE_META -->
 
-<!-- ══ BADEN_LAB_LAYER: тестовая сборка портала, собрано 20.08.2026 09:41 ══ -->
+<!-- ══ BADEN_LAB_LAYER: тестовая сборка портала, собрано 20.08.2026 10:00 ══ -->
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
    Слой лаборатории поверх настоящего reports.html.
@@ -2337,6 +2337,64 @@ body { padding-bottom: 132px; }
 .card::before {
   background: radial-gradient(420px circle at var(--mx,50%) var(--my,50%),
               rgba(212,184,147,0.24), rgba(200,169,126,0.06) 36%, transparent 66%);
+}
+
+/* ── 02b · Разворот карточки ───────────────────────────────────────────── */
+.lab-scrim {
+  position: fixed; inset: 0; z-index: 55;
+  background: rgba(6,5,4,0.74); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 320ms var(--ease);
+}
+:root[data-theme="light"] .lab-scrim { background: rgba(30,24,14,0.42); }
+.lab-scrim.on { opacity: 1; }
+
+.lab-sheet {
+  position: fixed; z-index: 60; overflow: auto;
+  background: var(--surface); border: 1px solid var(--border-h);
+  border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: var(--s-7); transform-origin: 0 0; will-change: transform;
+}
+.lab-sheet__eyebrow { font-family: 'Cormorant', serif; font-style: italic; font-size: 14px; color: var(--accent); }
+.lab-sheet h3 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 300; letter-spacing: -0.02em; margin-top: 6px; }
+.lab-sheet__kpi { font-size: clamp(30px, 4.4vw, 44px); font-weight: 300; letter-spacing: -0.025em; margin-top: var(--s-5); font-variant-numeric: tabular-nums; }
+.lab-sheet__kpilbl { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.lab-sheet__desc { color: var(--text-2); font-size: 14px; margin-top: var(--s-4); max-width: 62ch; }
+.lab-sheet__rows { margin-top: var(--s-6); display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+.lab-sheet__row { display: flex; justify-content: space-between; gap: var(--s-4); padding: 12px var(--s-4); background: var(--surface); font-size: 14px; }
+.lab-sheet__row span:first-child { color: var(--text-2); }
+.lab-sheet__row span:last-child { font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+.lab-sheet__row.warn span:last-child { color: var(--warning); }
+
+.lab-sheet__actions { margin-top: var(--s-6); display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.lab-sheet__open {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 999px; border: 0; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 500; color: #201a10;
+  background: linear-gradient(180deg, #f0d9ae, var(--accent));
+  box-shadow: 0 12px 30px rgba(200,169,126,0.3);
+  text-decoration: none;
+  transition: transform var(--d-fast) var(--ease), box-shadow var(--d-fast) var(--ease);
+}
+.lab-sheet__open:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(200,169,126,0.38); }
+.lab-sheet__open:active { transform: scale(0.98); }
+.lab-sheet__open span { transition: transform var(--d-fast) var(--ease); }
+.lab-sheet__open:hover span { transform: translateX(4px); }
+.lab-sheet__later {
+  padding: 13px 20px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 14px; color: var(--text-2);
+  background: none; border: 1px solid var(--border);
+}
+.lab-sheet__later:hover { color: var(--text); border-color: var(--border-h); }
+.lab-sheet__hint { font-size: 11px; color: var(--text-3); margin-left: auto; }
+.lab-sheet__close {
+  position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-2);
+  cursor: pointer; font-size: 18px; line-height: 1; display: grid; place-items: center;
+}
+.lab-sheet__close:hover { color: var(--text); border-color: var(--border-h); }
+@media (max-width: 620px) {
+  .lab-sheet { padding: var(--s-6) var(--s-5); }
+  .lab-sheet__hint { display: none; }
 }
 
 /* ── 03 · Кольцо свежести вместо точки ─────────────────────────────────── */
@@ -2599,6 +2657,162 @@ body { padding-bottom: 132px; }
     });
   }
 
+  /* ═══════════════ 02b · Разворот карточки ════════════════════════════ */
+
+  var LIVE = null;
+  function fmt(v, d) {
+    return (typeof v === 'number' ? v.toFixed(d == null ? 0 : d) : String(v))
+      .replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function pct(v) { return (v > 0 ? '+' : '') + fmt(v, 1).replace('-', '−') + '%'; }
+
+  // строки сводки собираем из того же live.json, что кормит карточки портала
+  function rowsFor(href) {
+    var L = LIVE, r = [];
+    if (!L) return r;
+    var t = L.thermal || {}, f = L.finance || {}, fc = L.forecast || {}, a = L.attendance || {};
+    if (href === 'finance.html') {
+      if (f.totalRub) r.push(['Поступило за ' + (f.yesterday || 'вчера'), fmt(f.totalRub) + ' ₽']);
+      if (f.kassaRub) r.push(['Из них касса', fmt(f.kassaRub) + ' ₽']);
+      if (f.rsRub)    r.push(['Расчётный счёт', fmt(f.rsRub) + ' ₽']);
+    } else if (href === 'sales.html') {
+      if (t.revenueMln) r.push(['Выручка за ' + (t.yesterday || 'вчера'), fmt(t.revenueMln, 3) + ' млн ₽']);
+      if (t.guests)     r.push(['Гостей', fmt(t.guests)]);
+      if (t.checkRub)   r.push(['Средний чек', fmt(t.checkRub) + ' ₽']);
+      if (t.revenueDeltaWeek != null) r.push(['К прошлой неделе', pct(t.revenueDeltaWeek), t.revenueDeltaWeek < 0]);
+      if (t.revenueDelta2025 != null) r.push(['К 2025 году', pct(t.revenueDelta2025), t.revenueDelta2025 < 0]);
+    } else if (href === 'forecast.html') {
+      if (fc.guests)     r.push(['Гостей ждём сегодня', '~' + fmt(fc.guests)]);
+      if (fc.revenueMln) r.push(['Выручка, прогноз', '~' + fmt(fc.revenueMln, 2) + ' млн ₽']);
+      if (t.guests)      r.push(['Вчера по факту', fmt(t.guests) + ' гостей']);
+    } else if (href === 'attendance.html') {
+      if (a.yoy12 != null) r.push(['Отток за 12 месяцев', pct(a.yoy12), a.yoy12 < -10]);
+      if (a.q12)           r.push(['Гостей за 12 месяцев', fmt(a.q12)]);
+      if (a.lastDataDate)  r.push(['Данные по', a.lastDataDate.split('-').reverse().join('.')]);
+    } else if (href === 'owner.html') {
+      if (t.guests)      r.push(['Вчера гостей', fmt(t.guests)]);
+      if (t.revenueMln)  r.push(['Вчера выручка', fmt(t.revenueMln, 3) + ' млн ₽']);
+      if (fc.guests)     r.push(['Сегодня ждём', '~' + fmt(fc.guests)]);
+      if (a.yoy12 != null) r.push(['Отток за 12 мес', pct(a.yoy12), a.yoy12 < -10]);
+    }
+    var pf = a.planfact;
+    if (pf && pf.pct != null && (href === 'finance.html' || href === 'owner.html')) {
+      r.push(['План месяца закрыт', fmt(pf.pct, 1) + '%', pf.pct < 90]);
+    }
+    return r;
+  }
+
+  var openSheet = null, openCard = null, scrim = null;
+
+  function expand(card) {
+    if (openSheet) return;
+    var href = card.getAttribute('href');
+    var title = card.querySelector('.card-title');
+    var desc = card.querySelector('.card-desc');
+    var num = card.querySelector('.card-num');
+    var kpiV = card.querySelector('.kpi-val');
+    var kpiL = card.querySelector('.kpi-lbl');
+    var r = card.getBoundingClientRect();
+
+    scrim = document.createElement('div');
+    scrim.className = 'lab-scrim';
+    scrim.addEventListener('click', collapse);
+    document.body.appendChild(scrim);
+    requestAnimationFrame(function () { scrim.classList.add('on'); });
+
+    var w = Math.min(720, innerWidth - 32);
+    var left = (innerWidth - w) / 2;
+
+    var rows = rowsFor(href);
+    var sheet = document.createElement('div');
+    sheet.className = 'lab-sheet';
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-modal', 'true');
+    // высоту сначала отдаём содержимому, потом фиксируем — иначе не посчитать FLIP
+    sheet.style.cssText = 'left:' + left + 'px;top:0;width:' + w + 'px;height:auto;visibility:hidden;';
+    sheet.innerHTML =
+      '<button class="lab-sheet__close" type="button" aria-label="Закрыть">×</button>' +
+      (num ? '<div class="lab-sheet__eyebrow">' + num.textContent + '</div>' : '') +
+      '<h3>' + (title ? title.textContent : 'Отчёт') + '</h3>' +
+      (kpiV ? '<div class="lab-sheet__kpi">' + kpiV.textContent + '</div>' +
+              '<div class="lab-sheet__kpilbl">' + (kpiL ? kpiL.textContent : '') + '</div>' : '') +
+      (desc ? '<div class="lab-sheet__desc">' + desc.textContent + '</div>' : '') +
+      (rows.length ? '<div class="lab-sheet__rows">' + rows.map(function (x) {
+        return '<div class="lab-sheet__row' + (x[2] ? ' warn' : '') + '"><span>' + x[0] + '</span><span>' + x[1] + '</span></div>';
+      }).join('') + '</div>' : '') +
+      '<div class="lab-sheet__actions">' +
+        '<a class="lab-sheet__open" href="' + href + '">Открыть отчёт <span>→</span></a>' +
+        '<button class="lab-sheet__later" type="button">Не сейчас</button>' +
+        '<span class="lab-sheet__hint">Enter — открыть · Esc — закрыть</span>' +
+      '</div>';
+    document.body.appendChild(sheet);
+
+    var h = Math.min(sheet.offsetHeight, innerHeight - 64);
+    var top = Math.max(32, (innerHeight - h) / 2);
+    sheet.style.height = h + 'px';
+    sheet.style.top = top + 'px';
+    sheet.style.visibility = '';
+
+    sheet.querySelector('.lab-sheet__close').addEventListener('click', collapse);
+    sheet.querySelector('.lab-sheet__later').addEventListener('click', collapse);
+
+    var from = 'translate(' + (r.left - left) + 'px,' + (r.top - top) + 'px) scale(' +
+               (r.width / w) + ',' + (r.height / h) + ')';
+    var dur = REDUCED ? 1 : 460;
+    sheet.animate([{ transform: from, opacity: 0.5 }, { transform: 'none', opacity: 1 }],
+                  { duration: dur, easing: 'cubic-bezier(0.22,1,0.36,1)' });
+    sheet.querySelectorAll('h3,.lab-sheet__kpi,.lab-sheet__desc,.lab-sheet__rows,.lab-sheet__actions')
+      .forEach(function (el, i) {
+        el.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+          { duration: dur, delay: REDUCED ? 0 : 110 + i * 55, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' });
+      });
+
+    card.style.visibility = 'hidden';
+    openSheet = sheet; openCard = card;
+    addEventListener('keydown', onKey);
+    sheet.querySelector('.lab-sheet__open').focus();
+  }
+
+  function collapse() {
+    if (!openSheet) return;
+    var sheet = openSheet, card = openCard;
+    openSheet = null; openCard = null;
+    removeEventListener('keydown', onKey);
+    var r = card.getBoundingClientRect(), s = sheet.getBoundingClientRect();
+    var to = 'translate(' + (r.left - s.left) + 'px,' + (r.top - s.top) + 'px) scale(' +
+             (r.width / s.width) + ',' + (r.height / s.height) + ')';
+    scrim.classList.remove('on');
+    var a = sheet.animate([{ transform: 'none', opacity: 1 }, { transform: to, opacity: 0.35 }],
+                          { duration: REDUCED ? 1 : 360, easing: 'cubic-bezier(0.5,0,0.75,0)' });
+    a.onfinish = function () { sheet.remove(); scrim.remove(); card.style.visibility = ''; };
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); collapse(); }
+    else if (e.key === 'Enter' && openSheet && document.activeElement === openSheet.querySelector('.lab-sheet__later')) {
+      // на «Не сейчас» Enter должен закрывать, а не открывать
+      e.preventDefault(); collapse();
+    }
+  }
+
+  function enableExpand() {
+    fetch('live.json?t=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) { LIVE = d; })
+      .catch(function () {});
+
+    document.querySelectorAll('.cards a.card:not(.card-locked)').forEach(function (card) {
+      var href = card.getAttribute('href');
+      if (!href || href.indexOf('http') === 0) return;      // внешние проекты — как были
+      card.addEventListener('click', function (e) {
+        // Ctrl/Cmd/Shift-клик и средняя кнопка оставляем браузеру: открыть в новой вкладке
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        expand(card);
+      });
+    });
+  }
+
   // живые цифры (их вставляет слой BADEN_LIVE_META) набегают при появлении
   function animateKpis() {
     if (REDUCED) return;
@@ -2693,6 +2907,7 @@ body { padding-bottom: 132px; }
   function boot() {
     buildDock();
     enhanceCards();
+    enableExpand();
     animateKpis();
     buildOrbits();
   }
