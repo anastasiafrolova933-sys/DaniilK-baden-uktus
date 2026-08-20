@@ -1046,32 +1046,6 @@
   })();
 
   // ── 3D tilt + spotlight on cards (framer-motion-style) ──
-  function attachCardCursor() {
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('.card:not(.card-locked)').forEach(function(c){
-      var raf = 0, tx = 0, ty = 0;
-      function apply(){
-        c.style.transform = 'perspective(900px) rotateX(' + ty + 'deg) rotateY(' + tx + 'deg) translateZ(0)';
-        raf = 0;
-      }
-      c.addEventListener('pointermove', function(e){
-        var r = c.getBoundingClientRect();
-        var px = (e.clientX - r.left) / r.width;
-        var py = (e.clientY - r.top) / r.height;
-        c.style.setProperty('--mx', (px * 100) + '%');
-        c.style.setProperty('--my', (py * 100) + '%');
-        if (reduced) return;
-        var max = 8;
-        tx = (px - 0.5) * 2 * max;
-        ty = -(py - 0.5) * 2 * max;
-        if (!raf) raf = requestAnimationFrame(apply);
-      });
-      c.addEventListener('pointerleave', function(){
-        tx = 0; ty = 0;
-        if (!raf) raf = requestAnimationFrame(apply);
-      });
-    });
-  }
 
   // ── Magnetic buttons — притягиваются к курсору ──
   function attachMagnetic() {
@@ -1389,7 +1363,6 @@
       now.toLocaleDateString('ru', {day:'2-digit', month:'long', year:'numeric'});
     attachPrefetch();
     attachCmdk();
-    attachCardCursor();
     attachMagnetic();
     attachReveal();
     attachThemePill();
@@ -2250,5 +2223,670 @@ import * as THREE from 'three';
 })();
 </script>
 <!-- /BADEN_LIVE_META -->
+
+<!-- ══ BADEN_LAB_LAYER: док, разворот карточки, кольца свежести ══ -->
+<style>
+/* ─────────────────────────────────────────────────────────────────────────
+   Слой лаборатории поверх настоящего reports.html.
+   Подмешивается сборщиком build_lab_portal.py в reports-lab.html.
+   Ничего из этого не попадает в боевой портал.
+   ───────────────────────────────────────────────────────────────────────── */
+
+
+/* ── 01 · Док ──────────────────────────────────────────────────────────── */
+body { padding-bottom: 132px; }
+
+.lab-dock {
+  position: fixed; z-index: 45;
+  left: 50%; bottom: 24px; transform: translateX(-50%);
+  width: min(560px, calc(100vw - 28px));
+  height: 78px;
+  touch-action: none;
+  opacity: 0; pointer-events: none;
+  transition: opacity 500ms var(--ease);
+}
+.lab-dock.on { opacity: 1; pointer-events: auto; }
+@media (max-width: 520px) { .lab-dock { height: 68px; bottom: 14px; } }
+
+.lab-dock__skin { position: absolute; left: 0; top: -46px; width: 100%; height: calc(100% + 46px); overflow: visible; }
+.lab-dock__skin path { filter: drop-shadow(0 18px 40px rgba(0,0,0,0.55)); }
+:root[data-theme="light"] .lab-dock__skin path { filter: drop-shadow(0 14px 34px rgba(60,45,20,0.22)); }
+
+.lab-dock__tabs { position: absolute; inset: 0; display: flex; align-items: center; }
+.lab-dock__tab {
+  flex: 1; height: 100%; display: grid; place-items: center;
+  background: none; border: 0; cursor: pointer; color: var(--text-3);
+  transition: color var(--d-fast) var(--ease), transform var(--d-fast) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.lab-dock__tab svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 520px) { .lab-dock__tab svg { width: 18px; height: 18px; } }
+.lab-dock__tab:hover { color: var(--text-2); transform: translateY(-2px); }
+.lab-dock__tab[aria-selected="true"] { color: transparent; }
+.lab-dock__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -6px; border-radius: 10px; }
+
+.lab-dock__bead {
+  position: absolute; top: -42px; left: 0;
+  width: 52px; height: 52px; margin-left: -26px;
+  border-radius: 50%;
+  background: radial-gradient(120% 120% at 32% 26%, #f6e3c2 0%, #d9bd91 42%, #a3814f 100%);
+  display: grid; place-items: center;
+  cursor: grab; touch-action: none;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,235,190,0.35) inset;
+  will-change: transform;
+}
+.lab-dock__bead:active { cursor: grabbing; }
+.lab-dock__bead svg { width: 21px; height: 21px; fill: none; stroke: #201a10; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; position: relative; z-index: 1; }
+.lab-dock__glow {
+  position: absolute; inset: -18px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(214,180,126,0.4), transparent 65%);
+}
+/* Подпись показываем только когда с доком работают — иначе она висит поверх карточек */
+.lab-dock__label {
+  position: absolute; left: 0; bottom: 100%; margin-bottom: 60px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); white-space: nowrap; pointer-events: none;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  opacity: 0; transition: opacity 260ms var(--ease);
+}
+.lab-dock:hover .lab-dock__label,
+.lab-dock:focus-within .lab-dock__label,
+.lab-dock.is-dragging .lab-dock__label { opacity: 1; }
+:root[data-theme="light"] .lab-dock__label { text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+
+/* ── 02 · Карточки: золото ведёт курсор, а не таймер ───────────────────── */
+.card:hover::after { animation: none !important; }
+.card::before {
+  background: radial-gradient(420px circle at var(--mx,50%) var(--my,50%),
+              rgba(212,184,147,0.24), rgba(200,169,126,0.06) 36%, transparent 66%);
+}
+
+/* ── 02b · Разворот карточки ───────────────────────────────────────────── */
+.lab-scrim {
+  position: fixed; inset: 0; z-index: 55;
+  background: rgba(6,5,4,0.74); backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 320ms var(--ease);
+}
+:root[data-theme="light"] .lab-scrim { background: rgba(30,24,14,0.42); }
+.lab-scrim.on { opacity: 1; }
+
+.lab-sheet {
+  position: fixed; z-index: 60; overflow: auto;
+  background: var(--surface); border: 1px solid var(--border-h);
+  border-radius: var(--r); box-shadow: var(--shadow-2);
+  padding: var(--s-7); transform-origin: 0 0; will-change: transform;
+}
+.lab-sheet__eyebrow { font-family: 'Cormorant', serif; font-style: italic; font-size: 14px; color: var(--accent); }
+.lab-sheet h3 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 300; letter-spacing: -0.02em; margin-top: 6px; }
+.lab-sheet__kpi { font-size: clamp(30px, 4.4vw, 44px); font-weight: 300; letter-spacing: -0.025em; margin-top: var(--s-5); font-variant-numeric: tabular-nums; }
+.lab-sheet__kpilbl { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.lab-sheet__desc { color: var(--text-2); font-size: 14px; margin-top: var(--s-4); max-width: 62ch; }
+.lab-sheet__rows { margin-top: var(--s-6); display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+.lab-sheet__row { display: flex; justify-content: space-between; gap: var(--s-4); padding: 12px var(--s-4); background: var(--surface); font-size: 14px; }
+.lab-sheet__row span:first-child { color: var(--text-2); }
+.lab-sheet__row span:last-child { font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+.lab-sheet__row.warn span:last-child { color: var(--warning); }
+
+.lab-sheet__actions { margin-top: var(--s-6); display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.lab-sheet__open {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 999px; border: 0; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 500; color: #201a10;
+  background: linear-gradient(180deg, #f0d9ae, var(--accent));
+  box-shadow: 0 12px 30px rgba(200,169,126,0.3);
+  text-decoration: none;
+  transition: transform var(--d-fast) var(--ease), box-shadow var(--d-fast) var(--ease);
+}
+.lab-sheet__open:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(200,169,126,0.38); }
+.lab-sheet__open:active { transform: scale(0.98); }
+.lab-sheet__open span { transition: transform var(--d-fast) var(--ease); }
+.lab-sheet__open:hover span { transform: translateX(4px); }
+.lab-sheet__later {
+  padding: 13px 20px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 14px; color: var(--text-2);
+  background: none; border: 1px solid var(--border);
+}
+.lab-sheet__later:hover { color: var(--text); border-color: var(--border-h); }
+.lab-sheet__hint { font-size: 11px; color: var(--text-3); margin-left: auto; }
+.lab-sheet__close {
+  position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-2);
+  cursor: pointer; font-size: 18px; line-height: 1; display: grid; place-items: center;
+}
+.lab-sheet__close:hover { color: var(--text); border-color: var(--border-h); }
+@media (max-width: 620px) {
+  .lab-sheet { padding: var(--s-6) var(--s-5); }
+  .lab-sheet__hint { display: none; }
+}
+
+/* ── 03 · Кольцо свежести вместо точки ─────────────────────────────────── */
+.card-status.has-orbit::before { display: none; }
+.card-status.has-orbit { gap: 9px; }
+.lab-orbit { position: relative; width: 19px; height: 19px; flex: none; }
+.lab-orbit svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.lab-orbit__track { fill: none; stroke: var(--border-h); stroke-width: 1.3; stroke-dasharray: 1.6 5.5; stroke-linecap: round; transform-origin: 50% 50%; animation: labOrbit 30s linear infinite; }
+.lab-orbit__prog { fill: none; stroke: var(--success); stroke-width: 1.7; stroke-linecap: round; transition: stroke 420ms var(--ease); }
+@keyframes labOrbit { to { transform: rotate(360deg); } }
+.lab-orbit.is-stale .lab-orbit__prog { stroke: var(--warning); }
+.lab-orbit.is-stale::after {
+  content: ''; position: absolute; inset: -3px; border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(226,185,116,0.45); animation: labStale 2.4s var(--ease) infinite;
+}
+@keyframes labStale {
+  0% { box-shadow: 0 0 0 0 rgba(226,185,116,0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(226,185,116,0); }
+  100% { box-shadow: 0 0 0 0 rgba(226,185,116,0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-orbit__track, .lab-orbit.is-stale::after { animation: none !important; }
+}
+</style>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Интерактивный слой портала: док, разворот карточки, кольца свежести.
+   Собран в лаборатории (Desktop\baden-lab), перенесён сюда 20.08.2026.
+   ───────────────────────────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
+
+  var ICON = {
+    'finance.html':            '<circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.6 10h3.4a1.8 1.8 0 0 1 0 3.6h-2.6a1.8 1.8 0 0 0 0 3.6h3.6"/>',
+    'sales.html':              '<path d="M4 19V5M4 19h16"/><path d="M8 15l3.5-4 3 2.4L20 8"/>',
+    'forecast.html':           '<path d="M3 14c2.5 0 2.5-5 5-5s2.5 5 5 5 2.5-5 5-5 2.5 5 3 5"/><path d="M3 19h18"/>',
+    'loyalty.html':            '<path d="M12 20s-7-4.4-7-9.2A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.8C19 15.6 12 20 12 20Z"/>',
+    'staff.html':              '<path d="M9 11a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 9 11Z"/><path d="M2.5 19c0-3 2.9-4.8 6.5-4.8s6.5 1.8 6.5 4.8"/><path d="M16.5 11.4a3 3 0 0 0 0-6"/><path d="M18 14.6c2.1.6 3.5 1.9 3.5 4.4"/>',
+    'attendance.html':         '<path d="M4 19V5M4 19h16"/><path d="M8.5 16V11M12.5 16V7M16.5 16v-3"/>',
+    'owner.html':              '<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/>',
+    'pricing-calculator.html': '<rect x="5" y="3.5" width="14" height="17" rx="2.4"/><path d="M8.5 8h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/>'
+  };
+  var ORDER = ['finance.html', 'sales.html', 'forecast.html', 'attendance.html',
+               'owner.html', 'pricing-calculator.html', 'loyalty.html', 'staff.html'];
+
+  /* ═══════════════ 01 · Док ═══════════════════════════════════════════ */
+
+  function buildDock() {
+    // берём только те отчёты, к которым у текущего юзера есть доступ
+    var items = [];
+    ORDER.forEach(function (href) {
+      var card = document.querySelector('.cards a.card[href="' + href + '"]');
+      if (!card || card.classList.contains('card-locked')) return;
+      var t = card.querySelector('.card-title');
+      items.push({ href: href, name: t ? t.textContent.trim() : href, icon: ICON[href] });
+    });
+    if (items.length < 2) return;
+    items = items.slice(0, 6);                       // больше шести — тесно для пальца
+
+    var dock = document.createElement('div');
+    dock.className = 'lab-dock';
+    dock.innerHTML =
+      '<svg class="lab-dock__skin"><defs>' +
+        '<linearGradient id="labDockFill" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="#211d18"/><stop offset="100%" stop-color="#151310"/></linearGradient>' +
+        '<linearGradient id="labDockRim" x1="0" y1="0" x2="1" y2="1">' +
+          '<stop offset="0%" stop-color="rgba(200,169,126,0.30)"/>' +
+          '<stop offset="45%" stop-color="rgba(255,235,190,0.55)"/>' +
+          '<stop offset="100%" stop-color="rgba(200,169,126,0.18)"/></linearGradient>' +
+      '</defs><path id="labDockPath" fill="url(#labDockFill)" stroke="url(#labDockRim)" stroke-width="1"/></svg>' +
+      '<div class="lab-dock__bead" id="labBead"><span class="lab-dock__glow"></span>' +
+        '<svg viewBox="0 0 24 24" id="labBeadIcon"></svg></div>' +
+      '<span class="lab-dock__label" id="labLabel"></span>' +
+      '<div class="lab-dock__tabs" id="labTabs" role="tablist" aria-label="Отчёты"></div>';
+    document.body.appendChild(dock);
+
+    var path = dock.querySelector('#labDockPath');
+    var svg = dock.querySelector('.lab-dock__skin');
+    var bead = dock.querySelector('#labBead');
+    var bicon = dock.querySelector('#labBeadIcon');
+    var label = dock.querySelector('#labLabel');
+    var tabsEl = dock.querySelector('#labTabs');
+
+    items.forEach(function (it, i) {
+      var b = document.createElement('button');
+      b.className = 'lab-dock__tab';
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      b.setAttribute('aria-label', it.name);
+      b.tabIndex = i === 0 ? 0 : -1;
+      b.innerHTML = '<svg viewBox="0 0 24 24">' + it.icon + '</svg>';
+      b.addEventListener('click', function () { go(i); });
+      tabsEl.appendChild(b);
+    });
+    var btns = Array.prototype.slice.call(tabsEl.children);
+
+    var G = {};
+    function measure() {
+      var W = dock.clientWidth, H = dock.clientHeight;
+      var TOP = 46, R = W < 430 ? 22 : 26;
+      var beadR = W < 430 ? 21 : 26;
+      var s = W < 430 ? 13 : 18;
+      var rb = beadR + 7;
+      var lift = W < 430 ? 13 : 16;
+      var by = TOP - lift;
+      var delta = TOP + s - by;
+      var reach = Math.sqrt(Math.max(0, (s + rb) * (s + rb) - delta * delta));
+      var n = items.length;
+      var pad = Math.ceil((R + reach + 14 - W / (2 * n)) / (1 - 1 / n));
+      pad = clamp(pad, 8, W * 0.22);
+      tabsEl.style.padding = '0 ' + pad + 'px';
+      bead.style.width = bead.style.height = (beadR * 2) + 'px';
+      bead.style.marginLeft = -beadR + 'px';
+      bead.style.top = (by - TOP - beadR) + 'px';
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (H + TOP));
+      G = { W: W, H: H + TOP, TOP: TOP, R: R, rb: rb, s: s, by: by, reach: reach };
+    }
+
+    function draw(bx) {
+      var W = G.W, H = G.H, TOP = G.TOP, R = G.R, rb = G.rb, s = G.s, by = G.by, reach = G.reach;
+      var cx = clamp(bx, R + reach, W - R - reach);
+      var k = s / (s + rb);
+      var lx = cx - reach, rx = cx + reach;
+      var pL = { x: lx + (cx - lx) * k, y: (TOP + s) + (by - (TOP + s)) * k };
+      var pR = { x: rx + (cx - rx) * k, y: pL.y };
+      path.setAttribute('d',
+        'M 0 ' + (H - R) + ' V ' + (TOP + R) +
+        ' A ' + R + ' ' + R + ' 0 0 1 ' + R + ' ' + TOP +
+        ' L ' + lx + ' ' + TOP +
+        ' A ' + s + ' ' + s + ' 0 0 1 ' + pL.x.toFixed(2) + ' ' + pL.y.toFixed(2) +
+        ' A ' + rb + ' ' + rb + ' 0 0 1 ' + pR.x.toFixed(2) + ' ' + pR.y.toFixed(2) +
+        ' A ' + s + ' ' + s + ' 0 0 1 ' + rx + ' ' + TOP +
+        ' L ' + (W - R) + ' ' + TOP +
+        ' A ' + R + ' ' + R + ' 0 0 1 ' + W + ' ' + (TOP + R) +
+        ' V ' + (H - R) +
+        ' A ' + R + ' ' + R + ' 0 0 1 ' + (W - R) + ' ' + H +
+        ' L ' + R + ' ' + H +
+        ' A ' + R + ' ' + R + ' 0 0 1 0 ' + (H - R) + ' Z');
+    }
+
+    var idx = 0, x = 0, target = 0, v = 0, raf = 0, dragging = false, moved = 0;
+
+    function centerOf(i) {
+      var r = btns[i].getBoundingClientRect(), d = dock.getBoundingClientRect();
+      return r.left - d.left + r.width / 2;
+    }
+    function render() {
+      draw(x);
+      var lean = clamp(v * 0.55, -14, 14);
+      var sq = 1 + Math.min(Math.abs(v) * 0.006, 0.09);
+      bead.style.transform = 'translateX(' + x.toFixed(2) + 'px) skewX(' + (-lean).toFixed(2) +
+                             'deg) scale(' + sq.toFixed(3) + ',' + (2 - sq).toFixed(3) + ')';
+      // подпись едет за каплей, но не кренится вместе с ней
+      label.style.transform = 'translateX(calc(-50% + ' + x.toFixed(2) + 'px))';
+    }
+    function tick() {
+      v += (target - x) * 0.16; v *= 0.74; x += v;
+      render();
+      if (dragging || Math.abs(target - x) > 0.15 || Math.abs(v) > 0.15) raf = requestAnimationFrame(tick);
+      else { x = target; v = 0; render(); raf = 0; }
+    }
+    function spring() { if (!raf) raf = requestAnimationFrame(tick); }
+
+    function select(i, animate) {
+      idx = i;
+      btns.forEach(function (b, j) {
+        b.setAttribute('aria-selected', j === i ? 'true' : 'false');
+        b.tabIndex = j === i ? 0 : -1;
+      });
+      bicon.innerHTML = items[i].icon;
+      label.textContent = items[i].name;
+      target = centerOf(i);
+      if (animate && !REDUCED) spring(); else { x = target; v = 0; render(); }
+    }
+
+    // клик по вкладке: сперва капля дотекает, потом уходим на отчёт
+    function go(i) {
+      select(i, true);
+      setTimeout(function () { window.location.href = items[i].href; }, REDUCED ? 0 : 280);
+    }
+
+    bead.addEventListener('pointerdown', function (e) {
+      dragging = true; moved = 0;
+      dock.classList.add('is-dragging');
+      bead.setPointerCapture(e.pointerId);
+      spring(); e.preventDefault();
+    });
+    bead.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var d = dock.getBoundingClientRect();
+      var nx = clamp(e.clientX - d.left, 0, d.width);
+      moved += Math.abs(nx - target);
+      target = nx;
+      var near = 0, bd = Infinity;
+      btns.forEach(function (b, j) { var dd = Math.abs(centerOf(j) - nx); if (dd < bd) { bd = dd; near = j; } });
+      label.textContent = items[near].name;
+      bicon.innerHTML = items[near].icon;
+    });
+    function drop() {
+      if (!dragging) return;
+      dragging = false;
+      dock.classList.remove('is-dragging');
+      var best = 0, bd = Infinity;
+      btns.forEach(function (b, j) { var dd = Math.abs(centerOf(j) - x); if (dd < bd) { bd = dd; best = j; } });
+      // перетаскивание только выбирает — никуда не уводит, чтобы не улететь случайно
+      select(best, true);
+    }
+    bead.addEventListener('pointerup', drop);
+    bead.addEventListener('pointercancel', drop);
+    // двойное нажатие по капле — перейти на выбранный отчёт
+    bead.addEventListener('dblclick', function () { go(idx); });
+
+    tabsEl.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (d) {
+        e.preventDefault();
+        var n = (idx + d + items.length) % items.length;
+        select(n, true); btns[n].focus();
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); go(idx);
+      }
+    });
+
+    measure(); select(0, false);
+    requestAnimationFrame(function () { dock.classList.add('on'); });
+    addEventListener('resize', function () { measure(); target = centerOf(idx); x = target; v = 0; render(); });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { measure(); target = centerOf(idx); x = target; render(); });
+    }
+  }
+
+  /* ═══════════════ 02 · Карточки ══════════════════════════════════════ */
+
+  function enhanceCards() {
+    document.querySelectorAll('.card:not(.card-locked)').forEach(function (c) {
+      var tx = 0, ty = 0, cx = 0, cy = 0, vx = 0, vy = 0, raf = 0, live = false;
+      function frame() {
+        vx += (tx - cx) * 0.18; vx *= 0.76; cx += vx;
+        vy += (ty - cy) * 0.18; vy *= 0.76; cy += vy;
+        c.style.transform = 'perspective(900px) rotateX(' + cy.toFixed(2) + 'deg) rotateY(' + cx.toFixed(2) + 'deg)';
+        if (live || Math.abs(tx - cx) > 0.02 || Math.abs(ty - cy) > 0.02 ||
+            Math.abs(vx) > 0.02 || Math.abs(vy) > 0.02) raf = requestAnimationFrame(frame);
+        else { c.style.transform = ''; raf = 0; }
+      }
+      function run() { if (!raf && !REDUCED) raf = requestAnimationFrame(frame); }
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        c.style.setProperty('--mx', (px * 100) + '%');
+        c.style.setProperty('--my', (py * 100) + '%');
+        c.style.setProperty('--ang', (Math.atan2(py - 0.5, px - 0.5) * 180 / Math.PI + 90).toFixed(1) + 'deg');
+        live = true; tx = (px - 0.5) * 14; ty = -(py - 0.5) * 14; run();
+      });
+      c.addEventListener('pointerleave', function () { live = false; tx = 0; ty = 0; run(); });
+    });
+  }
+
+  /* ═══════════════ 02b · Разворот карточки ════════════════════════════ */
+
+  var LIVE = null;
+  function fmt(v, d) {
+    return (typeof v === 'number' ? v.toFixed(d == null ? 0 : d) : String(v))
+      .replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function pct(v) { return (v > 0 ? '+' : '') + fmt(v, 1).replace('-', '−') + '%'; }
+
+  // строки сводки собираем из того же live.json, что кормит карточки портала
+  function rowsFor(href) {
+    var L = LIVE, r = [];
+    if (!L) return r;
+    var t = L.thermal || {}, f = L.finance || {}, fc = L.forecast || {}, a = L.attendance || {};
+    if (href === 'finance.html') {
+      if (f.totalRub) r.push(['Поступило за ' + (f.yesterday || 'вчера'), fmt(f.totalRub) + ' ₽']);
+      if (f.kassaRub) r.push(['Из них касса', fmt(f.kassaRub) + ' ₽']);
+      if (f.rsRub)    r.push(['Расчётный счёт', fmt(f.rsRub) + ' ₽']);
+    } else if (href === 'sales.html') {
+      if (t.revenueMln) r.push(['Выручка за ' + (t.yesterday || 'вчера'), fmt(t.revenueMln, 3) + ' млн ₽']);
+      if (t.guests)     r.push(['Гостей', fmt(t.guests)]);
+      if (t.checkRub)   r.push(['Средний чек', fmt(t.checkRub) + ' ₽']);
+      if (t.revenueDeltaWeek != null) r.push(['К прошлой неделе', pct(t.revenueDeltaWeek), t.revenueDeltaWeek < 0]);
+      if (t.revenueDelta2025 != null) r.push(['К 2025 году', pct(t.revenueDelta2025), t.revenueDelta2025 < 0]);
+    } else if (href === 'forecast.html') {
+      if (fc.guests)     r.push(['Гостей ждём сегодня', '~' + fmt(fc.guests)]);
+      if (fc.revenueMln) r.push(['Выручка, прогноз', '~' + fmt(fc.revenueMln, 2) + ' млн ₽']);
+      if (t.guests)      r.push(['Вчера по факту', fmt(t.guests) + ' гостей']);
+    } else if (href === 'attendance.html') {
+      if (a.yoy12 != null) r.push(['Отток за 12 месяцев', pct(a.yoy12), a.yoy12 < -10]);
+      if (a.q12)           r.push(['Гостей за 12 месяцев', fmt(a.q12)]);
+      if (a.lastDataDate)  r.push(['Данные по', a.lastDataDate.split('-').reverse().join('.')]);
+    } else if (href === 'owner.html') {
+      if (t.guests)      r.push(['Вчера гостей', fmt(t.guests)]);
+      if (t.revenueMln)  r.push(['Вчера выручка', fmt(t.revenueMln, 3) + ' млн ₽']);
+      if (fc.guests)     r.push(['Сегодня ждём', '~' + fmt(fc.guests)]);
+      if (a.yoy12 != null) r.push(['Отток за 12 мес', pct(a.yoy12), a.yoy12 < -10]);
+    }
+    var pf = a.planfact;
+    if (pf && pf.pct != null && (href === 'finance.html' || href === 'owner.html')) {
+      r.push(['План месяца закрыт', fmt(pf.pct, 1) + '%', pf.pct < 90]);
+    }
+    return r;
+  }
+
+  var openSheet = null, openCard = null, scrim = null;
+
+  function expand(card) {
+    if (openSheet) return;
+    var href = card.getAttribute('href');
+    var title = card.querySelector('.card-title');
+    var desc = card.querySelector('.card-desc');
+    var num = card.querySelector('.card-num');
+    var kpiV = card.querySelector('.kpi-val');
+    var kpiL = card.querySelector('.kpi-lbl');
+    var r = card.getBoundingClientRect();
+
+    scrim = document.createElement('div');
+    scrim.className = 'lab-scrim';
+    scrim.addEventListener('click', collapse);
+    document.body.appendChild(scrim);
+    requestAnimationFrame(function () { scrim.classList.add('on'); });
+
+    var w = Math.min(720, innerWidth - 32);
+    var left = (innerWidth - w) / 2;
+
+    var rows = rowsFor(href);
+    var sheet = document.createElement('div');
+    sheet.className = 'lab-sheet';
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-modal', 'true');
+    // высоту сначала отдаём содержимому, потом фиксируем — иначе не посчитать FLIP
+    sheet.style.cssText = 'left:' + left + 'px;top:0;width:' + w + 'px;height:auto;visibility:hidden;';
+    sheet.innerHTML =
+      '<button class="lab-sheet__close" type="button" aria-label="Закрыть">×</button>' +
+      (num ? '<div class="lab-sheet__eyebrow">' + num.textContent + '</div>' : '') +
+      '<h3>' + (title ? title.textContent : 'Отчёт') + '</h3>' +
+      (kpiV ? '<div class="lab-sheet__kpi">' + kpiV.textContent + '</div>' +
+              '<div class="lab-sheet__kpilbl">' + (kpiL ? kpiL.textContent : '') + '</div>' : '') +
+      (desc ? '<div class="lab-sheet__desc">' + desc.textContent + '</div>' : '') +
+      (rows.length ? '<div class="lab-sheet__rows">' + rows.map(function (x) {
+        return '<div class="lab-sheet__row' + (x[2] ? ' warn' : '') + '"><span>' + x[0] + '</span><span>' + x[1] + '</span></div>';
+      }).join('') + '</div>' : '') +
+      '<div class="lab-sheet__actions">' +
+        '<a class="lab-sheet__open" href="' + href + '">Открыть отчёт <span>→</span></a>' +
+        '<button class="lab-sheet__later" type="button">Не сейчас</button>' +
+        '<span class="lab-sheet__hint">Enter — открыть · Esc — закрыть</span>' +
+      '</div>';
+    document.body.appendChild(sheet);
+
+    var h = Math.min(sheet.offsetHeight, innerHeight - 64);
+    var top = Math.max(32, (innerHeight - h) / 2);
+    sheet.style.height = h + 'px';
+    sheet.style.top = top + 'px';
+    sheet.style.visibility = '';
+
+    sheet.querySelector('.lab-sheet__close').addEventListener('click', collapse);
+    sheet.querySelector('.lab-sheet__later').addEventListener('click', collapse);
+
+    var from = 'translate(' + (r.left - left) + 'px,' + (r.top - top) + 'px) scale(' +
+               (r.width / w) + ',' + (r.height / h) + ')';
+    var dur = REDUCED ? 1 : 460;
+    sheet.animate([{ transform: from, opacity: 0.5 }, { transform: 'none', opacity: 1 }],
+                  { duration: dur, easing: 'cubic-bezier(0.22,1,0.36,1)' });
+    sheet.querySelectorAll('h3,.lab-sheet__kpi,.lab-sheet__desc,.lab-sheet__rows,.lab-sheet__actions')
+      .forEach(function (el, i) {
+        el.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+          { duration: dur, delay: REDUCED ? 0 : 110 + i * 55, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'backwards' });
+      });
+
+    card.style.visibility = 'hidden';
+    openSheet = sheet; openCard = card;
+    addEventListener('keydown', onKey);
+    sheet.querySelector('.lab-sheet__open').focus();
+  }
+
+  function collapse() {
+    if (!openSheet) return;
+    var sheet = openSheet, card = openCard;
+    openSheet = null; openCard = null;
+    removeEventListener('keydown', onKey);
+    var r = card.getBoundingClientRect(), s = sheet.getBoundingClientRect();
+    var to = 'translate(' + (r.left - s.left) + 'px,' + (r.top - s.top) + 'px) scale(' +
+             (r.width / s.width) + ',' + (r.height / s.height) + ')';
+    scrim.classList.remove('on');
+    var a = sheet.animate([{ transform: 'none', opacity: 1 }, { transform: to, opacity: 0.35 }],
+                          { duration: REDUCED ? 1 : 360, easing: 'cubic-bezier(0.5,0,0.75,0)' });
+    a.onfinish = function () { sheet.remove(); scrim.remove(); card.style.visibility = ''; };
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); collapse(); }
+    else if (e.key === 'Enter' && openSheet && document.activeElement === openSheet.querySelector('.lab-sheet__later')) {
+      // на «Не сейчас» Enter должен закрывать, а не открывать
+      e.preventDefault(); collapse();
+    }
+  }
+
+  function enableExpand() {
+    fetch('live.json?t=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) { LIVE = d; })
+      .catch(function () {});
+
+    document.querySelectorAll('.cards a.card:not(.card-locked)').forEach(function (card) {
+      var href = card.getAttribute('href');
+      if (!href || href.indexOf('http') === 0) return;      // внешние проекты — как были
+      card.addEventListener('click', function (e) {
+        // Ctrl/Cmd/Shift-клик и средняя кнопка оставляем браузеру: открыть в новой вкладке
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        expand(card);
+      });
+    });
+  }
+
+  // живые цифры (их вставляет слой BADEN_LIVE_META) набегают при появлении
+  function animateKpis() {
+    if (REDUCED) return;
+    var seen = new WeakSet();
+    function run(el) {
+      if (seen.has(el)) return;
+      seen.add(el);
+      var raw = el.textContent;
+      var m = raw.match(/-?[\d\s]+(?:[.,]\d+)?/);
+      if (!m) return;
+      var num = parseFloat(m[0].replace(/\s/g, '').replace(',', '.'));
+      if (!isFinite(num) || num === 0) return;
+      var dec = (m[0].split(/[.,]/)[1] || '').length;
+      var pre = raw.slice(0, m.index), post = raw.slice(m.index + m[0].length);
+      var t0 = performance.now(), dur = 900;
+      (function step(now) {
+        var p = clamp((now - t0) / dur, 0, 1);
+        var e = 1 - Math.pow(1 - p, 3);
+        var val = (num * e).toFixed(dec).replace('.', ',');
+        el.textContent = pre + val.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + post;
+        if (p < 1) requestAnimationFrame(step); else el.textContent = raw;
+      })(t0);
+    }
+    new MutationObserver(function (muts) {
+      muts.forEach(function (mu) {
+        Array.prototype.forEach.call(mu.addedNodes, function (n) {
+          if (n.nodeType !== 1) return;
+          if (n.classList && n.classList.contains('kpi-live')) {
+            var v = n.querySelector('.kpi-val'); if (v) run(v);
+          }
+          if (n.querySelectorAll) n.querySelectorAll('.kpi-val').forEach(run);
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+    document.querySelectorAll('.kpi-val').forEach(run);
+  }
+
+  /* ═══════════════ 03 · Кольцо свежести ═══════════════════════════════ */
+
+  function buildOrbits() {
+    var R = 9, C = 2 * Math.PI * R;
+    var now = new Date();
+    var mins = now.getHours() * 60 + now.getMinutes();
+
+    document.querySelectorAll('.card:not(.card-locked) .card-status').forEach(function (st) {
+      var txt = st.textContent;
+      var times = txt.match(/(\d{1,2}):(\d{2})/g);
+      var slots = null;
+      if (times && times.length) {
+        slots = times.map(function (t) {
+          var p = t.split(':'); return (+p[0]) * 60 + (+p[1]);
+        }).sort(function (a, b) { return a - b; });
+      } else if (/кажд[а-яё]*\s+час/i.test(txt)) {   // \w кириллицу не ловит — только явный класс
+        slots = 'hourly';
+      }
+      if (!slots) return;                       // «живые цифры», «инструмент» — оставляем точку
+
+      var prev, next;
+      if (slots === 'hourly') { prev = Math.floor(mins / 60) * 60; next = prev + 60; }
+      else {
+        prev = slots[slots.length - 1] - 1440; next = slots[0];
+        for (var i = 0; i < slots.length; i++) {
+          if (slots[i] <= mins) prev = slots[i];
+          if (slots[i] > mins) { next = slots[i]; break; }
+        }
+        if (mins >= slots[slots.length - 1]) { prev = slots[slots.length - 1]; next = slots[0] + 1440; }
+      }
+      var p = clamp((mins - prev) / (next - prev), 0, 1);
+
+      var ring = document.createElement('span');
+      ring.className = 'lab-orbit';
+      ring.innerHTML =
+        '<svg viewBox="0 0 22 22">' +
+          '<circle class="lab-orbit__track" cx="11" cy="11" r="' + R + '"/>' +
+          '<circle class="lab-orbit__prog" cx="11" cy="11" r="' + R + '" transform="rotate(-90 11 11)" ' +
+            'stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - p)).toFixed(1) + '"/>' +
+        '</svg>';
+      var hh = Math.floor((next - mins) / 60), mm = (next - mins) % 60;
+      ring.title = 'До следующего обновления: ' + (hh ? hh + ' ч ' : '') + mm + ' мин';
+      st.classList.add('has-orbit');
+      st.insertBefore(ring, st.firstChild);
+
+      // общий слой портала помечает протухшие отчёты значком ⚠ — подхватываем его
+      new MutationObserver(function () {
+        ring.classList.toggle('is-stale', !!st.querySelector('.stale-badge'));
+      }).observe(st, { childList: true });
+    });
+  }
+
+  /* ═══════════════ Запуск после показа портала ════════════════════════ */
+
+  function boot() {
+    buildDock();
+    enhanceCards();
+    enableExpand();
+    animateKpis();
+    buildOrbits();
+  }
+
+  function whenVisible() {
+    var main = document.getElementById('main');
+    if (main && getComputedStyle(main).display !== 'none') { boot(); return; }
+    var mo = new MutationObserver(function () {
+      if (main && getComputedStyle(main).display !== 'none') { mo.disconnect(); setTimeout(boot, 60); }
+    });
+    if (main) mo.observe(main, { attributes: true, attributeFilter: ['style'] });
+  }
+
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', whenVisible);
+  else whenVisible();
+})();
+</script>
+<!-- ══ /BADEN_LAB_LAYER ══ -->
 </body>
 </html>

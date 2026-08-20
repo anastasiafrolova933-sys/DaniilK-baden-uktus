@@ -285,7 +285,7 @@
 
   // Already logged in? skip
   if (BadenAuth.getSession()) {
-    window.location.href = 'reports-lab.html';
+    window.location.href = 'reports.html';
   }
 
   document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -319,7 +319,7 @@
       // Redirect: либо next из query, либо reports.html
       const next = params.get('next');
       setTimeout(() => {
-        window.location.href = next || 'reports-lab.html';
+        window.location.href = next || 'reports.html';
       }, 400);
     } catch (err) {
       status.textContent = err.message || 'Ошибка входа';
@@ -331,7 +331,7 @@
 </script>
 
 
-<!-- ══ BADEN_LAB_LAYER: тестовый вход, собрано 20.08.2026 10:00 ══ -->
+<!-- ══ BADEN_LAB_LAYER: тестовый вход, собрано 20.08.2026 10:13 ══ -->
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
    Слой лаборатории поверх настоящего login.html → login-lab.html.
