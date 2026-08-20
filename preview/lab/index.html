@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0c0c0c">
+<title>Лаборатория — Baden Uktus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+
+<div class="halo" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="brand">Baden&nbsp;Uktus · лаборатория</div>
+  <h1>Приколюхи <i>для портала</i></h1>
+  <p class="lead">
+    Черновик. На боевом портале ничего из этого пока не стоит — здесь можно потыкать
+    и решить, что забираем. Всё работает мышью, пальцем и с клавиатуры.
+  </p>
+  <nav class="toc">
+    <a href="#dock">01 · Док с каплей</a>
+    <a href="#cards">02 · Ожившие карточки</a>
+    <a href="#orbit">03 · Орбита свежести</a>
+    <a href="#login">04 · Живой вход</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ─────────────────────────── 01 · ДОК ─────────────────────────── -->
+  <section class="stand" id="dock">
+    <div class="stand__head">
+      <span class="stand__num">01</span>
+      <h2>Док с каплей</h2>
+      <p class="stand__sub">
+        Нижняя панель быстрого перехода между отчётами. Активная вкладка — золотая капля;
+        панель не просто подсвечивает её, а <i>вытекает</i> ей навстречу: край выреза —
+        одна параметрическая кривая, а не набор склеенных дуг.
+      </p>
+    </div>
+
+    <div class="stage stage--dock">
+      <div class="dockwrap">
+        <div class="dock" id="dockEl">
+          <svg class="dock__skin" id="dockSkin" aria-hidden="true">
+            <defs>
+              <linearGradient id="dockFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#211d18"/>
+                <stop offset="100%" stop-color="#151310"/>
+              </linearGradient>
+              <linearGradient id="dockRim" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="rgba(200,169,126,0.30)"/>
+                <stop offset="45%"  stop-color="rgba(255,235,190,0.55)"/>
+                <stop offset="100%" stop-color="rgba(200,169,126,0.18)"/>
+              </linearGradient>
+            </defs>
+            <path id="dockPath" fill="url(#dockFill)" stroke="url(#dockRim)" stroke-width="1"/>
+          </svg>
+
+          <div class="dock__bead" id="dockBead">
+            <span class="dock__beadglow"></span>
+            <svg viewBox="0 0 24 24" id="beadIcon" aria-hidden="true"></svg>
+          </div>
+
+          <div class="dock__tabs" id="dockTabs" role="tablist" aria-label="Отчёты"></div>
+          <div class="dock__label" id="dockLabel" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <p class="hint">
+        Нажми вкладку — или <b>потяни каплю</b> вдоль панели. Стрелки ← → тоже работают.
+      </p>
+
+      <div class="dock__screen" id="dockScreen">
+        <div class="dock__screen-num" id="dockScreenNum">3,26 млн ₽</div>
+        <div class="dock__screen-lbl" id="dockScreenLbl">поступления за вчера</div>
+      </div>
+    </div>
+
+    <p class="note">
+      <b>Зачем на портале.</b> Сейчас между отчётами ходят только через главную.
+      Док живёт поверх любой страницы — из БДДС в Прогноз одним движением, не возвращаясь назад.
+    </p>
+  </section>
+
+  <!-- ────────────────────── 02 · ОЖИВШИЕ КАРТОЧКИ ────────────────────── -->
+  <section class="stand" id="cards">
+    <div class="stand__head">
+      <span class="stand__num">02</span>
+      <h2>Ожившие карточки</h2>
+      <p class="stand__sub">
+        То, что уже есть на портале, доведённое до конца: золото по краю течёт за курсором,
+        наклон возвращается с инерцией, цифры набегают при появлении, а по клику карточка
+        <i>перетекает</i> в полный экран — вместо перезагрузки страницы.
+      </p>
+    </div>
+
+    <div class="stage stage--cards">
+      <div class="cards" id="labCards">
+
+        <a class="lcard" href="#" data-key="finance" data-accent="200,169,126">
+          <span class="lcard__num">01</span>
+          <div class="lcard__kpi"><span class="count" data-to="3.26" data-dec="2">0</span> млн ₽</div>
+          <div class="lcard__kpilbl">поступления за 17.08</div>
+          <h3>БДДС</h3>
+          <p>Бюджет движения денежных средств — доходы, расходы, остатки, ликвидность</p>
+          <div class="lcard__meta"><span class="dot"></span> обновляется 10:00 / 18:00</div>
+        </a>
+
+        <a class="lcard" href="#" data-key="sales" data-accent="200,169,126">
+          <span class="lcard__num">02</span>
+          <div class="lcard__kpi"><span class="count" data-to="1687" data-dec="0">0</span> тыс ₽</div>
+          <div class="lcard__kpilbl">выручка вчера · 977 гостей</div>
+          <h3>Продажи</h3>
+          <p>Выручка, средний чек, динамика по услугам и периодам</p>
+          <div class="lcard__meta"><span class="dot"></span> обновляется 10:00 / 18:00</div>
+        </a>
+
+        <a class="lcard" href="#" data-key="churn" data-accent="226,185,116">
+          <span class="lcard__num">06</span>
+          <div class="lcard__kpi lcard__kpi--warn">−<span class="count" data-to="11.7" data-dec="1">0</span>%</div>
+          <div class="lcard__kpilbl">отток за скользящие 12 мес</div>
+          <h3>Статистика посещений</h3>
+          <p>Посещаемость и отток гостей 2023–2026, тарифы, платёжный микс</p>
+          <div class="lcard__meta"><span class="dot dot--warn"></span> обновляется 10:20 / 18:20</div>
+        </a>
+
+      </div>
+      <p class="hint">Наведи, поводи курсором по карточке — и нажми, чтобы она развернулась.</p>
+    </div>
+
+    <p class="note">
+      <b>Зачем на портале.</b> Клик по карточке сейчас — белая вспышка и перезагрузка.
+      Перетекание держит контекст: видно, откуда ты пришёл и куда вернёшься.
+    </p>
+  </section>
+
+  <!-- ────────────────────── 03 · ОРБИТА СВЕЖЕСТИ ────────────────────── -->
+  <section class="stand" id="orbit">
+    <div class="stand__head">
+      <span class="stand__num">03</span>
+      <h2>Орбита свежести</h2>
+      <p class="stand__sub">
+        Зелёная точка «10:00 / 18:00» знает только два состояния. Кольцо показывает,
+        сколько осталось до следующего обновления — и краснеет само, когда отчёт просрочен.
+        Пунктир намеренный: сплошное кольцо такого размера читается как спиннер загрузки.
+      </p>
+    </div>
+
+    <div class="stage stage--orbit">
+      <div class="orbits" id="orbits"></div>
+      <div class="timescrub">
+        <label for="clock">Прокрути время суток</label>
+        <input type="range" id="clock" min="0" max="1439" value="731" step="1">
+        <output id="clockOut">12:11</output>
+      </div>
+    </div>
+
+    <p class="note">
+      <b>Зачем на портале.</b> Сейчас «⚠ не обновилось» видно только в ленте «Сегодня».
+      Кольцо ставит это прямо на карточку — и до того, как данные протухли.
+    </p>
+  </section>
+
+  <!-- ─────────────────────────── 04 · ВХОД ─────────────────────────── -->
+  <section class="stand" id="login">
+    <div class="stand__head">
+      <span class="stand__num">04</span>
+      <h2>Живой вход</h2>
+      <p class="stand__sub">
+        Поля проверяются на лету, галочка дорисовывается сама, кнопка пружинит.
+        Пока пароль пустой — кнопка уворачивается от курсора: пасхалка, но она же и подсказка,
+        что жать ещё рано. <b>Пальцем и с клавиатуры кнопка не убегает никогда.</b>
+      </p>
+    </div>
+
+    <div class="stage stage--login">
+      <form class="lform" id="lform" autocomplete="off" novalidate>
+        <div class="lform__brand"><span class="lform__mark"></span> Baden Uktus · отчёты</div>
+        <h3>Вход</h3>
+        <p class="lform__sub">Два поля отделяют тебя от кнопки.</p>
+
+        <label class="field" for="f-login">
+          <span class="field__lbl">Логин</span>
+          <span class="field__box">
+            <svg class="field__ico" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"/></svg>
+            <input id="f-login" type="text" placeholder="drozhzhina" autocomplete="off" spellcheck="false">
+            <svg class="field__ok" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7"/></svg>
+          </span>
+        </label>
+
+        <label class="field" for="f-pass">
+          <span class="field__lbl">Пароль</span>
+          <span class="field__box">
+            <svg class="field__ico" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+            <input id="f-pass" type="password" placeholder="••••••••" autocomplete="off">
+            <button type="button" class="field__eye" id="eye" aria-label="Показать пароль">
+              <svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <svg class="field__ok" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7"/></svg>
+          </span>
+        </label>
+
+        <div class="lform__socket" id="socket">
+          <button class="cta" id="cta" type="submit" aria-disabled="true">
+            <span class="cta__txt">Войти</span>
+          </button>
+        </div>
+
+        <div class="lform__status" id="lstatus"></div>
+        <div class="lform__keys"><kbd>Tab</kbd> дотягивается · <kbd>Enter</kbd> отправляет</div>
+      </form>
+      <p class="hint">Демо, никуда не отправляет: подойдёт любой логин и пароль от 4 символов.</p>
+    </div>
+
+    <p class="note">
+      <b>Зачем на портале.</b> Сейчас на входе список людей и одно поле: ошибся паролем — узнаёшь
+      об этом после отправки. Живая проверка снимает половину обращений «я не могу зайти».
+    </p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>Черновик лаборатории · не влияет на боевой портал</span>
+  <button class="foot__theme" id="themeBtn" type="button">Светлая тема</button>
+</footer>
+
+<script src="lab.js"></script>
+</body>
+</html>
