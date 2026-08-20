@@ -914,8 +914,24 @@
     var host = document.getElementById('users');
     var chosen = null;
 
-    // если уже вошли — незачем показывать форму
-    if (window.BadenAuth && BadenAuth.getSession()) { location.replace('index.html'); return; }
+    // Раньше здесь стоял редирект «есть сессия — сразу на портал», и экран входа
+    // невозможно было посмотреть, будучи залогиненным. Для черновика это неверно:
+    // показываем форму всегда, а про живую сессию честно предупреждаем.
+    var session = window.BadenAuth ? BadenAuth.getSession() : null;
+    if (session && session.user) {
+      var already = document.createElement('div');
+      already.className = 'gate__already';
+      already.innerHTML =
+        '<span class="gate__already-dot"></span>' +
+        '<span class="gate__already-txt">Уже вошли как <b>' + session.user.name + '</b></span>' +
+        '<a class="gate__already-go" href="index.html">Продолжить →</a>' +
+        '<button class="gate__already-out" type="button">Выйти</button>';
+      document.querySelector('.gate__sub').after(already);
+      already.querySelector('.gate__already-out').addEventListener('click', function () {
+        try { localStorage.removeItem('baden_session'); } catch (e) {}
+        already.remove();
+      });
+    }
 
     var last = null;
     try { last = localStorage.getItem('baden_last_login'); } catch (e) {}

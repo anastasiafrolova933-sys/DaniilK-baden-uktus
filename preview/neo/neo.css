@@ -750,3 +750,25 @@ body.is-ready .gate__cta:active { transform: scale(0.98); }
 @media (prefers-reduced-motion: reduce) {
   .gate__field.is-ok .gate__ok { animation: none !important; stroke-dashoffset: 0; }
 }
+
+/* плашка «уже вошли» на экране входа */
+.gate__already {
+  margin-top: 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 11px 14px; border-radius: 18px;
+  background: rgba(255,255,255,0.62); border: 1px solid var(--line);
+  font-size: 13px;
+}
+.gate__already-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; }
+.gate__already-txt { flex: 1; min-width: 120px; color: var(--ink-2); }
+.gate__already-txt b { font-weight: 500; color: var(--ink); }
+.gate__already-go {
+  padding: 7px 14px; border-radius: var(--r-pill);
+  background: var(--ink); color: #fff; text-decoration: none; font-size: 13px; font-weight: 500;
+  transition: transform var(--d-fast) var(--ease);
+}
+.gate__already-go:hover { transform: translateY(-1px); }
+.gate__already-out {
+  padding: 7px 12px; border-radius: var(--r-pill);
+  border: 1px solid var(--line); color: var(--ink-2); font-size: 13px;
+}
+.gate__already-out:hover { color: var(--ink); border-color: var(--ink-3); }
