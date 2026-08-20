@@ -238,7 +238,7 @@
     </button>
   </div>
 
-  <form id="login-form" autocomplete="on">
+  <form id="login-form" autocomplete="on" novalidate>
     <div class="field">
       <input type="password" id="pwd" name="password" placeholder="••••••••••" autocomplete="current-password" required>
     </div>
@@ -330,5 +330,190 @@
   });
 </script>
 
+
+<!-- ══ BADEN_LAB_LAYER: живая проверка полей и пружинящая кнопка ══ -->
+<style>
+/* ─────────────────────────────────────────────────────────────────────────
+   Слой лаборатории поверх настоящего login.html → login-lab.html.
+   ───────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Поле пароля: живая проверка ───────────────────────────────────────── */
+.field { position: relative; }
+.lab-ok {
+  position: absolute; right: 14px; top: 50%; margin-top: -10px;
+  width: 20px; height: 20px; pointer-events: none;
+  fill: none; stroke: var(--accent, #c8a97e); stroke-width: 2.2;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 26; stroke-dashoffset: 26; opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.22,1,0.36,1);
+}
+.lab-pass-ok .lab-ok { opacity: 1; animation: labDraw 460ms cubic-bezier(0.16,1,0.3,1) forwards; }
+@keyframes labDraw { to { stroke-dashoffset: 0; } }
+.lab-pass-ok #pwd { padding-right: 44px; }
+
+/* выбранное имя подсвечиваем заметнее — это половина «готовности» формы */
+.user-chip.active { box-shadow: 0 0 0 3px rgba(200,169,126,0.12); }
+
+/* ── Сокет и кнопка ────────────────────────────────────────────────────── */
+/* Коробка входа стала выше: у страницы стоит overflow:hidden, и на низком экране
+   низ формы просто обрезало бы без возможности прокрутить. */
+html, body { overflow-y: auto; }
+
+.lab-socket {
+  position: relative; margin-top: 18px; height: 78px;
+  border: 1px dashed rgba(255,255,255,0.09); border-radius: 999px;
+  display: grid; place-items: center;
+  transition: border-color 380ms cubic-bezier(0.22,1,0.36,1), background 380ms cubic-bezier(0.22,1,0.36,1);
+}
+.lab-ready .lab-socket { border-style: solid; border-color: rgba(200,169,126,0.28); background: rgba(200,169,126,0.05); }
+.lab-socket .submit {
+  margin: 0 !important; width: auto !important; min-width: 190px;
+  border-radius: 999px !important;
+  will-change: transform;
+  transition: background 380ms cubic-bezier(0.22,1,0.36,1), color 380ms cubic-bezier(0.22,1,0.36,1),
+              box-shadow 380ms cubic-bezier(0.22,1,0.36,1), opacity 380ms cubic-bezier(0.22,1,0.36,1);
+}
+body:not(.lab-ready) .lab-socket .submit {
+  cursor: not-allowed; opacity: 0.55; filter: grayscale(0.6);
+}
+.lab-ready .lab-socket .submit { box-shadow: 0 12px 30px rgba(200,169,126,0.3); }
+.lab-hint {
+  margin-top: 12px; text-align: center; font-size: 12px;
+  color: rgba(240,237,232,0.3); min-height: 18px;
+  transition: color 300ms;
+}
+.lab-hint.warn { color: #e2b974; }
+.lab-keys { margin-top: 16px; text-align: center; font-size: 11px; color: rgba(240,237,232,0.22); }
+.lab-keys kbd {
+  font: inherit; font-size: 10px; padding: 2px 6px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+  color: rgba(240,237,232,0.45);
+}
+
+/* низкий экран — поджимаемся, чтобы форма влезала целиком */
+@media (max-height: 760px) {
+  .lab-socket { height: 64px; margin-top: 14px; }
+  .lab-keys { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-pass-ok .lab-ok { animation: none !important; stroke-dashoffset: 0; }
+}
+</style>
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Живой вход: проверка полей на лету, галочка, пружина и убегающая кнопка.
+   Родную логику входа не трогает — она отправляет форму и зовёт BadenAuth.
+   Собран в лаборатории (Desktop\baden-lab), перенесён сюда 20.08.2026.
+   ───────────────────────────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FINE = matchMedia('(pointer: fine)').matches;
+  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
+
+  function init() {
+    var form = document.getElementById('login-form');
+    var pwd = document.getElementById('pwd');
+    var btn = document.getElementById('submit-btn');
+    if (!form || !pwd || !btn) return;
+
+
+    // галочка в поле пароля
+    var field = pwd.parentNode;
+    var ok = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    ok.setAttribute('viewBox', '0 0 24 24');
+    ok.setAttribute('class', 'lab-ok');
+    ok.innerHTML = '<path d="M4 12.5 9.5 18 20 7"/>';
+    field.appendChild(ok);
+
+    // кнопку заворачиваем в «сокет», внутри которого ей есть куда убегать
+    var socket = document.createElement('div');
+    socket.className = 'lab-socket';
+    btn.parentNode.insertBefore(socket, btn);
+    socket.appendChild(btn);
+
+    var hint = document.createElement('div');
+    hint.className = 'lab-hint';
+    socket.parentNode.insertBefore(hint, socket.nextSibling);
+
+    var keys = document.createElement('div');
+    keys.className = 'lab-keys';
+    keys.innerHTML = '<kbd>Tab</kbd> дотягивается · <kbd>Enter</kbd> отправляет';
+    hint.parentNode.insertBefore(keys, hint.nextSibling);
+
+    // ── состояние готовности ────────────────────────────────────────────
+    var tx = 0, ty = 0, cx = 0, cy = 0, vx = 0, vy = 0, raf = 0;
+
+    function chosen() { return !!document.querySelector('.user-chip.active'); }
+    function ready() { return chosen() && pwd.value.length >= 4; }
+
+    function sync() {
+      var r = ready();
+      document.body.classList.toggle('lab-ready', r);
+      field.classList.toggle('lab-pass-ok', pwd.value.length >= 4);
+      if (r) { hint.textContent = ''; hint.className = 'lab-hint'; tx = 0; ty = 0; run(); }
+      else if (!chosen()) hint.textContent = 'Сначала выбери себя в списке';
+      else hint.textContent = pwd.value.length ? 'Пароль — от 4 символов' : 'Осталось ввести пароль';
+    }
+
+    function frame() {
+      vx += (tx - cx) * 0.2; vx *= 0.72; cx += vx;
+      vy += (ty - cy) * 0.2; vy *= 0.72; cy += vy;
+      btn.style.transform = 'translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+      if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1 ||
+          Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1) raf = requestAnimationFrame(frame);
+      else { raf = 0; if (!tx && !ty) btn.style.transform = ''; }
+    }
+    function run() { if (REDUCED) { btn.style.transform = ''; return; } if (!raf) raf = requestAnimationFrame(frame); }
+
+    pwd.addEventListener('input', sync);
+    document.querySelectorAll('.user-chip').forEach(function (c) {
+      c.addEventListener('click', function () { setTimeout(sync, 0); });
+    });
+
+    // ── убегающая кнопка: только мышь и только пока форма не готова ─────
+    if (FINE && !REDUCED) {
+      socket.addEventListener('pointermove', function (e) {
+        if (ready()) return;
+        var s = socket.getBoundingClientRect(), b = btn.getBoundingClientRect();
+        var dx = (b.left + b.width / 2) - e.clientX;
+        var dy = (b.top + b.height / 2) - e.clientY;
+        var dist = Math.hypot(dx, dy) || 1;
+        if (dist > b.width * 0.72) return;                  // курсор ещё далеко — стоим
+        var push = (b.width * 0.72 - dist) * 1.5;
+        var freeX = (s.width - b.width) / 2 - 6;
+        var freeY = (s.height - b.height) / 2 - 5;
+        tx = clamp(cx + dx / dist * push, -freeX, freeX);
+        ty = clamp(cy + dy / dist * push, -freeY, freeY);
+        // упёрлись по горизонтали — уходим по вертикали, чтобы не дать себя прижать
+        if (Math.abs(tx) >= freeX - 0.5) ty = clamp(ty + (dy > 0 ? push : -push), -freeY, freeY);
+        run();
+      });
+      socket.addEventListener('pointerleave', function () { tx = 0; ty = 0; run(); });
+    }
+
+    // не готова — не отправляем, но подсказываем чего не хватает
+    form.addEventListener('submit', function (e) {
+      if (ready()) return;                                   // дальше отработает родной обработчик
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      sync();
+      hint.className = 'lab-hint warn';
+      socket.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' },
+                      { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }],
+                     { duration: REDUCED ? 1 : 260, easing: 'ease-out' });
+    }, true);                                                // capture: раньше родного
+
+    sync();
+  }
+
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+<!-- ══ /BADEN_LAB_LAYER ══ -->
 </body>
 </html>
