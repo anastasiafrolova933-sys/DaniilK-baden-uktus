@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#EFEDE8">
+<title>Все отчёты — Baden Uktus · Neo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="neo.css?v=7">
+</head>
+<body data-page="all">
+
+<div class="aura" aria-hidden="true">
+  <span class="aura__blob aura__blob--rose"></span>
+  <span class="aura__blob aura__blob--lime"></span>
+  <span class="aura__blob aura__blob--sky"></span>
+</div>
+
+<a class="lab-badge" href="../index.html">черновик дизайна <b>· к песочнице</b></a>
+
+<main class="shell">
+
+  <!-- шапка со стрелкой назад, как на референсе -->
+  <header class="topbar">
+    <a class="ico ico--ghost" href="index.html" aria-label="Назад">
+      <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg>
+    </a>
+    <h1>Все отчёты</h1>
+    <span class="who-wrap who-wrap--bar" id="whoSwitch"></span>
+  </header>
+
+  <!-- поиск -->
+  <label class="search" for="search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+    <input id="search" type="search" placeholder="Быстрый поиск" autocomplete="off">
+  </label>
+
+  <!-- белые стат-карточки, горизонтальной лентой -->
+  <section class="stats" id="stats"></section>
+
+  <nav class="pills" id="pills" aria-label="Фильтр отчётов">
+    <button class="pill is-on" type="button" data-filter="all">Все отчёты</button>
+    <button class="pill" type="button" data-filter="money">Деньги</button>
+    <button class="pill" type="button" data-filter="guests">Гости</button>
+    <button class="pill" type="button" data-filter="people">Персонал</button>
+  </nav>
+
+  <!-- плитки лентой, как карточки кредитов в референсе -->
+  <section class="tiles tiles--rail" id="tiles"></section>
+
+  <p class="railhint">Листай вбок · нажми плитку, чтобы раскрыть сводку</p>
+
+</main>
+
+<div class="dock" id="dock">
+  <svg class="dock__skin" id="dockSkin" aria-hidden="true">
+    <defs>
+      <linearGradient id="dockFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#F6F4F0"/>
+      </linearGradient>
+    </defs>
+    <path id="dockPath" fill="url(#dockFill)" stroke="rgba(22,22,26,0.10)" stroke-width="1"/>
+  </svg>
+  <div class="dock__bead" id="dockBead"><svg viewBox="0 0 24 24" id="beadIcon"></svg></div>
+  <span class="dock__label" id="dockLabel"></span>
+  <div class="dock__tabs" id="dockTabs" role="tablist" aria-label="Отчёты"></div>
+</div>
+
+<script src="../../js/api.js"></script>
+<script src="neo.js?v=7"></script>
+</body>
+</html>

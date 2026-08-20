@@ -9,11 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neo.css?v=4">
+<link rel="stylesheet" href="neo.css?v=7">
 </head>
-<body>
+<body data-page="home">
 
-<!-- радужная дымка на фоне, как в референсе -->
 <div class="aura" aria-hidden="true">
   <span class="aura__blob aura__blob--rose"></span>
   <span class="aura__blob aura__blob--lime"></span>
@@ -24,31 +23,29 @@
 
 <main class="shell">
 
-  <!-- ── шапка ─────────────────────────────────────────────────────────── -->
   <header class="top">
     <div class="top__left">
       <span class="mark" aria-hidden="true"></span>
-      <button class="ico ico--ghost" type="button" aria-label="Меню">
-        <svg viewBox="0 0 24 24"><path d="M4 8h16M4 13h11M4 18h7"/></svg>
-      </button>
+      <span class="who-wrap" id="whoSwitch"></span>
     </div>
     <div class="top__right">
-      <button class="ico ico--ghost" type="button" aria-label="ИИ-аналитик">
+      <a class="ico ico--ghost" href="https://t.me/BBTUktus_bot" target="_blank" rel="noopener" aria-label="ИИ-аналитик">
         <svg viewBox="0 0 24 24"><path d="M12 4.5a7.5 7.5 0 0 0-7.5 7.5v3.2A2.8 2.8 0 0 0 7.3 18h.9v-5h-2"/><path d="M19.5 15.2V12A7.5 7.5 0 0 0 12 4.5"/><path d="M19.5 15.2A2.8 2.8 0 0 1 16.7 18h-.9v-5h2"/></svg>
-      </button>
-      <span class="avatar" aria-hidden="true">Д</span>
+      </a>
+      <a class="ico ico--solid" href="all.html" aria-label="Все отчёты">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </a>
     </div>
   </header>
 
-  <!-- ── герой ─────────────────────────────────────────────────────────── -->
   <section class="hero">
-    <h1 class="hero__hi">Привет, Даниил!<br><i>Посмотрим, как идут дела</i></h1>
+    <h1 class="hero__hi" id="heroHi">Привет!<br><i>Посмотрим, как идут дела</i></h1>
 
     <div class="hero__row">
       <div class="hero__score">
-        <div class="hero__delta" id="planDelta">— п.п. к плану дня</div>
+        <div class="hero__delta" id="planDelta">—</div>
         <div class="hero__big"><span id="planPct">0</span><span class="hero__unit">%</span></div>
-        <div class="hero__cap" id="planCap">плана месяца · обновлено —</div>
+        <div class="hero__cap" id="planCap">плана месяца</div>
       </div>
       <button class="select" type="button" id="segSelect">
         Термаль
@@ -56,7 +53,6 @@
       </button>
     </div>
 
-    <!-- шкала выполнения плана: три полосы + маркер -->
     <div class="bands" id="bands">
       <div class="band band--red"><i></i><i></i><i></i><span class="band__pip"></span></div>
       <div class="band band--amber"><i></i><i></i><i></i><span class="band__pip"></span></div>
@@ -66,8 +62,10 @@
     </div>
   </section>
 
-  <!-- ── плавающая плашка «требуют внимания» ───────────────────────────── -->
-  <button class="alert" type="button" id="alertPill">
+  <!-- лента «Сегодня» -->
+  <section class="today" id="today"></section>
+
+  <a class="alert" href="all.html">
     <span class="ico ico--ghost ico--sm" aria-hidden="true">
       <svg viewBox="0 0 24 24"><path d="M13 3 6 13.5h5L10.5 21 18 10.5h-5L13 3Z"/></svg>
     </span>
@@ -76,9 +74,8 @@
     <span class="ico ico--solid ico--sm" aria-hidden="true">
       <svg viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>
     </span>
-  </button>
+  </a>
 
-  <!-- ── карточка с графиком ───────────────────────────────────────────── -->
   <section class="panel">
     <div class="panel__head">
       <span class="ico ico--ghost" aria-hidden="true">
@@ -96,20 +93,33 @@
     </div>
   </section>
 
-  <!-- ── фильтры ───────────────────────────────────────────────────────── -->
   <nav class="pills" id="pills" aria-label="Фильтр отчётов">
     <button class="pill is-on" type="button" data-filter="all">Все отчёты</button>
     <button class="pill" type="button" data-filter="money">Деньги</button>
     <button class="pill" type="button" data-filter="guests">Гости</button>
     <button class="pill" type="button" data-filter="people">Персонал</button>
+    <button class="pill" type="button" data-filter="projects">Проекты</button>
   </nav>
 
-  <!-- ── плитки отчётов ────────────────────────────────────────────────── -->
   <section class="tiles" id="tiles"></section>
+
+  <!-- ИИ-аналитик -->
+  <a class="ai" href="https://t.me/BBTUktus_bot" target="_blank" rel="noopener">
+    <div class="ai__body">
+      <div class="ai__eyebrow">AI · @BBTUktus_bot</div>
+      <div class="ai__title">Спроси что угодно<br>по данным комплекса</div>
+      <p>Ассистент читает выручку, посещаемость и прогнозы — и отвечает словами, а не таблицей.</p>
+    </div>
+    <span class="ai__go">Открыть в Telegram
+      <svg viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>
+    </span>
+  </a>
+
+  <h2 class="sect">Проекты</h2>
+  <section class="projects" id="projects"></section>
 
 </main>
 
-<!-- ── док ─────────────────────────────────────────────────────────────── -->
 <div class="dock" id="dock">
   <svg class="dock__skin" id="dockSkin" aria-hidden="true">
     <defs>
@@ -124,6 +134,7 @@
   <div class="dock__tabs" id="dockTabs" role="tablist" aria-label="Отчёты"></div>
 </div>
 
-<script src="neo.js?v=4"></script>
+<script src="../../js/api.js"></script>
+<script src="neo.js?v=7"></script>
 </body>
 </html>
