@@ -399,12 +399,13 @@
     var t = L.thermal || {}, fc = L.forecast || {}, a = L.attendance || {}, pf = a.planfact || {};
     var chips = [];
 
-    if (can('sales') && t.guests) chips.push(['вчера', nf(t.guests) + ' гостей · ' + nf(t.revenueMln, 3) + ' млн ₽', 0]);
-    if (can('forecast') && fc.guests) chips.push(['сегодня ждём', '~' + nf(fc.guests) + ' · ~' + nf(fc.revenueMln, 2) + ' млн ₽', 0]);
-    if (can('sales') && pf.pct != null) chips.push(['месяц', nf(pf.factMln, 1) + ' млн ₽ · ' + nf(pf.pct, 1) + '%', pf.pct < 90]);
-    if (can('sales') && a.yoy12 < -10) chips.push(['отток за год', pct(a.yoy12), 1]);
+    // каждый чип ведёт в отчёт, из которого взята цифра
+    if (can('sales') && t.guests) chips.push(['вчера', nf(t.guests) + ' гостей · ' + nf(t.revenueMln, 3) + ' млн ₽', 0, '../../sales.html']);
+    if (can('forecast') && fc.guests) chips.push(['сегодня ждём', '~' + nf(fc.guests) + ' · ~' + nf(fc.revenueMln, 2) + ' млн ₽', 0, '../../forecast.html']);
+    if (can('sales') && pf.pct != null) chips.push(['месяц', nf(pf.factMln, 1) + ' млн ₽ · ' + nf(pf.pct, 1) + '%', pf.pct < 90, can('finance') ? '../../owner.html' : '../../attendance.html']);
+    if (can('sales') && a.yoy12 < -10) chips.push(['отток за год', pct(a.yoy12), 1, '../../attendance.html']);
     if (can('staff')) ((L.staff || {}).critical || []).slice(0, 2).forEach(function (c) {
-      chips.push([c.name, 'укомплект. ' + nf(c.filled, 1) + '% · −' + c.deficit, 1]);
+      chips.push([c.name, 'укомплект. ' + nf(c.filled, 1) + '% · −' + c.deficit, 1, '../../staff.html']);
     });
 
     if (!chips.length) { host.remove(); return; }
@@ -413,38 +414,114 @@
     host.innerHTML =
       '<div class="today__date">Сегодня · ' + now.getDate() + ' ' + m + '</div>' +
       '<div class="today__chips">' + chips.map(function (c) {
-        return '<span class="chip' + (c[2] ? ' chip--warn' : '') + '"><span>' + c[0] + '</span><b>' + c[1] + '</b></span>';
+        return '<a class="chip' + (c[2] ? ' chip--warn' : '') + '" href="' + c[3] + '">' +
+               '<span>' + c[0] + '</span><b>' + c[1] + '</b></a>';
       }).join('') + '</div>';
   }
 
   /* ── герой ───────────────────────────────────────────────────────────── */
-  function paintHero() {
+  // Переключатель в шапке героя показывает только то, что реально есть в live.json —
+  // выдуманных сегментов в списке нет.
+  var METRICS = [
+    { key: 'plan',     perm: 'sales',    label: 'План месяца' },
+    { key: 'revenue',  perm: 'sales',    label: 'Выручка вчера' },
+    { key: 'guests',   perm: 'sales',    label: 'Гости вчера' },
+    { key: 'forecast', perm: 'forecast', label: 'Прогноз на сегодня' }
+  ];
+
+  function heroValue(key) {
+    var t = L.thermal || {}, fc = L.forecast || {}, pf = (L.attendance || {}).planfact || {};
+    switch (key) {
+      case 'plan':
+        if (pf.pct == null) return null;
+        var diff = pf.pct - 100;
+        return { v: pf.pct, dec: 1, unit: '%', bands: true,
+                 cap: 'плана месяца · ' + nf(pf.factMln, 2) + ' из ' + nf(pf.planMtdMln, 2) + ' млн ₽',
+                 delta: (diff >= 0 ? 'с опережением на ' : 'отставание ') + nf(Math.abs(diff), 1) + ' п.п.' };
+      case 'revenue':
+        if (t.revenueMln == null) return null;
+        return { v: t.revenueMln, dec: 3, unit: 'млн ₽',
+                 cap: 'выручка за ' + (t.yesterday || 'вчера'),
+                 delta: pct(t.revenueDeltaWeek) + ' к прошлой неделе' };
+      case 'guests':
+        if (t.guests == null) return null;
+        return { v: t.guests, dec: 0, unit: 'чел.',
+                 cap: 'гостей за ' + (t.yesterday || 'вчера') + ' · средний чек ' + nf(t.checkRub) + ' ₽',
+                 delta: pct(t.guestsDeltaWeek) + ' к прошлой неделе' };
+      case 'forecast':
+        if (fc.guests == null) return null;
+        return { v: fc.guests, dec: 0, unit: 'гостей',
+                 cap: 'ждём сегодня · ~' + nf(fc.revenueMln, 2) + ' млн ₽',
+                 delta: 'прогноз на ' + (fc.today || 'сегодня') };
+    }
+    return null;
+  }
+
+  function paintHero(key) {
     var el = document.getElementById('planPct');
     if (!el) return;
     var hi = document.getElementById('heroHi');
     if (hi) hi.innerHTML = 'Привет, ' + WHO.name.split(' ')[0] + '!<br><i>Посмотрим, как идут дела</i>';
 
-    var pf = (L.attendance || {}).planfact;
+    var avail = METRICS.filter(function (m) { return can(m.perm) && heroValue(m.key); });
     var cap = document.getElementById('planCap'), delta = document.getElementById('planDelta');
-    if (!can('sales') || !pf || pf.pct == null) {
-      el.textContent = '—';
-      cap.textContent = can('sales') ? 'плана месяца · нет данных' : 'план месяца — нет доступа';
-      delta.textContent = '';
-      document.getElementById('bands').classList.add('is-off');
+    var bands = document.getElementById('bands');
+
+    if (!avail.length) {
+      el.textContent = '—'; cap.textContent = 'нет доступа к сводным цифрам'; delta.textContent = '';
+      bands.style.display = 'none';
+      var sel0 = document.getElementById('segSelect'); if (sel0) sel0.style.display = 'none';
       return;
     }
-    countUp(el, pf.pct, 1);
-    cap.textContent = 'плана месяца · ' + nf(pf.factMln, 2) + ' из ' + nf(pf.planMtdMln, 2) + ' млн ₽';
-    var diff = pf.pct - 100;
-    delta.textContent = (diff >= 0 ? 'с опережением на ' : 'отставание ') + nf(Math.abs(diff), 1) + ' п.п.';
 
-    var p = pf.pct, tt;
-    if (p <= 90)       tt = clamp((p - 75) / 15, 0, 1) / 3;
-    else if (p <= 100) tt = 1 / 3 + (p - 90) / 10 / 3;
-    else               tt = 2 / 3 + clamp((p - 100) / 15, 0, 1) / 3;
-    requestAnimationFrame(function () {
-      document.getElementById('bandsMarker').style.left = (tt * 100).toFixed(1) + '%';
+    var m = avail.filter(function (x) { return x.key === key; })[0] || avail[0];
+    var d = heroValue(m.key);
+    countUp(el, d.v, d.dec);
+    document.querySelector('.hero__unit').textContent = d.unit;
+    cap.textContent = d.cap;
+    delta.textContent = d.delta;
+    bands.style.display = d.bands ? '' : 'none';
+
+    if (d.bands) {
+      var p = d.v, tt;
+      if (p <= 90)       tt = clamp((p - 75) / 15, 0, 1) / 3;
+      else if (p <= 100) tt = 1 / 3 + (p - 90) / 10 / 3;
+      else               tt = 2 / 3 + clamp((p - 100) / 15, 0, 1) / 3;
+      requestAnimationFrame(function () {
+        document.getElementById('bandsMarker').style.left = (tt * 100).toFixed(1) + '%';
+      });
+    }
+    buildMetricPicker(avail, m.key);
+  }
+
+  function buildMetricPicker(avail, active) {
+    var sel = document.getElementById('segSelect');
+    if (!sel) return;
+    sel.innerHTML = avail.filter(function (m) { return m.key === active; })[0].label +
+      '<svg viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></svg>';
+
+    var wrap = sel.parentNode;
+    var old = wrap.querySelector('.who__menu');
+    if (old) old.remove();
+    if (avail.length < 2) { sel.style.pointerEvents = 'none'; sel.querySelector('svg').style.display = 'none'; return; }
+
+    wrap.classList.add('who-wrap');
+    var menu = document.createElement('div');
+    menu.className = 'who__menu who__menu--right';
+    avail.forEach(function (m) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'who__item' + (m.key === active ? ' is-on' : '');
+      b.textContent = m.label;
+      b.addEventListener('click', function () {
+        wrap.classList.remove('is-open');
+        paintHero(m.key);
+      });
+      menu.appendChild(b);
     });
+    wrap.appendChild(menu);
+    sel.onclick = function (e) { e.stopPropagation(); wrap.classList.toggle('is-open'); };
+    document.addEventListener('click', function () { wrap.classList.remove('is-open'); });
   }
 
   function countUp(el, to, dec) {
@@ -531,19 +608,19 @@
     });
 
     var cards = [];
-    if (total) cards.push({ icon: 'coin', title: 'Отчёты свежие', value: fresh, of: total, warn: fresh < total, dots: [fresh, total] });
-    if (can('sales') && pf.pct != null) cards.push({ icon: 'bars', title: 'План месяца', value: nf(pf.pct, 1), unit: '%', warn: pf.pct < 90, dots: [Math.round(pf.pct / 10), 10] });
-    if (can('sales') && a.yoy12 != null) cards.push({ icon: 'users', title: 'Отток за год', value: pct(a.yoy12), alarm: a.yoy12 < -10 });
+    if (total) cards.push({ icon: 'coin', title: 'Отчёты свежие', value: fresh, of: total, warn: fresh < total, dots: [fresh, total], href: '#tiles' });
+    if (can('sales') && pf.pct != null) cards.push({ icon: 'bars', title: 'План месяца', value: nf(pf.pct, 1), unit: '%', warn: pf.pct < 90, dots: [Math.round(pf.pct / 10), 10], href: can('finance') ? '../../owner.html' : '../../attendance.html' });
+    if (can('sales') && a.yoy12 != null) cards.push({ icon: 'users', title: 'Отток за год', value: pct(a.yoy12), alarm: a.yoy12 < -10, href: '../../attendance.html' });
     if (can('staff')) {
       var c = ((L.staff || {}).critical || [])[0];
-      if (c) cards.push({ icon: 'users', title: 'Укомплектованность', value: nf(c.filled, 1), unit: '%', alarm: c.filled < 60, warn: c.filled < 85, dots: [Math.round(c.filled / 10), 10] });
+      if (c) cards.push({ icon: 'users', title: 'Укомплектованность', value: nf(c.filled, 1), unit: '%', alarm: c.filled < 60, warn: c.filled < 85, dots: [Math.round(c.filled / 10), 10], href: '../../staff.html' });
     }
     if (!cards.length) { host.remove(); return; }
 
     host.innerHTML = cards.map(function (c) {
       var dots = '';
       if (c.dots) for (var i = 0; i < c.dots[1]; i++) dots += '<i class="' + (i < c.dots[0] ? 'is-on' : '') + '"></i>';
-      return '<article class="stat">' +
+      return '<a class="stat" href="' + c.href + '">' +
         '<div class="stat__top">' +
           '<span class="ico ico--ghost"><svg viewBox="0 0 24 24">' + ICON[c.icon] + '</svg></span>' +
           (c.warn || c.alarm ? '<span class="stat__flag"><svg viewBox="0 0 24 24">' +
@@ -557,8 +634,27 @@
           (c.unit ? '<span class="stat__of">' + c.unit + '</span>' : '') +
         '</div>' +
         (dots ? '<div class="stat__dots">' + dots + '</div>' : '') +
-      '</article>';
+      '</a>';
     }).join('');
+  }
+
+  /* ── легенда графика переключает вторую линию ────────────────────────── */
+  function bindLegend() {
+    var items = document.querySelectorAll('.legend__item');
+    if (items.length < 2) return;
+    items[1].addEventListener('click', function () {
+      var g = document.querySelector('.chart__ghost');
+      if (!g) return;
+      var off = items[1].classList.toggle('is-off');
+      g.style.display = off ? 'none' : '';
+    });
+    items[0].addEventListener('click', function () {
+      var l = document.querySelector('.chart__line');
+      if (!l) return;
+      var off = items[0].classList.toggle('is-off');
+      items[0].classList.toggle('is-on', !off);
+      l.style.display = off ? 'none' : '';
+    });
   }
 
   /* ── поиск на экране «Все отчёты» ────────────────────────────────────── */
@@ -756,6 +852,7 @@
     paintHero();
     paintToday();
     paintChart();
+    bindLegend();
     paintStats();
     bindPills();
     bindSearch();
