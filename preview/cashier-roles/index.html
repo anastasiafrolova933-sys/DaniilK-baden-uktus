@@ -77,6 +77,11 @@
         <span class="ic">🎁</span>
         <span class="tx">Погасить приз<small>Код из карточки гостя</small></span>
       </a>
+      <div class="sep">Управление</div>
+      <a class="btn" id="go-admin" href="#">
+        <span class="ic">⚙️</span>
+        <span class="tx">Настройки игры<small>Зоны, расписание, призы, правила (по паролю)</small></span>
+      </a>
     </div>
 
     <div class="err" id="err"></div>
@@ -112,6 +117,7 @@
       // поэтому ротация туннеля закладку сотрудника не ломает
       document.getElementById('go-staff').href = base + '/staff';
       document.getElementById('go-prize').href = base + '/staff';
+      document.getElementById('go-admin').href = base + '/path-admin';
       spin.style.display = 'none';
       statusEl.textContent = 'Выберите действие';
       menu.style.display = 'block';
