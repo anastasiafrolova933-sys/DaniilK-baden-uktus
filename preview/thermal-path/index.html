@@ -783,7 +783,8 @@ let zones = [
   { code: "kidspool", n: 16, cat: "pool",  name: "Детский бассейн",     icon: "🐠", on: true,  src: "sticker", role: ""          },
   { code: "beachpool",n: 17, cat: "pool",  name: "Бассейны пляжа",      icon: "🏝",  on: true,  src: "sticker", role: ""          },
   { code: "poolbar",  n: 11, cat: "bar",   name: "Пул-Бар",             icon: "🍹", on: true,  src: "both",    role: "animator"  },
-  { code: "beach",    n: 48, cat: "act",   name: "Пляж",                icon: "🏖",  on: true,  src: "both",    role: "animator"  },
+  // Пляж — большая открытая территория: отмечается наклейкой, персонал его не ведёт
+  { code: "beach",    n: 48, cat: "act",   name: "Пляж",                icon: "🏖",  on: true,  src: "sticker", role: ""          },
   { code: "aqua",     n: 47, cat: "act",   name: "Аквапарк",            icon: "🎢", on: true,  src: "sticker", role: ""          },
   { code: "volley",   n: 49, cat: "act",   name: "Волейбольная площадка", icon: "🏐", on: true, src: "sticker", role: ""         },
   { code: "cafe",     n: 10, cat: "bar",   name: "Кафе",                icon: "🍽",  on: true,  src: "sticker", role: ""          },
@@ -917,8 +918,24 @@ const BIG_COST = 400;   // приз дороже — «крупный», поп�
 /* ── помощники ─────────────────────────────────────────────── */
 const activeZones = () => zones.filter(z => z.on);
 const doneCount   = () => st.checked.length;
-const roleName    = z => (ROLES[z && z.role] || {}).name || "Сотрудник";
-const zonesOfRole = r => activeZones().filter(z => z.role === r);
+const roleName = z => (ROLES[z && z.role] || {}).name || "Сотрудник";
+
+/* Есть ли у зоны сеансы в сегодняшних программах */
+function zoneHasSessions(code) {
+  return dayProgram().some(e => e.z === code);
+}
+
+/* Что сотрудник видит на смене:
+   — «только сотрудник» (СПА и подобное) — всегда, расписания у них нет;
+   — «наклейка + сеанс» — лишь пока в расписании есть его сеансы в этой зоне;
+   — «гость сам» — не показывается никому из персонала. */
+function zonesOfRole(r) {
+  return activeZones().filter(z => {
+    if (z.role !== r || z.src === "sticker") return false;
+    if (z.src === "staff") return true;
+    return zoneHasSessions(z.code);
+  });
+}
 
 function poolOf(n) {
   // Пройденный рекомендованный маршрут сразу открывает золото: он ведёт гостя
@@ -1145,7 +1162,7 @@ function renderGuest() {
       const when = s.timed
         ? `${hhmm(s.at)} · ${KIND[s.kind] || "сеанс"}`
         : `${hhmm(s.at)} · в удобный момент`;
-      const how = s.timed
+      const how = (s.timed && z.src !== "sticker")
         ? `${roleName(z)} отметит вас после сеанса`
         : `Наклейка у входа в зону`;
       html += `
@@ -1589,8 +1606,31 @@ function renderStaff() {
       <div style="height:10px"></div>
       ${sess
         ? `<div class="note-box info" style="margin:0"><b>${sess.t} · ${sess.n}</b><br>Сейчас идёт — отмечайте гостей, которые были на сеансе.</div>`
-        : `<div class="note-box" style="margin:0">Сейчас в этой зоне сеанса нет (время в демо ${fmtMin(vnow())}). Гости отмечаются наклейкой сами.</div>`}
+        : cur.src === "staff"
+          ? `<div class="note-box info" style="margin:0">Работает по записи, без общего расписания — отмечайте после процедуры.</div>`
+          : `<div class="note-box" style="margin:0">Сейчас в этой зоне сеанса нет (время в демо ${fmtMin(vnow())}). Гости отмечаются наклейкой сами.</div>`}
     </div>
+
+    ${cur.src !== "staff" ? `
+    <div class="card">
+      <div class="card-title">Мои сеансы сегодня · ${cur.name}</div>
+      <div class="zones">
+        ${(function () {
+          const mine = dayProgram().filter(e => e.z === cur.code);
+          if (!mine.length) return `<div class="note-box">Сеансов в этой зоне сегодня нет.</div>`;
+          return mine.map(e => {
+            const past = vnow() > e.at + e.d;
+            const live = vnow() >= e.at - 5 && vnow() <= e.at + e.d;
+            return `<div class="zone ${live ? "done" : ""}" style="${past ? "opacity:.45" : ""}">
+              <div class="zone-ico">${live ? "▶" : past ? "✓" : "🕒"}</div>
+              <div class="zone-body">
+                <div class="zone-name">${e.t} · ${e.n}</div>
+                <div class="zone-meta">${live ? "идёт сейчас" : past ? "прошёл" : "впереди"}</div>
+              </div></div>`;
+          }).join("");
+        })()}
+      </div>
+    </div>` : ""}
 
     <div class="card">
       <div class="card-title">Код гостя</div>
@@ -1753,9 +1793,12 @@ function renderZones() {
         </td>
         <td>
           <select onchange="setZoneSrc(${i}, this.value)">
-            <option value="sticker" ${z.src === "sticker" ? "selected" : ""}>Наклейка на месте</option>
-            <option value="staff"   ${z.src === "staff"   ? "selected" : ""}>Сотрудник после услуги</option>
+            <option value="sticker" ${z.src === "sticker" ? "selected" : ""}>Гость сам · наклейка</option>
+            <option value="both"    ${z.src === "both"    ? "selected" : ""}>Наклейка + сотрудник на сеансе</option>
+            <option value="staff"   ${z.src === "staff"   ? "selected" : ""}>Только сотрудник, всегда</option>
           </select>
+          ${z.src === "both" && !zoneHasSessions(z.code)
+            ? `<div style="font-size:10.5px;color:#a07b1a;margin-top:3px">сегодня сеансов нет — работает как наклейка</div>` : ""}
         </td>
         <td>${z.src === "sticker"
           ? `<span style="font-size:12px;color:var(--sub)">гость сам</span>`
@@ -1775,7 +1818,8 @@ function renderZones() {
 
 function setZoneSrc(i, v) {
   zones[i].src = v;
-  if (v === "staff" && !zones[i].role) zones[i].role = "Сотрудник";
+  if (v === "sticker") zones[i].role = "";              // гость сам — роль не нужна
+  else if (!zones[i].role) zones[i].role = "parmaster"; // роль по умолчанию, дальше меняется в соседней колонке
   renderAll();
 }
 
