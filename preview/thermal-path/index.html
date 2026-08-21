@@ -387,10 +387,10 @@
   </div>
   <span class="proto-tag">прототип · тестовые данные</span>
   <div class="modes">
-    <button class="mode-btn active" data-mode="guest">Гость</button>
-    <button class="mode-btn" data-mode="staff">Сотрудник</button>
-    <button class="mode-btn" data-mode="cashier">Кассир</button>
-    <button class="mode-btn" data-mode="admin">Админ</button>
+    <button class="mode-btn active" data-mode="guest">Гость · бот</button>
+    <button class="mode-btn" data-mode="staff">Рабочее место</button>
+    <button class="mode-btn" data-mode="cashier">Погашение призов</button>
+    <button class="mode-btn" data-mode="admin">Настройки</button>
   </div>
 </div>
 
@@ -474,10 +474,10 @@
     <div class="phone" style="height:640px">
       <div class="phone-notch"></div>
       <div class="header">
-        <div class="header-logo">👤</div>
+        <div class="header-logo" id="s-header-ico">👤</div>
         <div>
-          <div class="header-title">Отметка после услуги</div>
-          <div class="header-sub" id="s-header-sub">Пармастер · смена открыта</div>
+          <div class="header-title" id="s-header-title">Рабочее место</div>
+          <div class="header-sub" id="s-header-sub">Выберите роль</div>
         </div>
       </div>
       <div class="content" id="s-content"></div>
@@ -485,11 +485,17 @@
     </div>
 
     <div class="sim">
-      <h3>Метки, которых нет на стене</h3>
-      <p class="hint">Парения, анимация и СПА не отмечаются наклейкой. После услуги сотрудник сканирует код гостя — так же, как кассир на входе. Здесь скан заменён вводом кода.</p>
+      <h3>Вечная ссылка для персонала</h3>
+      <p class="hint">Это продолжение уже работающей страницы <code>/cashier/</code>: она читает <code>loyalty_url.json</code> и ведёт на живой туннель, поэтому адрес не меняется при его ротации. Роли добавляются туда же — сотруднику остаётся одна закладка на все случаи.</p>
+      <div class="sim-block">
+        <label class="sim-label">Роль на смене</label>
+        <select id="s-role" onchange="setWorkRole(this.value)">
+          ${""}
+        </select>
+      </div>
       <div class="sim-block">
         <div class="kv"><span>Код гостя в демо</span><span id="s-guest-code">G-4821</span></div>
-        <div class="kv"><span>Зон за сотрудниками</span><span id="s-staff-count">—</span></div>
+        <div class="kv"><span>Зон у этой роли</span><span id="s-staff-count">—</span></div>
       </div>
       <div class="note-box info">
         <b>Почему так надёжнее наклейки.</b> Наклейку можно сфотографировать и переслать другу — отметка уйдёт человеку, который в термах не был. Код гостя сканирует сотрудник, стоящий рядом: подделать нечего, и заодно подтверждается, что услуга действительно оказана.
@@ -541,9 +547,49 @@
       </div>
 
       <div class="tab-pane active" id="tab-zones">
+        <div class="card" style="margin-bottom:18px">
+          <h2 class="sec">Как это встаёт в существующие системы</h2>
+          <p class="sec-sub">Ничего нового заводить не нужно — обе точки входа уже есть.</p>
+          <div class="grid2">
+            <div>
+              <div class="zones">
+                <div class="zone done">
+                  <div class="zone-ico">🤖</div>
+                  <div class="zone-body">
+                    <div class="zone-name">Гостю — кнопка в боте</div>
+                    <div class="zone-meta">@BadenLoyalty_bot, рядом с картой лояльности. Наклейка в зоне открывает мини-апп сразу на нужной зоне.</div>
+                  </div>
+                </div>
+                <div class="zone done">
+                  <div class="zone-ico">🛎️</div>
+                  <div class="zone-body">
+                    <div class="zone-name">Сотруднику — вечная ссылка</div>
+                    <div class="zone-meta">Та же страница <code>/cashier/</code>, где сейчас «Касса» и «Регистрация». Добавляются роли: пармастер, аниматор, администратор СПА, администратор.</div>
+                  </div>
+                </div>
+                <div class="zone done">
+                  <div class="zone-ico">⚙️</div>
+                  <div class="zone-body">
+                    <div class="zone-name">Настройки — там же, но по правам</div>
+                    <div class="zone-meta">Зоны, призы, расписание, правила. Видят только администраторы системы.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="note-box info" style="margin-bottom:12px">
+                <b>Обкатка на админах.</b> Первый этап — доступ только для Telegram ID <code>8794105763</code> и <code>1267746004</code>: они уже прописаны как <code>ADMIN_IDS</code> в боте лояльности. Остальные гости кнопку не видят, персонал ролей не видит. Так можно пройти комплекс своими ногами и проверить всё вживую, ничего не объявляя.
+              </div>
+              <div class="note-box">
+                <b>Что решить до расширения круга.</b> Проверка подписи Telegram (сейчас гость опознаётся без неё), тексты для гостей, кто из сотрудников чем сканирует, и режим работы призов на кассе.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="card">
           <h2 class="sec">Зоны маршрута</h2>
-          <p class="sec-sub">Список настраивается здесь — добавить зону или убрать её из игры можно без правки кода. Выключенная зона перестаёт учитываться в прогрессе, наклейка просто не сработает.</p>
+          <p class="sec-sub">Зоны взяты из схемы комплекса — номер совпадает с точкой на интерактивной карте сайта. Сауны детальнее карты: там все парные — одна точка №19, а в расписании они разные. Список настраивается здесь, без правки кода; выключенная зона перестаёт учитываться в прогрессе.</p>
           <table id="zones-table"></table>
           <div style="height:16px"></div>
           <div class="sim-row" style="max-width:560px">
@@ -713,20 +759,38 @@
    "both"    — наклейка есть всегда, а на сеансе отметку ставит мастер
    Сауны и бассейны — "both": зайти можно в любой момент, но парение
    или занятие подтверждает сотрудник. */
+/* Роли рабочего места. В бою они разводятся на «вечной ссылке» /cashier/
+   и по правам на сервере лояльности. */
+const ROLES = {
+  parmaster: { name: "Пармастер",       icon: "🔥", desc: "Отмечает гостей после парения" },
+  animator:  { name: "Аниматор",        icon: "🤸", desc: "Отмечает после занятия анимации" },
+  spa:       { name: "Администратор СПА", icon: "💆", desc: "Отмечает после процедуры" },
+  admin:     { name: "Администратор",   icon: "🛎️", desc: "Касса, призы, регистрация гостей" }
+};
+
+/* Зоны взяты из схемы комплекса (map.html): n — номер точки на карте,
+   cat — её категория. Сауны парений детальнее карты: там они одной точкой «Сауны». */
 let zones = [
-  { code: "coffee",   name: "Кофейная сауна",      icon: "☕",  on: true,  src: "both",    role: "Пармастер"  },
-  { code: "panorama", name: "Панорамная сауна",    icon: "🪟", on: true,  src: "both",    role: "Пармастер"  },
-  { code: "citrus",   name: "Цитрусовая сауна",    icon: "🍊", on: true,  src: "both",    role: "Пармастер"  },
-  { code: "bakery",   name: "Булочная сауна",      icon: "🥐", on: true,  src: "both",    role: "Пармастер"  },
-  { code: "herbal",   name: "Травяная сауна",      icon: "🌿", on: true,  src: "both",    role: "Пармастер"  },
-  { code: "himalaya", name: "Гималайская сауна",   icon: "🧂", on: true,  src: "both",    role: "Аниматор"   },
-  { code: "pool",     name: "Термальный бассейн",  icon: "🏊", on: true,  src: "both",    role: "Аниматор"   },
-  { code: "poolbar",  name: "Бассейн с пул-баром", icon: "🍹", on: true,  src: "both",    role: "Аниматор"   },
-  { code: "beach",    name: "Второй этаж / Пляж",  icon: "🏖",  on: true,  src: "both",    role: "Аниматор"   },
-  { code: "spa",      name: "СПА-зона",            icon: "💆", on: true,  src: "staff",   role: "СПА-мастер" },
-  // ниже — зоны под уточнение: в расписаниях их нет, включать после сверки
-  { code: "kupel",    name: "Купель",              icon: "🧊", on: false, src: "sticker", role: ""           },
-  { code: "hamam",    name: "Хамам",               icon: "💨", on: false, src: "sticker", role: ""           }
+  { code: "coffee",   n: 19, cat: "spa",   name: "Кофейная сауна",      icon: "☕",  on: true,  src: "both",    role: "parmaster" },
+  { code: "panorama", n: 19, cat: "spa",   name: "Панорамная сауна",    icon: "🪟", on: true,  src: "both",    role: "parmaster" },
+  { code: "citrus",   n: 19, cat: "spa",   name: "Цитрусовая сауна",    icon: "🍊", on: true,  src: "both",    role: "parmaster" },
+  { code: "bakery",   n: 19, cat: "spa",   name: "Булочная сауна",      icon: "🥐", on: true,  src: "both",    role: "parmaster" },
+  { code: "herbal",   n: 19, cat: "spa",   name: "Травяная сауна",      icon: "🌿", on: true,  src: "both",    role: "parmaster" },
+  { code: "himalaya", n: 19, cat: "spa",   name: "Гималайская сауна",   icon: "🧂", on: true,  src: "both",    role: "animator"  },
+  { code: "spa",      n: 18, cat: "spa",   name: "SPA",                 icon: "💆", on: true,  src: "staff",   role: "spa"       },
+  { code: "pool",     n: 14, cat: "pool",  name: "Главный бассейн",     icon: "🏊", on: true,  src: "both",    role: "animator"  },
+  { code: "massage",  n: 15, cat: "pool",  name: "Массажные бассейны",  icon: "🫧", on: true,  src: "sticker", role: ""          },
+  { code: "kidspool", n: 16, cat: "pool",  name: "Детский бассейн",     icon: "🐠", on: true,  src: "sticker", role: ""          },
+  { code: "beachpool",n: 17, cat: "pool",  name: "Бассейны пляжа",      icon: "🏝",  on: true,  src: "sticker", role: ""          },
+  { code: "poolbar",  n: 11, cat: "bar",   name: "Пул-Бар",             icon: "🍹", on: true,  src: "both",    role: "animator"  },
+  { code: "beach",    n: 48, cat: "act",   name: "Пляж",                icon: "🏖",  on: true,  src: "both",    role: "animator"  },
+  { code: "aqua",     n: 47, cat: "act",   name: "Аквапарк",            icon: "🎢", on: true,  src: "sticker", role: ""          },
+  { code: "volley",   n: 49, cat: "act",   name: "Волейбольная площадка", icon: "🏐", on: true, src: "sticker", role: ""         },
+  { code: "cafe",     n: 10, cat: "bar",   name: "Кафе",                icon: "🍽",  on: true,  src: "sticker", role: ""          },
+  { code: "germanbar",n: 12, cat: "bar",   name: "Немецкий БАР",        icon: "🍺", on: true,  src: "sticker", role: ""          },
+  { code: "grill",    n: 13, cat: "bar",   name: "Гриль-БАР",           icon: "🥩", on: true,  src: "sticker", role: ""          },
+  { code: "rest",     n:  9, cat: "termy", name: "Зона отдыха",         icon: "🛋",  on: true,  src: "sticker", role: ""          },
+  { code: "kids",     n:  7, cat: "termy", name: "Детская комната",     icon: "🧸", on: false, src: "sticker", role: ""          }
 ];
 
 /* ── Реальные программы Baden Uktus ────────────────────────────
@@ -853,6 +917,8 @@ const BIG_COST = 400;   // приз дороже — «крупный», поп�
 /* ── помощники ─────────────────────────────────────────────── */
 const activeZones = () => zones.filter(z => z.on);
 const doneCount   = () => st.checked.length;
+const roleName    = z => (ROLES[z && z.role] || {}).name || "Сотрудник";
+const zonesOfRole = r => activeZones().filter(z => z.role === r);
 
 function poolOf(n) {
   // Пройденный рекомендованный маршрут сразу открывает золото: он ведёт гостя
@@ -1080,7 +1146,7 @@ function renderGuest() {
         ? `${hhmm(s.at)} · ${KIND[s.kind] || "сеанс"}`
         : `${hhmm(s.at)} · в удобный момент`;
       const how = s.timed
-        ? `${z.role || "Сотрудник"} отметит вас после сеанса`
+        ? `${roleName(z)} отметит вас после сеанса`
         : `Наклейка у входа в зону`;
       html += `
         <div class="tl-item ${done ? "done" : ""} ${isNow ? "now" : ""}">
@@ -1138,16 +1204,16 @@ function renderGuest() {
 function zoneRow(z) {
   const done = st.checked.includes(z.code);
   const tag = z.src === "staff"
-    ? `<span class="zone-tag staff">${z.role}</span>`
+    ? `<span class="zone-tag staff">${roleName(z)}</span>`
     : z.src === "both"
-      ? `<span class="zone-tag sticker">наклейка</span><span class="zone-tag staff">${z.role}</span>`
+      ? `<span class="zone-tag sticker">наклейка</span><span class="zone-tag staff">${roleName(z)}</span>`
       : `<span class="zone-tag sticker">наклейка</span>`;
   const meta = done
     ? "Отмечено" + (st.by[z.code] ? " · " + st.by[z.code] : "")
     : z.src === "staff"
-      ? `${z.role} отметит вас после услуги`
+      ? `${roleName(z)} отметит вас после услуги`
       : z.src === "both"
-        ? `Наклейка у входа · на сеансе отметит ${(z.role || "сотрудник").toLowerCase()}`
+        ? `Наклейка у входа · на сеансе отметит ${roleName(z).toLowerCase()}`
         : "Отсканируйте метку у входа в зону";
   return `
     <div class="zone ${done ? "done" : ""} ${st.justCode === z.code ? "just" : ""}">
@@ -1191,11 +1257,11 @@ function simScan() {
     return;
   }
   if (z.src === "staff") {
-    toast("g-toast", "👤", `${z.name}: наклейки здесь нет. ${z.role} отсканирует ваш код ${st.guestCode} после услуги.`, true);
+    toast("g-toast", "👤", `${z.name}: наклейки здесь нет. ${roleName(z)} отсканирует ваш код ${st.guestCode} после услуги.`, true);
     return;
   }
   if (!st.checked.includes(z.code) && z.src === "both" && sessionNow(z.code)) {
-    toast("g-toast", "👤", `Сейчас в зоне «${z.name}» идёт сеанс — отметку поставит ${(z.role || "сотрудник").toLowerCase()} по коду ${st.guestCode}.`, true);
+    toast("g-toast", "👤", `Сейчас в зоне «${z.name}» идёт сеанс — отметку поставит ${roleName(z).toLowerCase()} по коду ${st.guestCode}.`, true);
     return;
   }
   if (st.checked.includes(z.code)) {
@@ -1410,16 +1476,103 @@ function closeSheet() { document.getElementById("g-sheet-wrap").classList.remove
 
 /* ══════════════ СОТРУДНИК ══════════════ */
 let staffZoneCode = null;
+let workRole = null;          // null — экран выбора роли, как на вечной ссылке
+
+function setWorkRole(r) {
+  workRole = r || null;
+  staffZoneCode = null;
+  renderStaff();
+}
 
 function renderStaff() {
   const el = document.getElementById("s-content");
   if (!el) return;
-  const staffZones = activeZones().filter(z => z.src === "staff" || z.src === "both");
-  if (!staffZones.length) {
-    el.innerHTML = `<div class="card"><div class="note-box">Ни одна зона не отмечена как «выдаёт сотрудник». Включите такой тип в админке, во вкладке «Зоны маршрута».</div></div>`;
+
+  // селект роли в панели рядом
+  const rsel = document.getElementById("s-role");
+  if (rsel) {
+    rsel.innerHTML = `<option value="">— экран выбора роли —</option>` +
+      Object.keys(ROLES).map(k => `<option value="${k}" ${k === workRole ? "selected" : ""}>${ROLES[k].icon} ${ROLES[k].name}</option>`).join("");
+  }
+
+  // 1. Экран выбора роли — то, что видит сотрудник, открыв вечную ссылку
+  if (!workRole) {
+    document.getElementById("s-header-ico").textContent = "🛎️";
+    document.getElementById("s-header-title").textContent = "Рабочее место";
+    document.getElementById("s-header-sub").textContent = "baden · вечная ссылка";
+    el.innerHTML = `
+      <div class="hero">
+        <div class="hero-label">Baden Uktus</div>
+        <div style="font-size:18px;font-weight:700;margin-top:6px">Выберите роль</div>
+        <div class="hero-note">Адрес постоянный — сохраняется в закладки один раз. Сервер лояльности может переехать на другой туннель, ссылка останется прежней.</div>
+      </div>
+      ${Object.keys(ROLES).map(k => `
+        <button class="choice" onclick="setWorkRole('${k}')">
+          <div class="choice-ico">${ROLES[k].icon}</div>
+          <div class="choice-name">${ROLES[k].name}</div>
+          <div class="choice-desc">${ROLES[k].desc}</div>
+          <div class="choice-bonus">${k === "admin" ? "Касса · регистрация · призы" : zonesOfRole(k).length + " " + plural(zonesOfRole(k).length, "зона", "зоны", "зон")}</div>
+        </button>`).join("")}
+      <div class="note-box info">
+        <b>Так это встанет в существующую страницу.</b> Сейчас на <code>/cashier/</code> две кнопки — «Касса» и «Регистрация гостя». Роли добавляются рядом, каждая ведёт в свой раздел того же сервера лояльности.
+      </div>`;
+    setText("s-staff-count", "—");
+    setText("s-guest-code", st.guestCode);
     return;
   }
-  if (!staffZones.some(z => z.code === staffZoneCode)) staffZoneCode = staffZones[0].code;
+
+  // 2. Администратор — касса, призы, регистрация
+  if (workRole === "admin") {
+    document.getElementById("s-header-ico").textContent = ROLES.admin.icon;
+    document.getElementById("s-header-title").textContent = ROLES.admin.name;
+    document.getElementById("s-header-sub").textContent = "смена открыта";
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-title">Что уже работает</div>
+        <div class="zones">
+          <div class="zone done"><div class="zone-ico">🔑</div><div class="zone-body">
+            <div class="zone-name">Касса · отметить визит</div>
+            <div class="zone-meta">QR или телефон гостя, нужен PIN. Есть на вечной ссылке сегодня.</div></div></div>
+          <div class="zone done"><div class="zone-ico">➕</div><div class="zone-body">
+            <div class="zone-name">Регистрация гостя</div>
+            <div class="zone-meta">В том числе без Telegram, дедуп по телефону. Есть сегодня.</div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Что добавляет термальный путь</div>
+        <div class="zones">
+          <div class="zone"><div class="zone-ico">🎁</div><div class="zone-body">
+            <div class="zone-name">Погашение призов</div>
+            <div class="zone-meta">Код из карточки гостя — вкладка «Погашение призов» вверху.</div></div></div>
+          <div class="zone"><div class="zone-ico">📊</div><div class="zone-body">
+            <div class="zone-name">Прогресс гостя</div>
+            <div class="zone-meta">Сколько зон прошёл, что выиграл, был ли на сеансах.</div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Настройки</div>
+        <div class="note-box">Зоны, призы, расписание и правила — только у администратора системы, по Telegram ID. Вкладка «Настройки» вверху.</div>
+      </div>`;
+    setText("s-staff-count", "касса и призы");
+    setText("s-guest-code", st.guestCode);
+    return;
+  }
+
+  // 3. Пармастер / Аниматор / Администратор СПА — отметка после услуги
+  const staffZones = zonesOfRole(workRole);
+  document.getElementById("s-header-ico").textContent = ROLES[workRole].icon;
+  document.getElementById("s-header-title").textContent = ROLES[workRole].name;
+  if (!staffZones.length) {
+    document.getElementById("s-header-sub").textContent = "нет закреплённых зон";
+    el.innerHTML = `<div class="card"><div class="note-box">За ролью «${ROLES[workRole].name}» не закреплено ни одной активной зоны. Это настраивается во вкладке «Настройки» → «Зоны маршрута».</div></div>
+      <button class="btn ghost" onclick="setWorkRole(null)">← Сменить роль</button>`;
+    setText("s-staff-count", "0");
+    return;
+  }
+  if (!staffZones.some(z => z.code === staffZoneCode)) {
+    const live = staffZones.find(z => sessionNow(z.code));
+    staffZoneCode = (live || staffZones[0]).code;
+  }
   const cur = staffZones.find(z => z.code === staffZoneCode);
   const done = st.checked.includes(cur.code);
 
@@ -1462,16 +1615,18 @@ function renderStaff() {
             }).join("")
           : `<div class="note-box info">Пока ничего. Отметьте услугу — она появится здесь и в приложении гостя.</div>`}
       </div>
-    </div>`;
+    </div>
 
-  document.getElementById("s-header-sub").textContent = `${cur.role} · смена открыта`;
+    <button class="btn ghost" onclick="setWorkRole(null)">← Сменить роль</button>`;
+
+  document.getElementById("s-header-sub").textContent = `${staffZones.length} ${plural(staffZones.length, "зона", "зоны", "зон")} · смена открыта`;
   setText("s-guest-code", st.guestCode);
   setText("s-staff-count", `${staffZones.length} из ${activeZones().length}`);
 }
 
 function staffMark() {
   const cur = zones.find(z => z.code === staffZoneCode);
-  if (!cur) return;
+  if (!cur || !workRole) return;
   const val = (document.getElementById("s-code").value || "").toUpperCase().trim();
 
   if (val !== st.guestCode.toUpperCase()) {
@@ -1492,7 +1647,7 @@ function staffMark() {
   }
   // Паузу между зонами к отметкам сотрудника не применяем: рядом стоит живой человек,
   // подделать нечего, а услуги идут одна за другой по расписанию.
-  applyCheckin(cur, cur.role, "s-toast");
+  applyCheckin(cur, ROLES[workRole].name, "s-toast");
   document.getElementById("s-code").value = "";
   renderStaff();
 }
@@ -1592,7 +1747,9 @@ function renderZones() {
         <td><input type="text" value="${z.icon}" style="width:46px;text-align:center" onchange="zones[${i}].icon=this.value;renderAll()"></td>
         <td>
           <input type="text" value="${z.name}" onchange="zones[${i}].name=this.value;renderAll()">
-          <div style="font-size:10.5px;color:var(--sub);margin-top:3px"><code>zone_${z.code}</code></div>
+          <div style="font-size:10.5px;color:var(--sub);margin-top:3px">
+            <code>zone_${z.code}</code>${z.n ? ` · точка №${z.n} на карте` : ""}
+          </div>
         </td>
         <td>
           <select onchange="setZoneSrc(${i}, this.value)">
@@ -1600,9 +1757,12 @@ function renderZones() {
             <option value="staff"   ${z.src === "staff"   ? "selected" : ""}>Сотрудник после услуги</option>
           </select>
         </td>
-        <td>${z.src === "staff"
-          ? `<input type="text" value="${z.role}" placeholder="должность" onchange="zones[${i}].role=this.value;renderAll()">`
-          : `<span style="font-size:12px;color:var(--sub)">гость сам</span>`}</td>
+        <td>${z.src === "sticker"
+          ? `<span style="font-size:12px;color:var(--sub)">гость сам</span>`
+          : `<select onchange="zones[${i}].role=this.value;renderAll()">
+               ${Object.keys(ROLES).filter(k => k !== "admin").map(k =>
+                 `<option value="${k}" ${k === z.role ? "selected" : ""}>${ROLES[k].name}</option>`).join("")}
+             </select>`}</td>
         <td>
           <label class="switch">
             <input type="checkbox" ${z.on ? "checked" : ""} onchange="toggleZone(${i}, this.checked)">
