@@ -137,6 +137,55 @@
   .zone-meta { font-size: 11.5px; color: var(--sub); margin-top: 1px; }
   .zone-mark { font-size: 18px; color: var(--green); flex-shrink: 0; }
   .zone-mark.pending { color: #d5d0c6; font-size: 15px; }
+  .zone-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px;
+    border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+  .zone-tag.staff { background: rgba(168,134,95,.16); color: var(--gold-dk); }
+  .zone-tag.sticker { background: rgba(0,0,0,.05); color: #8a857c; }
+
+  /* Выбор режима */
+  .choice {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 18px; cursor: pointer; transition: all .2s; text-align: left; width: 100%;
+    font: inherit; color: var(--text); display: block;
+  }
+  .choice:hover { border-color: var(--gold); box-shadow: 0 6px 22px rgba(168,134,95,.16); transform: translateY(-2px); }
+  .choice.accent { background: var(--dark-grad); color: #fff; border-color: transparent; }
+  .choice-ico { font-size: 27px; margin-bottom: 9px; }
+  .choice-name { font-size: 17px; font-weight: 700; margin-bottom: 5px; }
+  .choice.accent .choice-name { color: #fff; }
+  .choice-desc { font-size: 12.5px; color: var(--sub); line-height: 1.5; }
+  .choice.accent .choice-desc { color: rgba(255,255,255,.72); }
+  .choice-bonus { margin-top: 11px; font-size: 11.5px; font-weight: 600; color: var(--gold); }
+
+  /* Таймлайн маршрута */
+  .tl { position: relative; padding-left: 22px; }
+  .tl::before { content: ""; position: absolute; left: 6px; top: 10px; bottom: 10px;
+    width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 10px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -20px; top: 15px; width: 11px; height: 11px;
+    border-radius: 50%; background: var(--card); border: 2px solid #d5d0c6; z-index: 1;
+  }
+  .tl-item.done::before { background: var(--green); border-color: var(--green); }
+  .tl-item.now::before  { background: var(--gold); border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(168,134,95,.18); }
+  .tl-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 11px 13px; transition: all .25s;
+  }
+  .tl-item.done .tl-card { border-color: rgba(22,199,132,.4); background: rgba(22,199,132,.05); }
+  .tl-item.now .tl-card  { border-color: var(--gold); box-shadow: 0 4px 16px rgba(168,134,95,.14); }
+  .tl-time { font-size: 11.5px; font-weight: 700; color: var(--gold-dk); letter-spacing: .3px; }
+  .tl-title { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .tl-meta { font-size: 11.5px; color: var(--sub); margin-top: 3px; line-height: 1.4; }
+
+  .code-strip {
+    background: var(--dark-grad); border-radius: var(--radius-sm); padding: 13px 15px; color: #fff;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .code-strip .cs-label { font-size: 11px; opacity: .7; line-height: 1.4; }
+  .code-strip .cs-val { font-family: ui-monospace, monospace; font-size: 19px; font-weight: 700;
+    color: var(--gold); letter-spacing: 2px; flex-shrink: 0; }
 
   /* Кнопки */
   .btn {
@@ -339,6 +388,7 @@
   <span class="proto-tag">прототип · тестовые данные</span>
   <div class="modes">
     <button class="mode-btn active" data-mode="guest">Гость</button>
+    <button class="mode-btn" data-mode="staff">Сотрудник</button>
     <button class="mode-btn" data-mode="cashier">Кассир</button>
     <button class="mode-btn" data-mode="admin">Админ</button>
   </div>
@@ -378,6 +428,7 @@
       <div class="sim-block">
         <label class="sim-label">Состояние визита</label>
         <div class="kv"><span>Визит отмечен кассиром</span><span id="sim-visit">да</span></div>
+        <div class="kv"><span>Режим</span><span id="sim-mode">не выбран</span></div>
         <div class="kv"><span>Зон пройдено</span><span id="sim-count">0</span></div>
         <div class="kv"><span>Доступный пул</span><span id="sim-pool">—</span></div>
         <div class="kv"><span>До следующей отметки</span><span id="sim-cd">готово</span></div>
@@ -395,6 +446,38 @@
 
       <div class="note-box info">
         <b>Что здесь проверяется.</b> Попробуй отсканировать две зоны подряд без паузы или выключить визит — приложение откажет ровно так, как откажет сервер.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ СОТРУДНИК ══════════════ -->
+  <div class="pane" id="pane-staff">
+    <div class="phone" style="height:640px">
+      <div class="phone-notch"></div>
+      <div class="header">
+        <div class="header-logo">👤</div>
+        <div>
+          <div class="header-title">Отметка после услуги</div>
+          <div class="header-sub" id="s-header-sub">Пармастер · смена открыта</div>
+        </div>
+      </div>
+      <div class="content" id="s-content"></div>
+      <div class="toast" id="s-toast"><span class="t-ico"></span><span class="t-text"></span></div>
+    </div>
+
+    <div class="sim">
+      <h3>Метки, которых нет на стене</h3>
+      <p class="hint">Парения, анимация и СПА не отмечаются наклейкой. После услуги сотрудник сканирует код гостя — так же, как кассир на входе. Здесь скан заменён вводом кода.</p>
+      <div class="sim-block">
+        <div class="kv"><span>Код гостя в демо</span><span id="s-guest-code">G-4821</span></div>
+        <div class="kv"><span>Зон за сотрудниками</span><span id="s-staff-count">—</span></div>
+      </div>
+      <div class="note-box info">
+        <b>Почему так надёжнее наклейки.</b> Наклейку можно сфотографировать и переслать другу — отметка уйдёт человеку, который в термах не был. Код гостя сканирует сотрудник, стоящий рядом: подделать нечего, и заодно подтверждается, что услуга действительно оказана.
+      </div>
+      <div style="height:12px"></div>
+      <div class="note-box">
+        <b>Если телефона у сотрудника нет.</b> Запасной вариант — стопка одноразовых карточек с кодами, которые пармастер раздаёт после парения. Дешевле, но код может уйти на сторону: карточка гасится при первом вводе, не более того.
       </div>
     </div>
   </div>
@@ -432,6 +515,7 @@
     <div class="admin">
       <div class="tabs">
         <button class="tab active" data-tab="zones">Зоны маршрута</button>
+        <button class="tab" data-tab="sched">Расписание сеансов</button>
         <button class="tab" data-tab="prizes">Призы и шансы</button>
         <button class="tab" data-tab="rules">Правила игры</button>
         <button class="tab" data-tab="stats">Что покажут данные</button>
@@ -447,6 +531,20 @@
             <input type="text" id="new-zone-name" placeholder="Название новой зоны">
             <input type="text" id="new-zone-icon" placeholder="Иконка" style="max-width:90px" value="✨">
             <button class="btn sm" onclick="addZone()" style="flex:0 0 auto">Добавить</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-sched">
+        <div class="card">
+          <h2 class="sec">Расписание сеансов</h2>
+          <p class="sec-sub">Из него собирается рекомендованный маршрут: приложение подставляет гостю время парений, анимации и СПА, а промежутки заполняет свободными зонами, чтобы он не ждал впустую. В прототипе время задано смещением от «сейчас» — в работе это будут реальные часы сеансов.</p>
+          <div style="overflow-x:auto"><table id="sched-table"></table></div>
+          <div style="height:14px"></div>
+          <button class="btn sm" onclick="addSched()">Добавить сеанс</button>
+          <div style="height:18px"></div>
+          <div class="note-box">
+            <b>Откуда возьмётся расписание.</b> Сегодня сеансы живут на бумаге и в голове у администратора. Чтобы маршрут работал, их нужно вести в одном месте — этот экран и есть такое место. Он же потом кормит расписание парений на сайте и пуши «через 10 минут парение», если решим их делать.
           </div>
         </div>
       </div>
@@ -521,6 +619,13 @@
                   <div class="zone-meta">Повторный скан той же зоны за визит ничего не даёт.</div>
                 </div>
               </div>
+              <div class="zone done">
+                <div class="zone-ico">5</div>
+                <div class="zone-body">
+                  <div class="zone-name">Услуги отмечает сотрудник</div>
+                  <div class="zone-meta">Парения, анимация и СПА не имеют наклейки: пармастер сканирует код гостя сам. Здесь подделывать нечего — и заодно видно, что услуга правда оказана.</div>
+                </div>
+              </div>
             </div>
             <div style="height:14px"></div>
             <div class="note-box">
@@ -581,16 +686,26 @@
    zones / prizes / zone_checkins / game_rounds / prize_wins.
    ══════════════════════════════════════════════════════════════ */
 
+/* src: "sticker" — наклейка на стене, гость сканирует сам
+   src: "staff"   — метку ставит сотрудник, отсканировав гостя после услуги */
 let zones = [
-  { code: "parnaya",  name: "Русская парная",     icon: "🔥", on: true  },
-  { code: "sauna",    name: "Финская сауна",      icon: "🪵", on: true  },
-  { code: "hamam",    name: "Хамам",              icon: "💨", on: true  },
-  { code: "salt",     name: "Соляная комната",    icon: "🧂", on: true  },
-  { code: "pool",     name: "Основной бассейн",   icon: "🏊", on: true  },
-  { code: "jacuzzi",  name: "Джакузи",            icon: "🫧", on: true  },
-  { code: "kupel",    name: "Купель",             icon: "🧊", on: true  },
-  { code: "bar",      name: "Термальный бар",     icon: "🍵", on: false },
-  { code: "spa",      name: "СПА-зона",           icon: "💆", on: false }
+  { code: "parnaya",  name: "Русская парная",     icon: "🔥", on: true,  src: "staff",   role: "Пармастер"   },
+  { code: "sauna",    name: "Финская сауна",      icon: "🪵", on: true,  src: "sticker", role: ""            },
+  { code: "hamam",    name: "Хамам",              icon: "💨", on: true,  src: "sticker", role: ""            },
+  { code: "salt",     name: "Соляная комната",    icon: "🧂", on: true,  src: "sticker", role: ""            },
+  { code: "pool",     name: "Основной бассейн",   icon: "🏊", on: true,  src: "staff",   role: "Аниматор"    },
+  { code: "jacuzzi",  name: "Джакузи",            icon: "🫧", on: true,  src: "sticker", role: ""            },
+  { code: "kupel",    name: "Купель",             icon: "🧊", on: true,  src: "sticker", role: ""            },
+  { code: "spa",      name: "СПА-зона",           icon: "💆", on: true,  src: "staff",   role: "СПА-мастер"  },
+  { code: "bar",      name: "Термальный бар",     icon: "🍵", on: false, src: "staff",   role: "Бармен"      }
+];
+
+/* Расписание услуг. Время задаётся смещением в минутах от «сейчас»,
+   чтобы демонстрация всегда была живой. В бою — таблица schedule с реальными сеансами. */
+let schedule = [
+  { off: 10,  zone: "parnaya", title: "Парение «Апельсиновый бриз»", dur: 15 },
+  { off: 45,  zone: "pool",    title: "Аквааэробика",                dur: 25 },
+  { off: 95,  zone: "spa",     title: "Массаж спины, 20 минут",      dur: 20 }
 ];
 
 let prizes = [
@@ -612,7 +727,12 @@ let rules = { cooldown: 10, minZones: 3, silverZones: 5, dayCap: 3 };
 /* Состояние текущего визита гостя */
 let st = {
   visitActive: true,
+  mode: null,           // null — выбор ещё не сделан | "free" | "route"
+  route: [],            // шаги рекомендованного маршрута
+  startedAt: Date.now(),
+  guestCode: "G-4821",  // личный код гостя: его называет/показывает сотруднику
   checked: [],          // коды отмеченных зон
+  by: {},               // код зоны -> кто отметил ("Пармастер", "наклейка", ...)
   lastAt: null,         // время последней отметки (мс)
   spun: false,          // барабан за этот визит уже крутили
   wins: [],             // выигранные призы
@@ -627,11 +747,60 @@ const activeZones = () => zones.filter(z => z.on);
 const doneCount   = () => st.checked.length;
 
 function poolOf(n) {
+  // Пройденный рекомендованный маршрут сразу открывает золото: он ведёт гостя
+  // туда, куда нужно комплексу, — на сеансы и в СПА, а не только по ближним зонам.
+  if (st.mode === "route" && st.route.length && routeDone()) return "g";
   if (n >= activeZones().length && activeZones().length > 0) return "g";
   if (n >= rules.silverZones) return "s";
   if (n >= rules.minZones)    return "b";
   return null;
 }
+
+/* ── Рекомендованный маршрут ────────────────────────────────
+   Собирается из расписания сеансов: сначала события с временем,
+   затем в промежутки подставляются свободные зоны рядом. */
+function buildRoute() {
+  const base = Date.now();
+  const steps = [];
+
+  schedule.forEach(ev => {
+    const z = zones.find(x => x.code === ev.zone);
+    if (!z || !z.on) return;
+    if (steps.some(s => s.zone === z.code)) return;   // зона засчитывается один раз за визит
+    steps.push({ at: base + ev.off * 60000, zone: z.code, title: ev.title, timed: true, dur: ev.dur });
+  });
+  steps.sort((a, b) => a.at - b.at);
+
+  // заполняем паузы свободными зонами (наклейки), чтобы гость не простаивал
+  const filler = activeZones().filter(z => z.src === "sticker" && !schedule.some(e => e.zone === z.code));
+  const out = [];
+  let fi = 0;
+  steps.forEach((s, i) => {
+    if (i > 0) {
+      const gap = (s.at - steps[i - 1].at) / 60000 - (steps[i - 1].dur || 0);
+      const slots = Math.min(Math.floor(gap / 20), 2);
+      for (let k = 0; k < slots && fi < filler.length; k++, fi++) {
+        out.push({ at: steps[i - 1].at + (steps[i - 1].dur + 5 + k * 20) * 60000,
+                   zone: filler[fi].code, title: "Свободно · " + filler[fi].name, timed: false });
+      }
+    }
+    out.push(s);
+  });
+  while (fi < filler.length && out.length < 6) {
+    const last = out[out.length - 1];
+    out.push({ at: (last ? last.at : base) + 25 * 60000, zone: filler[fi].code,
+               title: "Свободно · " + filler[fi].name, timed: false });
+    fi++;
+  }
+  st.route = out;
+}
+
+const routeDone = () => st.route.length > 0 && st.route.every(s => st.checked.includes(s.zone));
+function routeNext() { return st.route.find(s => !st.checked.includes(s.zone)) || null; }
+function hhmm(ms) {
+  return new Date(ms).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+}
+function minsTo(ms) { return Math.round((ms - Date.now()) / 60000); }
 const POOL_NAME = { b: "Бронза", s: "Серебро", g: "Золото" };
 const POOL_CLS  = { b: "bronze", s: "silver", g: "gold" };
 
@@ -664,8 +833,49 @@ function toast(el, icon, text, isErr) {
   t._tm = setTimeout(() => t.classList.remove("show"), 3400);
 }
 
+/* Экран выбора: с него начинается визит */
+function renderModeChoice() {
+  const ev = schedule.filter(e => { const z = zones.find(x => x.code === e.zone); return z && z.on; });
+  const first = ev.length ? ev[0] : null;
+  document.getElementById("g-content").innerHTML = `
+    <div class="hero">
+      <div class="hero-label">Термальный путь</div>
+      <div style="font-size:19px;font-weight:700;margin-top:6px">Как пойдём?</div>
+      <div class="hero-note">Соберите зоны комплекса и получите подарок. Выбор влияет только на подсказки — отметки и призы работают одинаково.</div>
+    </div>
+
+    <button class="choice" onclick="chooseMode('free')">
+      <div class="choice-ico">🧭</div>
+      <div class="choice-name">Свободное посещение</div>
+      <div class="choice-desc">Ходите как хочется и отмечайтесь в любом порядке. Приложение просто считает зоны и подсказывает, сколько осталось до следующего пула призов.</div>
+      <div class="choice-bonus">Барабан от ${rules.minZones} зон</div>
+    </button>
+
+    <button class="choice accent" onclick="chooseMode('route')">
+      <div class="choice-ico">🗺️</div>
+      <div class="choice-name">Рекомендованный маршрут</div>
+      <div class="choice-desc">Приложение подставит время по расписанию: парения, анимация, СПА. Между сеансами предложит, куда зайти, чтобы не ждать впустую.${first ? ` Ближайшее — «${first.title}» через ${first.off} мин.` : ""}</div>
+      <div class="choice-bonus">Пройденный маршрут открывает золотой пул</div>
+    </button>
+
+    <div class="note-box info">
+      <b>Часть отметок ставят сотрудники.</b> После парения, анимации или СПА мастер отсканирует ваш код — эти зоны не отмечаются наклейкой.
+    </div>`;
+  document.getElementById("g-header-sub").textContent = "Визит открыт · Daniil K.";
+  renderSim(); renderCashier(); renderStaff();
+}
+
+function chooseMode(m) {
+  st.mode = m;
+  if (m === "route") buildRoute();
+  renderGuest();
+  toast("g-toast", m === "route" ? "🗺️" : "🧭",
+    m === "route" ? "Маршрут собран по расписанию на сегодня." : "Свободный режим. Отмечайтесь в любом порядке.");
+}
+
 /* ══════════════ ЭКРАН ГОСТЯ ══════════════ */
 function renderGuest() {
+  if (st.visitActive && st.mode === null) { renderModeChoice(); return; }
   const az = activeZones(), n = doneCount(), total = az.length;
   const pool = poolOf(n);
   const pct = total ? Math.round(n / total * 100) : 0;
@@ -709,21 +919,55 @@ function renderGuest() {
       <div class="locked-note">Отметьтесь ещё в ${rules.minZones - n} ${plural(rules.minZones - n, "зоне", "зонах", "зонах")}, чтобы открыть розыгрыш.</div>`;
   }
 
-  // Зоны
-  html += `<div><div class="card-title" style="padding-left:4px">Зоны комплекса</div><div class="zones">`;
-  az.forEach(z => {
-    const done = st.checked.includes(z.code);
-    html += `
-      <div class="zone ${done ? "done" : ""} ${st.justCode === z.code ? "just" : ""}">
-        <div class="zone-ico">${z.icon}</div>
-        <div class="zone-body">
-          <div class="zone-name">${z.name}</div>
-          <div class="zone-meta">${done ? "Отмечено" : "Отсканируйте метку у входа в зону"}</div>
-        </div>
-        <div class="zone-mark ${done ? "" : "pending"}">${done ? "✓" : "○"}</div>
-      </div>`;
-  });
-  html += `</div></div>`;
+  // Личный код — его называют сотруднику вместо сканирования наклейки
+  html += `
+    <div class="code-strip">
+      <div class="cs-label">Ваш код для пармастера,<br>аниматора и СПА</div>
+      <div class="cs-val">${st.guestCode}</div>
+    </div>`;
+
+  // Маршрут по расписанию
+  if (st.mode === "route" && st.route.length) {
+    const nx = routeNext();
+    html += `<div>
+      <div class="card-title" style="padding-left:4px">Маршрут на сегодня</div>
+      <div class="tl">`;
+    st.route.forEach(s => {
+      const z = zones.find(x => x.code === s.zone) || { icon: "•", name: s.zone, src: "sticker", role: "" };
+      const done = st.checked.includes(s.zone);
+      const isNow = !done && nx && nx.zone === s.zone;
+      const late = minsTo(s.at);
+      const when = s.timed
+        ? `${hhmm(s.at)} · сеанс`
+        : `${hhmm(s.at)} · в удобный момент`;
+      const how = z.src === "staff"
+        ? `${z.role} отметит вас после услуги`
+        : `Наклейка у входа в зону`;
+      html += `
+        <div class="tl-item ${done ? "done" : ""} ${isNow ? "now" : ""}">
+          <div class="tl-card">
+            <div class="tl-time">${when}${isNow && late > 0 ? ` · через ${late} ${plural(late, "минуту", "минуты", "минут")}` : ""}</div>
+            <div class="tl-title">${z.icon} ${s.title}</div>
+            <div class="tl-meta">${done ? "✓ Отмечено" + (st.by[s.zone] ? " · " + st.by[s.zone] : "") : how}</div>
+          </div>
+        </div>`;
+    });
+    html += `</div></div>`;
+
+    const extra = az.filter(z => !st.route.some(s => s.zone === z.code));
+    if (extra.length) {
+      html += `<div><div class="card-title" style="padding-left:4px">Можно зайти сверх маршрута</div><div class="zones">`;
+      extra.forEach(z => html += zoneRow(z));
+      html += `</div></div>`;
+    }
+  } else {
+    // Свободное посещение — просто все зоны
+    html += `<div><div class="card-title" style="padding-left:4px">Зоны комплекса</div><div class="zones">`;
+    az.forEach(z => html += zoneRow(z));
+    html += `</div></div>`;
+  }
+
+  html += `<button class="btn ghost" onclick="switchMode()">${st.mode === "route" ? "🧭 Перейти в свободный режим" : "🗺️ Показать маршрут по расписанию"}</button>`;
 
   // Призы гостя
   if (st.wins.length) {
@@ -749,6 +993,36 @@ function renderGuest() {
   st.justCode = null;
   renderSim();
   renderCashier();
+  renderStaff();
+}
+
+function zoneRow(z) {
+  const done = st.checked.includes(z.code);
+  const tag = z.src === "staff"
+    ? `<span class="zone-tag staff">${z.role}</span>`
+    : `<span class="zone-tag sticker">наклейка</span>`;
+  const meta = done
+    ? "Отмечено" + (st.by[z.code] ? " · " + st.by[z.code] : "")
+    : z.src === "staff"
+      ? `${z.role} отметит вас после услуги`
+      : "Отсканируйте метку у входа в зону";
+  return `
+    <div class="zone ${done ? "done" : ""} ${st.justCode === z.code ? "just" : ""}">
+      <div class="zone-ico">${z.icon}</div>
+      <div class="zone-body">
+        <div class="zone-name">${z.name}${tag}</div>
+        <div class="zone-meta">${meta}</div>
+      </div>
+      <div class="zone-mark ${done ? "" : "pending"}">${done ? "✓" : "○"}</div>
+    </div>`;
+}
+
+function switchMode() {
+  if (st.mode === "route") { st.mode = "free"; }
+  else { st.mode = "route"; if (!st.route.length) buildRoute(); }
+  renderGuest();
+  toast("g-toast", st.mode === "route" ? "🗺️" : "🧭",
+    st.mode === "route" ? "Маршрут по расписанию. Отметки и призы те же." : "Свободный режим.");
 }
 
 function plural(n, one, few, many) {
@@ -773,6 +1047,10 @@ function simScan() {
     toast("g-toast", "⛔", "Эта зона выключена из маршрута в админке.", true);
     return;
   }
+  if (z.src === "staff") {
+    toast("g-toast", "👤", `${z.name}: наклейки здесь нет. ${z.role} отсканирует ваш код ${st.guestCode} после услуги.`, true);
+    return;
+  }
   if (st.checked.includes(z.code)) {
     toast("g-toast", "↺", `${z.name} уже отмечена — повторный скан за визит ничего не даёт.`, true);
     return;
@@ -782,18 +1060,27 @@ function simScan() {
     toast("g-toast", "⏳", `Слишком быстро. Следующая зона засчитается через ${left} ${plural(left, "минуту", "минуты", "минут")}.`, true);
     return;
   }
+  applyCheckin(z, "наклейка", "g-toast");
+}
 
+/* Общий зачёт зоны. Наклейку сканирует гость, услугу отмечает сотрудник —
+   правила и последствия одинаковые, различается только источник. */
+function applyCheckin(z, by, toastEl) {
+  const wasRouteDone = st.mode === "route" && routeDone();
   st.checked.push(z.code);
+  st.by[z.code] = by;
   st.lastAt = Date.now();
   st.justCode = z.code;
 
   const n = doneCount(), was = poolOf(n - 1), now = poolOf(n);
   renderGuest();
 
-  if (now && now !== was) {
-    toast("g-toast", "🎉", `${z.name} отмечена. Открыт пул «${POOL_NAME[now]}»!`);
+  if (st.mode === "route" && routeDone() && !wasRouteDone) {
+    toast(toastEl, "🏆", "Маршрут пройден полностью — открыт золотой пул!");
+  } else if (now && now !== was) {
+    toast(toastEl, "🎉", `${z.name} отмечена. Открыт пул «${POOL_NAME[now]}»!`);
   } else {
-    toast("g-toast", "✓", `${z.name} отмечена. Пройдено ${n} из ${activeZones().length}.`);
+    toast(toastEl, "✓", `${z.name} отмечена${by !== "наклейка" ? " · " + by : ""}. Пройдено ${n} из ${activeZones().length}.`);
   }
 }
 
@@ -809,9 +1096,10 @@ function simToggleVisit() {
     st.visitActive ? "Визит отмечен кассиром — путь открыт." : "Визит закрыт — отметки больше не принимаются.", !st.visitActive);
 }
 function simResetVisit() {
-  st.checked = []; st.lastAt = null; st.spun = false; st.visitActive = true;
+  st.checked = []; st.by = {}; st.lastAt = null; st.spun = false;
+  st.visitActive = true; st.mode = null; st.route = []; st.startedAt = Date.now();
   renderGuest();
-  toast("g-toast", "↻", "Новый визит. Прогресс обнулён, призы остались в карточке.");
+  toast("g-toast", "↻", "Новый визит. Гость снова выбирает режим, призы остались в карточке.");
 }
 
 function renderSim() {
@@ -825,6 +1113,7 @@ function renderSim() {
   }
   const n = doneCount(), p = poolOf(n), left = cooldownLeft();
   setText("sim-visit", st.visitActive ? "да" : "нет");
+  setText("sim-mode", st.mode === "route" ? "маршрут" : st.mode === "free" ? "свободный" : "не выбран");
   setText("sim-count", `${n} из ${activeZones().length}`);
   setText("sim-pool", p ? POOL_NAME[p] : "закрыт");
   setText("sim-cd", left > 0 ? `${left} мин` : "готово");
@@ -949,6 +1238,87 @@ function showPrize(w, pool) {
 
 function closeSheet() { document.getElementById("g-sheet-wrap").classList.remove("show"); }
 
+/* ══════════════ СОТРУДНИК ══════════════ */
+let staffZoneCode = null;
+
+function renderStaff() {
+  const el = document.getElementById("s-content");
+  if (!el) return;
+  const staffZones = activeZones().filter(z => z.src === "staff");
+  if (!staffZones.length) {
+    el.innerHTML = `<div class="card"><div class="note-box">Ни одна зона не отмечена как «выдаёт сотрудник». Включите такой тип в админке, во вкладке «Зоны маршрута».</div></div>`;
+    return;
+  }
+  if (!staffZones.some(z => z.code === staffZoneCode)) staffZoneCode = staffZones[0].code;
+  const cur = staffZones.find(z => z.code === staffZoneCode);
+  const done = st.checked.includes(cur.code);
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">Что подтверждаем</div>
+      <select id="s-zone" onchange="staffZoneCode=this.value;renderStaff()">
+        ${staffZones.map(z => `<option value="${z.code}" ${z.code === staffZoneCode ? "selected" : ""}>${z.icon} ${z.name} — ${z.role}</option>`).join("")}
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Код гостя</div>
+      <input type="text" id="s-code" placeholder="G-0000" maxlength="8"
+        style="text-transform:uppercase;font-size:21px;letter-spacing:4px;text-align:center;font-family:ui-monospace,monospace;padding:14px">
+      <div style="height:12px"></div>
+      <button class="btn" onclick="staffMark()" ${done ? "disabled" : ""}>
+        ${done ? "Уже отмечено за этот визит" : "Отметить услугу"}
+      </button>
+      <div class="locked-note">В приложении сотрудника здесь камера: наводит на код гостя — отметка ставится сама.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Сегодня отмечено</div>
+      <div class="zones">
+        ${Object.keys(st.by).filter(c => st.by[c] !== "наклейка").length
+          ? Object.keys(st.by).filter(c => st.by[c] !== "наклейка").map(c => {
+              const z = zones.find(x => x.code === c) || {};
+              return `<div class="win-row"><div class="win-ico">${z.icon || "•"}</div>
+                <div class="win-body"><div class="win-name">${z.name || c}</div>
+                <div class="win-meta">${st.by[c]} · гость ${st.guestCode}</div></div></div>`;
+            }).join("")
+          : `<div class="note-box info">Пока ничего. Отметьте услугу — она появится здесь и в приложении гостя.</div>`}
+      </div>
+    </div>`;
+
+  document.getElementById("s-header-sub").textContent = `${cur.role} · смена открыта`;
+  setText("s-guest-code", st.guestCode);
+  setText("s-staff-count", `${staffZones.length} из ${activeZones().length}`);
+}
+
+function staffMark() {
+  const cur = zones.find(z => z.code === staffZoneCode);
+  if (!cur) return;
+  const val = (document.getElementById("s-code").value || "").toUpperCase().trim();
+
+  if (val !== st.guestCode.toUpperCase()) {
+    toast("s-toast", "⛔", val ? "Такой гость не найден или визит уже закрыт." : "Отсканируйте код гостя.", true);
+    return;
+  }
+  if (!st.visitActive) {
+    toast("s-toast", "⛔", "У гостя нет активного визита — отметка не ставится.", true);
+    return;
+  }
+  if (st.mode === null) {
+    toast("s-toast", "⛔", "Гость ещё не открыл термальный путь в боте.", true);
+    return;
+  }
+  if (st.checked.includes(cur.code)) {
+    toast("s-toast", "↺", `${cur.name} уже отмечена за этот визит.`, true);
+    return;
+  }
+  // Паузу между зонами к отметкам сотрудника не применяем: рядом стоит живой человек,
+  // подделать нечего, а услуги идут одна за другой по расписанию.
+  applyCheckin(cur, cur.role, "s-toast");
+  document.getElementById("s-code").value = "";
+  renderStaff();
+}
+
 /* ══════════════ КАССИР ══════════════ */
 function renderCashier() {
   const c = document.getElementById("c-content");
@@ -1037,13 +1407,24 @@ function renderZones() {
   const t = document.getElementById("zones-table");
   if (!t) return;
   t.innerHTML = `
-    <tr><th style="width:56px">Знак</th><th>Название зоны</th><th style="width:150px">Код метки</th>
-        <th style="width:110px">В игре</th><th style="width:60px"></th></tr>` +
+    <tr><th style="width:56px">Знак</th><th>Название зоны</th><th style="width:190px">Как ставится отметка</th>
+        <th style="width:150px">Кто отмечает</th><th style="width:90px">В игре</th><th style="width:56px"></th></tr>` +
     zones.map((z, i) => `
       <tr>
         <td><input type="text" value="${z.icon}" style="width:46px;text-align:center" onchange="zones[${i}].icon=this.value;renderAll()"></td>
-        <td><input type="text" value="${z.name}" onchange="zones[${i}].name=this.value;renderAll()"></td>
-        <td><code style="font-size:11.5px;color:var(--sub)">zone_${z.code}</code></td>
+        <td>
+          <input type="text" value="${z.name}" onchange="zones[${i}].name=this.value;renderAll()">
+          <div style="font-size:10.5px;color:var(--sub);margin-top:3px"><code>zone_${z.code}</code></div>
+        </td>
+        <td>
+          <select onchange="setZoneSrc(${i}, this.value)">
+            <option value="sticker" ${z.src === "sticker" ? "selected" : ""}>Наклейка на месте</option>
+            <option value="staff"   ${z.src === "staff"   ? "selected" : ""}>Сотрудник после услуги</option>
+          </select>
+        </td>
+        <td>${z.src === "staff"
+          ? `<input type="text" value="${z.role}" placeholder="должность" onchange="zones[${i}].role=this.value;renderAll()">`
+          : `<span style="font-size:12px;color:var(--sub)">гость сам</span>`}</td>
         <td>
           <label class="switch">
             <input type="checkbox" ${z.on ? "checked" : ""} onchange="toggleZone(${i}, this.checked)">
@@ -1052,6 +1433,41 @@ function renderZones() {
         </td>
         <td><button class="btn danger sm" onclick="removeZone(${i})">✕</button></td>
       </tr>`).join("");
+}
+
+function setZoneSrc(i, v) {
+  zones[i].src = v;
+  if (v === "staff" && !zones[i].role) zones[i].role = "Сотрудник";
+  renderAll();
+}
+
+function renderSchedule() {
+  const t = document.getElementById("sched-table");
+  if (!t) return;
+  const opts = z => activeZones().map(x =>
+    `<option value="${x.code}" ${x.code === z ? "selected" : ""}>${x.icon} ${x.name}</option>`).join("");
+  t.innerHTML = `
+    <tr><th style="width:120px">Через, мин</th><th style="width:210px">Зона</th><th>Название сеанса</th>
+        <th style="width:110px">Длит., мин</th><th style="width:56px"></th></tr>` +
+    schedule.map((e, i) => `
+      <tr>
+        <td><input type="number" class="num" style="width:80px" value="${e.off}" onchange="schedule[${i}].off=+this.value||0;afterSchedChange()"></td>
+        <td><select onchange="schedule[${i}].zone=this.value;afterSchedChange()">${opts(e.zone)}</select></td>
+        <td><input type="text" value="${e.title}" onchange="schedule[${i}].title=this.value;afterSchedChange()"></td>
+        <td><input type="number" class="num" style="width:70px" value="${e.dur}" onchange="schedule[${i}].dur=+this.value||0;afterSchedChange()"></td>
+        <td><button class="btn danger sm" onclick="schedule.splice(${i},1);afterSchedChange()">✕</button></td>
+      </tr>`).join("");
+}
+
+function afterSchedChange() {
+  if (st.mode === "route") buildRoute();
+  renderAll();
+}
+function addSched() {
+  const z = activeZones().find(x => x.src === "staff") || activeZones()[0];
+  if (!z) return;
+  schedule.push({ off: 60, zone: z.code, title: "Новый сеанс", dur: 20 });
+  afterSchedChange();
 }
 
 function toggleZone(i, on) {
@@ -1071,7 +1487,7 @@ function addZone() {
   if (!name) { nameEl.focus(); return; }
   zones.push({
     code: "z" + Date.now().toString(36).slice(-4),
-    name, icon: (icoEl.value || "✨").trim(), on: true
+    name, icon: (icoEl.value || "✨").trim(), on: true, src: "sticker", role: ""
   });
   nameEl.value = ""; icoEl.value = "✨";
   renderAll();
@@ -1170,7 +1586,7 @@ function renderStats() {
 }
 
 function renderAll() {
-  renderGuest(); renderZones(); renderPrizes(); renderStats();
+  renderGuest(); renderZones(); renderSchedule(); renderPrizes(); renderStats();
 }
 
 /* ══════════════ НАВИГАЦИЯ ══════════════ */
