@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Baden — рабочее место (превью)</title>
+<style>
+  :root { --gold:#a8865f; --bg:#0f0f10; --card:#1a1a1c; --text:#f3efe9; --muted:#9a948c; --border:#2c2c30; --red:#e0574a; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #1c1a17 0%, var(--bg) 60%);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    min-height:100dvh; padding:24px;
+  }
+  .card {
+    width:100%; max-width:400px; background:var(--card); border:1px solid var(--border);
+    border-radius:20px; padding:34px 26px; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+  }
+  .badge {
+    width:56px; height:56px; margin:0 auto 18px; border-radius:16px;
+    background:linear-gradient(135deg,#c8a273,#8f6f4a); display:flex; align-items:center; justify-content:center;
+    font-size:28px; box-shadow:0 8px 24px rgba(168,134,95,.35);
+  }
+  h1 { font-size:20px; margin:0 0 4px; font-weight:650; letter-spacing:.2px; }
+  .sub { font-size:13.5px; color:var(--muted); margin:0 0 24px; }
+  .spinner {
+    width:30px; height:30px; margin:14px auto; border:3px solid var(--border);
+    border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #menu { display:none; }
+  .btn {
+    display:flex; align-items:center; gap:12px; width:100%; margin-top:12px; padding:16px 18px;
+    border:1px solid var(--border); border-radius:14px; background:#232326; color:var(--text);
+    font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; text-align:left;
+    transition:transform .06s ease, border-color .15s;
+  }
+  .btn:active { transform:scale(.98); }
+  .btn .ic { font-size:22px; flex:0 0 auto; }
+  .btn .tx { display:flex; flex-direction:column; }
+  .btn .tx small { font-weight:400; font-size:12px; color:var(--muted); margin-top:2px; }
+  .btn.primary { background:var(--gold); color:#1a1a1c; border-color:transparent; }
+  .btn.primary .tx small { color:rgba(26,26,28,.7); }
+  .err { display:none; color:var(--red); font-size:13.5px; margin-top:16px; line-height:1.5; }
+  .hint { margin-top:20px; font-size:11.5px; color:#6f6a62; line-height:1.5; }
+  .sep { margin:18px 0 6px; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+         color:#6f6a62; display:flex; align-items:center; gap:10px; }
+  .sep::after { content:''; flex:1; height:1px; background:var(--border); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">🛎️</div>
+    <h1>Рабочее место</h1>
+    <div class="sub" id="status">Подключаемся к серверу лояльности…</div>
+    <div class="spinner" id="spin"></div>
+
+    <div id="menu">
+      <a class="btn primary" id="go-cashier" href="#">
+        <span class="ic">🔑</span>
+        <span class="tx">Касса<small>Отметить визит по QR / телефону (нужен PIN)</small></span>
+      </a>
+      <a class="btn" id="go-register" href="#">
+        <span class="ic">➕</span>
+        <span class="tx">Регистрация гостя<small>Оформить нового гостя (в т.ч. без Telegram)</small></span>
+      </a>
+      <div class="sep">Термальный путь</div>
+      <a class="btn" id="go-staff" href="#">
+        <span class="ic">🌿</span>
+        <span class="tx">Отметить гостя<small>Пармастер, аниматор, СПА — по вашему PIN</small></span>
+      </a>
+      <a class="btn" id="go-prize" href="#">
+        <span class="ic">🎁</span>
+        <span class="tx">Погасить приз<small>Код из карточки гостя</small></span>
+      </a>
+    </div>
+
+    <div class="err" id="err"></div>
+    <div class="hint">Сохраните эту страницу в закладки — адрес постоянный,<br>даже если сервер переключится после обрыва связи.</div>
+  </div>
+<script>
+  // Постоянная точка входа для персонала. Реальный адрес сервера — эфемерный
+  // cloudflared-туннель из loyalty_url.json (обновляется loyalty-watchdog при
+  // ротации). Даём выбор: Касса (/cashier) или Регистрация гостя (/ — форма мини-аппа,
+  // работает в браузере, telegram_id=null, дедуп по телефону на бэкенде).
+  (async function () {
+    const statusEl = document.getElementById('status');
+    const spin = document.getElementById('spin');
+    const menu = document.getElementById('menu');
+    const err = document.getElementById('err');
+    const goCashier = document.getElementById('go-cashier');
+    const goRegister = document.getElementById('go-register');
+    function fail(msg) {
+      spin.style.display = 'none';
+      statusEl.textContent = 'Не удалось подключиться';
+      err.style.display = 'block';
+      err.textContent = msg;
+    }
+    try {
+      const res = await fetch('../../loyalty_url.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('json ' + res.status);
+      const data = await res.json();
+      const base = (data && data.url || '').trim().replace(/\/+$/, '');
+      if (!/^https:\/\/.+/.test(base)) throw new Error('empty url');
+      goCashier.href = base + '/cashier';
+      goRegister.href = base + '/';
+      // «Термальный путь» — те же правила: адрес берём из loyalty_url.json,
+      // поэтому ротация туннеля закладку сотрудника не ломает
+      document.getElementById('go-staff').href = base + '/staff';
+      document.getElementById('go-prize').href = base + '/staff';
+      spin.style.display = 'none';
+      statusEl.textContent = 'Выберите действие';
+      menu.style.display = 'block';
+    } catch (e) {
+      fail('Сервер лояльности сейчас недоступен. Обновите страницу через минуту или откройте позже.');
+    }
+  })();
+</script>
+</body>
+</html>
