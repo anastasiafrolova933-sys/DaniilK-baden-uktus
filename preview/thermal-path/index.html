@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Термальный путь — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:    #a8865f;
+    --gold-lt: rgba(168,134,95,.10);
+    --gold-dk: #8c6e4a;
+    --text:    #1a1814;
+    --sub:     #6a665f;
+    --bg:      #fafaf8;
+    --card:    #ffffff;
+    --border:  #e8e4db;
+    --green:   #16C784;
+    --red:     #EF4444;
+    --amber:   #E8A317;
+    --shadow:  0 2px 16px rgba(168,134,95,.10);
+    --radius:  18px;
+    --radius-sm: 12px;
+    --dark-grad: linear-gradient(135deg, #1a1814 0%, #2a2620 100%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #efece5; color: var(--text); min-height: 100vh;
+    background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(168,134,95,.13), transparent 70%);
+  }
+  .serif { font-family: "Cormorant", Georgia, serif; }
+
+  /* Шапка прототипа */
+  .proto-bar {
+    background: var(--dark-grad); color: #fff; padding: 13px 20px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    box-shadow: 0 4px 20px rgba(26,24,20,.25); position: sticky; top: 0; z-index: 100;
+  }
+  .proto-bar img { height: 28px; width: auto; opacity: .95; }
+  .proto-name { font-size: 15px; font-weight: 700; }
+  .proto-tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--gold); border: 1px solid rgba(168,134,95,.45);
+    padding: 3px 8px; border-radius: 20px;
+  }
+  .modes { margin-left: auto; display: flex; gap: 4px; background: rgba(255,255,255,.07);
+    padding: 4px; border-radius: 12px; }
+  .mode-btn {
+    background: transparent; border: none; color: rgba(255,255,255,.65);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 8px 15px;
+    border-radius: 9px; cursor: pointer; transition: all .15s;
+  }
+  .mode-btn:hover { color: #fff; }
+  .mode-btn.active { background: var(--gold); color: #fff; }
+
+  .stage { padding: 26px 20px 60px; display: flex; gap: 26px;
+    align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .pane { display: none; }
+  .pane.active { display: flex; gap: 26px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+
+  /* Телефонный фрейм */
+  .phone {
+    width: 390px; max-width: 100%; background: var(--bg);
+    border-radius: 34px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(26,24,20,.28), 0 0 0 10px #14120f;
+    display: flex; flex-direction: column; height: 790px; position: relative;
+  }
+  .phone-notch { height: 24px; background: var(--card); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; }
+  .phone-notch::after { content: ""; width: 100px; height: 5px; border-radius: 5px; background: #ddd8ce; }
+
+  .header {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 12px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  .header-logo {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; background: var(--gold-lt);
+    border: 1px solid rgba(168,134,95,.20); font-size: 17px;
+  }
+  .header-title { font-size: 16px; font-weight: 700; }
+  .header-sub { font-size: 11.5px; color: var(--sub); margin-top: 1px; }
+
+  .content { flex: 1; padding: 16px 14px 20px; display: flex; flex-direction: column;
+    gap: 14px; overflow-y: auto; }
+  .content > * { flex-shrink: 0; }   /* иначе блоки сжимаются вместо прокрутки */
+  .content::-webkit-scrollbar { width: 0; }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--sub); text-transform: uppercase;
+    letter-spacing: .5px; margin-bottom: 12px; }
+
+  /* Hero прогресса */
+  .hero {
+    background: var(--dark-grad); border-radius: var(--radius); padding: 22px 20px;
+    color: #fff; position: relative; overflow: hidden; box-shadow: 0 8px 28px rgba(26,24,20,.22);
+  }
+  .hero::before { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 50% 0%, rgba(168,134,95,.22), transparent 70%); }
+  .hero > * { position: relative; z-index: 1; }
+  .hero-top { display: flex; align-items: baseline; justify-content: space-between; }
+  .hero-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gold); }
+  .hero-count { font-size: 44px; font-weight: 600; line-height: 1; font-style: italic; }
+  .hero-count small { font-size: 19px; opacity: .5; font-style: normal; font-weight: 400; }
+  .hero-note { font-size: 12.5px; opacity: .72; margin-top: 8px; line-height: 1.45; }
+
+  .bar { height: 7px; background: rgba(255,255,255,.13); border-radius: 4px; overflow: hidden; margin-top: 14px; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dk), #d9b98a);
+    border-radius: 4px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .milestones { display: flex; justify-content: space-between; margin-top: 9px; font-size: 10.5px; }
+  .ms { opacity: .42; transition: opacity .3s; }
+  .ms.reached { opacity: 1; color: var(--gold); font-weight: 700; }
+
+  /* Зоны */
+  .zones { display: flex; flex-direction: column; gap: 8px; }
+  .zone {
+    display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    transition: all .25s;
+  }
+  .zone.done { border-color: rgba(22,199,132,.4); background: rgba(22,199,132,.05); }
+  .zone.just { animation: pop .55s ease; }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); box-shadow: 0 6px 22px rgba(168,134,95,.32); }
+    100% { transform: scale(1); }
+  }
+  .zone-ico { width: 38px; height: 38px; border-radius: 10px; background: var(--gold-lt);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .zone.done .zone-ico { background: rgba(22,199,132,.13); }
+  .zone-body { flex: 1; min-width: 0; }
+  .zone-name { font-size: 14px; font-weight: 600; }
+  .zone-meta { font-size: 11.5px; color: var(--sub); margin-top: 1px; }
+  .zone-mark { font-size: 18px; color: var(--green); flex-shrink: 0; }
+  .zone-mark.pending { color: #d5d0c6; font-size: 15px; }
+
+  /* Кнопки */
+  .btn {
+    width: 100%; padding: 15px; border: none; border-radius: 14px; background: var(--gold);
+    color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn:hover:not(:disabled) { background: var(--gold-dk); }
+  .btn:active:not(:disabled) { transform: scale(.985); }
+  .btn:disabled { background: #ddd8ce; color: #a29d93; cursor: not-allowed; }
+  .btn.dark { background: var(--dark-grad); }
+  .btn.dark:hover:not(:disabled) { filter: brightness(1.3); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn.ghost:hover:not(:disabled) { background: var(--gold-lt); border-color: var(--gold); }
+  .btn.sm { padding: 9px 13px; font-size: 13px; width: auto; border-radius: 10px; }
+  .btn.danger { background: transparent; border: 1px solid rgba(239,68,68,.35); color: var(--red); }
+  .btn.danger:hover:not(:disabled) { background: rgba(239,68,68,.07); }
+
+  .locked-note { font-size: 12px; color: var(--sub); text-align: center; margin-top: 9px; line-height: 1.5; }
+
+  /* Тост */
+  .toast {
+    position: absolute; left: 14px; right: 14px; bottom: 18px; z-index: 60;
+    background: var(--dark-grad); color: #fff; padding: 14px 16px; border-radius: 14px;
+    font-size: 13.5px; box-shadow: 0 10px 30px rgba(26,24,20,.35);
+    display: flex; align-items: center; gap: 10px; line-height: 1.4;
+    opacity: 0; transform: translateY(14px); pointer-events: none; transition: all .3s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { background: linear-gradient(135deg,#7a2f2f,#5c2020); }
+  .toast .t-ico { font-size: 19px; flex-shrink: 0; }
+
+  /* Модалка внутри телефона */
+  .sheet-wrap {
+    position: absolute; inset: 0; z-index: 70; background: rgba(20,18,15,.55);
+    display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .sheet-wrap.show { opacity: 1; pointer-events: auto; }
+  .sheet {
+    width: 100%; background: var(--bg); border-radius: 24px 24px 0 0; padding: 20px 16px 24px;
+    max-height: 92%; overflow-y: auto; transform: translateY(30px); transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .sheet-wrap.show .sheet { transform: translateY(0); }
+  .sheet::-webkit-scrollbar { width: 0; }
+  .sheet-grip { width: 40px; height: 4px; background: #ddd8ce; border-radius: 4px; margin: 0 auto 16px; }
+  .sheet-title { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+  .sheet-sub { font-size: 13px; color: var(--sub); text-align: center; margin-bottom: 18px; line-height: 1.45; }
+
+  /* Колесо */
+  .wheel-wrap { position: relative; width: 250px; height: 250px; margin: 0 auto 18px; }
+  .wheel {
+    width: 100%; height: 100%; border-radius: 50%;
+    box-shadow: 0 8px 30px rgba(26,24,20,.28), 0 0 0 7px #1a1814, 0 0 0 9px var(--gold);
+    transition: transform 4.4s cubic-bezier(.16,.84,.28,1);
+  }
+  .wheel-pin {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent;
+    border-top: 20px solid var(--gold); z-index: 3;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.35));
+  }
+  .wheel-hub {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 54px; height: 54px; border-radius: 50%; background: var(--dark-grad);
+    border: 2px solid var(--gold); z-index: 2; display: flex; align-items: center;
+    justify-content: center; color: var(--gold); font-size: 21px;
+  }
+
+  /* Приз */
+  .prize-card {
+    background: var(--dark-grad); border-radius: var(--radius); padding: 24px 20px; color: #fff;
+    text-align: center; position: relative; overflow: hidden; box-shadow: 0 8px 28px rgba(26,24,20,.25);
+  }
+  .prize-card::before { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(168,134,95,.3), transparent 70%); }
+  .prize-card > * { position: relative; z-index: 1; }
+  .prize-ico { font-size: 46px; margin-bottom: 8px; }
+  .prize-name { font-size: 21px; font-weight: 600; font-style: italic; margin-bottom: 6px; }
+  .prize-desc { font-size: 12.5px; opacity: .72; line-height: 1.45; margin-bottom: 16px; }
+  .prize-code {
+    background: rgba(255,255,255,.09); border: 1px dashed rgba(168,134,95,.5);
+    border-radius: 12px; padding: 12px; margin-bottom: 8px;
+  }
+  .prize-code-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--gold); margin-bottom: 4px; }
+  .prize-code-val { font-size: 26px; font-weight: 700; letter-spacing: 4px; font-family: ui-monospace, monospace; }
+  .prize-ttl { font-size: 11.5px; opacity: .6; }
+
+  .win-row {
+    display: flex; align-items: center; gap: 11px; padding: 11px 13px; background: var(--card);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+  }
+  .win-row.used { opacity: .5; }
+  .win-ico { width: 36px; height: 36px; border-radius: 9px; background: var(--gold-lt);
+    display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .win-body { flex: 1; min-width: 0; }
+  .win-name { font-size: 13.5px; font-weight: 600; }
+  .win-meta { font-size: 11px; color: var(--sub); margin-top: 1px; }
+  .win-code { font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700;
+    color: var(--gold); letter-spacing: 1px; }
+
+  /* Панель симуляции */
+  .sim {
+    width: 330px; background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 20px; border: 1px solid var(--border);
+  }
+  .sim h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--sub);
+    margin-bottom: 6px; }
+  .sim p.hint { font-size: 12.5px; color: var(--sub); line-height: 1.5; margin-bottom: 16px; }
+  .sim-block { margin-bottom: 18px; }
+  .sim-label { font-size: 11.5px; font-weight: 600; color: var(--text); margin-bottom: 7px; display: block; }
+  select, input[type=text], input[type=number] {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    font: inherit; font-size: 13.5px; background: var(--bg); color: var(--text); outline: none;
+  }
+  select:focus, input:focus { border-color: var(--gold); }
+  .sim-row { display: flex; gap: 8px; }
+  .sim-row > * { flex: 1; }
+  .kv { display: flex; justify-content: space-between; font-size: 12.5px; padding: 6px 0;
+    border-bottom: 1px dashed var(--border); }
+  .kv:last-child { border-bottom: none; }
+  .kv span:last-child { font-weight: 600; }
+
+  /* Админ */
+  .admin { width: 100%; max-width: 1120px; }
+  .tabs { display: flex; gap: 4px; background: var(--card); padding: 5px; border-radius: 14px;
+    margin-bottom: 18px; box-shadow: var(--shadow); flex-wrap: wrap; }
+  .tab { flex: 1; min-width: 130px; background: transparent; border: none; font: inherit; font-size: 13.5px;
+    font-weight: 600; color: var(--sub); padding: 11px; border-radius: 10px; cursor: pointer; transition: all .15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { background: var(--gold); color: #fff; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+    color: var(--sub); padding: 9px 8px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  td { padding: 9px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td input[type=number], td input[type=text] { padding: 6px 8px; font-size: 12.5px; }
+  .w-in { width: 62px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  #prizes-table td:first-child { min-width: 215px; }
+  #zones-table td:nth-child(2) { min-width: 190px; }
+
+  .chip { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 3px 9px;
+    border-radius: 20px; letter-spacing: .3px; }
+  .chip.bronze { background: rgba(176,124,84,.14); color: #96613a; }
+  .chip.silver { background: rgba(128,128,128,.14); color: #66665f; }
+  .chip.gold   { background: rgba(168,134,95,.18); color: var(--gold-dk); }
+  .chip.on  { background: rgba(22,199,132,.14); color: #0f8f5e; }
+  .chip.off { background: rgba(0,0,0,.06); color: #8a857c; }
+
+  .switch { position: relative; width: 40px; height: 23px; flex-shrink: 0; cursor: pointer; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: #ddd8ce; border-radius: 23px; transition: .2s; }
+  .slider::before { content: ""; position: absolute; height: 17px; width: 17px; left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: .2s; }
+  .switch input:checked + .slider { background: var(--green); }
+  .switch input:checked + .slider::before { transform: translateX(17px); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  @media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  .stat { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--sub); }
+  .stat-val { font-size: 32px; font-weight: 600; font-style: italic; color: var(--gold-dk); margin-top: 4px; line-height: 1; }
+  .stat-note { font-size: 11.5px; color: var(--sub); margin-top: 6px; line-height: 1.4; }
+
+  .heat-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; }
+  .heat-name { width: 165px; font-size: 13px; flex-shrink: 0; }
+  .heat-bar { flex: 1; height: 26px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+  .heat-fill { height: 100%; border-radius: 7px; transition: width .6s; }
+  .heat-val { width: 70px; text-align: right; font-size: 12.5px; font-weight: 600;
+    font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  .funnel-step { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .funnel-bar { height: 34px; background: linear-gradient(90deg, var(--gold-dk), #d9b98a);
+    border-radius: 8px; display: flex; align-items: center; padding: 0 12px; color: #fff;
+    font-size: 12.5px; font-weight: 600; min-width: 90px; transition: width .6s; }
+  .funnel-label { width: 195px; font-size: 13px; flex-shrink: 0; }
+
+  .note-box { background: rgba(232,163,23,.08); border: 1px solid rgba(232,163,23,.3);
+    border-radius: var(--radius-sm); padding: 13px 15px; font-size: 12.5px; line-height: 1.55; color: #7a5a12; }
+  .note-box b { color: #5c430c; }
+  .note-box.info { background: var(--gold-lt); border-color: rgba(168,134,95,.3); color: #6b5537; }
+  .note-box.info b { color: var(--gold-dk); }
+
+  h2.sec { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  p.sec-sub { font-size: 13px; color: var(--sub); margin-bottom: 16px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="proto-bar">
+  <img src="https://anastasiafrolova933-sys.github.io/DaniilK-baden-uktus/logo.png" alt="Baden">
+  <div>
+    <div class="proto-name">Термальный путь</div>
+  </div>
+  <span class="proto-tag">прототип · тестовые данные</span>
+  <div class="modes">
+    <button class="mode-btn active" data-mode="guest">Гость</button>
+    <button class="mode-btn" data-mode="cashier">Кассир</button>
+    <button class="mode-btn" data-mode="admin">Админ</button>
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- ══════════════ ГОСТЬ ══════════════ -->
+  <div class="pane active" id="pane-guest">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="header">
+        <div class="header-logo">🌿</div>
+        <div>
+          <div class="header-title">Термальный путь</div>
+          <div class="header-sub" id="g-header-sub">Визит открыт · Daniil K.</div>
+        </div>
+      </div>
+      <div class="content" id="g-content"></div>
+      <div class="toast" id="g-toast"><span class="t-ico"></span><span class="t-text"></span></div>
+      <div class="sheet-wrap" id="g-sheet-wrap">
+        <div class="sheet" id="g-sheet"></div>
+      </div>
+    </div>
+
+    <div class="sim">
+      <h3>Симулятор визита</h3>
+      <p class="hint">В жизни отметка появляется, когда гость сканирует наклейку у зоны — телефон открывает мини-апп сразу с нужной зоной. Здесь скан заменён кнопкой.</p>
+
+      <div class="sim-block">
+        <label class="sim-label">Отсканировать метку зоны</label>
+        <select id="sim-zone"></select>
+        <div style="height:8px"></div>
+        <button class="btn" onclick="simScan()">📷 Сканировать</button>
+      </div>
+
+      <div class="sim-block">
+        <label class="sim-label">Состояние визита</label>
+        <div class="kv"><span>Визит отмечен кассиром</span><span id="sim-visit">да</span></div>
+        <div class="kv"><span>Зон пройдено</span><span id="sim-count">0</span></div>
+        <div class="kv"><span>Доступный пул</span><span id="sim-pool">—</span></div>
+        <div class="kv"><span>До следующей отметки</span><span id="sim-cd">готово</span></div>
+      </div>
+
+      <div class="sim-block">
+        <label class="sim-label">Проверить защиту</label>
+        <div class="sim-row">
+          <button class="btn ghost sm" onclick="simSkipCooldown()">Промотать паузу</button>
+          <button class="btn ghost sm" onclick="simToggleVisit()">Визит вкл/выкл</button>
+        </div>
+        <div style="height:8px"></div>
+        <button class="btn ghost sm" style="width:100%" onclick="simResetVisit()">Сбросить визит заново</button>
+      </div>
+
+      <div class="note-box info">
+        <b>Что здесь проверяется.</b> Попробуй отсканировать две зоны подряд без паузы или выключить визит — приложение откажет ровно так, как откажет сервер.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ КАССИР ══════════════ -->
+  <div class="pane" id="pane-cashier">
+    <div class="phone" style="height:640px">
+      <div class="phone-notch"></div>
+      <div class="header">
+        <div class="header-logo">🎫</div>
+        <div>
+          <div class="header-title">Погашение приза</div>
+          <div class="header-sub">Планшет кассира · смена открыта</div>
+        </div>
+      </div>
+      <div class="content" id="c-content"></div>
+      <div class="toast" id="c-toast"><span class="t-ico"></span><span class="t-text"></span></div>
+    </div>
+
+    <div class="sim">
+      <h3>Как это работает на стойке</h3>
+      <p class="hint">Гость показывает код из карточки лояльности. Кассир вводит его или сканирует QR — приз гасится один раз и больше не сработает.</p>
+      <div class="sim-block">
+        <label class="sim-label">Активные коды из режима «Гость»</label>
+        <div id="c-codes-list" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+      <div class="note-box">
+        <b>Важно.</b> Приз гасит тот, кто его выдаёт: бар — напитки и десерты, стойка — вход и СПА. Иначе гость обойдёт всех по очереди с одним кодом.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ АДМИН ══════════════ -->
+  <div class="pane" id="pane-admin">
+    <div class="admin">
+      <div class="tabs">
+        <button class="tab active" data-tab="zones">Зоны маршрута</button>
+        <button class="tab" data-tab="prizes">Призы и шансы</button>
+        <button class="tab" data-tab="rules">Правила игры</button>
+        <button class="tab" data-tab="stats">Что покажут данные</button>
+      </div>
+
+      <div class="tab-pane active" id="tab-zones">
+        <div class="card">
+          <h2 class="sec">Зоны маршрута</h2>
+          <p class="sec-sub">Список настраивается здесь — добавить зону или убрать её из игры можно без правки кода. Выключенная зона перестаёт учитываться в прогрессе, наклейка просто не сработает.</p>
+          <table id="zones-table"></table>
+          <div style="height:16px"></div>
+          <div class="sim-row" style="max-width:560px">
+            <input type="text" id="new-zone-name" placeholder="Название новой зоны">
+            <input type="text" id="new-zone-icon" placeholder="Иконка" style="max-width:90px" value="✨">
+            <button class="btn sm" onclick="addZone()" style="flex:0 0 auto">Добавить</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-prizes">
+        <div class="card">
+          <h2 class="sec">Призы и вероятности</h2>
+          <p class="sec-sub">Вес — это относительный шанс внутри пула. Ноль означает, что в этом пуле приз не выпадает. Проценты и стоимость пересчитываются сразу, поэтому подбирать бюджет можно прямо здесь.</p>
+          <div style="overflow-x:auto"><table id="prizes-table"></table></div>
+          <div style="height:18px"></div>
+          <div class="grid3" id="pool-summary"></div>
+          <div style="height:16px"></div>
+          <div class="note-box" id="ev-note"></div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-rules">
+        <div class="grid2">
+          <div class="card">
+            <h2 class="sec">Правила и защита</h2>
+            <p class="sec-sub">Эти четыре настройки решают, будет игра честной или превратится в раздачу призов из раздевалки.</p>
+            <div class="sim-block">
+              <label class="sim-label">Пауза между отметками, минут</label>
+              <input type="number" id="r-cooldown" min="0" max="60" value="10" onchange="onRuleChange()">
+              <p class="hint" style="margin-top:6px">Мешает пробежать весь маршрут за минуту по чужим фотографиям QR. Заодно растягивает визит — ровно то, ради чего игра и затевается.</p>
+            </div>
+            <div class="sim-block">
+              <label class="sim-label">Зон для доступа к барабану</label>
+              <input type="number" id="r-minzones" min="1" max="10" value="3" onchange="onRuleChange()">
+              <p class="hint" style="margin-top:6px">Порог входа. Ниже трёх игра теряет смысл, выше пяти — гости перестают доходить до конца.</p>
+            </div>
+            <div class="sim-block">
+              <label class="sim-label">Зон для серебряного пула</label>
+              <input type="number" id="r-silver" min="2" max="12" value="5" onchange="onRuleChange()">
+            </div>
+            <div class="sim-block">
+              <label class="sim-label">Крупных призов в день, максимум</label>
+              <input type="number" id="r-daycap" min="0" max="50" value="3" onchange="onRuleChange()">
+              <p class="hint" style="margin-top:6px">Стоп-кран на случай наплыва: когда лимит выбран, дорогие призы временно уходят из барабана, а гость получает средний.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="sec">Четыре рубежа против накрутки</h2>
+            <p class="sec-sub">Ни один из них не требует дорогого железа — все проверки живут на сервере.</p>
+            <div class="zones">
+              <div class="zone done">
+                <div class="zone-ico">1</div>
+                <div class="zone-body">
+                  <div class="zone-name">Только активный визит</div>
+                  <div class="zone-meta">Играет лишь тот, кого кассир отметил на входе сегодня. Механизм уже работает — таблица visits.</div>
+                </div>
+              </div>
+              <div class="zone done">
+                <div class="zone-ico">2</div>
+                <div class="zone-body">
+                  <div class="zone-name">Пауза между зонами</div>
+                  <div class="zone-meta">Маршрут нельзя пройти быстрее, чем его реально проходят ногами.</div>
+                </div>
+              </div>
+              <div class="zone done">
+                <div class="zone-ico">3</div>
+                <div class="zone-body">
+                  <div class="zone-name">Метка живёт час</div>
+                  <div class="zone-meta">Наклейка бумажная, но сервер принимает её только в текущем окне — пересланное вчера фото не сработает.</div>
+                </div>
+              </div>
+              <div class="zone done">
+                <div class="zone-ico">4</div>
+                <div class="zone-body">
+                  <div class="zone-name">Одна зона — один зачёт</div>
+                  <div class="zone-meta">Повторный скан той же зоны за визит ничего не даёт.</div>
+                </div>
+              </div>
+            </div>
+            <div style="height:14px"></div>
+            <div class="note-box">
+              <b>Нулевой шаг до запуска.</b> Сейчас мини-апп узнаёт гостя через <code>initDataUnsafe</code> без проверки подписи Telegram. Пока на кону только показ своей скидки — это терпимо. Как только появляются призы, подменить чужой ID становится выгодно, поэтому проверку подписи нужно включить до первой наклейки.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tab-stats">
+        <div class="grid3" style="margin-bottom:18px">
+          <div class="stat">
+            <div class="stat-label">Тепловая карта зон</div>
+            <div class="stat-val">впервые</div>
+            <div class="stat-note">Сегодня нет данных о том, какими зонами гости реально пользуются. Отметки дадут их с первого дня — даже до запуска призов.</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Средняя длительность визита</div>
+            <div class="stat-val">+?</div>
+            <div class="stat-note">Первая и последняя отметка дают длительность. Если игра работает, разница между игравшими и остальными будет видна за две недели.</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Возврат гостя</div>
+            <div class="stat-val">30 дн</div>
+            <div class="stat-note">Приз со сроком — это повод вернуться. Доля вернувшихся с призом против обычных и есть ответ, окупилась ли затея.</div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <h2 class="sec">Тепловая карта зон</h2>
+            <p class="sec-sub">Так это будет выглядеть. Цифры ниже — выдуманные, для формы отчёта.</p>
+            <div id="heatmap"></div>
+            <div style="height:12px"></div>
+            <div class="note-box info">
+              <b>Ради этого стоит делать даже без призов.</b> Соляная комната в примере собирает втрое меньше отметок, чем парная — такой факт меняет решения по ремонту, персоналу и расписанию.
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="sec">Воронка участия</h2>
+            <p class="sec-sub">Где гости отваливаются — там и надо чинить механику или навигацию по комплексу.</p>
+            <div id="funnel"></div>
+            <div style="height:12px"></div>
+            <div class="note-box info">
+              <b>Как читать.</b> Провал между «3 зоны» и «5 зон» означает, что порог серебра слишком высок или зоны далеко друг от друга. Это настраивается во вкладке «Правила игры» без переписывания кода.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   ДАННЫЕ. Всё, что ниже, в бою живёт в таблицах SQLite:
+   zones / prizes / zone_checkins / game_rounds / prize_wins.
+   ══════════════════════════════════════════════════════════════ */
+
+let zones = [
+  { code: "parnaya",  name: "Русская парная",     icon: "🔥", on: true  },
+  { code: "sauna",    name: "Финская сауна",      icon: "🪵", on: true  },
+  { code: "hamam",    name: "Хамам",              icon: "💨", on: true  },
+  { code: "salt",     name: "Соляная комната",    icon: "🧂", on: true  },
+  { code: "pool",     name: "Основной бассейн",   icon: "🏊", on: true  },
+  { code: "jacuzzi",  name: "Джакузи",            icon: "🫧", on: true  },
+  { code: "kupel",    name: "Купель",             icon: "🧊", on: true  },
+  { code: "bar",      name: "Термальный бар",     icon: "🍵", on: false },
+  { code: "spa",      name: "СПА-зона",           icon: "💆", on: false }
+];
+
+let prizes = [
+  { id:1,  name:"Травяной чай",            icon:"🍵", cat:"Кафе",   cost:60,   w:{b:30,s:18,g:8}  },
+  { id:2,  name:"Домашний лимонад",        icon:"🥤", cat:"Кафе",   cost:90,   w:{b:22,s:16,g:8}  },
+  { id:3,  name:"Десерт дня",              icon:"🍰", cat:"Кафе",   cost:160,  w:{b:12,s:14,g:10} },
+  { id:4,  name:"Пицца на компанию",       icon:"🍕", cat:"Кафе",   cost:350,  w:{b:0, s:6, g:8}  },
+  { id:5,  name:"Скидка 10% на визит",     icon:"🎟", cat:"Визиты", cost:0,    w:{b:26,s:16,g:8}  },
+  { id:6,  name:"−20% на СПА в непик",     icon:"💧", cat:"СПА",    cost:0,    w:{b:10,s:14,g:12} },
+  { id:7,  name:"Массаж 20 минут",         icon:"🤲", cat:"СПА",    cost:500,  w:{b:0, s:8, g:14} },
+  { id:8,  name:"Мыло-скраб ручной работы",icon:"🧼", cat:"Мерч",   cost:130,  w:{b:0, s:8, g:10} },
+  { id:9,  name:"Шапка для сауны",         icon:"🎩", cat:"Мерч",   cost:420,  w:{b:0, s:0, g:12} },
+  { id:10, name:"Банное полотенце",        icon:"🧻", cat:"Мерч",   cost:700,  w:{b:0, s:0, g:6}  },
+  { id:11, name:"Бесплатный будний вход",  icon:"🎫", cat:"Визиты", cost:1100, w:{b:0, s:0, g:4}  }
+];
+
+let rules = { cooldown: 10, minZones: 3, silverZones: 5, dayCap: 3 };
+
+/* Состояние текущего визита гостя */
+let st = {
+  visitActive: true,
+  checked: [],          // коды отмеченных зон
+  lastAt: null,         // время последней отметки (мс)
+  spun: false,          // барабан за этот визит уже крутили
+  wins: [],             // выигранные призы
+  justCode: null,
+  spinning: false
+};
+
+const BIG_COST = 400;   // приз дороже — «крупный», попадает под дневной лимит
+
+/* ── помощники ─────────────────────────────────────────────── */
+const activeZones = () => zones.filter(z => z.on);
+const doneCount   = () => st.checked.length;
+
+function poolOf(n) {
+  if (n >= activeZones().length && activeZones().length > 0) return "g";
+  if (n >= rules.silverZones) return "s";
+  if (n >= rules.minZones)    return "b";
+  return null;
+}
+const POOL_NAME = { b: "Бронза", s: "Серебро", g: "Золото" };
+const POOL_CLS  = { b: "bronze", s: "silver", g: "gold" };
+
+function poolPrizes(p) { return prizes.filter(x => x.w[p] > 0); }
+function poolTotal(p)  { return poolPrizes(p).reduce((a, x) => a + x.w[p], 0); }
+function poolEV(p) {
+  const tot = poolTotal(p);
+  if (!tot) return 0;
+  return poolPrizes(p).reduce((a, x) => a + x.w[p] * x.cost, 0) / tot;
+}
+
+function cooldownLeft() {
+  if (!st.lastAt) return 0;
+  const passed = (Date.now() - st.lastAt) / 60000;
+  return Math.max(0, Math.ceil(rules.cooldown - passed));
+}
+
+function code6() {
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 6 }, () => A[Math.floor(Math.random() * A.length)]).join("");
+}
+
+function toast(el, icon, text, isErr) {
+  const t = document.getElementById(el);
+  t.querySelector(".t-ico").textContent = icon;
+  t.querySelector(".t-text").textContent = text;
+  t.classList.toggle("err", !!isErr);
+  t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove("show"), 3400);
+}
+
+/* ══════════════ ЭКРАН ГОСТЯ ══════════════ */
+function renderGuest() {
+  const az = activeZones(), n = doneCount(), total = az.length;
+  const pool = poolOf(n);
+  const pct = total ? Math.round(n / total * 100) : 0;
+
+  const nextHint = !st.visitActive
+    ? "Отметьте визит на стойке — путь откроется автоматически."
+    : pool === null
+      ? `Ещё ${rules.minZones - n} ${plural(rules.minZones - n, "зона", "зоны", "зон")} — и откроется барабан.`
+      : pool === "b"
+        ? `Барабан открыт. Пройдите ${rules.silverZones - n} ${plural(rules.silverZones - n, "зону", "зоны", "зон")} до серебряного пула — призы станут заметно интереснее.`
+        : pool === "s"
+          ? `Серебро ваше. Осталось ${total - n} ${plural(total - n, "зона", "зоны", "зон")} до золота.`
+          : "Весь комплекс пройден. Открыт золотой пул — лучшие призы.";
+
+  let html = `
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-label">Пройдено зон</div>
+          <div class="hero-count serif">${n}<small> / ${total}</small></div>
+        </div>
+        ${pool ? `<span class="chip ${POOL_CLS[pool]}">${POOL_NAME[pool]}</span>` : ""}
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="milestones">
+        <span class="ms ${n >= rules.minZones ? "reached" : ""}">${rules.minZones} — барабан</span>
+        <span class="ms ${n >= rules.silverZones ? "reached" : ""}">${rules.silverZones} — серебро</span>
+        <span class="ms ${n >= total && total ? "reached" : ""}">${total} — золото</span>
+      </div>
+      <div class="hero-note">${nextHint}</div>
+    </div>`;
+
+  // Барабан
+  if (pool && !st.spun) {
+    html += `
+      <button class="btn dark" onclick="openWheel()">🎡 Крутить барабан · ${POOL_NAME[pool]}</button>
+      <div class="locked-note">Один розыгрыш за визит. Чем больше зон — тем щедрее пул.</div>`;
+  } else if (!pool) {
+    html += `
+      <button class="btn" disabled>🎡 Барабан закрыт</button>
+      <div class="locked-note">Отметьтесь ещё в ${rules.minZones - n} ${plural(rules.minZones - n, "зоне", "зонах", "зонах")}, чтобы открыть розыгрыш.</div>`;
+  }
+
+  // Зоны
+  html += `<div><div class="card-title" style="padding-left:4px">Зоны комплекса</div><div class="zones">`;
+  az.forEach(z => {
+    const done = st.checked.includes(z.code);
+    html += `
+      <div class="zone ${done ? "done" : ""} ${st.justCode === z.code ? "just" : ""}">
+        <div class="zone-ico">${z.icon}</div>
+        <div class="zone-body">
+          <div class="zone-name">${z.name}</div>
+          <div class="zone-meta">${done ? "Отмечено" : "Отсканируйте метку у входа в зону"}</div>
+        </div>
+        <div class="zone-mark ${done ? "" : "pending"}">${done ? "✓" : "○"}</div>
+      </div>`;
+  });
+  html += `</div></div>`;
+
+  // Призы гостя
+  if (st.wins.length) {
+    html += `<div><div class="card-title" style="padding-left:4px">Мои призы</div><div class="zones">`;
+    st.wins.forEach(w => {
+      html += `
+        <div class="win-row ${w.used ? "used" : ""}">
+          <div class="win-ico">${w.icon}</div>
+          <div class="win-body">
+            <div class="win-name">${w.name}</div>
+            <div class="win-meta">${w.used ? "Погашен" : "Действует 30 дней · покажите код"}</div>
+          </div>
+          <div class="win-code">${w.used ? "—" : w.code}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  document.getElementById("g-content").innerHTML = html;
+  document.getElementById("g-header-sub").textContent =
+    st.visitActive ? "Визит открыт · Daniil K." : "Визит не отмечен · Daniil K.";
+
+  st.justCode = null;
+  renderSim();
+  renderCashier();
+}
+
+function plural(n, one, few, many) {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5)   return few;
+  if (b === 1)          return one;
+  return many;
+}
+
+/* ══════════════ СКАН ЗОНЫ ══════════════ */
+function simScan() {
+  const codeSel = document.getElementById("sim-zone").value;
+  const z = zones.find(x => x.code === codeSel);
+  if (!z) return;
+
+  if (!st.visitActive) {
+    toast("g-toast", "⛔", "Нет активного визита. Игра доступна только гостям, которых отметил кассир на входе.", true);
+    return;
+  }
+  if (!z.on) {
+    toast("g-toast", "⛔", "Эта зона выключена из маршрута в админке.", true);
+    return;
+  }
+  if (st.checked.includes(z.code)) {
+    toast("g-toast", "↺", `${z.name} уже отмечена — повторный скан за визит ничего не даёт.`, true);
+    return;
+  }
+  const left = cooldownLeft();
+  if (left > 0) {
+    toast("g-toast", "⏳", `Слишком быстро. Следующая зона засчитается через ${left} ${plural(left, "минуту", "минуты", "минут")}.`, true);
+    return;
+  }
+
+  st.checked.push(z.code);
+  st.lastAt = Date.now();
+  st.justCode = z.code;
+
+  const n = doneCount(), was = poolOf(n - 1), now = poolOf(n);
+  renderGuest();
+
+  if (now && now !== was) {
+    toast("g-toast", "🎉", `${z.name} отмечена. Открыт пул «${POOL_NAME[now]}»!`);
+  } else {
+    toast("g-toast", "✓", `${z.name} отмечена. Пройдено ${n} из ${activeZones().length}.`);
+  }
+}
+
+function simSkipCooldown() {
+  st.lastAt = null;
+  renderSim();
+  toast("g-toast", "⏱", "Пауза промотана — можно сканировать следующую зону.");
+}
+function simToggleVisit() {
+  st.visitActive = !st.visitActive;
+  renderGuest();
+  toast("g-toast", st.visitActive ? "✓" : "⛔",
+    st.visitActive ? "Визит отмечен кассиром — путь открыт." : "Визит закрыт — отметки больше не принимаются.", !st.visitActive);
+}
+function simResetVisit() {
+  st.checked = []; st.lastAt = null; st.spun = false; st.visitActive = true;
+  renderGuest();
+  toast("g-toast", "↻", "Новый визит. Прогресс обнулён, призы остались в карточке.");
+}
+
+function renderSim() {
+  const sel = document.getElementById("sim-zone");
+  if (sel) {
+    const cur = sel.value;
+    sel.innerHTML = zones.map(z =>
+      `<option value="${z.code}">${z.icon} ${z.name}${z.on ? "" : " — выключена"}${st.checked.includes(z.code) ? " ✓" : ""}</option>`
+    ).join("");
+    if (cur) sel.value = cur;
+  }
+  const n = doneCount(), p = poolOf(n), left = cooldownLeft();
+  setText("sim-visit", st.visitActive ? "да" : "нет");
+  setText("sim-count", `${n} из ${activeZones().length}`);
+  setText("sim-pool", p ? POOL_NAME[p] : "закрыт");
+  setText("sim-cd", left > 0 ? `${left} мин` : "готово");
+}
+function setText(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
+
+/* ══════════════ БАРАБАН ══════════════ */
+const SECTOR_COLORS = ["#a8865f","#2a2620","#c2a179","#3a352c","#8c6e4a","#1a1814","#d9b98a","#4a443a","#b5946c","#252119"];
+
+function bigWonToday() { return st.wins.filter(w => w.big).length; }
+
+function openWheel() {
+  const pool = poolOf(doneCount());
+  if (!pool || st.spun) return;
+
+  // дневной лимит крупных призов — исключаем их из пула
+  const capped = bigWonToday() >= rules.dayCap;
+  let list = poolPrizes(pool).filter(p => !(capped && p.cost >= BIG_COST));
+  if (!list.length) list = poolPrizes(pool);
+
+  const total = list.reduce((a, x) => a + x.w[pool], 0);
+  let acc = 0;
+  const segs = list.map((p, i) => {
+    const start = acc / total * 360;
+    acc += p.w[pool];
+    const end = acc / total * 360;
+    return { p, start, end, mid: (start + end) / 2, color: SECTOR_COLORS[i % SECTOR_COLORS.length] };
+  });
+
+  const sheet = document.getElementById("g-sheet");
+  sheet.innerHTML = `
+    <div class="sheet-grip"></div>
+    <div class="sheet-title">Пул «${POOL_NAME[pool]}»</div>
+    <div class="sheet-sub">${list.length} ${plural(list.length, "приз", "приза", "призов")} · размер сектора — это и есть шанс${capped ? "<br>Крупные призы на сегодня разобраны" : ""}</div>
+    <div class="wheel-wrap">
+      <div class="wheel-pin"></div>
+      <div class="wheel" id="wheel">${wheelSvg(segs)}</div>
+      <div class="wheel-hub">✦</div>
+    </div>
+    <button class="btn dark" id="spin-btn" onclick="doSpin()">Крутить</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" onclick="closeSheet()">Позже</button>`;
+
+  sheet._segs = segs;
+  sheet._pool = pool;
+  document.getElementById("g-sheet-wrap").classList.add("show");
+}
+
+function wheelSvg(segs) {
+  const R = 100, C = 100;
+  const parts = segs.map(s => {
+    const a1 = (s.start - 90) * Math.PI / 180, a2 = (s.end - 90) * Math.PI / 180;
+    const x1 = C + R * Math.cos(a1), y1 = C + R * Math.sin(a1);
+    const x2 = C + R * Math.cos(a2), y2 = C + R * Math.sin(a2);
+    const large = (s.end - s.start) > 180 ? 1 : 0;
+    const full = segs.length === 1;
+    const d = full
+      ? `M ${C} ${C - R} A ${R} ${R} 0 1 1 ${C - 0.01} ${C - R} Z`
+      : `M ${C} ${C} L ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} Z`;
+    const am = (s.mid - 90) * Math.PI / 180;
+    const tx = C + 68 * Math.cos(am), ty = C + 68 * Math.sin(am);
+    const wide = (s.end - s.start) >= 22;
+    return `<path d="${d}" fill="${s.color}" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
+            ${wide ? `<text x="${tx}" y="${ty}" font-size="17" text-anchor="middle" dominant-baseline="central">${s.p.icon}</text>` : ""}`;
+  }).join("");
+  return `<svg viewBox="0 0 200 200" style="width:100%;height:100%;display:block;border-radius:50%">${parts}</svg>`;
+}
+
+function doSpin() {
+  if (st.spinning) return;
+  const sheet = document.getElementById("g-sheet");
+  const segs = sheet._segs, pool = sheet._pool;
+  st.spinning = true;
+  document.getElementById("spin-btn").disabled = true;
+
+  // выбор приза по весам — в бою это делает сервер
+  const total = segs.reduce((a, s) => a + s.p.w[pool], 0);
+  let r = Math.random() * total, hit = segs[segs.length - 1];
+  for (const s of segs) { r -= s.p.w[pool]; if (r <= 0) { hit = s; break; } }
+
+  const span = hit.end - hit.start;
+  const jitter = (Math.random() - .5) * span * .7;
+  const target = 360 * 6 - (hit.mid + jitter);
+
+  const wheel = document.getElementById("wheel");
+  wheel.style.transform = `rotate(${target}deg)`;
+
+  setTimeout(() => {
+    st.spinning = false;
+    st.spun = true;
+    const w = {
+      name: hit.p.name, icon: hit.p.icon, code: code6(),
+      big: hit.p.cost >= BIG_COST, used: false, cost: hit.p.cost
+    };
+    st.wins.unshift(w);
+    showPrize(w, pool);
+    renderGuest();
+  }, 4600);
+}
+
+function showPrize(w, pool) {
+  const sheet = document.getElementById("g-sheet");
+  sheet.innerHTML = `
+    <div class="sheet-grip"></div>
+    <div class="prize-card">
+      <div class="prize-ico">${w.icon}</div>
+      <div class="prize-name serif">${w.name}</div>
+      <div class="prize-desc">Пул «${POOL_NAME[pool]}» · подарок за ${doneCount()} ${plural(doneCount(), "зону", "зоны", "зон")} термального пути</div>
+      <div class="prize-code">
+        <div class="prize-code-label">Код для получения</div>
+        <div class="prize-code-val">${w.code}</div>
+      </div>
+      <div class="prize-ttl">Действует 30 дней · назовите код на стойке или в баре</div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="note-box info" style="text-align:left">
+      <b>Почему без проигрыша.</b> Гость, прошедший весь комплекс и получивший «не повезло», уходит с обидой вместо лояльности. Азарт даёт разброс призов, а не риск остаться ни с чем.
+    </div>
+    <div style="height:14px"></div>
+    <button class="btn" onclick="closeSheet()">В карточку лояльности</button>`;
+}
+
+function closeSheet() { document.getElementById("g-sheet-wrap").classList.remove("show"); }
+
+/* ══════════════ КАССИР ══════════════ */
+function renderCashier() {
+  const c = document.getElementById("c-content");
+  if (!c) return;
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-title">Код приза</div>
+      <input type="text" id="redeem-code" placeholder="XXXXXX" maxlength="6"
+        style="text-transform:uppercase;font-size:22px;letter-spacing:6px;text-align:center;font-family:ui-monospace,monospace;padding:14px">
+      <div style="height:12px"></div>
+      <button class="btn" onclick="lookupCode()">Найти приз</button>
+    </div>
+    <div id="redeem-result"></div>`;
+
+  const list = document.getElementById("c-codes-list");
+  if (list) {
+    const act = st.wins.filter(w => !w.used);
+    list.innerHTML = act.length
+      ? act.map(w => `
+          <div class="win-row">
+            <div class="win-ico">${w.icon}</div>
+            <div class="win-body">
+              <div class="win-name">${w.name}</div>
+              <div class="win-meta">${w.big ? "крупный приз" : "обычный приз"}</div>
+            </div>
+            <div class="win-code">${w.code}</div>
+          </div>`).join("")
+      : `<div class="note-box info">Пока ни одного активного кода. Выиграйте приз в режиме «Гость» — он появится здесь.</div>`;
+  }
+}
+
+function lookupCode() {
+  const inp = document.getElementById("redeem-code");
+  const val = (inp.value || "").toUpperCase().trim();
+  const box = document.getElementById("redeem-result");
+  const w = st.wins.find(x => x.code === val);
+
+  if (!w) {
+    box.innerHTML = `<div class="card"><div class="note-box">Код не найден. Проверьте раскладку или попросите гостя открыть карточку в боте.</div></div>`;
+    toast("c-toast", "⛔", "Код не найден", true);
+    return;
+  }
+  if (w.used) {
+    box.innerHTML = `<div class="card"><div class="note-box"><b>Приз уже погашен.</b> Каждый код срабатывает один раз — это защита от повторного обхода точек с одним кодом.</div></div>`;
+    toast("c-toast", "⛔", "Код уже использован", true);
+    return;
+  }
+  box.innerHTML = `
+    <div class="card">
+      <div class="card-title">Гость</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div class="win-ico" style="width:44px;height:44px;font-size:20px">${w.icon}</div>
+        <div>
+          <div style="font-size:16px;font-weight:700">${w.name}</div>
+          <div style="font-size:12px;color:var(--sub);margin-top:2px">Daniil K. · +7 904 ***-86-10</div>
+        </div>
+      </div>
+      <div class="kv"><span>Код</span><span style="font-family:ui-monospace,monospace">${w.code}</span></div>
+      <div class="kv"><span>Действует до</span><span>${dateIn(30)}</span></div>
+      <div class="kv"><span>Себестоимость</span><span>${w.cost} ₽</span></div>
+      <div style="height:16px"></div>
+      <button class="btn" onclick="redeem('${w.code}')">Погасить приз</button>
+    </div>`;
+}
+
+function dateIn(days) {
+  const d = new Date(Date.now() + days * 864e5);
+  return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function redeem(code) {
+  const w = st.wins.find(x => x.code === code);
+  if (!w || w.used) return;
+  w.used = true;
+  document.getElementById("redeem-result").innerHTML =
+    `<div class="card"><div class="note-box" style="background:rgba(22,199,132,.08);border-color:rgba(22,199,132,.3);color:#0f7a52">
+      <b>Погашено.</b> Приз списан, у гостя в карточке он стал серым. Повторно код не сработает.
+     </div></div>`;
+  document.getElementById("redeem-code").value = "";
+  toast("c-toast", "✓", `Погашено: ${w.name}`);
+  renderGuest();
+}
+
+/* ══════════════ АДМИН ══════════════ */
+function renderZones() {
+  const t = document.getElementById("zones-table");
+  if (!t) return;
+  t.innerHTML = `
+    <tr><th style="width:56px">Знак</th><th>Название зоны</th><th style="width:150px">Код метки</th>
+        <th style="width:110px">В игре</th><th style="width:60px"></th></tr>` +
+    zones.map((z, i) => `
+      <tr>
+        <td><input type="text" value="${z.icon}" style="width:46px;text-align:center" onchange="zones[${i}].icon=this.value;renderAll()"></td>
+        <td><input type="text" value="${z.name}" onchange="zones[${i}].name=this.value;renderAll()"></td>
+        <td><code style="font-size:11.5px;color:var(--sub)">zone_${z.code}</code></td>
+        <td>
+          <label class="switch">
+            <input type="checkbox" ${z.on ? "checked" : ""} onchange="toggleZone(${i}, this.checked)">
+            <span class="slider"></span>
+          </label>
+        </td>
+        <td><button class="btn danger sm" onclick="removeZone(${i})">✕</button></td>
+      </tr>`).join("");
+}
+
+function toggleZone(i, on) {
+  zones[i].on = on;
+  if (!on) st.checked = st.checked.filter(c => c !== zones[i].code);
+  renderAll();
+}
+function removeZone(i) {
+  st.checked = st.checked.filter(c => c !== zones[i].code);
+  zones.splice(i, 1);
+  renderAll();
+}
+function addZone() {
+  const nameEl = document.getElementById("new-zone-name");
+  const icoEl  = document.getElementById("new-zone-icon");
+  const name = (nameEl.value || "").trim();
+  if (!name) { nameEl.focus(); return; }
+  zones.push({
+    code: "z" + Date.now().toString(36).slice(-4),
+    name, icon: (icoEl.value || "✨").trim(), on: true
+  });
+  nameEl.value = ""; icoEl.value = "✨";
+  renderAll();
+}
+
+function renderPrizes() {
+  const t = document.getElementById("prizes-table");
+  if (!t) return;
+  const tot = { b: poolTotal("b"), s: poolTotal("s"), g: poolTotal("g") };
+  t.innerHTML = `
+    <tr>
+      <th>Приз</th><th style="width:90px">Категория</th><th style="width:110px" class="num">Себест., ₽</th>
+      <th style="width:76px" class="num">Вес Б</th><th style="width:76px" class="num">Вес С</th><th style="width:76px" class="num">Вес З</th>
+      <th style="width:150px" class="num">Шанс Б / С / З</th>
+    </tr>` +
+    prizes.map((p, i) => {
+      const pc = k => tot[k] ? (p.w[k] / tot[k] * 100).toFixed(1).replace(".0", "") + "%" : "—";
+      return `
+      <tr>
+        <td>${p.icon} ${p.name}${p.cost >= BIG_COST ? ` <span class="chip gold">крупный</span>` : ""}</td>
+        <td><span class="chip off">${p.cat}</span></td>
+        <td class="num">${p.cost}</td>
+        <td class="num"><input class="w-in num" type="number" min="0" value="${p.w.b}" onchange="prizes[${i}].w.b=+this.value||0;renderPrizes()"></td>
+        <td class="num"><input class="w-in num" type="number" min="0" value="${p.w.s}" onchange="prizes[${i}].w.s=+this.value||0;renderPrizes()"></td>
+        <td class="num"><input class="w-in num" type="number" min="0" value="${p.w.g}" onchange="prizes[${i}].w.g=+this.value||0;renderPrizes()"></td>
+        <td class="num" style="color:var(--sub);font-size:12px">${pc("b")} / ${pc("s")} / ${pc("g")}</td>
+      </tr>`;
+    }).join("");
+
+  const sum = document.getElementById("pool-summary");
+  const az = activeZones().length;
+  const meta = {
+    b: { label: "Бронза", req: `${rules.minZones}+ зон` },
+    s: { label: "Серебро", req: `${rules.silverZones}+ зон` },
+    g: { label: "Золото", req: `${az} зон — весь комплекс` }
+  };
+  sum.innerHTML = ["b", "s", "g"].map(k => `
+    <div class="stat">
+      <div class="stat-label">${meta[k].label} · ${meta[k].req}</div>
+      <div class="stat-val">${Math.round(poolEV(k))} ₽</div>
+      <div class="stat-note">Средняя себестоимость одного розыгрыша. Призов в пуле: ${poolPrizes(k).length}.</div>
+    </div>`).join("");
+
+  const evB = poolEV("b"), evS = poolEV("s"), evG = poolEV("g");
+  const mix = evB * .55 + evS * .32 + evG * .13;
+  document.getElementById("ev-note").innerHTML =
+    `<b>Что это значит для бюджета.</b> Если из 100 сыгравших гостей примерно 55 доходят до бронзы, 32 до серебра и 13 проходят весь комплекс,
+     средний розыгрыш обходится в <b>${Math.round(mix)} ₽</b>, а сотня участников — в <b>${Math.round(mix * 100).toLocaleString("ru-RU")} ₽</b>.
+     Заметная часть этой суммы — чай, СПА в непик и будний вход, то есть незанятые мощности, а не живые деньги.
+     Пропорции доходимости — предположение до первых двух недель работы; после запуска они считаются из реальных данных.`;
+}
+
+function onRuleChange() {
+  rules.cooldown    = +document.getElementById("r-cooldown").value || 0;
+  rules.minZones    = +document.getElementById("r-minzones").value || 1;
+  rules.silverZones = +document.getElementById("r-silver").value || 2;
+  rules.dayCap      = +document.getElementById("r-daycap").value || 0;
+  renderAll();
+}
+
+/* Тестовая аналитика — форма отчёта, цифры выдуманные */
+function hashNum(s, min, max) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
+  return min + (h % (max - min + 1));
+}
+function renderStats() {
+  const heat = document.getElementById("heatmap");
+  if (!heat) return;
+  const az = activeZones();
+  const data = az.map(z => ({ z, v: hashNum(z.code, 120, 980) })).sort((a, b) => b.v - a.v);
+  const max = Math.max(...data.map(d => d.v), 1);
+  heat.innerHTML = data.map(d => {
+    const rel = d.v / max;
+    const col = `linear-gradient(90deg, rgba(168,134,95,${.35 + rel * .55}), rgba(217,185,138,${.4 + rel * .5}))`;
+    return `
+      <div class="heat-row">
+        <div class="heat-name">${d.z.icon} ${d.z.name}</div>
+        <div class="heat-bar"><div class="heat-fill" style="width:${Math.round(rel * 100)}%;background:${col}"></div></div>
+        <div class="heat-val">${d.v}</div>
+      </div>`;
+  }).join("");
+
+  const steps = [
+    { l: "Визитов за месяц",        v: 2400 },
+    { l: "Открыли путь в боте",     v: 1180 },
+    { l: `Дошли до ${rules.minZones} зон`,   v: 760 },
+    { l: `Дошли до ${rules.silverZones} зон`, v: 430 },
+    { l: "Прошли весь комплекс",    v: 180 }
+  ];
+  document.getElementById("funnel").innerHTML = steps.map(s => `
+    <div class="funnel-step">
+      <div class="funnel-label">${s.l}</div>
+      <div class="funnel-bar" style="width:${Math.round(s.v / steps[0].v * 100)}%">${s.v.toLocaleString("ru-RU")}</div>
+    </div>`).join("");
+}
+
+function renderAll() {
+  renderGuest(); renderZones(); renderPrizes(); renderStats();
+}
+
+/* ══════════════ НАВИГАЦИЯ ══════════════ */
+document.querySelectorAll(".mode-btn").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".mode-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
+    document.getElementById("pane-" + b.dataset.mode).classList.add("active");
+  };
+});
+document.querySelectorAll(".tab").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+    document.getElementById("tab-" + b.dataset.tab).classList.add("active");
+  };
+});
+document.getElementById("g-sheet-wrap").onclick = e => {
+  if (e.target.id === "g-sheet-wrap" && !st.spinning) closeSheet();
+};
+
+renderAll();
+setInterval(renderSim, 20000);
+</script>
+</body>
+</html>
