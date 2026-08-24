@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Навигация по комплексу — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:#a8865f; --gold-lt:rgba(168,134,95,.10); --gold-dk:#8c6e4a;
+    --text:#1a1814; --sub:#6a665f; --bg:#fafaf8; --card:#fff; --border:#e8e4db;
+    --green:#16C784; --red:#EF4444; --shadow:0 2px 16px rgba(168,134,95,.10);
+    --radius:18px; --radius-sm:12px;
+    --dark:linear-gradient(135deg,#1a1814 0%,#2a2620 100%);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden;
+  }
+
+  .header {
+    background:var(--card); border-bottom:1px solid var(--border);
+    padding:12px 18px; display:flex; align-items:center; gap:12px;
+    position:sticky; top:0; z-index:20;
+  }
+  .header-logo {
+    width:36px; height:36px; border-radius:10px; display:flex; align-items:center;
+    justify-content:center; background:var(--gold-lt);
+    border:1px solid rgba(168,134,95,.20); font-size:17px;
+  }
+  .header-title { font-size:16px; font-weight:700; }
+  .header-sub { font-size:11.5px; color:var(--sub); margin-top:1px; }
+  .badge-proto {
+    margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.6px;
+    text-transform:uppercase; padding:4px 9px; border-radius:20px;
+    background:rgba(239,68,68,.10); color:var(--red); border:1px solid rgba(239,68,68,.25);
+  }
+
+  .content { padding:14px 14px 40px; display:flex; flex-direction:column; gap:12px; }
+
+  /* ─── Карта ─────────────────────────────────────────────────────────── */
+  .map-card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    overflow:hidden; }
+  /* Высота подгоняется под пропорции картинки (JS проставит aspect-ratio после
+     загрузки) — иначе под схемой остаётся пустое поле в треть экрана. */
+  .map-vp {
+    position:relative; width:100%; aspect-ratio:4/3; max-height:64vh; overflow:hidden;
+    background:#1a1814; touch-action:none; cursor:grab;
+  }
+  .map-vp.dragging { cursor:grabbing; }
+  .map-stage { position:absolute; top:0; left:0; transform-origin:0 0; will-change:transform; }
+  .map-stage img { display:block; width:100%; height:auto; user-select:none; -webkit-user-drag:none; }
+
+  .mk {
+    position:absolute; transform:translate(-50%,-50%);
+    display:flex; align-items:center; justify-content:center;
+    width:26px; height:26px; border-radius:50%; font-size:13px;
+    background:#fff; border:2px solid #fff; color:var(--sub);
+    box-shadow:0 2px 7px rgba(0,0,0,.32); cursor:pointer; z-index:10;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .mk:active { transform:translate(-50%,-50%) scale(1.2); }
+  .mk.done { background:var(--green); border-color:#fff; color:#fff; }
+  .mk.next {
+    background:var(--gold); border-color:#fff; color:#fff; width:30px; height:30px;
+    font-size:14px; z-index:30; box-shadow:0 4px 14px rgba(168,134,95,.55);
+    animation:bob 1.8s ease-in-out infinite;
+  }
+  .mk.here {
+    background:var(--text); border-color:#fff; color:#fff; width:26px; height:26px; z-index:40;
+  }
+  .mk.here::after {
+    content:""; position:absolute; inset:-8px; border-radius:50%;
+    border:2px solid var(--text); opacity:.5; animation:ping 1.9s ease-out infinite;
+  }
+  .mk.dim { opacity:.62; }
+  .mk.editing { outline:3px dashed var(--gold); outline-offset:3px; z-index:50; }
+
+  /* Панель редактора висит поверх карты, чтобы работать и в полноэкранном режиме. */
+  .edit-bar {
+    position:fixed; left:0; right:0; bottom:0; z-index:200; display:none;
+    background:var(--dark); color:#fff; padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    box-shadow:0 -6px 24px rgba(0,0,0,.3);
+  }
+  .edit-bar.on { display:block; }
+  body.edit-on { padding-bottom:var(--edit-h,0px); }
+  .map-card.full { padding-bottom:var(--edit-h,0px); }
+  .edit-bar .eb-top { font-size:11px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--gold); margin-bottom:8px; }
+  .edit-bar select {
+    width:100%; padding:10px; border-radius:var(--radius-sm); font-size:13.5px;
+    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.07); color:#fff;
+    font-family:inherit;
+  }
+  .edit-bar .eb-row { display:flex; gap:7px; margin-top:9px; }
+  .edit-bar button {
+    flex:1; padding:10px 6px; border-radius:var(--radius-sm); font-size:12.5px; font-weight:600;
+    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff;
+    font-family:inherit; cursor:pointer;
+  }
+  .edit-bar button.primary { background:var(--gold); border-color:var(--gold); }
+  .edit-bar .eb-hint { font-size:11.5px; opacity:.75; margin-top:9px; line-height:1.4; }
+
+  .ed-stat { font-size:12.5px; color:var(--sub); line-height:1.5; }
+  .ed-json { width:100%; min-height:92px; margin-top:10px; padding:10px; font-size:11px;
+    font-family:ui-monospace,Consolas,monospace; border:1px solid var(--border);
+    border-radius:var(--radius-sm); background:#fbfaf7; color:var(--text); resize:vertical; }
+  .ed-btns { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
+  .ed-btns button {
+    flex:1; min-width:96px; padding:10px; border-radius:var(--radius-sm); font-size:12.5px;
+    font-weight:600; border:1px solid var(--border); background:#fff; color:var(--text);
+    font-family:inherit; cursor:pointer;
+  }
+  .ed-btns button.primary { background:var(--gold); border-color:var(--gold); color:#fff; }
+
+  /* Карта на весь экран: 260 px высоты на телефоне мало, чтобы ориентироваться. */
+  .map-card.full { position:fixed; inset:0; z-index:100; border-radius:0;
+    display:flex; flex-direction:column; }
+  .map-card.full .map-vp { flex:1; aspect-ratio:auto !important; max-height:none; }
+  .map-card.full .map-tools { padding-bottom:calc(9px + env(safe-area-inset-bottom)); }
+  @keyframes ping { 0%{transform:scale(.75);opacity:.6} 100%{transform:scale(1.5);opacity:0} }
+  @keyframes bob { 0%,100%{margin-top:0} 50%{margin-top:-5px} }
+
+  .mk-badge {
+    position:absolute; top:-6px; right:-6px; width:14px; height:14px; border-radius:50%;
+    background:var(--gold); color:#fff; font-size:8px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; border:1.5px solid #fff;
+  }
+
+  .route-line { position:absolute; inset:0; z-index:5; pointer-events:none; }
+  .route-line path { fill:none; }
+  .route-line .halo { stroke:#fff; stroke-width:6; opacity:.9; stroke-linecap:round; }
+  .route-line .line { stroke:var(--gold); stroke-width:3; stroke-dasharray:7 6;
+    animation:march 1s linear infinite; }
+  @keyframes march { to { stroke-dashoffset:-13; } }
+
+  .map-tools { display:flex; gap:6px; padding:9px 12px; border-top:1px solid var(--border);
+    background:var(--card); }
+  .tool {
+    flex:1; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border);
+    background:#fff; font-size:12px; font-weight:600; color:var(--sub); cursor:pointer;
+  }
+  .tool:active { background:var(--gold-lt); }
+
+  /* ─── Подсказка ─────────────────────────────────────────────────────── */
+  .nav-hero { background:var(--dark); border-radius:var(--radius); padding:18px 18px 16px;
+    color:#fff; position:relative; overflow:hidden; box-shadow:0 8px 28px rgba(26,24,20,.22); }
+  .nav-hero::before { content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse 70% 70% at 50% 0%, rgba(168,134,95,.22), transparent 70%); }
+  .nav-hero > * { position:relative; z-index:1; }
+  .nav-label { font-size:10.5px; text-transform:uppercase; letter-spacing:1.2px; color:var(--gold); }
+  .nav-where { font-size:13px; opacity:.7; margin-top:9px; }
+  .nav-target { font-size:25px; font-weight:600; font-style:italic;
+    font-family:"Cormorant",Georgia,serif; line-height:1.15; margin-top:3px; }
+  .nav-hint { font-size:13px; opacity:.85; margin-top:10px; line-height:1.5;
+    padding-top:10px; border-top:1px solid rgba(255,255,255,.13); }
+  .nav-hint b { color:var(--gold); font-weight:600; }
+  .nav-pts { display:inline-block; margin-top:10px; font-size:10.5px; font-weight:600;
+    padding:3px 9px; border-radius:20px; background:rgba(168,134,95,.22); color:#e0b48a; }
+
+  /* ─── Карточки ──────────────────────────────────────────────────────── */
+  .card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; }
+  .card-title { font-size:12px; font-weight:600; color:var(--sub); text-transform:uppercase;
+    letter-spacing:.5px; margin-bottom:11px; }
+
+  .zrow { display:flex; align-items:center; gap:10px; padding:9px 0;
+    border-bottom:1px solid var(--border); cursor:pointer; }
+  .zrow:last-child { border-bottom:none; }
+  .zrow-ico { width:30px; height:30px; border-radius:9px; background:var(--gold-lt);
+    display:flex; align-items:center; justify-content:center; font-size:15px; flex:0 0 auto; }
+  .zrow-name { font-size:13.5px; font-weight:600; }
+  .zrow-meta { font-size:11px; color:var(--sub); margin-top:1px; }
+  .zrow-pts { margin-left:auto; font-size:11px; font-weight:700; color:var(--gold); }
+  .zrow.is-done .zrow-name { opacity:.5; text-decoration:line-through; }
+  .zrow.is-next { background:var(--gold-lt); margin:0 -16px; padding-left:16px; padding-right:16px; }
+
+  .group-note { font-size:11.5px; color:var(--sub); line-height:1.45; margin-top:8px;
+    padding:9px 11px; background:#f6f3ec; border-radius:var(--radius-sm);
+    border-left:3px solid var(--gold); }
+
+  /* ─── Симулятор ─────────────────────────────────────────────────────── */
+  .sim summary { font-size:12px; font-weight:600; color:var(--sub); cursor:pointer;
+    text-transform:uppercase; letter-spacing:.5px; }
+  .sim-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px; }
+  .sim-fld { display:flex; flex-direction:column; gap:5px; }
+  .sim-fld label { font-size:11px; color:var(--sub); font-weight:600; }
+  .sim-fld select { padding:9px; border-radius:var(--radius-sm); border:1px solid var(--border);
+    background:#fff; font-size:12.5px; font-family:inherit; color:var(--text); }
+  .sim-hint { font-size:11.5px; color:var(--sub); line-height:1.45; margin-top:10px; }
+
+  .foot { font-size:11px; color:var(--sub); text-align:center; line-height:1.5; padding:0 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">🧭</div>
+  <div>
+    <div class="header-title">Навигация по комплексу</div>
+    <div class="header-sub">Baden-Баден Уктус · схема и маршрут</div>
+  </div>
+  <div class="badge-proto">прототип</div>
+</div>
+
+<div class="content">
+
+  <div class="nav-hero">
+    <div class="nav-label">Следующая точка</div>
+    <div class="nav-where" id="navWhere">Вы здесь: —</div>
+    <div class="nav-target" id="navTarget">—</div>
+    <div class="nav-hint" id="navHint">—</div>
+    <div class="nav-pts" id="navPts" style="display:none"></div>
+  </div>
+
+  <div class="map-card">
+    <div class="map-vp" id="vp">
+      <div class="map-stage" id="stage">
+        <img id="mapImg" src="map.jpg" alt="Схема комплекса">
+        <svg class="route-line" id="routeSvg" preserveAspectRatio="none"><path class="halo" id="routeHalo"></path><path class="line" id="routePath"></path></svg>
+      </div>
+    </div>
+    <div class="map-tools">
+      <button class="tool" onclick="zoomBy(1.35)">+</button>
+      <button class="tool" onclick="zoomBy(.74)">−</button>
+      <button class="tool" onclick="fitGame()">Зоны игры</button>
+      <button class="tool" onclick="focusHere()">Ко мне</button>
+      <button class="tool" onclick="toggleFull()" id="btnFull">Во весь экран</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Зоны игры</div>
+    <div id="zoneList"></div>
+    <div class="group-note" id="groupNote" style="display:none"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Редактор координат</div>
+    <div class="ed-stat" id="edStat"></div>
+    <div class="ed-btns">
+      <button class="primary" onclick="toggleEdit()" id="edToggle">Включить редактор</button>
+      <button onclick="resetXY()">Сбросить всё</button>
+    </div>
+    <textarea class="ed-json" id="edJson" readonly
+      placeholder="Здесь появится JSON с координатами, которые вы расставили"></textarea>
+    <div class="ed-btns">
+      <button onclick="copyXY()" id="edCopy">Скопировать</button>
+      <button onclick="downloadXY()">Скачать файл</button>
+    </div>
+    <div class="sim-hint">
+      Координаты сохраняются в этом браузере сами. Файл <b>zone_xy.json</b> нужен,
+      чтобы перенести их в мини-апп: положить рядом с картой и пересобрать.
+    </div>
+  </div>
+
+  <details class="card sim">
+    <summary>Симулятор — что видит гость</summary>
+    <div class="sim-grid">
+      <div class="sim-fld">
+        <label>Вы здесь</label>
+        <select id="selHere" onchange="setHere(this.value)"></select>
+      </div>
+      <div class="sim-fld">
+        <label>Следующая точка</label>
+        <select id="selNext" onchange="setNext(this.value)"></select>
+      </div>
+    </div>
+    <div class="sim-hint">
+      В боевой версии «вы здесь» подставится из последней отметки гостя,
+      а следующая точка — из его маршрута. Здесь их можно выбрать руками,
+      чтобы посмотреть все сочетания.
+    </div>
+  </details>
+
+  <div class="foot">
+    Прототип навигации. Данные схемы — из <b>map.html</b> (49 точек),
+    зоны и баллы — из боевой базы, только чтение.<br>
+    Боевой мини-апп не затронут.
+  </div>
+
+</div>
+
+<div class="edit-bar" id="editBar">
+  <div class="eb-top">Куда поставить зону</div>
+  <select id="edSelect" onchange="editZone=this.value; render();"></select>
+  <div class="eb-row">
+    <button onclick="nextUnset()">Следующая</button>
+    <button onclick="clearOne()">Убрать точку</button>
+    <button class="primary" onclick="toggleEdit()">Готово</button>
+  </div>
+  <div class="eb-hint" id="edBarHint">Коснитесь места на схеме — точка встанет туда.</div>
+</div>
+
+<script>
+const DATA = {"image": "map.jpg", "cats": {"entry": {"name": "Входы", "color": "#8e44ad", "icon": "🚪"}, "termy": {"name": "Термы и сервис", "color": "#2980b9", "icon": "🏛️"}, "pool": {"name": "Бассейны", "color": "#1a7fc0", "icon": "🏊"}, "spa": {"name": "SPA и Сауны", "color": "#16a085", "icon": "💆"}, "bar": {"name": "Бары и Кафе", "color": "#d35400", "icon": "🍻"}, "barn": {"name": "БарнХаусы", "color": "#27ae60", "icon": "🏠"}, "resid": {"name": "Резиденция", "color": "#c0392b", "icon": "🏡"}, "dk": {"name": "Домики ДК", "color": "#e74c3c", "icon": "🏘️"}, "act": {"name": "Активности", "color": "#e67e22", "icon": "🎯"}}, "points": [{"id": "vhod", "n": 3, "name": "Проход к БарнХаусам", "cat": "entry", "x": 46.7, "y": 30.2}, {"id": "vhod_res", "n": 2, "name": "Вход резиденции", "cat": "entry", "x": 71.8, "y": 88.8}, {"id": "vhod_cmp", "n": 1, "name": "Вход к комплексу", "cat": "entry", "x": 7.9, "y": 47.9}, {"id": "kassy", "n": 4, "name": "Кассы", "cat": "termy", "x": 14.9, "y": 42.5}, {"id": "muzh", "n": 5, "name": "Мужская раздевалка", "cat": "termy", "x": 19.1, "y": 40.9}, {"id": "zhen", "n": 6, "name": "Женская раздевалка", "cat": "termy", "x": 18.7, "y": 45.7}, {"id": "detk", "n": 7, "name": "Детская комната", "cat": "termy", "x": 28.4, "y": 39.5}, {"id": "vyhod", "n": 8, "name": "Выход в бассейн", "cat": "termy", "x": 30.2, "y": 48.0}, {"id": "zona", "n": 9, "name": "Зона отдыха", "cat": "termy", "x": 25.7, "y": 58.2}, {"id": "kafe", "n": 10, "name": "Кафе", "cat": "bar", "x": 20.8, "y": 53.0}, {"id": "pool_bar", "n": 11, "name": "Пул-Бар", "cat": "bar", "x": 18.8, "y": 64.1}, {"id": "germ_b", "n": 12, "name": "Немецкий БАР", "cat": "bar", "x": 29.3, "y": 66.4}, {"id": "grill", "n": 13, "name": "Гриль-БАР", "cat": "bar", "x": 82.5, "y": 52.8}, {"id": "main_p", "n": 14, "name": "Главный бассейн", "cat": "pool", "x": 37.1, "y": 39.9}, {"id": "mass_p", "n": 15, "name": "Массажные бассейны", "cat": "pool", "x": 46.0, "y": 44.0}, {"id": "det_p", "n": 16, "name": "Детский бассейн", "cat": "pool", "x": 56.7, "y": 54.4}, {"id": "plzh_p", "n": 17, "name": "Бассейны пляжа", "cat": "pool", "x": 77.9, "y": 45.2}, {"id": "spa", "n": 18, "name": "SPA", "cat": "spa", "x": 32.2, "y": 63.6}, {"id": "sauny", "n": 19, "name": "Сауны", "cat": "spa", "x": 39.3, "y": 60.2}, {"id": "bh1", "n": 20, "name": "БарнХаус 1", "cat": "barn", "x": 41.9, "y": 23.3}, {"id": "bh2", "n": 21, "name": "БарнХаус 2", "cat": "barn", "x": 36.4, "y": 24.5}, {"id": "bh3", "n": 22, "name": "БарнХаус 3", "cat": "barn", "x": 29.8, "y": 26.2}, {"id": "bh4", "n": 23, "name": "БарнХаус 4", "cat": "barn", "x": 22.8, "y": 24.6}, {"id": "bh5", "n": 24, "name": "БарнХаус 5", "cat": "barn", "x": 16.6, "y": 21.9}, {"id": "bh6", "n": 25, "name": "БарнХаус 6", "cat": "barn", "x": 9.5, "y": 26.5}, {"id": "bh7", "n": 26, "name": "БарнХаус 7", "cat": "barn", "x": 7.4, "y": 16.4}, {"id": "bh8", "n": 27, "name": "БарнХаус 8", "cat": "barn", "x": 16.2, "y": 11.2}, {"id": "bh9", "n": 28, "name": "БарнХаус 9", "cat": "barn", "x": 22.7, "y": 12.7}, {"id": "bh10", "n": 29, "name": "БарнХаус 10", "cat": "barn", "x": 29.4, "y": 13.9}, {"id": "bh11", "n": 30, "name": "БарнХаус 11", "cat": "barn", "x": 34.4, "y": 9.5}, {"id": "bh12", "n": 31, "name": "БарнХаус 12", "cat": "barn", "x": 38.1, "y": 16.2}, {"id": "kotedj", "n": 32, "name": "Котедж", "cat": "resid", "x": 51.1, "y": 31.7}, {"id": "dk1", "n": 33, "name": "ДК 1", "cat": "dk", "x": 82.2, "y": 84.2}, {"id": "dk2", "n": 34, "name": "ДК 2", "cat": "dk", "x": 87.3, "y": 81.4}, {"id": "dk3", "n": 35, "name": "ДК 3", "cat": "dk", "x": 90.1, "y": 75.8}, {"id": "dk4", "n": 36, "name": "ДК 4", "cat": "dk", "x": 92.6, "y": 70.1}, {"id": "dk5", "n": 37, "name": "ДК 5", "cat": "dk", "x": 93.5, "y": 63.9}, {"id": "dk6", "n": 38, "name": "ДК 6", "cat": "dk", "x": 93.8, "y": 58.6}, {"id": "dk7", "n": 39, "name": "ДК 7", "cat": "dk", "x": 93.7, "y": 51.5}, {"id": "dk8", "n": 40, "name": "ДК 8", "cat": "dk", "x": 93.2, "y": 45.6}, {"id": "dk9", "n": 41, "name": "ДК 9", "cat": "dk", "x": 91.9, "y": 39.9}, {"id": "dk10", "n": 42, "name": "ДК 10", "cat": "dk", "x": 86.2, "y": 42.1}, {"id": "dk11", "n": 43, "name": "ДК 11", "cat": "dk", "x": 85.4, "y": 37.6}, {"id": "dk12", "n": 44, "name": "ДК 12", "cat": "dk", "x": 80.1, "y": 34.2}, {"id": "dk13", "n": 45, "name": "ДК 13", "cat": "dk", "x": 75.3, "y": 36.0}, {"id": "dk14", "n": 46, "name": "ДК 14", "cat": "dk", "x": 69.7, "y": 38.1}, {"id": "akvap", "n": 47, "name": "Аквапарк", "cat": "act", "x": 61.9, "y": 65.2}, {"id": "plazh", "n": 48, "name": "Пляж", "cat": "act", "x": 72.1, "y": 52.6}, {"id": "volley", "n": 49, "name": "Волейбольная площадка", "cat": "act", "x": 76.2, "y": 67.9}], "zones": [{"code": "coffee", "name": "Кофейная сауна", "icon": "☕", "map_n": 19, "cat": "spa", "src": "both", "role": "parmaster", "is_active": 1, "points": 15}, {"code": "panorama", "name": "Панорамная сауна", "icon": "🪟", "map_n": 19, "cat": "spa", "src": "both", "role": "parmaster", "is_active": 1, "points": 15}, {"code": "citrus", "name": "Цитрусовая сауна", "icon": "🍊", "map_n": 19, "cat": "spa", "src": "both", "role": "parmaster", "is_active": 1, "points": 15}, {"code": "bakery", "name": "Булочная сауна", "icon": "🥐", "map_n": 19, "cat": "spa", "src": "both", "role": "parmaster", "is_active": 1, "points": 15}, {"code": "herbal", "name": "Травяная сауна", "icon": "🌿", "map_n": 19, "cat": "spa", "src": "both", "role": "parmaster", "is_active": 1, "points": 15}, {"code": "himalaya", "name": "Гималайская сауна", "icon": "🧂", "map_n": 19, "cat": "spa", "src": "both", "role": "animator", "is_active": 1, "points": 15}, {"code": "spa", "name": "SPA", "icon": "💆", "map_n": 18, "cat": "spa", "src": "staff", "role": "spa", "is_active": 1, "points": 30}, {"code": "pool", "name": "Главный бассейн", "icon": "🏊", "map_n": 14, "cat": "pool", "src": "both", "role": "animator", "is_active": 1, "points": 10}, {"code": "massage", "name": "Массажные бассейны", "icon": "🫧", "map_n": 15, "cat": "pool", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "kidspool", "name": "Детский бассейн", "icon": "🐠", "map_n": 16, "cat": "pool", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "beachpool", "name": "Бассейны пляжа", "icon": "🏝", "map_n": 17, "cat": "pool", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "poolbar", "name": "Пул-Бар", "icon": "🍹", "map_n": 11, "cat": "bar", "src": "both", "role": "animator", "is_active": 1, "points": 20}, {"code": "beach", "name": "Пляж", "icon": "🏖", "map_n": 48, "cat": "act", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "aqua", "name": "Аквапарк", "icon": "🎢", "map_n": 47, "cat": "act", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "volley", "name": "Волейбольная площадка", "icon": "🏐", "map_n": 49, "cat": "act", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "cafe", "name": "Кафе", "icon": "🍽", "map_n": 10, "cat": "bar", "src": "sticker", "role": "", "is_active": 1, "points": 20}, {"code": "germanbar", "name": "Немецкий БАР", "icon": "🍺", "map_n": 12, "cat": "bar", "src": "sticker", "role": "", "is_active": 1, "points": 20}, {"code": "grill", "name": "Гриль-БАР", "icon": "🥩", "map_n": 13, "cat": "bar", "src": "sticker", "role": "", "is_active": 1, "points": 20}, {"code": "rest", "name": "Зона отдыха", "icon": "🛋", "map_n": 9, "cat": "termy", "src": "sticker", "role": "", "is_active": 1, "points": 10}, {"code": "kids", "name": "Детская комната", "icon": "🧸", "map_n": 7, "cat": "termy", "src": "sticker", "role": "", "is_active": 0, "points": 10}], "hints": {}};
+
+// ─── Состояние ────────────────────────────────────────────────────────────
+let hereCode = null;      // код зоны, где гость сейчас
+let nextCode = null;      // куда ведём
+let doneCodes = new Set(); // отмеченные зоны (в прототипе — демо)
+
+const zones = DATA.zones.filter(z => z.is_active);
+const ptByN = {};
+DATA.points.forEach(p => ptByN[p.n] = p);
+
+// Ручные координаты главнее схемы: на схеме шесть саун стоят одной точкой,
+// а вести гостя надо к конкретной. Правятся в редакторе внизу страницы.
+// XY_KEY объявлен здесь, а не в блоке редактора: const не поднимается,
+// а loadXY() вызывается прямо сейчас.
+const XY_KEY = "bbt_map_xy";
+const zoneXY = Object.assign({}, DATA.zone_xy || {}, loadXY());
+
+function zoneOf(code) { return zones.find(x => x.code === code); }
+
+function pointOf(code) {
+  const z = zoneOf(code);
+  if (!z) return null;
+  const m = zoneXY[code];
+  if (m) return { n: "z:" + code, name: z.name, x: m.x, y: m.y, custom: true };
+  return ptByN[z.map_n] || null;
+}
+
+// Ключ места: зоны с одинаковым ключом рисуются одним маркером.
+function posKey(code) { const p = pointOf(code); return p ? String(p.n) : null; }
+
+// Кто ещё стоит в этом же месте.
+function shareOf(code) {
+  const k = posKey(code);
+  return k ? zones.filter(z => posKey(z.code) === k) : [];
+}
+
+// ─── Подсказка направления ────────────────────────────────────────────────
+// Считаем по координатам схемы и говорим в терминах картинки, которую гость
+// видит перед собой — а не в терминах севера: компас в термах врёт.
+function directionText(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const ang = Math.atan2(dy, dx);
+  const idx = Math.round((ang + Math.PI / 2) / (Math.PI / 4));
+  const names = ["вверх по схеме","вверх и вправо","вправо","вниз и вправо",
+                 "вниз по схеме","вниз и влево","влево","вверх и влево"];
+  return names[((idx % 8) + 8) % 8];
+}
+function distanceHint(a, b) {
+  const d = Math.hypot(b.x - a.x, b.y - a.y);
+  if (d < 6)  return "совсем рядом";
+  if (d < 15) return "недалеко";
+  if (d < 30) return "через центр комплекса";
+  return "в другом конце комплекса";
+}
+
+function buildHint() {
+  const zn = zoneOf(nextCode), pn = pointOf(nextCode);
+  if (!zn || !pn) return "Выберите следующую точку.";
+  const custom = (DATA.hints || {})[nextCode];
+  if (custom) return custom;
+
+  const ph = pointOf(hereCode);
+  if (!ph) return "Найдите <b>" + pn.name + "</b> на схеме — точка подсвечена золотым.";
+  if (String(ph.n) === String(pn.n)) {
+    const share = shareOf(nextCode);
+    if (share.length > 1)
+      return "Вы уже на месте: <b>" + pn.name + "</b>. Здесь " + share.length +
+             " зон рядом — нужная вам: <b>" + zn.name + "</b>.";
+    return "Вы уже на месте — это <b>" + zn.name + "</b>.";
+  }
+  return "От вас — <b>" + directionText(ph, pn) + "</b>, " + distanceHint(ph, pn) +
+         ". Ориентир на схеме: <b>" + pn.name + "</b>.";
+}
+
+// ─── Отрисовка ────────────────────────────────────────────────────────────
+const stage = document.getElementById("stage");
+const vp = document.getElementById("vp");
+
+function renderMarkers() {
+  stage.querySelectorAll(".mk").forEach(el => el.remove());
+
+  const places = new Map();          // ключ места -> { p, list }
+  zones.forEach(z => {
+    const p = pointOf(z.code);
+    if (!p) return;
+    const k = String(p.n);
+    if (!places.has(k)) places.set(k, { p, list: [] });
+    places.get(k).list.push(z);
+  });
+
+  const hereK = posKey(hereCode), nextK = posKey(nextCode);
+
+  places.forEach(({ p, list }, k) => {
+    const isHere = hereK && k === hereK;
+    const isNext = nextK && k === nextK;
+    const allDone = list.every(s => doneCodes.has(s.code));
+    const editing = editMode && editZone && list.some(z => z.code === editZone);
+
+    const el = document.createElement("div");
+    el.className = "mk" + (isHere ? " here" : isNext ? " next"
+                    : allDone ? " done" : (hereCode || nextCode) ? " dim" : "")
+                 + (editing ? " editing" : "");
+    el.style.left = p.x + "%";
+    el.style.top = p.y + "%";
+    el.textContent = isHere ? "📍" : isNext ? (list[0].icon || "★")
+                   : allDone ? "✓" : (list[0].icon || "");
+    el.title = list.map(s => s.name).join(", ");
+    if (list.length > 1) {
+      const b = document.createElement("div");
+      b.className = "mk-badge";
+      b.textContent = list.length;
+      el.appendChild(b);
+    }
+    el.onclick = ev => { ev.stopPropagation(); if (!editMode) setNext(list[0].code); };
+    stage.appendChild(el);
+  });
+  drawRoute();
+}
+
+function drawRoute() {
+  const svg = document.getElementById("routeSvg");
+  const path = document.getElementById("routePath");
+  const a = pointOf(hereCode), b = pointOf(nextCode);
+  const img = document.getElementById("mapImg");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  svg.style.width = img.offsetWidth + "px";
+  svg.style.height = img.offsetHeight + "px";
+  const halo = document.getElementById("routeHalo");
+  if (!a || !b || a.n === b.n) { path.setAttribute("d", ""); halo.setAttribute("d", ""); return; }
+  const mx = (a.x + b.x) / 2 + (b.y - a.y) * .12;
+  const my = (a.y + b.y) / 2 - (b.x - a.x) * .12;
+  const d = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`;
+  path.setAttribute("d", d); halo.setAttribute("d", d);
+  path.setAttribute("vector-effect", "non-scaling-stroke");
+  halo.setAttribute("vector-effect", "non-scaling-stroke");
+}
+
+function renderPanel() {
+  const zh = zoneOf(hereCode), zn = zoneOf(nextCode);
+  document.getElementById("navWhere").textContent =
+    "Вы здесь: " + (zh ? zh.name : "не отмечались");
+  document.getElementById("navTarget").textContent = zn ? zn.name : "точка не выбрана";
+  document.getElementById("navHint").innerHTML = buildHint();
+  const pts = document.getElementById("navPts");
+  if (zn) { pts.style.display = "inline-block"; pts.textContent = "+" + zn.points + " баллов"; }
+  else pts.style.display = "none";
+}
+
+function renderList() {
+  const box = document.getElementById("zoneList");
+  box.innerHTML = "";
+  zones.forEach(z => {
+    const share = shareOf(z.code);
+    const row = document.createElement("div");
+    row.className = "zrow" + (doneCodes.has(z.code) ? " is-done" : "")
+                            + (z.code === nextCode ? " is-next" : "");
+    row.innerHTML = `
+      <div class="zrow-ico">${z.icon || "•"}</div>
+      <div>
+        <div class="zrow-name">${z.name}</div>
+        <div class="zrow-meta">${z.code === hereCode ? "вы здесь · " : ""}${
+          zoneXY[z.code] ? "координата задана вручную" : "точка №" + z.map_n}${
+          share.length > 1 ? " · делит место с " + (share.length - 1) : ""}</div>
+      </div>
+      <div class="zrow-pts">+${z.points}</div>`;
+    row.onclick = () => setNext(z.code);
+    box.appendChild(row);
+  });
+
+  const seen = new Set(), shared = [];
+  zones.forEach(z => {
+    const k = posKey(z.code);
+    if (!k || seen.has(k)) return;
+    seen.add(k);
+    const list = shareOf(z.code);
+    if (list.length > 1) shared.push(list);
+  });
+  const note = document.getElementById("groupNote");
+  if (shared.length) {
+    const list = shared[0];
+    note.style.display = "block";
+    note.innerHTML = `<b>${list.length} зон</b> стоят в одном месте — ` +
+      list.map(z => z.name).join(", ") +
+      `. Навигация ведёт к общей точке и называет нужную зону словами. ` +
+      `Разведите их в редакторе ниже — и стрелка станет точной.`;
+  } else {
+    note.style.display = "block";
+    note.innerHTML = `Каждая зона стоит на своём месте — навигация ведёт точно.`;
+  }
+}
+
+function render() { renderMarkers(); renderPanel(); renderList(); renderEditor(); }
+
+// ─── Редактор координат ───────────────────────────────────────────────────
+// На схеме шесть саун стоят одной точкой. Развести их может только человек,
+// который знает комплекс, поэтому координаты ставятся пальцем по карте.
+let editMode = false;
+let editZone = null;
+
+function loadXY() {
+  // Молча глотать нельзя — так уже потерялись сохранённые координаты.
+  try { return JSON.parse(localStorage.getItem(XY_KEY) || "{}"); }
+  catch (e) { console.warn("координаты не прочитались:", e); return {}; }
+}
+function saveXY() {
+  try { localStorage.setItem(XY_KEY, JSON.stringify(zoneXY)); } catch (e) {}
+}
+
+function toggleEdit() {
+  editMode = !editMode;
+  document.getElementById("editBar").classList.toggle("on", editMode);
+  document.getElementById("edToggle").textContent =
+    editMode ? "Выключить редактор" : "Включить редактор";
+  document.body.classList.toggle("edit-on", editMode);
+  if (editMode && !editZone) nextUnset();
+  render();
+  syncEditHeight();
+}
+
+// Панель закреплена внизу — освобождаем под неё место, иначе она накрывает
+// кнопки карты в полноэкранном режиме и конец списка на обычной странице.
+function syncEditHeight() {
+  requestAnimationFrame(() => {
+    const bar = document.getElementById("editBar");
+    const h = editMode ? bar.offsetHeight : 0;
+    document.documentElement.style.setProperty("--edit-h", h + "px");
+    if (document.querySelector(".map-card.full")) { fitGame(true); drawRoute(); }
+  });
+}
+
+function nextUnset() {
+  const free = zones.filter(z => !zoneXY[z.code]);
+  const pool = free.length ? free : zones;
+  const i = pool.findIndex(z => z.code === editZone);
+  editZone = pool[(i + 1) % pool.length].code;
+  syncEditSelect();
+  render();
+}
+
+function clearOne() {
+  if (!editZone) return;
+  delete zoneXY[editZone];
+  saveXY(); render();
+}
+
+function resetXY() {
+  if (!Object.keys(zoneXY).length) return;
+  Object.keys(zoneXY).forEach(k => delete zoneXY[k]);
+  saveXY(); render();
+}
+
+// Клик по схеме в режиме редактора: переводим точку экрана в проценты картинки.
+function placeAt(clientX, clientY) {
+  if (!editMode || !editZone) return;
+  const r = stage.getBoundingClientRect();
+  const x = ((clientX - r.left) / r.width) * 100;
+  const y = ((clientY - r.top) / r.height) * 100;
+  if (x < 0 || x > 100 || y < 0 || y > 100) return;
+  zoneXY[editZone] = { x: +x.toFixed(1), y: +y.toFixed(1) };
+  saveXY(); render();
+}
+
+function syncEditSelect() {
+  const sel = document.getElementById("edSelect");
+  if (sel.options.length !== zones.length) {
+    sel.innerHTML = "";
+    zones.forEach(z => sel.insertAdjacentHTML("beforeend",
+      `<option value="${z.code}">${z.name}</option>`));
+  }
+  if (editZone) sel.value = editZone;
+}
+
+function renderEditor() {
+  syncEditSelect();
+  const set = Object.keys(zoneXY).length;
+  document.getElementById("edStat").innerHTML =
+    `Задано вручную: <b>${set}</b> из ${zones.length} зон. ` +
+    (set ? "Остальные берут координату из схемы." :
+           "Пока все зоны берут координату из схемы комплекса.");
+  document.getElementById("edJson").value =
+    set ? JSON.stringify(zoneXY, null, 1) : "";
+  const z = zoneOf(editZone);
+  const hint = document.getElementById("edBarHint");
+  if (hint) hint.innerHTML = z
+    ? (zoneXY[editZone]
+        ? `<b>${z.name}</b> — точка задана (${zoneXY[editZone].x}, ${zoneXY[editZone].y}). Коснитесь снова, чтобы передвинуть.`
+        : `<b>${z.name}</b> — коснитесь места на схеме.`)
+    : "Выберите зону.";
+}
+
+function copyXY() {
+  const t = document.getElementById("edJson");
+  if (!t.value) return;
+  t.select();
+  navigator.clipboard ? navigator.clipboard.writeText(t.value) : document.execCommand("copy");
+  const b = document.getElementById("edCopy");
+  b.textContent = "Скопировано";
+  setTimeout(() => (b.textContent = "Скопировать"), 1500);
+}
+
+function downloadXY() {
+  const t = document.getElementById("edJson");
+  if (!t.value) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([t.value], { type: "application/json" }));
+  a.download = "zone_xy.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+function setHere(code) { hereCode = code || null; syncSelects(); render(); }
+function setNext(code) { nextCode = code || null; syncSelects(); render(); }
+
+function syncSelects() {
+  document.getElementById("selHere").value = hereCode || "";
+  document.getElementById("selNext").value = nextCode || "";
+}
+
+// ─── Зум и перетаскивание ─────────────────────────────────────────────────
+let scale = 1, tx = 0, ty = 0;
+function apply() { stage.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`; }
+function clamp() {
+  const w = vp.clientWidth, h = vp.clientHeight;
+  const sw = w * scale, sh = (stage.offsetHeight || h) * scale;
+  tx = Math.min(0, Math.max(tx, w - sw));
+  ty = Math.min(0, Math.max(ty, h - sh));
+  if (sw < w) tx = (w - sw) / 2;
+  if (sh < h) ty = (h - sh) / 2;   // ниже вьюпорта — центрируем, а не прижимаем к верху
+}
+function zoomBy(k, cx, cy) {
+  const w = vp.clientWidth, h = vp.clientHeight;
+  cx = cx == null ? w / 2 : cx; cy = cy == null ? h / 2 : cy;
+  const ns = Math.min(5, Math.max(1, scale * k));
+  const r = ns / scale;
+  tx = cx - (cx - tx) * r; ty = cy - (cy - ty) * r;
+  scale = ns; clamp(); apply();
+}
+function fitAll() { scale = 1; tx = 0; ty = 0; apply(); }
+
+// Схема покрывает весь участок вместе с домиками и БарнХаусами, а игра идёт
+// в левой части. По умолчанию показываем именно её, иначе гость ищет свою
+// точку среди построек, которые к игре отношения не имеют.
+function fitGame(cover) {
+  const ps = zones.map(z => ptByN[z.map_n]).filter(Boolean);
+  if (!ps.length) return fitAll();
+  const pad = 6;
+  const x1 = Math.max(0, Math.min(...ps.map(p => p.x)) - pad);
+  const x2 = Math.min(100, Math.max(...ps.map(p => p.x)) + pad);
+  const y1 = Math.max(0, Math.min(...ps.map(p => p.y)) - pad);
+  const y2 = Math.min(100, Math.max(...ps.map(p => p.y)) + pad);
+  const w = vp.clientWidth, h = vp.clientHeight, sh = stage.offsetHeight || h;
+  // Во сколько раз можно увеличить, чтобы прямоугольник зон целиком остался в кадре.
+  const kx = 100 / (x2 - x1);
+  const ky = (h / sh) * (100 / (y2 - y1));
+  // cover=true — заполнить вьюпорт целиком (стартовый вид: гостю важнее детали
+  // вокруг себя). cover=false — вписать все зоны, пусть и с полями по краям:
+  // так работает кнопка «Зоны игры», и она обязана показать именно все зоны.
+  const need = cover ? Math.max(1, h / sh) : 1;   // по ширине картинка равна вьюпорту
+  scale = Math.min(5, Math.max(1, need, Math.min(kx, ky)));
+  // Центрируем прямоугольник зон, а не прижимаем его углом.
+  tx = w / 2 - ((x1 + x2) / 2 / 100) * w * scale;
+  ty = h / 2 - ((y1 + y2) / 2 / 100) * sh * scale;
+  clamp(); apply();
+}
+
+function toggleFull() {
+  const card = document.querySelector(".map-card");
+  const on = card.classList.toggle("full");
+  document.getElementById("btnFull").textContent = on ? "Свернуть" : "Во весь экран";
+  document.body.style.overflow = on ? "hidden" : "";
+  // Пропорции вьюпорта меняются — пересчитываем после того, как браузер применит стили.
+  requestAnimationFrame(() => { fitGame(true); drawRoute(); });
+}
+function focusHere() {
+  const p = pointOf(hereCode) || pointOf(nextCode);
+  if (!p) return;
+  scale = 2.4;
+  const w = vp.clientWidth, sh = stage.offsetHeight;
+  tx = vp.clientWidth / 2 - (p.x / 100) * w * scale;
+  ty = vp.clientHeight / 2 - (p.y / 100) * sh * scale;
+  clamp(); apply();
+}
+
+let drag = null;
+vp.addEventListener("pointerdown", e => {
+  drag = { x: e.clientX, y: e.clientY, tx, ty, moved: false };
+  vp.classList.add("dragging"); vp.setPointerCapture(e.pointerId);
+});
+vp.addEventListener("pointermove", e => {
+  if (!drag) return;
+  if (Math.abs(e.clientX - drag.x) > 4 || Math.abs(e.clientY - drag.y) > 4) drag.moved = true;
+  tx = drag.tx + (e.clientX - drag.x); ty = drag.ty + (e.clientY - drag.y);
+  clamp(); apply();
+});
+vp.addEventListener("pointerup", e => {
+  // Короткое касание без сдвига — это клик, а не перетаскивание карты.
+  if (drag && !drag.moved) placeAt(e.clientX, e.clientY);
+  drag = null; vp.classList.remove("dragging");
+});
+vp.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = vp.getBoundingClientRect();
+  zoomBy(e.deltaY < 0 ? 1.15 : .87, e.clientX - r.left, e.clientY - r.top);
+}, { passive: false });
+
+// пинч двумя пальцами
+let pinch = null;
+vp.addEventListener("touchstart", e => {
+  if (e.touches.length === 2) {
+    const [a, b] = e.touches;
+    pinch = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), s: scale };
+  }
+}, { passive: true });
+vp.addEventListener("touchmove", e => {
+  if (pinch && e.touches.length === 2) {
+    const [a, b] = e.touches;
+    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+    const r = vp.getBoundingClientRect();
+    const target = pinch.s * (d / pinch.d);
+    zoomBy(target / scale, (a.clientX + b.clientX) / 2 - r.left, (a.clientY + b.clientY) / 2 - r.top);
+  }
+}, { passive: true });
+vp.addEventListener("touchend", () => { pinch = null; }, { passive: true });
+
+// ─── Старт ────────────────────────────────────────────────────────────────
+(function init() {
+  const selH = document.getElementById("selHere"), selN = document.getElementById("selNext");
+  selH.innerHTML = '<option value="">— не отмечался —</option>';
+  selN.innerHTML = '<option value="">— не выбрана —</option>';
+  zones.forEach(z => {
+    selH.insertAdjacentHTML("beforeend", `<option value="${z.code}">${z.name}</option>`);
+    selN.insertAdjacentHTML("beforeend", `<option value="${z.code}">${z.name}</option>`);
+  });
+
+  // Демонстрационный сценарий: гость отметился в трёх саунах, как в первом проходе.
+  doneCodes = new Set(["herbal", "panorama", "coffee"]);
+  hereCode = "coffee";
+  nextCode = "poolbar";
+  syncSelects();
+
+  const img = document.getElementById("mapImg");
+  const start = () => {
+    // Контейнер должен быть ровно в пропорциях схемы, иначе снизу пустое поле.
+    if (img.naturalWidth) vp.style.aspectRatio = img.naturalWidth + "/" + img.naturalHeight;
+    render();
+    fitGame(true);
+    drawRoute();
+  };
+  if (img.complete && img.naturalWidth) start(); else img.onload = start;
+  window.addEventListener("resize", () => { clamp(); apply(); drawRoute(); syncEditHeight(); });
+})();
+</script>
+</body>
+</html>
