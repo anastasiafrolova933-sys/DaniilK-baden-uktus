@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Термальный путь — Baden Uktus</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:#c8a273; --gold-dk:#8f6f4a; --gold-lt:#e5cba6;
+    --bg:#141210; --bg2:#1c1a17; --card:#221f1b; --border:#332f29;
+    --text:#f4efe7; --muted:#a09892; --green:#4ec99a; --red:#e0574a; --amber:#e8b45a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    background:var(--bg); color:var(--text); overflow:hidden;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  .serif { font-family:'Cormorant',Georgia,serif; }
+
+  .deck { position:relative; width:100vw; height:100vh; overflow:hidden; }
+  @media (min-width:900px) {
+    .deck { max-width:calc(100vh * 16 / 9); max-height:calc(100vw * 9 / 16);
+      margin:auto; position:absolute; inset:0; }
+  }
+  .slide {
+    position:absolute; inset:0; padding:clamp(24px,4.5vw,64px);
+    display:flex; flex-direction:column; justify-content:center;
+    opacity:0; visibility:hidden; transition:opacity .35s ease;
+    background:radial-gradient(ellipse 90% 60% at 50% -10%, var(--bg2), var(--bg) 65%);
+    overflow-y:auto;
+  }
+  .slide.active { opacity:1; visibility:visible; }
+  .slide::-webkit-scrollbar { width:0; }
+
+  .kicker { font-size:clamp(10px,1.1vw,12px); letter-spacing:.22em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:14px; font-weight:600; }
+  h1 { font-size:clamp(32px,5.4vw,68px); line-height:1.05; font-weight:600; letter-spacing:-.02em; }
+  h1 em { font-family:'Cormorant',Georgia,serif; font-style:italic; color:var(--gold-lt); font-weight:600; }
+  h2 { font-size:clamp(22px,3.2vw,42px); line-height:1.15; font-weight:600; letter-spacing:-.015em;
+    margin-bottom:clamp(14px,2vw,24px); }
+  h2 em { font-family:'Cormorant',Georgia,serif; font-style:italic; color:var(--gold-lt); }
+  p.lead { font-size:clamp(14px,1.7vw,21px); line-height:1.55; color:var(--muted); max-width:60ch; }
+  p.lead b { color:var(--text); font-weight:600; }
+
+  .grid { display:grid; gap:clamp(10px,1.4vw,18px); }
+  .g2 { grid-template-columns:repeat(2,1fr); }
+  .g3 { grid-template-columns:repeat(3,1fr); }
+  .g4 { grid-template-columns:repeat(4,1fr); }
+  @media (max-width:820px) { .g3,.g4 { grid-template-columns:repeat(2,1fr); } .g2 { grid-template-columns:1fr; } }
+
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:clamp(14px,1.8vw,24px); }
+  .card h3 { font-size:clamp(14px,1.6vw,19px); font-weight:600; margin-bottom:8px; }
+  .card p { font-size:clamp(12px,1.25vw,15px); line-height:1.5; color:var(--muted); }
+  .card .ico { font-size:clamp(20px,2.4vw,30px); margin-bottom:10px; display:block; }
+
+  .metric { text-align:center; }
+  .metric .v { font-family:'Cormorant',Georgia,serif; font-style:italic; font-weight:600;
+    font-size:clamp(34px,5vw,62px); color:var(--gold); line-height:1; }
+  .metric .k { font-size:clamp(11px,1.15vw,14px); color:var(--muted); margin-top:8px; line-height:1.4; }
+
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,3vw,48px); align-items:center; }
+  @media (max-width:820px) { .split { grid-template-columns:1fr; gap:20px; } }
+
+  .shot { border-radius:18px; overflow:hidden; border:1px solid var(--border);
+    box-shadow:0 24px 60px rgba(0,0,0,.5); background:#000; max-height:76vh; }
+  .shot img { width:100%; display:block; }
+  .shot-cap { font-size:11px; color:var(--muted); text-align:center; margin-top:10px; letter-spacing:.04em; }
+
+  ul.ticks { list-style:none; display:flex; flex-direction:column; gap:clamp(9px,1.2vw,15px); }
+  ul.ticks li { font-size:clamp(13px,1.45vw,18px); line-height:1.5; padding-left:30px; position:relative; color:var(--text); }
+  ul.ticks li::before { content:"→"; position:absolute; left:0; color:var(--gold); font-weight:700; }
+  ul.ticks li span { color:var(--muted); }
+
+  .steps { display:flex; flex-direction:column; gap:10px; }
+  .step { display:flex; gap:14px; align-items:flex-start; background:var(--card);
+    border:1px solid var(--border); border-radius:14px; padding:clamp(12px,1.5vw,18px); }
+  .step .n { flex-shrink:0; width:30px; height:30px; border-radius:9px; background:var(--gold);
+    color:#1a1814; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .step .t1 { font-size:clamp(13px,1.4vw,17px); font-weight:600; }
+  .step .t2 { font-size:clamp(11.5px,1.2vw,14px); color:var(--muted); margin-top:3px; line-height:1.45; }
+
+  table.tbl { width:100%; border-collapse:collapse; font-size:clamp(12px,1.3vw,16px); }
+  table.tbl th { text-align:left; padding:10px 12px; color:var(--gold); font-weight:600;
+    font-size:clamp(10px,1.05vw,12px); text-transform:uppercase; letter-spacing:.12em;
+    border-bottom:1px solid var(--border); }
+  table.tbl td { padding:11px 12px; border-bottom:1px solid var(--border); color:var(--text); }
+  table.tbl td.m { color:var(--muted); }
+  table.tbl tr:last-child td { border-bottom:none; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+
+  .badge { display:inline-block; font-size:clamp(10px,1.05vw,12px); font-weight:600; padding:4px 11px;
+    border-radius:20px; letter-spacing:.02em; }
+  .b-gold { background:rgba(200,162,115,.18); color:var(--gold-lt); }
+  .b-green { background:rgba(78,201,154,.15); color:var(--green); }
+  .b-amber { background:rgba(232,180,90,.14); color:var(--amber); }
+  .b-mute { background:rgba(255,255,255,.06); color:var(--muted); }
+
+  .chartbox { position:relative; height:clamp(200px,32vh,340px); }
+
+  .quote { font-family:'Cormorant',Georgia,serif; font-style:italic;
+    font-size:clamp(20px,3vw,38px); line-height:1.35; color:var(--gold-lt); max-width:22ch; }
+
+  /* навигация */
+  .bar { position:fixed; top:0; left:0; height:2px; background:var(--gold); z-index:100; transition:width .3s; }
+  .nav { position:fixed; bottom:clamp(12px,2vh,24px); left:50%; transform:translateX(-50%);
+    display:flex; align-items:center; gap:14px; z-index:100;
+    background:rgba(20,18,16,.82); backdrop-filter:blur(10px);
+    border:1px solid var(--border); border-radius:100px; padding:7px 9px; }
+  .nav button { background:transparent; border:none; color:var(--text); width:32px; height:32px;
+    border-radius:50%; cursor:pointer; font-size:15px; opacity:.75; }
+  .nav button:hover { background:rgba(255,255,255,.09); opacity:1; }
+  .nav .cnt { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; min-width:52px; text-align:center; }
+  .chapter { position:fixed; top:16px; right:20px; z-index:100; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); }
+  @media (max-width:820px) { .chapter { display:none; } }
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div class="chapter" id="chapter"></div>
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide active" data-ch="">
+  <div style="text-align:center">
+    <div class="kicker">Baden-Баден · Уктус · 2026</div>
+    <h1>Термальный <em>путь</em></h1>
+    <p class="lead" style="margin:22px auto 0;text-align:center">
+      Игра-маршрут по комплексу: гость проходит зоны, набирает баллы и получает подарок.
+      Мы — удлиняем визит, загружаем СПА и впервые видим, чем гости реально пользуются.
+    </p>
+    <div class="grid g4" style="margin-top:clamp(26px,4vh,48px);max-width:820px;margin-left:auto;margin-right:auto">
+      <div class="metric"><div class="v">19</div><div class="k">зон комплекса<br>в маршруте</div></div>
+      <div class="metric"><div class="v">32</div><div class="k">сеанса в расписании<br>каждый день</div></div>
+      <div class="metric"><div class="v">11</div><div class="k">призов<br>в трёх пулах</div></div>
+      <div class="metric"><div class="v">1295</div><div class="k">гостей уже есть<br>в лояльности</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Проблема</div>
+  <h2>Мы не знаем, <em>что происходит</em> внутри комплекса</h2>
+  <div class="grid g3" style="margin-top:10px">
+    <div class="card">
+      <span class="ico">🗺️</span>
+      <h3>Какие зоны работают</h3>
+      <p>Сколько людей за день заходит в соляную, а сколько в хамам — не знает никто.
+        Решения по ремонту, персоналу и расписанию принимаются на ощущение.</p>
+    </div>
+    <div class="card">
+      <span class="ico">💆</span>
+      <h3>СПА почти простаивает</h3>
+      <p>Загрузка СПА — доли процента. Гость проходит мимо двери, потому что не знает,
+        что там есть и что сейчас свободно.</p>
+    </div>
+    <div class="card">
+      <span class="ico">⏱️</span>
+      <h3>Визит короче, чем мог бы</h3>
+      <p>Гость приходит на 2–3 часа и обходит две-три ближние зоны.
+        Половина комплекса остаётся неувиденной, а чек — несформированным.</p>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:clamp(18px,2.5vh,28px)">
+    <b>Отчёты показывают выручку и посещаемость, но не поведение.</b>
+    Мы видим, что гость пришёл, — и не видим, что он делал внутри.
+  </p>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="split">
+    <div>
+      <div class="kicker">Решение</div>
+      <h2>Гость собирает зоны — <em>мы собираем данные</em></h2>
+      <p class="lead">В боте лояльности появляется «Термальный путь».
+        Гость отмечается в зонах, копит баллы и на пороге крутит барабан с подарком.</p>
+      <ul class="ticks" style="margin-top:clamp(16px,2.2vh,24px)">
+        <li>Работает <b>внутри существующего бота</b> — <span>ставить ничего не нужно</span></li>
+        <li>Отметка — <b>наклейка с QR</b> или <b>код от мастера</b></li>
+        <li>Подарок — <b>за баллы</b>, <span>а платные услуги дают их больше</span></li>
+        <li>Всё считается <b>на сервере</b> — <span>подделать результат нельзя</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="shot"><img src="shots/guest-top.png" alt="Экран гостя"></div>
+      <div class="shot-cap">Реальный экран из работающей системы · 24.08.2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Как это работает у гостя</div>
+  <h2>Четыре шага, <em>ноль обучения</em></h2>
+  <div class="steps" style="max-width:900px">
+    <div class="step"><div class="n">1</div><div><div class="t1">Кассир отмечает визит — как сейчас</div>
+      <div class="t2">Ничего нового на стойке. Путь открывается сам, только для тех, кто действительно в комплексе.</div></div></div>
+    <div class="step"><div class="n">2</div><div><div class="t1">Гость выбирает: свободно или по маршруту</div>
+      <div class="t2">Маршрут строится от времени прихода: парения, анимация, свободные зоны в паузах. Прошедшее не показываем.</div></div></div>
+    <div class="step"><div class="n">3</div><div><div class="t1">Отмечается в зонах</div>
+      <div class="t2">Сканирует наклейку камерой прямо в приложении — или вводит код, который мастер назвал после парения.</div></div></div>
+    <div class="step"><div class="n">4</div><div><div class="t1">Набирает баллы и получает подарок</div>
+      <div class="t2">30 баллов — бронзовый барабан, 60 — серебряный, 100 — золотой. Приз гасится на стойке или в баре.</div></div></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="split">
+    <div>
+      <div class="kicker">Механика</div>
+      <h2>Баллы там, <em>где деньги</em></h2>
+      <p class="lead">Зоны стоят по-разному. Простой заход в бассейн и оплаченная процедура —
+        не одно и то же, и система это различает.</p>
+      <table class="tbl" style="margin-top:18px">
+        <tr><th>Зона</th><th class="num">Баллы</th><th>Почему</th></tr>
+        <tr><td>СПА</td><td class="num"><b>30</b></td><td class="m">платная процедура</td></tr>
+        <tr><td>Кафе, бары, Пул-Бар</td><td class="num"><b>20</b></td><td class="m">гость покупает</td></tr>
+        <tr><td>Сауны с парением</td><td class="num"><b>15</b></td><td class="m">время и работа мастера</td></tr>
+        <tr><td>Бассейны, пляж, отдых</td><td class="num"><b>10</b></td><td class="m">просто заход</td></tr>
+      </table>
+      <p class="lead" style="margin-top:16px;font-size:clamp(13px,1.4vw,17px)">
+        <b>Одно посещение СПА открывает барабан сразу.</b> Без трат до него нужно три зоны.
+      </p>
+    </div>
+    <div>
+      <div class="chartbox"><canvas id="chPoints"></canvas></div>
+      <div class="shot-cap">Сколько баллов даёт каждый тип зоны</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="split">
+    <div>
+      <div class="kicker">Экономика</div>
+      <h2>Что стоит <em>один розыгрыш</em></h2>
+      <p class="lead">Три пула призов. Чем больше баллов набрал гость — тем дороже подарки в барабане.</p>
+      <div class="grid g3" style="margin-top:20px">
+        <div class="card metric"><div class="v">57 ₽</div><div class="k"><span class="badge b-mute">Бронза</span><br>чай, лимонад, скидка</div></div>
+        <div class="card metric"><div class="v">119 ₽</div><div class="k"><span class="badge b-mute">Серебро</span><br>+ десерт, мерч, массаж</div></div>
+        <div class="card metric"><div class="v">275 ₽</div><div class="k"><span class="badge b-gold">Золото</span><br>+ полотенце, вход</div></div>
+      </div>
+      <p class="lead" style="margin-top:18px;font-size:clamp(13px,1.4vw,17px)">
+        Заметная часть этой суммы — <b>чай, СПА в непик и будний вход</b>: незанятые мощности,
+        а не живые деньги. Игра перекладывает спрос из пиков в провалы.
+      </p>
+    </div>
+    <div>
+      <div class="chartbox"><canvas id="chEV"></canvas></div>
+      <div class="shot-cap">Средняя себестоимость розыгрыша по пулам, ₽</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Что получает бизнес</div>
+  <h2>Четыре эффекта, <em>которые видно в цифрах</em></h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card"><span class="ico">⏳</span><h3>Визит становится длиннее</h3>
+      <p>Пауза между отметками и маршрут по расписанию физически растягивают пребывание.
+        Дольше визит — выше вероятность покупки в баре и СПА.</p></div>
+    <div class="card"><span class="ico">💰</span><h3>Допродажи получают стимул</h3>
+      <p>Платные зоны дают втрое больше баллов. Гостю выгодно зайти в СПА и кафе —
+        и он идёт туда сам, без уговоров персонала.</p></div>
+    <div class="card"><span class="ico">📊</span><h3>Появляются данные о зонах</h3>
+      <p>Тепловая карта посещений — то, чего сегодня нет ни в одном отчёте.
+        Видно, какие зоны работают, а какие простаивают.</p></div>
+    <div class="card"><span class="ico">🔁</span><h3>Причина вернуться</h3>
+      <p>Приз действует 30 дней. Это не скидка «в никуда», а конкретный повод
+        прийти ещё раз в ближайший месяц.</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="split">
+    <div>
+      <div class="kicker">Данные</div>
+      <h2>Тепловая карта, <em>которой не было</em></h2>
+      <p class="lead">Каждая отметка — строка в базе: какая зона, во сколько, был ли сеанс, кто отметил.
+        Из этого собирается картина дня.</p>
+      <ul class="ticks" style="margin-top:18px">
+        <li>Какие зоны <b>реально посещают</b>, а какие простаивают</li>
+        <li><b>Длительность визита</b> — от первой отметки до последней</li>
+        <li>Доходят ли гости <b>до конца маршрута</b> и где отваливаются</li>
+        <li>Возвращаются ли <b>с призом</b> — и через сколько дней</li>
+      </ul>
+      <p class="lead" style="margin-top:16px;font-size:clamp(13px,1.4vw,17px)">
+        <b>Это работает даже без призов.</b> Первая фаза даёт данные,
+        даже если барабан ещё выключен.
+      </p>
+    </div>
+    <div>
+      <div class="shot"><img src="shots/admin-stat.png" alt="Аналитика"></div>
+      <div class="shot-cap">Раздел «Данные» в настройках · реальный экран</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Защита</div>
+  <h2>Почему это <em>нельзя накрутить</em></h2>
+  <p class="lead">Главный риск любой такой механики — гость отмечается, не выходя из раздевалки,
+    по фотографии чужого QR. Пять рубежей закрывают этот сценарий.</p>
+  <div class="grid g3" style="margin-top:clamp(16px,2.4vh,26px)">
+    <div class="card"><h3>1 · Только активный визит</h3><p>Играет лишь тот, кого кассир отметил на входе сегодня. Из дома — не получится.</p></div>
+    <div class="card"><h3>2 · Пауза между зонами</h3><p>Маршрут нельзя пройти быстрее, чем его проходят ногами.</p></div>
+    <div class="card"><h3>3 · Код мастера живёт минуты</h3><p>Назвали после парения — через 15 минут он мёртв. Унести домой нечего.</p></div>
+    <div class="card"><h3>4 · Зона — один раз за визит</h3><p>Повторная отметка не даёт ничего.</p></div>
+    <div class="card"><h3>5 · Приз гасится однократно</h3><p>С одним кодом не обойти бар, стойку и СПА по очереди.</p></div>
+    <div class="card" style="border-color:rgba(200,162,115,.4)"><h3>Розыгрыш — на сервере</h3>
+      <p>Приз выбирает не браузер. Через консоль телефона результат не подкрутить.</p></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Статус</div>
+  <h2>Что <em>уже сделано</em></h2>
+  <div class="split" style="align-items:start">
+    <div>
+      <table class="tbl">
+        <tr><th>Готово</th><th></th></tr>
+        <tr><td>Игра в боте лояльности</td><td><span class="badge b-green">работает</span></td></tr>
+        <tr><td>Рабочее место персонала</td><td><span class="badge b-green">работает</span></td></tr>
+        <tr><td>Настройки: зоны, призы, правила</td><td><span class="badge b-green">работает</span></td></tr>
+        <tr><td>Расписания парений и анимации</td><td><span class="badge b-green">внесены</span></td></tr>
+        <tr><td>Наклейки на 19 зон</td><td><span class="badge b-green">напечатать</span></td></tr>
+        <tr><td>Доступ гостям</td><td><span class="badge b-amber">выключен</span></td></tr>
+      </table>
+      <p class="lead" style="margin-top:18px;font-size:clamp(13px,1.4vw,17px)">
+        Сейчас систему видят <b>только два администратора</b>.
+        Гости кнопку не видят вовсе — обкатка идёт незаметно для зала.
+      </p>
+    </div>
+    <div>
+      <div class="grid g2">
+        <div class="card metric"><div class="v">77</div><div class="k">автоматических проверок<br>проходят при каждой сборке</div></div>
+        <div class="card metric"><div class="v">0</div><div class="k">изменений в кассе<br>и карте лояльности</div></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Работающая лояльность не тронута</h3>
+        <p>Игра живёт в отдельных таблицах и отдельных страницах.
+          Касса, регистрация гостей и карта лояльности работают ровно как раньше —
+          это проверяется автоматически при каждом запуске.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">План</div>
+  <h2>Запуск <em>в три этапа</em></h2>
+  <div class="steps" style="max-width:940px">
+    <div class="step"><div class="n">1</div><div><div class="t1">Обкатка на администраторах <span class="badge b-green" style="margin-left:6px">идёт сейчас</span></div>
+      <div class="t2">Двое проходят комплекс своими ногами: наклейки, коды, барабан, погашение. Гости ничего не видят. Правим то, что окажется неудобным.</div></div></div>
+    <div class="step"><div class="n">2</div><div><div class="t1">Подключаем персонал</div>
+      <div class="t2">Пармастеры, аниматоры, СПА и стойка. Одна страница-инструкция, вход по тому же PIN, что на кассе. Проверяем на реальном потоке после парений.</div></div></div>
+    <div class="step"><div class="n">3</div><div><div class="t1">Открываем гостям</div>
+      <div class="t2">Один переключатель в настройках. Наклейки в зонах, анонс в боте. Смотрим на первые данные и настраиваем пороги и призы.</div></div></div>
+  </div>
+  <p class="lead" style="margin-top:clamp(16px,2.4vh,26px)">
+    <b>Откат на любом этапе — одна команда.</b> Игра выключается переключателем,
+    работающая лояльность при этом не затрагивается.
+  </p>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-ch="Для руководителей">
+  <div class="kicker">Решения</div>
+  <h2>Что нужно <em>от руководства</em></h2>
+  <div class="grid g2">
+    <div class="card"><h3>Утвердить состав призов</h3>
+      <p>Сейчас в списке 11 позиций: чай, лимонад, десерт, пицца, скидки, СПА в непик, массаж,
+        мерч, полотенце, бесплатный будний вход. Что оставляем, что убираем, что добавить.</p></div>
+    <div class="card"><h3>Согласовать бюджет игры</h3>
+      <p>Средний розыгрыш — около 100 ₽ на участника, значительная часть из них
+        закрывается незанятыми мощностями. Нужен потолок на день или месяц.</p></div>
+    <div class="card"><h3>Назначить ответственных</h3>
+      <p>Кто ведёт расписание сеансов, кто следит за призами на стойке,
+        кто отвечает за наклейки в зонах.</p></div>
+    <div class="card"><h3>Проверить формулировки</h3>
+      <p>Механика построена так, что подарок получают все дошедшие — случаен только его вид.
+        Тексты для гостей стоит показать юристу.</p></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-ch="Для сотрудников">
+  <div style="text-align:center">
+    <div class="kicker">Часть вторая</div>
+    <h1>Что меняется <em>в вашей работе</em></h1>
+    <p class="lead" style="margin:22px auto 0;text-align:center;max-width:52ch">
+      Почти ничего. У большинства — одно новое действие в день,
+      и оно занимает несколько секунд.
+    </p>
+    <div class="grid g4" style="margin-top:clamp(26px,4vh,46px);max-width:900px;margin-left:auto;margin-right:auto">
+      <div class="card metric"><div class="v">🔥</div><div class="k"><b>Пармастер</b><br>назвать код после парения</div></div>
+      <div class="card metric"><div class="v">🤸</div><div class="k"><b>Аниматор</b><br>назвать код после занятия</div></div>
+      <div class="card metric"><div class="v">💆</div><div class="k"><b>СПА</b><br>отметить гостя после процедуры</div></div>
+      <div class="card metric"><div class="v">🛎️</div><div class="k"><b>Стойка</b><br>погасить приз по коду</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-ch="Для сотрудников">
+  <div class="split">
+    <div>
+      <div class="kicker">Пармастер и аниматор</div>
+      <h2>Один код <em>на всю группу</em></h2>
+      <p class="lead">После парения из парной выходит полсотни человек.
+        Никого сканировать не нужно — вы просто называете код вслух, один раз.</p>
+      <div class="steps" style="margin-top:18px">
+        <div class="step"><div class="n">1</div><div><div class="t1">Открыть рабочее место</div>
+          <div class="t2">Закладка в браузере, вход по тому же PIN, что на кассе. Адрес не меняется никогда.</div></div></div>
+        <div class="step"><div class="n">2</div><div><div class="t1">Нажать «Показать код зоны»</div>
+          <div class="t2">На экране появится четыре крупные цифры и таймер.</div></div></div>
+        <div class="step"><div class="n">3</div><div><div class="t1">Сказать код группе</div>
+          <div class="t2">«Код четыре-два-семь-один». Всё. Дальше гости вводят его сами.</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="shot"><img src="shots/staff-code.png" alt="Экран пармастера"></div>
+      <div class="shot-cap">Рабочее место пармастера · реальный экран</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-ch="Для сотрудников">
+  <div class="split">
+    <div>
+      <div class="kicker">Частые вопросы</div>
+      <h2>Коротко <em>о главном</em></h2>
+      <table class="tbl">
+        <tr><td><b>Код нужно менять каждый раз?</b></td><td class="m">Нет. Он живёт 15 минут, кнопка отдаёт тот же самый — подошедшему позже диктовать новый не нужно.</td></tr>
+        <tr><td><b>А если гость услышал код и не был на парении?</b></td><td class="m">Он всё равно должен быть в комплексе с отмеченным визитом. Максимум — сосед по залу. Это допустимо.</td></tr>
+        <tr><td><b>Нужен ли мне телефон в парной?</b></td><td class="m">Нет. Код показывается после сеанса, на планшете или телефоне в зоне отдыха.</td></tr>
+        <tr><td><b>Что если гость не разобрался?</b></td><td class="m">Скажите ему открыть бота лояльности и нажать «Термальный путь». Поле для кода — на первом экране.</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="shot" style="max-width:300px;margin:0 auto"><img src="shots/sticker.png" alt="Наклейка зоны"></div>
+      <div class="shot-cap">Наклейка в зоне · гость сканирует камерой</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-ch="Для сотрудников">
+  <div class="split">
+    <div>
+      <div class="kicker">СПА и стойка</div>
+      <h2>Отметить гостя <em>и выдать приз</em></h2>
+      <div class="card" style="margin-bottom:14px">
+        <h3>💆 СПА — после процедуры</h3>
+        <p>Гость показывает свой код из карточки лояльности (восемь символов).
+          Вы вводите его в рабочем месте — отметка ставится сразу.
+          СПА даёт гостю больше всего баллов, это стоит проговаривать.</p>
+      </div>
+      <div class="card">
+        <h3>🛎️ Стойка и бар — погашение приза</h3>
+        <p>Гость называет код из шести символов. Вы вводите его, видите приз, имя гостя и срок,
+          нажимаете «Погасить». Код срабатывает один раз — повторно им воспользоваться нельзя.</p>
+      </div>
+    </div>
+    <div>
+      <div class="shot"><img src="shots/guest-zones.png" alt="Зоны и призы у гостя"></div>
+      <div class="shot-cap">Что видит гость: зоны, баллы и выигранный приз</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-ch="Для сотрудников">
+  <div class="split">
+    <div>
+      <div class="kicker">Управление</div>
+      <h2>Всё настраивается <em>без программиста</em></h2>
+      <p class="lead">Зоны, баллы, расписание, призы, шансы и пороги меняются в одном разделе.
+        Изменение вступает в силу сразу.</p>
+      <ul class="ticks" style="margin-top:18px">
+        <li>Включить или выключить <b>любую зону</b></li>
+        <li>Изменить <b>баллы</b> за зону и <b>пороги</b> пулов</li>
+        <li>Поправить <b>расписание</b> и продлить программу анимации</li>
+        <li>Настроить <b>призы и их шансы</b> — стоимость пересчитается сразу</li>
+        <li>Открыть игру <b>всем гостям</b> одним переключателем</li>
+      </ul>
+    </div>
+    <div>
+      <div class="shot"><img src="shots/admin-zones.png" alt="Настройки зон"></div>
+      <div class="shot-cap">Раздел «Зоны» · реальный экран настроек</div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-ch="">
+  <div style="text-align:center">
+    <div class="kicker">Дальше</div>
+    <h1>Готово <em>к обкатке</em></h1>
+    <p class="lead" style="margin:20px auto 0;text-align:center;max-width:54ch">
+      Система работает, наклейки напечатаны, персоналу нужно одно новое действие.
+      Осталось пройти комплекс своими ногами и открыть гостям.
+    </p>
+    <div class="grid g3" style="margin-top:clamp(26px,4vh,44px);max-width:760px;margin-left:auto;margin-right:auto">
+      <div class="metric"><div class="v">1</div><div class="k">переключатель,<br>чтобы открыть гостям</div></div>
+      <div class="metric"><div class="v">19</div><div class="k">наклеек<br>распечатать и повесить</div></div>
+      <div class="metric"><div class="v">30</div><div class="k">дней живёт приз —<br>повод вернуться</div></div>
+    </div>
+    <p class="lead" style="margin:clamp(24px,3.5vh,40px) auto 0;text-align:center;font-size:clamp(12px,1.3vw,15px);opacity:.65">
+      Baden-Баден · Уктус · август 2026
+    </p>
+  </div>
+</section>
+
+</div>
+
+<div class="nav">
+  <button onclick="go(-1)">‹</button>
+  <span class="cnt" id="cnt">1 / 18</span>
+  <button onclick="go(1)">›</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let cur = 0, charted = false;
+
+function show(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, n) => s.classList.toggle('active', n === cur));
+  document.getElementById('cnt').textContent = (cur + 1) + ' / ' + slides.length;
+  document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+  document.getElementById('chapter').textContent = slides[cur].dataset.ch || '';
+  slides[cur].scrollTop = 0;
+  if (!charted && (cur === 4 || cur === 5)) { drawCharts(); charted = true; }
+}
+function go(d) { show(cur + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(slides.length - 1);
+});
+
+// свайпы на телефоне
+let x0 = null;
+document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (x0 === null) return;
+  const dx = e.changedTouches[0].clientX - x0;
+  if (Math.abs(dx) > 60) go(dx < 0 ? 1 : -1);
+  x0 = null;
+}, { passive: true });
+
+function drawCharts() {
+  const gold = '#c8a273', goldDk = '#8f6f4a', light = '#e5cba6';
+  const grid = 'rgba(255,255,255,.06)', tick = '#a09892';
+  Chart.defaults.color = tick;
+  Chart.defaults.font.family = 'Inter, sans-serif';
+
+  new Chart(document.getElementById('chPoints'), {
+    type: 'bar',
+    data: {
+      labels: ['СПА', 'Кафе и бары', 'Сауны\nс парением', 'Бассейны,\nпляж'],
+      datasets: [{ data: [30, 20, 15, 10],
+        backgroundColor: [light, gold, goldDk, 'rgba(143,111,74,.5)'],
+        borderRadius: 8, borderSkipped: false }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: c => c.parsed.y + ' баллов' } } },
+      scales: { y: { beginAtZero: true, grid: { color: grid }, ticks: { stepSize: 10 } },
+                x: { grid: { display: false } } } }
+  });
+
+  new Chart(document.getElementById('chEV'), {
+    type: 'bar',
+    data: {
+      labels: ['Бронза · 30', 'Серебро · 60', 'Золото · 100'],
+      datasets: [{ data: [57, 119, 275],
+        backgroundColor: ['rgba(143,111,74,.55)', gold, light],
+        borderRadius: 8, borderSkipped: false }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: c => c.parsed.x + ' ₽ в среднем' } } },
+      scales: { x: { beginAtZero: true, grid: { color: grid }, ticks: { callback: v => v + ' ₽' } },
+                y: { grid: { display: false } } } }
+  });
+}
+
+show(0);
+</script>
+</body>
+</html>
