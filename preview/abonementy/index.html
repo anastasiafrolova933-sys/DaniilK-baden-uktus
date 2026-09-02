@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#127903;</text></svg>">
+<title>Абонементы по кассам</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+:root{
+  --bg:#EEF2F3; --surface:#FFFFFF; --surface-2:#F5F9F9; --raise:#E7EEEF;
+  --ink:#10222A; --muted:#5A737C; --faint:#8299A1; --line:#D3DFE2; --line-soft:#E3EBED;
+  --accent:#0E6B77; --accent-soft:#D8EBEC; --brass:#93701A; --brass-soft:#F0E7CE;
+  --pos:#2C7A57; --warn:#A05B21; --neg:#9C3A3A;
+  --shadow:0 1px 2px rgba(16,34,42,.05), 0 8px 24px -16px rgba(16,34,42,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1417; --surface:#121F23; --surface-2:#16272C; --raise:#1C3138;
+    --ink:#E4EEEF; --muted:#93AAB1; --faint:#6E888F; --line:#26383E; --line-soft:#1D2E33;
+    --accent:#57B8C4; --accent-soft:#123338; --brass:#D5A945; --brass-soft:#2C2617;
+    --pos:#59B98C; --warn:#D28E4C; --neg:#D97070;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1417; --surface:#121F23; --surface-2:#16272C; --raise:#1C3138;
+  --ink:#E4EEEF; --muted:#93AAB1; --faint:#6E888F; --line:#26383E; --line-soft:#1D2E33;
+  --accent:#57B8C4; --accent-soft:#123338; --brass:#D5A945; --brass-soft:#2C2617;
+  --pos:#59B98C; --warn:#D28E4C; --neg:#D97070;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif; font-size:16.5px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:clamp(24px,5vw,64px) clamp(16px,4vw,32px) 96px; display:flex; flex-direction:column; gap:clamp(40px,6vw,72px)}
+
+h1,h2,h3,.grot{font-family:"Familjen Grotesk",system-ui,sans-serif; text-wrap:balance}
+.mono,td.num,th.num,.kpi-val,.eyebrow,.chip,.bar-val{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+
+.eyebrow{font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:600}
+
+.masthead{display:flex; flex-direction:column; gap:18px; border-bottom:2px solid var(--ink); padding-bottom:26px}
+.masthead h1{margin:0; font-size:clamp(30px,5.2vw,46px); font-weight:700; letter-spacing:-.022em; line-height:1.08}
+.dek{margin:0; color:var(--muted); max-width:62ch; font-size:17px}
+.meta{display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:4px}
+.chip{font-size:12px; padding:5px 10px; border:1px solid var(--line); border-radius:2px; background:var(--surface); color:var(--muted); white-space:nowrap}
+.chip b{color:var(--ink); font-weight:600}
+
+section{display:flex; flex-direction:column; gap:20px}
+.sec-head{display:flex; flex-direction:column; gap:7px; border-left:3px solid var(--accent); padding-left:14px}
+.sec-head h2{margin:0; font-size:clamp(21px,3.2vw,27px); font-weight:600; letter-spacing:-.015em}
+.sec-head p{margin:0; color:var(--muted); font-size:15.5px; max-width:66ch}
+
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:3px; padding:18px 18px 16px; display:flex; flex-direction:column; gap:6px; box-shadow:var(--shadow)}
+.kpi.lead{border-color:var(--brass); background:linear-gradient(var(--brass-soft),var(--surface) 70%)}
+.kpi-lab{font-size:12.5px; color:var(--muted); font-family:"Familjen Grotesk",sans-serif; font-weight:500}
+.kpi-val{font-size:clamp(25px,4vw,32px); font-weight:600; letter-spacing:-.02em; line-height:1.05}
+.kpi-sub{font-size:13px; color:var(--faint)}
+
+.tw{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface); box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; min-width:560px; font-family:"Familjen Grotesk",sans-serif; font-size:14.5px}
+caption{caption-side:top; text-align:left; padding:14px 16px 0; font-size:13px; color:var(--muted); font-family:"Familjen Grotesk",sans-serif}
+thead th{
+  text-align:left; padding:12px 14px; font-weight:600; font-size:11.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;
+}
+thead th.num{text-align:right}
+tbody td{padding:11px 14px; border-bottom:1px solid var(--line-soft); vertical-align:baseline}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right; white-space:nowrap; font-size:14px}
+tbody tr.tot td{border-top:1px solid var(--line); border-bottom:none; font-weight:600; background:var(--surface-2)}
+.name{font-weight:500}
+.sm{font-size:12.5px; color:var(--faint); display:block; font-weight:400}
+.z{color:var(--faint)}
+
+.matrix{display:flex; flex-direction:column; gap:2px; background:var(--surface); border:1px solid var(--line); border-radius:3px; padding:16px; box-shadow:var(--shadow)}
+.mrow{display:grid; grid-template-columns:minmax(140px,1.45fr) minmax(120px,3fr) minmax(96px,auto); gap:14px; align-items:center; padding:7px 4px; border-bottom:1px solid var(--line-soft)}
+.mrow:last-child{border-bottom:none}
+.mlab{font-family:"Familjen Grotesk",sans-serif; font-size:14px; font-weight:500; line-height:1.25}
+.mlab i{display:block; font-style:normal; font-size:11.5px; color:var(--faint); font-weight:400}
+.bar{display:flex; height:15px; border-radius:2px; overflow:hidden; background:var(--raise)}
+.bar span{display:block; height:100%}
+.bar-val{text-align:right; font-size:13px; font-weight:500}
+.legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); font-family:"Familjen Grotesk",sans-serif; font-size:12.5px; color:var(--muted)}
+.legend b{display:inline-flex; align-items:center; gap:6px; font-weight:500}
+.sw{width:11px; height:11px; border-radius:2px; display:inline-block}
+.c-serv{background:var(--accent)} .c-good{background:var(--brass)} .c-dep{background:var(--pos)} .c-etc{background:var(--faint)}
+
+.notes{display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:3px; box-shadow:var(--shadow)}
+.note{display:grid; grid-template-columns:auto 1fr; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line-soft)}
+.note:last-child{border-bottom:none}
+.flag{width:9px; border-radius:2px; margin-top:5px; min-height:26px}
+.f-warn{background:var(--warn)} .f-neg{background:var(--neg)} .f-acc{background:var(--accent)}
+.note h3{margin:0 0 5px; font-size:15.5px; font-weight:600; letter-spacing:-.008em}
+.note p{margin:0; font-size:15px; color:var(--muted); max-width:70ch}
+.note code{font-family:"IBM Plex Mono",monospace; font-size:12.5px; background:var(--surface-2); border:1px solid var(--line-soft); padding:1px 5px; border-radius:2px; color:var(--ink)}
+
+.callout{background:var(--accent-soft); border:1px solid var(--accent); border-radius:3px; padding:16px 18px}
+.callout p{margin:0; font-size:15.5px; max-width:72ch}
+.callout p + p{margin-top:9px}
+.callout strong{font-weight:600}
+
+footer{border-top:1px solid var(--line); padding-top:18px; color:var(--faint); font-size:13.5px; font-family:"Familjen Grotesk",sans-serif; display:flex; flex-direction:column; gap:5px}
+
+@media (max-width:620px){
+  .mrow{grid-template-columns:1fr auto; gap:6px 12px}
+  .bar{grid-column:1 / -1}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow">Отчёт по продажам на кассах по видам оплаты · iiko</div>
+  <h1>Абонементы по кассам</h1>
+  <p class="dek">Разбор выгрузки <span class="mono" style="font-size:14px">SellsOnCashDeskWithPaymentTypeReport</span> за 01.06 — 02.09.2026: где абонементы продаются, где они списываются и что вообще продаёт каждая касса.</p>
+  <div class="meta">
+    <span class="chip">Период <b>01.06 — 02.09.2026</b></span>
+    <span class="chip">Юрлиц <b>3</b></span>
+    <span class="chip">Касс <b>20</b></span>
+    <span class="chip">Позиций <b>426</b></span>
+    <span class="chip">Итог по отчёту <b>226 625 302 ₽</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <h2>Абонементы: коротко</h2>
+    <p>В номенклатуре ровно одна реальная позиция-абонемент — «Месячный абонемент» по 9 900 ₽, лежит в группе <span class="mono" style="font-size:13px">Услуги / --- АКЦИИ ---</span>.</p>
+  </div>
+  <div class="kpis">
+    <div class="kpi lead">
+      <div class="kpi-lab">Продано абонементов</div>
+      <div class="kpi-val">23 шт</div>
+      <div class="kpi-sub">227 700 ₽ · все по 9 900 ₽</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lab">Доля в выручке ресепшн + КСО</div>
+      <div class="kpi-val">0,13 %</div>
+      <div class="kpi-sub">из 171 349 080 ₽</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lab">Продают только</div>
+      <div class="kpi-val">4 кассы</div>
+      <div class="kpi-sub">Ресепшн №1 — №4</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lab">Проходов по абонементу</div>
+      <div class="kpi-val">129</div>
+      <div class="kpi-sub">служебные позиции, 436 ₽</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>Продажа: «Месячный абонемент»</h2>
+    <p>Продаётся только на стойках ресепшн. Ни онлайн-виджет, ни КСО, ни Резиденция, ни СПА абонемент не пробивали ни разу.</p>
+  </div>
+  <div class="tw">
+    <table>
+      <caption>Услуги → --- АКЦИИ --- → Месячный абонемент · цена 9 900 ₽ за штуку на всех кассах</caption>
+      <thead>
+        <tr>
+          <th>Касса</th>
+          <th class="num">Кол-во</th>
+          <th class="num">Сумма, ₽</th>
+          <th class="num">Наличными</th>
+          <th class="num">Доп. валютами</th>
+          <th class="num">Доля</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="name">Касса №2 Ресепшн</td><td class="num">12</td><td class="num">118 800</td><td class="num">19 800</td><td class="num">99 000</td><td class="num">52 %</td></tr>
+        <tr><td class="name">Касса №3 Ресепшн</td><td class="num">6</td><td class="num">59 400</td><td class="num">1</td><td class="num">59 398</td><td class="num">26 %</td></tr>
+        <tr><td class="name">Касса №1 Ресепшн</td><td class="num">3</td><td class="num">29 700</td><td class="num z">0</td><td class="num">29 700</td><td class="num">13 %</td></tr>
+        <tr><td class="name">Касса №4 Ресепшн</td><td class="num">2</td><td class="num">19 800</td><td class="num z">0</td><td class="num">19 800</td><td class="num">9 %</td></tr>
+        <tr class="tot"><td>Итого</td><td class="num">23</td><td class="num">227 700</td><td class="num">19 801</td><td class="num">207 898</td><td class="num">100 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p><strong>91 % абонементов оплачено «Доп. валютами».</strong> В этой выгрузке колонка «Безналичными» практически пустая — 22 ₽ за три месяца на весь комплекс, — а эквайринг падает именно в «Доп. валютами»: 152,8 млн ₽ из 226,6 млн. То есть «Доп. валютами» здесь читается как оплата банковской картой, а не как сертификат или депозит.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>Использование: где абонементы списываются</h2>
+    <p>Проход по уже купленному абонементу проводится служебными позициями «Тестовый абонемент с НДС» и «без НДС» — по 1–2 ₽ за срабатывание. За период 129 срабатываний.</p>
+  </div>
+  <div class="tw">
+    <table>
+      <caption>Услуги → Тестовый абонемент с НДС / без НДС · количество срабатываний</caption>
+      <thead>
+        <tr><th>Касса</th><th class="num">Без НДС</th><th class="num">С НДС</th><th class="num">Всего</th><th class="num">Сумма, ₽</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="name">КСО 1 Вход<span class="sm">турникет самообслуживания</span></td><td class="num">40</td><td class="num">37</td><td class="num">77</td><td class="num">77</td></tr>
+        <tr><td class="name">Widget<span class="sm">онлайн-продажа</span></td><td class="num">1</td><td class="num">20</td><td class="num">21</td><td class="num">22</td></tr>
+        <tr><td class="name">Администратор<span class="sm">служебная касса</span></td><td class="num">9</td><td class="num">6</td><td class="num">15</td><td class="num">321</td></tr>
+        <tr><td class="name">Касса №5 СПА</td><td class="num">2</td><td class="num">3</td><td class="num">5</td><td class="num">5</td></tr>
+        <tr><td class="name">Касса №4 Ресепшн</td><td class="num">2</td><td class="num">2</td><td class="num">4</td><td class="num">4</td></tr>
+        <tr><td class="name">Касса №1 Ресепшн</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">3</td></tr>
+        <tr><td class="name">Касса №2 Ресепшн</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td></tr>
+        <tr><td class="name">Касса №3 Ресепшн</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td></tr>
+        <tr class="tot"><td>Итого</td><td class="num">57</td><td class="num">72</td><td class="num">129</td><td class="num">436</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p><strong>Шесть из десяти проходов по абонементу — через КСО на входе.</strong> Держатель абонемента почти не подходит к стойке: 77 срабатываний из 129 на «КСО 1 Вход», ещё 21 — через онлайн-виджет. Это ровно та модель, ради которой абонемент и задуман, но она же означает, что кассир такого гостя не видит и допродавать ему на входе некому.</p>
+    <p>Отдельно стоит проверить деление на «с НДС» и «без НДС»: объёмы почти равны (72 против 57), но пропорция на разных кассах разная — на КСО почти поровну (37 к 40), в виджете 20 к 1. Если эти две позиции соответствуют разным типам абонемента, убедитесь, что кассиры не выбирают их наугад.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>Что легко спутать с абонементом</h2>
+    <p>Три позиции звучат «абонементно», но абонементами не являются. Если посчитать их вместе с «Месячным», цифра раздувается с 228 тыс. до 9,1 млн ₽ — и это будет неверно.</p>
+  </div>
+  <div class="tw">
+    <table>
+      <thead>
+        <tr><th>Позиция</th><th class="num">Кол-во</th><th class="num">Сумма, ₽</th><th class="num">Средний чек</th><th>Где продаётся</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">Безлимитный взрослый<span class="sm">Услуги / --- ТАРИФЫ ---</span></td>
+          <td class="num">1 594</td><td class="num">6 473 500</td><td class="num">4 062</td>
+          <td>Касса №6 Резиденция — 1 593 из 1 594</td>
+        </tr>
+        <tr>
+          <td class="name">Безлимитный детский<span class="sm">Услуги / --- ТАРИФЫ ---</span></td>
+          <td class="num">412</td><td class="num">1 231 500</td><td class="num">2 989</td>
+          <td>Касса №6 Резиденция, вся</td>
+        </tr>
+        <tr>
+          <td class="name">Сертификат<span class="sm">Товары</span></td>
+          <td class="num">218</td><td class="num">1 162 280</td><td class="num">5 331</td>
+          <td>Ресепшн №1 — №4 и Резиденция</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p><strong>«Безлимитный» — это дневной тариф Резиденции, а не абонемент.</strong> Он идёт в паре с 1 795 входами по позиции «Резиденция» и продаётся исключительно на кассе проживания: гость, который живёт в домике, получает вход в термы без ограничения по времени на свои сутки. Средний чек 4 062 ₽ — это цена дня, а не месяца.</p>
+    <p><strong>Сертификаты — отдельная механика.</strong> 218 штук на 1,16 млн ₽; лучший результат у Резиденции — 46 шт на 403 тыс. ₽, средний чек 8 767 ₽, вдвое выше, чем на ресепшн. С абонементами в один показатель их складывать нельзя.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>Что продаёт каждая касса</h2>
+    <p>Все 20 касс отчёта по убыванию оборота. Полоса показывает доли групп номенклатуры внутри кассы.</p>
+  </div>
+  <div class="matrix">
+    <div class="mrow"><div class="mlab">Касса №2 Ресепшн<i>Общая 3 ч · Общая 2 ч · Семья 3 ч</i></div><div class="bar"><span class="c-serv" style="width:96.6%"></span><span class="c-good" style="width:1.3%"></span><span class="c-dep" style="width:2.1%"></span></div><div class="bar-val">56 970 400</div></div>
+    <div class="mrow"><div class="mlab">Касса №1 Ресепшн<i>Общая 3 ч · Общая 2 ч · Семья 3 ч</i></div><div class="bar"><span class="c-serv" style="width:91.6%"></span><span class="c-good" style="width:1.4%"></span><span class="c-dep" style="width:7.0%"></span></div><div class="bar-val">55 970 137</div></div>
+    <div class="mrow"><div class="mlab">Касса №3 Ресепшн<i>Общая 3 ч · Общая 2 ч · Семья 3 ч</i></div><div class="bar"><span class="c-serv" style="width:96.8%"></span><span class="c-good" style="width:1.9%"></span><span class="c-dep" style="width:1.3%"></span></div><div class="bar-val">48 687 340</div></div>
+    <div class="mrow"><div class="mlab">Касса 1 (Кафе) · РХ<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">24 410 973</div></div>
+    <div class="mrow"><div class="mlab">Касса №6 Резиденция<i>Безлимитный взр. · депозит · Дом контейнер</i></div><div class="bar"><span class="c-serv" style="width:59.4%"></span><span class="c-good" style="width:21.8%"></span><span class="c-dep" style="width:18.9%"></span></div><div class="bar-val">12 725 413</div></div>
+    <div class="mrow"><div class="mlab">Касса №4 Ресепшн<i>Общая 3 ч · Семья 3 ч · Общая 2 ч</i></div><div class="bar"><span class="c-serv" style="width:87.3%"></span><span class="c-good" style="width:2.7%"></span><span class="c-dep" style="width:10.0%"></span></div><div class="bar-val">5 824 485</div></div>
+    <div class="mrow"><div class="mlab">Касса №3 (Пул бар) · РК<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">5 793 565</div></div>
+    <div class="mrow"><div class="mlab">Касса №5 СПА<i>«Сила леса» · «Сила океана» · авторский массаж</i></div><div class="bar"><span class="c-serv" style="width:99.6%"></span><span class="c-good" style="width:0.4%"></span></div><div class="bar-val">4 839 849</div></div>
+    <div class="mrow"><div class="mlab">КСО 1 Вход<i>Общая 3 ч · Общая 2 ч · Приорити 3 ч</i></div><div class="bar"><span class="c-serv" style="width:100%"></span></div><div class="bar-val">3 848 277</div></div>
+    <div class="mrow"><div class="mlab">Касса 2 (Немецкий бар) · РХ<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">2 975 521</div></div>
+    <div class="mrow"><div class="mlab">Касса 4 (Летняя терраса) · РХ<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">2 961 622</div></div>
+    <div class="mrow"><div class="mlab">Касса 3 (Пул бар) · РХ<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">485 056</div></div>
+    <div class="mrow"><div class="mlab">КСО 3 Выход<i>только пополнение депозита</i></div><div class="bar"><span class="c-dep" style="width:100%"></span></div><div class="bar-val">347 580</div></div>
+    <div class="mrow"><div class="mlab">Касса 5 (Бич бар) · РХ<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">240 370</div></div>
+    <div class="mrow"><div class="mlab">Касса №2 (Немецкий бар) · РК<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">218 291</div></div>
+    <div class="mrow"><div class="mlab">КСО 1 Выход<i>только пополнение депозита</i></div><div class="bar"><span class="c-dep" style="width:100%"></span></div><div class="bar-val">177 855</div></div>
+    <div class="mrow"><div class="mlab">КСО 2 Выход<i>только пополнение депозита</i></div><div class="bar"><span class="c-dep" style="width:100%"></span></div><div class="bar-val">79 965</div></div>
+    <div class="mrow"><div class="mlab">Администратор<i>служебная касса: правки и возвраты</i></div><div class="bar"><span class="c-serv" style="width:100%"></span></div><div class="bar-val">48 441</div></div>
+    <div class="mrow"><div class="mlab">Касса №4 (Летняя терраса) · РК<i>Общепит</i></div><div class="bar"><span class="c-good" style="width:100%"></span></div><div class="bar-val">20 140</div></div>
+    <div class="mrow"><div class="mlab">Widget<i>онлайн, только служебные позиции абонемента</i></div><div class="bar"><span class="c-serv" style="width:100%"></span></div><div class="bar-val">22</div></div>
+    <div class="legend">
+      <b><span class="sw c-serv"></span>Услуги — билеты, тарифы, массаж, аренда</b>
+      <b><span class="sw c-good"></span>Товары — общепит, розница, Резиденция</b>
+      <b><span class="sw c-dep"></span>Депозит</b>
+      <b><span class="sw c-etc"></span>РХ — Ресторанный Холдинг, РК — Ресторанный комплекс</b>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>На что обратить внимание в самой выгрузке</h2>
+    <p>Пять вещей, которые всплыли при разборе и влияют на то, как этот отчёт можно использовать дальше.</p>
+  </div>
+  <div class="notes">
+    <div class="note">
+      <div class="flag f-warn"></div>
+      <div>
+        <h3>Колонка «Безналичными» не работает</h3>
+        <p>За три месяца в ней 22 ₽, и те из тестового виджета. Весь эквайринг уходит в «Доп. валютами»: 152,8 млн ₽ против 50,4 млн наличными. В текущем виде разрез показывает только «нал / не нал» — отличить карту от сертификата и депозита по нему нельзя.</p>
+      </div>
+    </div>
+    <div class="note">
+      <div class="flag f-warn"></div>
+      <div>
+        <h3>Сумма не равна сумме видов оплаты</h3>
+        <p>Итог отчёта 226,6 млн ₽, а виды оплаты в сумме дают 212,4 млн. Разрыв 14,2 млн почти целиком в общепите: у «Кассы 1 (Кафе)» сумма 24,4 млн, а в разрезе оплат только 11,7 млн. Похоже, списание на браслет с расчётом на ресепшн в разрез видов оплаты не попадает — для выручки общепита этот отчёт использовать нельзя.</p>
+      </div>
+    </div>
+    <div class="note">
+      <div class="flag f-acc"></div>
+      <div>
+        <h3>Рабочая позиция называется «Тестовый абонемент»</h3>
+        <p>По <code>Тестовый абонемент с НДС</code> и <code>без НДС</code> прошло 129 реальных списаний, в том числе через КСО и онлайн-виджет. Слово «тестовый» в боевой номенклатуре гарантирует, что рано или поздно эти строки кто-нибудь отфильтрует как мусор. Стоит переименовать во что-то вроде «Проход по абонементу».</p>
+      </div>
+    </div>
+    <div class="note">
+      <div class="flag f-neg"></div>
+      <div>
+        <h3>Касса №6 Резиденция: минус 250 000 ₽ по браслетам</h3>
+        <p>Строка <code>Карты / Браслет</code> — 40 штук на минус 250 000 ₽, при этом все колонки видов оплаты нулевые. Отрицательная сумма без вида оплаты выглядит как ручная корректировка или сторно; стоит поднять по датам, что это было.</p>
+      </div>
+    </div>
+    <div class="note">
+      <div class="flag f-acc"></div>
+      <div>
+        <h3>Касса «Администратор» — минус 1 014 операций</h3>
+        <p>Минус 6 371 браслет, минус 22 QR-кода, при этом 48 441 ₽ выручки в колонке «Прочие оплаты». Это служебная касса правок и возвратов: при расчёте средних чеков и конверсий её нужно исключать, иначе количества уедут.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>Источник: SellsOnCashDeskWithPaymentTypeReport123.xlsx — выгрузка iiko, 710 строк, 426 позиций</div>
+  <div>Период 01.06.2026 — 02.09.2026 · юрлица: УК «Баден Групп», «Ресторанный Холдинг», «Ресторанный комплекс»</div>
+  <div>Контрольная сумма разбора сходится с итоговой строкой отчёта: 226 625 302 ₽</div>
+</footer>
+
+</div>
+
+</body>
+</html>
