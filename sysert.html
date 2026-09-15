@@ -1,0 +1,769 @@
+<!DOCTYPE html><html lang=ru><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Термы и гостиница Сысерть · Баден</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=Golos+Text:wght@400;500;600;700&display=swap">
+<style>
+:root{
+ --ground:#FAF8F5; --surface:#FFFFFF; --sunk:#F2EEE8;
+ --ink:#1C1A17; --ink2:#5E5850; --ink3:#8C857B;
+ --line:#E4DED5; --line2:#D2CAC0;
+ --therm:#0F7A72; --therm-soft:#E0F0EE; --therm-edge:#8FCBC4;
+ --stay:#9A5F16; --stay-soft:#F7EBD9; --stay-edge:#DFB57E;
+ --up:#2E6B3E; --dn:#A33528;
+ --shadow:0 1px 2px rgba(28,26,23,.05),0 8px 24px -12px rgba(28,26,23,.14);
+}
+@media (prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){
+  --ground:#141210; --surface:#1B1815; --sunk:#221E19;
+  --ink:#F3EFE9; --ink2:#B6AEA2; --ink3:#837A6E;
+  --line:#2F2A24; --line2:#3D372F;
+  --therm:#4FC4B8; --therm-soft:#123230; --therm-edge:#28655E;
+  --stay:#E2A85F; --stay-soft:#332410; --stay-edge:#6E4C20;
+  --up:#74C98A; --dn:#E68C83;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+ }
+}
+:root[data-theme="dark"]{
+ --ground:#141210; --surface:#1B1815; --sunk:#221E19;
+ --ink:#F3EFE9; --ink2:#B6AEA2; --ink3:#837A6E;
+ --line:#2F2A24; --line2:#3D372F;
+ --therm:#4FC4B8; --therm-soft:#123230; --therm-edge:#28655E;
+ --stay:#E2A85F; --stay-soft:#332410; --stay-edge:#6E4C20;
+ --up:#74C98A; --dn:#E68C83;
+ --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+ font-family:"Golos Text","Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.55;
+ -webkit-font-smoothing:antialiased;padding:0 20px 72px}
+.page{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:Unbounded,"Golos Text",system-ui,sans-serif;font-weight:600;text-wrap:balance;margin:0}
+.top{padding:46px 0 26px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:12px}
+h1{font-size:clamp(25px,3.4vw,38px);line-height:1.16;letter-spacing:-.01em}
+.lede{color:var(--ink2);font-size:14.5px;max-width:65ch;margin-top:12px}
+.split{margin:30px 0 0}
+.splitbar{display:flex;height:13px;border-radius:7px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
+.splitbar i{display:block}
+.sp-t{background:var(--therm)} .sp-l{background:var(--stay)} .sp-o{background:var(--line2)}
+.splitkey{display:flex;flex-wrap:wrap;gap:22px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.splitkey span{display:flex;align-items:center;gap:7px}
+.splitkey b{color:var(--ink);font-variant-numeric:tabular-nums}
+.dot{width:9px;height:9px;border-radius:2px;flex:none}
+.d-t{background:var(--therm)} .d-l{background:var(--stay)} .d-o{background:var(--line2)}
+
+.band{margin-top:56px;border:1px solid var(--line);border-radius:14px;background:var(--surface);
+ box-shadow:var(--shadow);overflow:hidden}
+.band.t{border-top:5px solid var(--therm)}
+.band.l{border-top:5px solid var(--stay)}
+.bhead{padding:22px 26px 20px}
+.band.t .bhead{background:var(--therm-soft);border-bottom:1px solid var(--therm-edge)}
+.band.l .bhead{background:var(--stay-soft);border-bottom:1px solid var(--stay-edge)}
+.btag{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.band.t .btag{color:var(--therm)} .band.l .btag{color:var(--stay)}
+h2{font-size:clamp(19px,2.3vw,25px);letter-spacing:-.01em}
+.bnote{font-size:13px;color:var(--ink2);margin-top:9px;max-width:68ch}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px}
+.band.t .kpi{background:var(--therm-edge);border-bottom:1px solid var(--therm-edge)}
+.band.l .kpi{background:var(--stay-edge);border-bottom:1px solid var(--stay-edge)}
+.kc{background:var(--surface);padding:16px 22px 18px;display:flex;flex-direction:column;gap:2px}
+.kl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.kv{font-family:Unbounded,system-ui,sans-serif;font-size:25px;font-weight:600;line-height:1.2;
+ font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.band.t .kv{color:var(--therm)} .band.l .kv{color:var(--stay)}
+.kv i{font-style:normal;font-size:11px;font-weight:400;color:var(--ink3);font-family:"Golos Text",sans-serif;margin-left:3px}
+.ks{font-size:11.5px;color:var(--ink3)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:700;
+ text-align:right;padding:13px 14px 11px;border-bottom:1px solid var(--line2);white-space:nowrap;background:var(--surface)}
+th:first-child{text-align:left}
+td{padding:0 14px;height:40px;font-size:13.5px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.s{font-weight:700;font-size:14.5px}
+.band.t td.s{color:var(--therm)} .band.l td.s{color:var(--stay)}
+tr.mo{cursor:pointer;background:var(--surface)}
+tr.mo:hover{background:var(--sunk)}
+tr.mo:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+tr.mo td{font-weight:600;height:46px}
+td.mn{font-weight:600}
+.ar{display:inline-block;width:0;height:0;border-left:5px solid currentColor;border-top:4px solid transparent;
+ border-bottom:4px solid transparent;color:var(--ink3);margin-right:9px;vertical-align:middle;transition:transform .18s}
+tr.mo[aria-expanded="true"] .ar{transform:rotate(90deg)}
+tr.dy{background:var(--sunk)}
+tr.dy.we td{color:var(--ink2)}
+tr.dy td{height:31px;font-size:12.5px;color:var(--ink2)}
+td.dn{padding-left:37px;color:var(--ink3)}
+td.dn i{font-style:normal;margin-left:7px;font-size:11px;opacity:.72}
+tr.tt td{font-weight:700;height:48px;border-top:2px solid var(--line2);border-bottom:none;background:var(--surface)}
+.pt{font-size:10.5px;color:var(--ink3);font-weight:500;margin-left:6px;border:1px solid var(--line2);
+ border-radius:4px;padding:1px 5px}
+.d{font-weight:600;font-size:12.5px} .d.u{color:var(--up)} .d.w{color:var(--dn)} .d.n{color:var(--ink3);font-weight:400}
+td.bc{width:92px;padding-right:20px}
+.bw{display:block;height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+tr.mo:hover .bw{background:var(--line)}
+.bf{display:block;height:100%;border-radius:3px}
+.bf.t{background:var(--therm)} .bf.l{background:var(--stay)}
+.rest{margin-top:44px;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:24px 26px;box-shadow:var(--shadow)}
+.rest h3{font-size:15px;margin-bottom:6px}
+.rest p{color:var(--ink2);font-size:13.5px;margin:0;max-width:70ch}
+.method{margin-top:22px;border-top:1px solid var(--line);padding-top:24px}
+.method h3{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;
+ font-family:"Golos Text",sans-serif;font-weight:700}
+.method dl{margin:0;display:grid;gap:13px}
+.method dt{font-weight:600;font-size:13.5px;margin-bottom:2px}
+.method dd{margin:0;color:var(--ink2);font-size:13px;max-width:78ch}
+.method b{color:var(--ink);font-weight:600}
+@media (max-width:640px){
+ body{padding:0 14px 56px} .bhead{padding:18px 18px 16px} .kc{padding:14px 18px 15px}
+ th,td{padding-left:11px;padding-right:11px} td.dn{padding-left:28px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body><!-- BADEN_AUTH_GUARD_V2 -->
+<script src="js/api.js"></script>
+<script>(function(){
+  var H="dcf1f3b1f910b7328bac24b13094396307f16b84c54a9df91518cba643430d95";
+  var PERM="sales";
+  function legacy(){
+    function s(p){var b=new TextEncoder().encode(p);return crypto.subtle.digest("SHA-256",b).then(function(a){return Array.from(new Uint8Array(a)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")});}
+    var k=localStorage.getItem("bbt_ok");if(k===H){document.documentElement.style.visibility="";return;}
+    document.documentElement.style.visibility="hidden";
+    var p=prompt("\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c:");
+    if(!p){document.documentElement.style.visibility="";window.location.href="about:blank";return;}
+    s(p).then(function(h){if(h===H){localStorage.setItem("bbt_ok",H);document.documentElement.style.visibility="";}else{alert("\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u043e\u043b\u044c");window.location.reload();}});
+  }
+  document.documentElement.style.visibility="hidden";
+  if(window.BadenAuth){
+    BadenAuth.requireAuth({permission:PERM,verify:false}).then(function(sess){
+      if(sess) document.documentElement.style.visibility="";
+    }).catch(function(){/* requireAuth already redirected */});
+  } else {
+    // js/api.js \u043d\u0435 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u043b\u0441\u044f (offline / CORS) \u2192 fallback \u043d\u0430 legacy baden2026
+    legacy();
+  }
+})();</script>
+
+
+<div class="page">
+<header class="top">
+<div class="eyebrow">Баден Сысерть · подразделение «Термаль Фабрика»</div>
+<h1>Термальный комплекс и гостиница</h1>
+<p class="lede">Два направления бизнеса, посчитанные раздельно по детальному кассовому отчёту 1С за 01.01–14.09.2026. Ни одна позиция не учтена дважды: тарифы на вход, проживание и всё остальное разведены по разным блокам.</p>
+<div class="split">
+<div class="splitbar" role="img" aria-label="Термы 42%, проживание 56%, прочее 2%">
+<i class="sp-t" style="width:42.23%"></i><i class="sp-l" style="width:55.85%"></i><i class="sp-o" style="width:1.91%"></i>
+</div>
+<div class="splitkey">
+<span><i class="dot d-t"></i>Посещение термального комплекса — <b>72,43 млн ₽ · 42.2%</b></span>
+<span><i class="dot d-l"></i>Проживание — <b>95,79 млн ₽ · 55.9%</b></span>
+<span><i class="dot d-o"></i>Прочее — <b>3,28 млн ₽ · 1.9%</b></span>
+</div>
+</div>
+</header>
+
+<section class="band t">
+<div class="bhead">
+<div class="btag">Направление 1</div>
+<h2>Посещение термального комплекса</h2>
+<p class="bnote">Только тарифы на вход и пляж: 3 часа общий и льготный, безлимит, «Ранняя пташка», «Еще не поздно!», «По соседски», студенты, семейный четверг, группы, абонементы. Проживание, товары, фиш-пилинг и корты сюда не входят.</p>
+</div>
+<div class="kpi">
+<div class="kc"><span class="kl">Выручка</span><span class="kv">72,43<i>млн ₽</i></span><span class="ks">42.2% всей выручки</span></div>
+<div class="kc"><span class="kl">Проходов</span><span class="kv">55 461</span><span class="ks">включая бесплатные</span></div>
+<div class="kc"><span class="kl">Из них платных</span><span class="kv">47 232</span><span class="ks">85% проходов</span></div>
+<div class="kc"><span class="kl">Средний чек</span><span class="kv">1 533<i>₽</i></span><span class="ks">по платным проходам</span></div>
+</div>
+<div class="scroll"><table>
+<thead><tr><th>Месяц</th><th>Проходов</th><th>Платных</th><th>Выручка, млн&nbsp;₽</th><th>Δ%</th><th>Ср. чек, ₽</th><th></th></tr></thead>
+<tbody>
+<tr class="mo" data-g="t0" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Январь</td><td class="n">6 974</td><td class="n">6 538</td><td class="n s">13,17</td><td class="n"><span class="d n">—</span></td><td class="n">2 015</td><td class="bc"><span class="bw"><span class="bf t" style="width:75.4%"></span></span></td></tr>
+<tr class="dy gt0" hidden><td class="dn">01.01<i>чт</i></td><td class="n">287</td><td class="n">279</td><td class="n s">0,65</td><td class="n"><span class="d n">—</span></td><td class="n">2 314</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">02.01<i>пт</i></td><td class="n">549</td><td class="n">538</td><td class="n s">1,27</td><td class="n"><span class="d n">—</span></td><td class="n">2 361</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">03.01<i>сб</i></td><td class="n">562</td><td class="n">530</td><td class="n s">1,26</td><td class="n"><span class="d n">—</span></td><td class="n">2 368</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">04.01<i>вс</i></td><td class="n">556</td><td class="n">542</td><td class="n s">1,29</td><td class="n"><span class="d n">—</span></td><td class="n">2 386</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">05.01<i>пн</i></td><td class="n">499</td><td class="n">474</td><td class="n s">1,09</td><td class="n"><span class="d n">—</span></td><td class="n">2 295</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">06.01<i>вт</i></td><td class="n">431</td><td class="n">408</td><td class="n s">0,96</td><td class="n"><span class="d n">—</span></td><td class="n">2 351</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">07.01<i>ср</i></td><td class="n">474</td><td class="n">463</td><td class="n s">1,05</td><td class="n"><span class="d n">—</span></td><td class="n">2 266</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">08.01<i>чт</i></td><td class="n">481</td><td class="n">442</td><td class="n s">1,00</td><td class="n"><span class="d u">+55%</span></td><td class="n">2 263</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">09.01<i>пт</i></td><td class="n">360</td><td class="n">332</td><td class="n s">0,76</td><td class="n"><span class="d w">−40%</span></td><td class="n">2 291</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">10.01<i>сб</i></td><td class="n">276</td><td class="n">263</td><td class="n s">0,61</td><td class="n"><span class="d w">−51%</span></td><td class="n">2 330</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">11.01<i>вс</i></td><td class="n">105</td><td class="n">96</td><td class="n s">0,22</td><td class="n"><span class="d w">−83%</span></td><td class="n">2 336</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">12.01<i>пн</i></td><td class="n">76</td><td class="n">70</td><td class="n s">0,09</td><td class="n"><span class="d w">−92%</span></td><td class="n">1 268</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">13.01<i>вт</i></td><td class="n">58</td><td class="n">55</td><td class="n s">0,07</td><td class="n"><span class="d w">−93%</span></td><td class="n">1 255</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">14.01<i>ср</i></td><td class="n">28</td><td class="n">28</td><td class="n s">0,03</td><td class="n"><span class="d w">−97%</span></td><td class="n">1 038</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">15.01<i>чт</i></td><td class="n">39</td><td class="n">37</td><td class="n s">0,05</td><td class="n"><span class="d w">−95%</span></td><td class="n">1 219</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">16.01<i>пт</i></td><td class="n">80</td><td class="n">73</td><td class="n s">0,08</td><td class="n"><span class="d w">−89%</span></td><td class="n">1 115</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">17.01<i>сб</i></td><td class="n">298</td><td class="n">262</td><td class="n s">0,45</td><td class="n"><span class="d w">−26%</span></td><td class="n">1 730</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">18.01<i>вс</i></td><td class="n">224</td><td class="n">204</td><td class="n s">0,32</td><td class="n"><span class="d u">+44%</span></td><td class="n">1 582</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">19.01<i>пн</i></td><td class="n">155</td><td class="n">148</td><td class="n s">0,16</td><td class="n"><span class="d u">+82%</span></td><td class="n">1 094</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">20.01<i>вт</i></td><td class="n">58</td><td class="n">53</td><td class="n s">0,07</td><td class="n"><span class="d u">+3%</span></td><td class="n">1 339</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">21.01<i>ср</i></td><td class="n">55</td><td class="n">52</td><td class="n s">0,06</td><td class="n"><span class="d u">+104%</span></td><td class="n">1 140</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">22.01<i>чт</i></td><td class="n">40</td><td class="n">40</td><td class="n s">0,04</td><td class="n"><span class="d w">−4%</span></td><td class="n">1 079</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">23.01<i>пт</i></td><td class="n">46</td><td class="n">40</td><td class="n s">0,04</td><td class="n"><span class="d w">−45%</span></td><td class="n">1 114</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">24.01<i>сб</i></td><td class="n">192</td><td class="n">169</td><td class="n s">0,28</td><td class="n"><span class="d w">−38%</span></td><td class="n">1 656</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">25.01<i>вс</i></td><td class="n">152</td><td class="n">136</td><td class="n s">0,20</td><td class="n"><span class="d w">−37%</span></td><td class="n">1 498</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">26.01<i>пн</i></td><td class="n">57</td><td class="n">52</td><td class="n s">0,07</td><td class="n"><span class="d w">−58%</span></td><td class="n">1 321</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">27.01<i>вт</i></td><td class="n">94</td><td class="n">88</td><td class="n s">0,12</td><td class="n"><span class="d u">+65%</span></td><td class="n">1 331</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">28.01<i>ср</i></td><td class="n">82</td><td class="n">80</td><td class="n s">0,07</td><td class="n"><span class="d u">+24%</span></td><td class="n">920</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">29.01<i>чт</i></td><td class="n">155</td><td class="n">136</td><td class="n s">0,14</td><td class="n"><span class="d u">+217%</span></td><td class="n">1 007</td><td class="bc"></td></tr>
+<tr class="dy gt0" hidden><td class="dn">30.01<i>пт</i></td><td class="n">208</td><td class="n">193</td><td class="n s">0,23</td><td class="n"><span class="d u">+422%</span></td><td class="n">1 205</td><td class="bc"></td></tr>
+<tr class="dy gt0 we" hidden><td class="dn">31.01<i>сб</i></td><td class="n">297</td><td class="n">255</td><td class="n s">0,43</td><td class="n"><span class="d u">+55%</span></td><td class="n">1 701</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t1" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Февраль</td><td class="n">4 313</td><td class="n">3 717</td><td class="n s">5,23</td><td class="n"><span class="d w">−60%</span></td><td class="n">1 408</td><td class="bc"><span class="bw"><span class="bf t" style="width:29.9%"></span></span></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">01.02<i>вс</i></td><td class="n">219</td><td class="n">192</td><td class="n s">0,32</td><td class="n"><span class="d u">+57%</span></td><td class="n">1 664</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">02.02<i>пн</i></td><td class="n">47</td><td class="n">43</td><td class="n s">0,05</td><td class="n"><span class="d w">−25%</span></td><td class="n">1 202</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">03.02<i>вт</i></td><td class="n">59</td><td class="n">52</td><td class="n s">0,07</td><td class="n"><span class="d w">−44%</span></td><td class="n">1 262</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">04.02<i>ср</i></td><td class="n">100</td><td class="n">96</td><td class="n s">0,09</td><td class="n"><span class="d u">+24%</span></td><td class="n">948</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">05.02<i>чт</i></td><td class="n">90</td><td class="n">72</td><td class="n s">0,07</td><td class="n"><span class="d w">−46%</span></td><td class="n">1 019</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">06.02<i>пт</i></td><td class="n">105</td><td class="n">97</td><td class="n s">0,12</td><td class="n"><span class="d w">−47%</span></td><td class="n">1 266</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">07.02<i>сб</i></td><td class="n">275</td><td class="n">240</td><td class="n s">0,39</td><td class="n"><span class="d w">−10%</span></td><td class="n">1 623</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">08.02<i>вс</i></td><td class="n">185</td><td class="n">168</td><td class="n s">0,27</td><td class="n"><span class="d w">−15%</span></td><td class="n">1 610</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">09.02<i>пн</i></td><td class="n">76</td><td class="n">69</td><td class="n s">0,10</td><td class="n"><span class="d u">+87%</span></td><td class="n">1 402</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">10.02<i>вт</i></td><td class="n">55</td><td class="n">55</td><td class="n s">0,06</td><td class="n"><span class="d w">−10%</span></td><td class="n">1 075</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">11.02<i>ср</i></td><td class="n">89</td><td class="n">84</td><td class="n s">0,09</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 056</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">12.02<i>чт</i></td><td class="n">90</td><td class="n">81</td><td class="n s">0,08</td><td class="n"><span class="d u">+14%</span></td><td class="n">1 037</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">13.02<i>пт</i></td><td class="n">127</td><td class="n">101</td><td class="n s">0,12</td><td class="n"><span class="d w">−6%</span></td><td class="n">1 145</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">14.02<i>сб</i></td><td class="n">473</td><td class="n">397</td><td class="n s">0,66</td><td class="n"><span class="d u">+70%</span></td><td class="n">1 670</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">15.02<i>вс</i></td><td class="n">168</td><td class="n">128</td><td class="n s">0,21</td><td class="n"><span class="d w">−22%</span></td><td class="n">1 653</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">16.02<i>пн</i></td><td class="n">93</td><td class="n">87</td><td class="n s">0,09</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 078</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">17.02<i>вт</i></td><td class="n">86</td><td class="n">77</td><td class="n s">0,10</td><td class="n"><span class="d u">+70%</span></td><td class="n">1 306</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">18.02<i>ср</i></td><td class="n">119</td><td class="n">111</td><td class="n s">0,11</td><td class="n"><span class="d u">+27%</span></td><td class="n">1 018</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">19.02<i>чт</i></td><td class="n">86</td><td class="n">79</td><td class="n s">0,09</td><td class="n"><span class="d u">+7%</span></td><td class="n">1 134</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">20.02<i>пт</i></td><td class="n">104</td><td class="n">94</td><td class="n s">0,11</td><td class="n"><span class="d w">−2%</span></td><td class="n">1 210</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">21.02<i>сб</i></td><td class="n">375</td><td class="n">331</td><td class="n s">0,48</td><td class="n"><span class="d w">−28%</span></td><td class="n">1 451</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">22.02<i>вс</i></td><td class="n">489</td><td class="n">399</td><td class="n s">0,62</td><td class="n"><span class="d u">+193%</span></td><td class="n">1 552</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">23.02<i>пн</i></td><td class="n">197</td><td class="n">148</td><td class="n s">0,24</td><td class="n"><span class="d u">+160%</span></td><td class="n">1 650</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">24.02<i>вт</i></td><td class="n">76</td><td class="n">68</td><td class="n s">0,07</td><td class="n"><span class="d w">−28%</span></td><td class="n">1 066</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">25.02<i>ср</i></td><td class="n">80</td><td class="n">77</td><td class="n s">0,09</td><td class="n"><span class="d w">−23%</span></td><td class="n">1 125</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">26.02<i>чт</i></td><td class="n">140</td><td class="n">129</td><td class="n s">0,15</td><td class="n"><span class="d u">+67%</span></td><td class="n">1 160</td><td class="bc"></td></tr>
+<tr class="dy gt1" hidden><td class="dn">27.02<i>пт</i></td><td class="n">75</td><td class="n">62</td><td class="n s">0,08</td><td class="n"><span class="d w">−30%</span></td><td class="n">1 280</td><td class="bc"></td></tr>
+<tr class="dy gt1 we" hidden><td class="dn">28.02<i>сб</i></td><td class="n">235</td><td class="n">180</td><td class="n s">0,29</td><td class="n"><span class="d w">−40%</span></td><td class="n">1 603</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t2" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Март</td><td class="n">4 905</td><td class="n">4 043</td><td class="n s">5,75</td><td class="n"><span class="d u">+10%</span></td><td class="n">1 422</td><td class="bc"><span class="bw"><span class="bf t" style="width:32.9%"></span></span></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">01.03<i>вс</i></td><td class="n">149</td><td class="n">128</td><td class="n s">0,20</td><td class="n"><span class="d w">−68%</span></td><td class="n">1 538</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">02.03<i>пн</i></td><td class="n">50</td><td class="n">39</td><td class="n s">0,06</td><td class="n"><span class="d w">−76%</span></td><td class="n">1 495</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">03.03<i>вт</i></td><td class="n">58</td><td class="n">49</td><td class="n s">0,07</td><td class="n"><span class="d w">−9%</span></td><td class="n">1 349</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">04.03<i>ср</i></td><td class="n">100</td><td class="n">72</td><td class="n s">0,08</td><td class="n"><span class="d w">−12%</span></td><td class="n">1 052</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">05.03<i>чт</i></td><td class="n">79</td><td class="n">60</td><td class="n s">0,06</td><td class="n"><span class="d w">−59%</span></td><td class="n">1 022</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">06.03<i>пт</i></td><td class="n">98</td><td class="n">74</td><td class="n s">0,09</td><td class="n"><span class="d u">+13%</span></td><td class="n">1 211</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">07.03<i>сб</i></td><td class="n">397</td><td class="n">306</td><td class="n s">0,50</td><td class="n"><span class="d u">+74%</span></td><td class="n">1 637</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">08.03<i>вс</i></td><td class="n">580</td><td class="n">475</td><td class="n s">0,75</td><td class="n"><span class="d u">+283%</span></td><td class="n">1 587</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">09.03<i>пн</i></td><td class="n">190</td><td class="n">144</td><td class="n s">0,24</td><td class="n"><span class="d u">+305%</span></td><td class="n">1 641</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">10.03<i>вт</i></td><td class="n">51</td><td class="n">38</td><td class="n s">0,05</td><td class="n"><span class="d w">−29%</span></td><td class="n">1 239</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">11.03<i>ср</i></td><td class="n">59</td><td class="n">54</td><td class="n s">0,06</td><td class="n"><span class="d w">−25%</span></td><td class="n">1 046</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">12.03<i>чт</i></td><td class="n">98</td><td class="n">94</td><td class="n s">0,11</td><td class="n"><span class="d u">+82%</span></td><td class="n">1 188</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">13.03<i>пт</i></td><td class="n">109</td><td class="n">83</td><td class="n s">0,10</td><td class="n"><span class="d u">+9%</span></td><td class="n">1 174</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">14.03<i>сб</i></td><td class="n">279</td><td class="n">228</td><td class="n s">0,37</td><td class="n"><span class="d w">−25%</span></td><td class="n">1 640</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">15.03<i>вс</i></td><td class="n">199</td><td class="n">163</td><td class="n s">0,26</td><td class="n"><span class="d w">−66%</span></td><td class="n">1 588</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">16.03<i>пн</i></td><td class="n">75</td><td class="n">54</td><td class="n s">0,07</td><td class="n"><span class="d w">−72%</span></td><td class="n">1 223</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">17.03<i>вт</i></td><td class="n">70</td><td class="n">66</td><td class="n s">0,08</td><td class="n"><span class="d u">+65%</span></td><td class="n">1 180</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">18.03<i>ср</i></td><td class="n">91</td><td class="n">84</td><td class="n s">0,09</td><td class="n"><span class="d u">+64%</span></td><td class="n">1 102</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">19.03<i>чт</i></td><td class="n">108</td><td class="n">92</td><td class="n s">0,10</td><td class="n"><span class="d w">−12%</span></td><td class="n">1 074</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">20.03<i>пт</i></td><td class="n">95</td><td class="n">74</td><td class="n s">0,09</td><td class="n"><span class="d w">−6%</span></td><td class="n">1 242</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">21.03<i>сб</i></td><td class="n">289</td><td class="n">236</td><td class="n s">0,38</td><td class="n"><span class="d u">+1%</span></td><td class="n">1 601</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">22.03<i>вс</i></td><td class="n">182</td><td class="n">150</td><td class="n s">0,24</td><td class="n"><span class="d w">−9%</span></td><td class="n">1 575</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">23.03<i>пн</i></td><td class="n">100</td><td class="n">80</td><td class="n s">0,09</td><td class="n"><span class="d u">+41%</span></td><td class="n">1 166</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">24.03<i>вт</i></td><td class="n">99</td><td class="n">91</td><td class="n s">0,10</td><td class="n"><span class="d u">+33%</span></td><td class="n">1 134</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">25.03<i>ср</i></td><td class="n">106</td><td class="n">96</td><td class="n s">0,11</td><td class="n"><span class="d u">+19%</span></td><td class="n">1 151</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">26.03<i>чт</i></td><td class="n">152</td><td class="n">139</td><td class="n s">0,16</td><td class="n"><span class="d u">+57%</span></td><td class="n">1 118</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">27.03<i>пт</i></td><td class="n">207</td><td class="n">181</td><td class="n s">0,22</td><td class="n"><span class="d u">+141%</span></td><td class="n">1 225</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">28.03<i>сб</i></td><td class="n">365</td><td class="n">295</td><td class="n s">0,48</td><td class="n"><span class="d u">+27%</span></td><td class="n">1 623</td><td class="bc"></td></tr>
+<tr class="dy gt2 we" hidden><td class="dn">29.03<i>вс</i></td><td class="n">182</td><td class="n">138</td><td class="n s">0,22</td><td class="n"><span class="d w">−6%</span></td><td class="n">1 608</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">30.03<i>пн</i></td><td class="n">152</td><td class="n">139</td><td class="n s">0,17</td><td class="n"><span class="d u">+79%</span></td><td class="n">1 204</td><td class="bc"></td></tr>
+<tr class="dy gt2" hidden><td class="dn">31.03<i>вт</i></td><td class="n">136</td><td class="n">121</td><td class="n s">0,17</td><td class="n"><span class="d u">+64%</span></td><td class="n">1 402</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t3" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Апрель</td><td class="n">3 225</td><td class="n">2 697</td><td class="n s">3,59</td><td class="n"><span class="d w">−38%</span></td><td class="n">1 331</td><td class="bc"><span class="bw"><span class="bf t" style="width:20.5%"></span></span></td></tr>
+<tr class="dy gt3" hidden><td class="dn">01.04<i>ср</i></td><td class="n">155</td><td class="n">149</td><td class="n s">0,14</td><td class="n"><span class="d u">+27%</span></td><td class="n">941</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">02.04<i>чт</i></td><td class="n">210</td><td class="n">187</td><td class="n s">0,23</td><td class="n"><span class="d u">+45%</span></td><td class="n">1 205</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">03.04<i>пт</i></td><td class="n">181</td><td class="n">152</td><td class="n s">0,19</td><td class="n"><span class="d w">−16%</span></td><td class="n">1 219</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">04.04<i>сб</i></td><td class="n">248</td><td class="n">209</td><td class="n s">0,34</td><td class="n"><span class="d w">−30%</span></td><td class="n">1 605</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">05.04<i>вс</i></td><td class="n">108</td><td class="n">89</td><td class="n s">0,14</td><td class="n"><span class="d w">−36%</span></td><td class="n">1 596</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">06.04<i>пн</i></td><td class="n">59</td><td class="n">50</td><td class="n s">0,07</td><td class="n"><span class="d w">−59%</span></td><td class="n">1 362</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">07.04<i>вт</i></td><td class="n">49</td><td class="n">39</td><td class="n s">0,04</td><td class="n"><span class="d w">−75%</span></td><td class="n">1 097</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">08.04<i>ср</i></td><td class="n">78</td><td class="n">69</td><td class="n s">0,07</td><td class="n"><span class="d w">−48%</span></td><td class="n">1 046</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">09.04<i>чт</i></td><td class="n">51</td><td class="n">50</td><td class="n s">0,05</td><td class="n"><span class="d w">−76%</span></td><td class="n">1 081</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">10.04<i>пт</i></td><td class="n">49</td><td class="n">47</td><td class="n s">0,06</td><td class="n"><span class="d w">−70%</span></td><td class="n">1 171</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">11.04<i>сб</i></td><td class="n">131</td><td class="n">104</td><td class="n s">0,17</td><td class="n"><span class="d w">−49%</span></td><td class="n">1 646</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">12.04<i>вс</i></td><td class="n">157</td><td class="n">128</td><td class="n s">0,20</td><td class="n"><span class="d u">+43%</span></td><td class="n">1 583</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">13.04<i>пн</i></td><td class="n">47</td><td class="n">33</td><td class="n s">0,04</td><td class="n"><span class="d w">−40%</span></td><td class="n">1 238</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">14.04<i>вт</i></td><td class="n">102</td><td class="n">84</td><td class="n s">0,10</td><td class="n"><span class="d u">+138%</span></td><td class="n">1 214</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">15.04<i>ср</i></td><td class="n">83</td><td class="n">70</td><td class="n s">0,07</td><td class="n"><span class="d w">−3%</span></td><td class="n">997</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">16.04<i>чт</i></td><td class="n">97</td><td class="n">79</td><td class="n s">0,09</td><td class="n"><span class="d u">+62%</span></td><td class="n">1 110</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">17.04<i>пт</i></td><td class="n">100</td><td class="n">87</td><td class="n s">0,11</td><td class="n"><span class="d u">+97%</span></td><td class="n">1 247</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">18.04<i>сб</i></td><td class="n">205</td><td class="n">170</td><td class="n s">0,28</td><td class="n"><span class="d u">+61%</span></td><td class="n">1 622</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">19.04<i>вс</i></td><td class="n">108</td><td class="n">88</td><td class="n s">0,14</td><td class="n"><span class="d w">−29%</span></td><td class="n">1 644</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">20.04<i>пн</i></td><td class="n">43</td><td class="n">37</td><td class="n s">0,04</td><td class="n"><span class="d u">+5%</span></td><td class="n">1 161</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">21.04<i>вт</i></td><td class="n">30</td><td class="n">28</td><td class="n s">0,03</td><td class="n"><span class="d w">−68%</span></td><td class="n">1 174</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">22.04<i>ср</i></td><td class="n">44</td><td class="n">39</td><td class="n s">0,05</td><td class="n"><span class="d w">−34%</span></td><td class="n">1 177</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">23.04<i>чт</i></td><td class="n">115</td><td class="n">97</td><td class="n s">0,10</td><td class="n"><span class="d u">+20%</span></td><td class="n">1 081</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">24.04<i>пт</i></td><td class="n">62</td><td class="n">55</td><td class="n s">0,06</td><td class="n"><span class="d w">−42%</span></td><td class="n">1 144</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">25.04<i>сб</i></td><td class="n">208</td><td class="n">166</td><td class="n s">0,27</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 608</td><td class="bc"></td></tr>
+<tr class="dy gt3 we" hidden><td class="dn">26.04<i>вс</i></td><td class="n">153</td><td class="n">125</td><td class="n s">0,21</td><td class="n"><span class="d u">+45%</span></td><td class="n">1 681</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">27.04<i>пн</i></td><td class="n">62</td><td class="n">49</td><td class="n s">0,06</td><td class="n"><span class="d u">+34%</span></td><td class="n">1 177</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">28.04<i>вт</i></td><td class="n">41</td><td class="n">31</td><td class="n s">0,04</td><td class="n"><span class="d u">+16%</span></td><td class="n">1 231</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">29.04<i>ср</i></td><td class="n">91</td><td class="n">67</td><td class="n s">0,07</td><td class="n"><span class="d u">+49%</span></td><td class="n">1 019</td><td class="bc"></td></tr>
+<tr class="dy gt3" hidden><td class="dn">30.04<i>чт</i></td><td class="n">158</td><td class="n">119</td><td class="n s">0,14</td><td class="n"><span class="d u">+29%</span></td><td class="n">1 140</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t4" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Май</td><td class="n">5 614</td><td class="n">4 834</td><td class="n s">7,25</td><td class="n"><span class="d u">+102%</span></td><td class="n">1 499</td><td class="bc"><span class="bw"><span class="bf t" style="width:41.5%"></span></span></td></tr>
+<tr class="dy gt4" hidden><td class="dn">01.05<i>пт</i></td><td class="n">293</td><td class="n">244</td><td class="n s">0,39</td><td class="n"><span class="d u">+513%</span></td><td class="n">1 580</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">02.05<i>сб</i></td><td class="n">266</td><td class="n">209</td><td class="n s">0,34</td><td class="n"><span class="d u">+26%</span></td><td class="n">1 613</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">03.05<i>вс</i></td><td class="n">181</td><td class="n">152</td><td class="n s">0,24</td><td class="n"><span class="d u">+15%</span></td><td class="n">1 587</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">04.05<i>пн</i></td><td class="n">58</td><td class="n">48</td><td class="n s">0,06</td><td class="n"><span class="d u">+8%</span></td><td class="n">1 300</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">05.05<i>вт</i></td><td class="n">62</td><td class="n">60</td><td class="n s">0,07</td><td class="n"><span class="d u">+84%</span></td><td class="n">1 168</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">06.05<i>ср</i></td><td class="n">116</td><td class="n">113</td><td class="n s">0,13</td><td class="n"><span class="d u">+86%</span></td><td class="n">1 122</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">07.05<i>чт</i></td><td class="n">124</td><td class="n">112</td><td class="n s">0,13</td><td class="n"><span class="d w">−7%</span></td><td class="n">1 131</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">08.05<i>пт</i></td><td class="n">116</td><td class="n">93</td><td class="n s">0,12</td><td class="n"><span class="d w">−70%</span></td><td class="n">1 258</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">09.05<i>сб</i></td><td class="n">254</td><td class="n">227</td><td class="n s">0,36</td><td class="n"><span class="d u">+8%</span></td><td class="n">1 604</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">10.05<i>вс</i></td><td class="n">257</td><td class="n">178</td><td class="n s">0,28</td><td class="n"><span class="d u">+15%</span></td><td class="n">1 563</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">11.05<i>пн</i></td><td class="n">78</td><td class="n">68</td><td class="n s">0,11</td><td class="n"><span class="d u">+84%</span></td><td class="n">1 690</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">12.05<i>вт</i></td><td class="n">45</td><td class="n">41</td><td class="n s">0,05</td><td class="n"><span class="d w">−29%</span></td><td class="n">1 220</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">13.05<i>ср</i></td><td class="n">69</td><td class="n">64</td><td class="n s">0,06</td><td class="n"><span class="d w">−53%</span></td><td class="n">930</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">14.05<i>чт</i></td><td class="n">81</td><td class="n">77</td><td class="n s">0,08</td><td class="n"><span class="d w">−35%</span></td><td class="n">1 070</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">15.05<i>пт</i></td><td class="n">97</td><td class="n">88</td><td class="n s">0,11</td><td class="n"><span class="d w">−7%</span></td><td class="n">1 231</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">16.05<i>сб</i></td><td class="n">515</td><td class="n">453</td><td class="n s">0,79</td><td class="n"><span class="d u">+117%</span></td><td class="n">1 741</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">17.05<i>вс</i></td><td class="n">511</td><td class="n">433</td><td class="n s">0,74</td><td class="n"><span class="d u">+165%</span></td><td class="n">1 706</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">18.05<i>пн</i></td><td class="n">156</td><td class="n">146</td><td class="n s">0,23</td><td class="n"><span class="d u">+97%</span></td><td class="n">1 548</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">19.05<i>вт</i></td><td class="n">194</td><td class="n">186</td><td class="n s">0,24</td><td class="n"><span class="d u">+383%</span></td><td class="n">1 298</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">20.05<i>ср</i></td><td class="n">52</td><td class="n">48</td><td class="n s">0,06</td><td class="n"><span class="d u">+1%</span></td><td class="n">1 257</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">21.05<i>чт</i></td><td class="n">87</td><td class="n">78</td><td class="n s">0,08</td><td class="n"><span class="d u">+0%</span></td><td class="n">1 059</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">22.05<i>пт</i></td><td class="n">75</td><td class="n">67</td><td class="n s">0,09</td><td class="n"><span class="d w">−20%</span></td><td class="n">1 289</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">23.05<i>сб</i></td><td class="n">282</td><td class="n">219</td><td class="n s">0,36</td><td class="n"><span class="d w">−54%</span></td><td class="n">1 662</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">24.05<i>вс</i></td><td class="n">480</td><td class="n">415</td><td class="n s">0,72</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 725</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">25.05<i>пн</i></td><td class="n">142</td><td class="n">123</td><td class="n s">0,17</td><td class="n"><span class="d w">−27%</span></td><td class="n">1 349</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">26.05<i>вт</i></td><td class="n">170</td><td class="n">158</td><td class="n s">0,21</td><td class="n"><span class="d w">−13%</span></td><td class="n">1 331</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">27.05<i>ср</i></td><td class="n">244</td><td class="n">227</td><td class="n s">0,30</td><td class="n"><span class="d u">+393%</span></td><td class="n">1 310</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">28.05<i>чт</i></td><td class="n">136</td><td class="n">105</td><td class="n s">0,11</td><td class="n"><span class="d u">+35%</span></td><td class="n">1 063</td><td class="bc"></td></tr>
+<tr class="dy gt4" hidden><td class="dn">29.05<i>пт</i></td><td class="n">96</td><td class="n">86</td><td class="n s">0,10</td><td class="n"><span class="d u">+21%</span></td><td class="n">1 218</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">30.05<i>сб</i></td><td class="n">216</td><td class="n">176</td><td class="n s">0,30</td><td class="n"><span class="d w">−18%</span></td><td class="n">1 706</td><td class="bc"></td></tr>
+<tr class="dy gt4 we" hidden><td class="dn">31.05<i>вс</i></td><td class="n">161</td><td class="n">140</td><td class="n s">0,23</td><td class="n"><span class="d w">−68%</span></td><td class="n">1 627</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t5" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Июнь</td><td class="n">7 051</td><td class="n">6 011</td><td class="n s">8,51</td><td class="n"><span class="d u">+17%</span></td><td class="n">1 415</td><td class="bc"><span class="bw"><span class="bf t" style="width:48.7%"></span></span></td></tr>
+<tr class="dy gt5" hidden><td class="dn">01.06<i>пн</i></td><td class="n">255</td><td class="n">181</td><td class="n s">0,26</td><td class="n"><span class="d u">+55%</span></td><td class="n">1 421</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">02.06<i>вт</i></td><td class="n">83</td><td class="n">72</td><td class="n s">0,09</td><td class="n"><span class="d w">−57%</span></td><td class="n">1 264</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">03.06<i>ср</i></td><td class="n">130</td><td class="n">120</td><td class="n s">0,15</td><td class="n"><span class="d w">−51%</span></td><td class="n">1 220</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">04.06<i>чт</i></td><td class="n">103</td><td class="n">79</td><td class="n s">0,09</td><td class="n"><span class="d w">−23%</span></td><td class="n">1 089</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">05.06<i>пт</i></td><td class="n">81</td><td class="n">73</td><td class="n s">0,09</td><td class="n"><span class="d w">−17%</span></td><td class="n">1 185</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">06.06<i>сб</i></td><td class="n">268</td><td class="n">225</td><td class="n s">0,38</td><td class="n"><span class="d u">+28%</span></td><td class="n">1 701</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">07.06<i>вс</i></td><td class="n">282</td><td class="n">231</td><td class="n s">0,38</td><td class="n"><span class="d u">+68%</span></td><td class="n">1 658</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">08.06<i>пн</i></td><td class="n">113</td><td class="n">105</td><td class="n s">0,13</td><td class="n"><span class="d w">−51%</span></td><td class="n">1 202</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">09.06<i>вт</i></td><td class="n">94</td><td class="n">86</td><td class="n s">0,10</td><td class="n"><span class="d u">+11%</span></td><td class="n">1 175</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">10.06<i>ср</i></td><td class="n">130</td><td class="n">124</td><td class="n s">0,13</td><td class="n"><span class="d w">−8%</span></td><td class="n">1 083</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">11.06<i>чт</i></td><td class="n">178</td><td class="n">140</td><td class="n s">0,15</td><td class="n"><span class="d u">+77%</span></td><td class="n">1 088</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">12.06<i>пт</i></td><td class="n">402</td><td class="n">358</td><td class="n s">0,57</td><td class="n"><span class="d u">+560%</span></td><td class="n">1 596</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">13.06<i>сб</i></td><td class="n">547</td><td class="n">447</td><td class="n s">0,74</td><td class="n"><span class="d u">+94%</span></td><td class="n">1 658</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">14.06<i>вс</i></td><td class="n">192</td><td class="n">146</td><td class="n s">0,24</td><td class="n"><span class="d w">−36%</span></td><td class="n">1 678</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">15.06<i>пн</i></td><td class="n">102</td><td class="n">88</td><td class="n s">0,12</td><td class="n"><span class="d w">−8%</span></td><td class="n">1 315</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">16.06<i>вт</i></td><td class="n">148</td><td class="n">131</td><td class="n s">0,18</td><td class="n"><span class="d u">+81%</span></td><td class="n">1 395</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">17.06<i>ср</i></td><td class="n">429</td><td class="n">403</td><td class="n s">0,49</td><td class="n"><span class="d u">+263%</span></td><td class="n">1 209</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">18.06<i>чт</i></td><td class="n">311</td><td class="n">289</td><td class="n s">0,32</td><td class="n"><span class="d u">+111%</span></td><td class="n">1 110</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">19.06<i>пт</i></td><td class="n">265</td><td class="n">233</td><td class="n s">0,29</td><td class="n"><span class="d w">−50%</span></td><td class="n">1 237</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">20.06<i>сб</i></td><td class="n">602</td><td class="n">519</td><td class="n s">0,88</td><td class="n"><span class="d u">+19%</span></td><td class="n">1 695</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">21.06<i>вс</i></td><td class="n">283</td><td class="n">235</td><td class="n s">0,39</td><td class="n"><span class="d u">+59%</span></td><td class="n">1 652</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">22.06<i>пн</i></td><td class="n">269</td><td class="n">230</td><td class="n s">0,29</td><td class="n"><span class="d u">+150%</span></td><td class="n">1 256</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">23.06<i>вт</i></td><td class="n">149</td><td class="n">111</td><td class="n s">0,14</td><td class="n"><span class="d w">−25%</span></td><td class="n">1 239</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">24.06<i>ср</i></td><td class="n">169</td><td class="n">154</td><td class="n s">0,18</td><td class="n"><span class="d w">−63%</span></td><td class="n">1 166</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">25.06<i>чт</i></td><td class="n">362</td><td class="n">281</td><td class="n s">0,34</td><td class="n"><span class="d u">+5%</span></td><td class="n">1 197</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">26.06<i>пт</i></td><td class="n">206</td><td class="n">177</td><td class="n s">0,27</td><td class="n"><span class="d w">−8%</span></td><td class="n">1 502</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">27.06<i>сб</i></td><td class="n">362</td><td class="n">322</td><td class="n s">0,47</td><td class="n"><span class="d w">−47%</span></td><td class="n">1 445</td><td class="bc"></td></tr>
+<tr class="dy gt5 we" hidden><td class="dn">28.06<i>вс</i></td><td class="n">313</td><td class="n">263</td><td class="n s">0,44</td><td class="n"><span class="d u">+12%</span></td><td class="n">1 658</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">29.06<i>пн</i></td><td class="n">88</td><td class="n">77</td><td class="n s">0,09</td><td class="n"><span class="d w">−69%</span></td><td class="n">1 166</td><td class="bc"></td></tr>
+<tr class="dy gt5" hidden><td class="dn">30.06<i>вт</i></td><td class="n">135</td><td class="n">111</td><td class="n s">0,14</td><td class="n"><span class="d u">+1%</span></td><td class="n">1 249</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t6" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Июль</td><td class="n">14 148</td><td class="n">11 778</td><td class="n s">17,48</td><td class="n"><span class="d u">+106%</span></td><td class="n">1 484</td><td class="bc"><span class="bw"><span class="bf t" style="width:100.0%"></span></span></td></tr>
+<tr class="dy gt6" hidden><td class="dn">01.07<i>ср</i></td><td class="n">296</td><td class="n">252</td><td class="n s">0,30</td><td class="n"><span class="d u">+66%</span></td><td class="n">1 187</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">02.07<i>чт</i></td><td class="n">204</td><td class="n">143</td><td class="n s">0,16</td><td class="n"><span class="d w">−53%</span></td><td class="n">1 100</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">03.07<i>пт</i></td><td class="n">157</td><td class="n">123</td><td class="n s">0,15</td><td class="n"><span class="d w">−42%</span></td><td class="n">1 260</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">04.07<i>сб</i></td><td class="n">616</td><td class="n">502</td><td class="n s">0,87</td><td class="n"><span class="d u">+86%</span></td><td class="n">1 723</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">05.07<i>вс</i></td><td class="n">801</td><td class="n">686</td><td class="n s">1,21</td><td class="n"><span class="d u">+176%</span></td><td class="n">1 757</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">06.07<i>пн</i></td><td class="n">786</td><td class="n">714</td><td class="n s">0,99</td><td class="n"><span class="d u">+997%</span></td><td class="n">1 380</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">07.07<i>вт</i></td><td class="n">331</td><td class="n">282</td><td class="n s">0,36</td><td class="n"><span class="d u">+156%</span></td><td class="n">1 260</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">08.07<i>ср</i></td><td class="n">292</td><td class="n">244</td><td class="n s">0,28</td><td class="n"><span class="d w">−6%</span></td><td class="n">1 158</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">09.07<i>чт</i></td><td class="n">339</td><td class="n">269</td><td class="n s">0,31</td><td class="n"><span class="d u">+98%</span></td><td class="n">1 159</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">10.07<i>пт</i></td><td class="n">348</td><td class="n">288</td><td class="n s">0,37</td><td class="n"><span class="d u">+137%</span></td><td class="n">1 275</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">11.07<i>сб</i></td><td class="n">524</td><td class="n">413</td><td class="n s">0,68</td><td class="n"><span class="d w">−22%</span></td><td class="n">1 644</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">12.07<i>вс</i></td><td class="n">468</td><td class="n">363</td><td class="n s">0,61</td><td class="n"><span class="d w">−49%</span></td><td class="n">1 678</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">13.07<i>пн</i></td><td class="n">244</td><td class="n">192</td><td class="n s">0,24</td><td class="n"><span class="d w">−76%</span></td><td class="n">1 238</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">14.07<i>вт</i></td><td class="n">159</td><td class="n">123</td><td class="n s">0,15</td><td class="n"><span class="d w">−57%</span></td><td class="n">1 229</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">15.07<i>ср</i></td><td class="n">167</td><td class="n">153</td><td class="n s">0,18</td><td class="n"><span class="d w">−36%</span></td><td class="n">1 183</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">16.07<i>чт</i></td><td class="n">378</td><td class="n">311</td><td class="n s">0,35</td><td class="n"><span class="d u">+13%</span></td><td class="n">1 133</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">17.07<i>пт</i></td><td class="n">344</td><td class="n">303</td><td class="n s">0,39</td><td class="n"><span class="d u">+5%</span></td><td class="n">1 273</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">18.07<i>сб</i></td><td class="n">356</td><td class="n">275</td><td class="n s">0,47</td><td class="n"><span class="d w">−31%</span></td><td class="n">1 692</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">19.07<i>вс</i></td><td class="n">278</td><td class="n">228</td><td class="n s">0,36</td><td class="n"><span class="d w">−41%</span></td><td class="n">1 574</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">20.07<i>пн</i></td><td class="n">180</td><td class="n">157</td><td class="n s">0,20</td><td class="n"><span class="d w">−14%</span></td><td class="n">1 305</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">21.07<i>вт</i></td><td class="n">535</td><td class="n">485</td><td class="n s">0,70</td><td class="n"><span class="d u">+363%</span></td><td class="n">1 445</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">22.07<i>ср</i></td><td class="n">650</td><td class="n">587</td><td class="n s">0,72</td><td class="n"><span class="d u">+296%</span></td><td class="n">1 221</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">23.07<i>чт</i></td><td class="n">807</td><td class="n">610</td><td class="n s">0,74</td><td class="n"><span class="d u">+110%</span></td><td class="n">1 211</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">24.07<i>пт</i></td><td class="n">579</td><td class="n">496</td><td class="n s">0,76</td><td class="n"><span class="d u">+98%</span></td><td class="n">1 537</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">25.07<i>сб</i></td><td class="n">886</td><td class="n">730</td><td class="n s">1,44</td><td class="n"><span class="d u">+210%</span></td><td class="n">1 973</td><td class="bc"></td></tr>
+<tr class="dy gt6 we" hidden><td class="dn">26.07<i>вс</i></td><td class="n">837</td><td class="n">716</td><td class="n s">1,42</td><td class="n"><span class="d u">+295%</span></td><td class="n">1 983</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">27.07<i>пн</i></td><td class="n">800</td><td class="n">694</td><td class="n s">1,11</td><td class="n"><span class="d u">+440%</span></td><td class="n">1 595</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">28.07<i>вт</i></td><td class="n">556</td><td class="n">463</td><td class="n s">0,72</td><td class="n"><span class="d u">+3%</span></td><td class="n">1 552</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">29.07<i>ср</i></td><td class="n">426</td><td class="n">354</td><td class="n s">0,45</td><td class="n"><span class="d w">−37%</span></td><td class="n">1 273</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">30.07<i>чт</i></td><td class="n">556</td><td class="n">402</td><td class="n s">0,52</td><td class="n"><span class="d w">−30%</span></td><td class="n">1 294</td><td class="bc"></td></tr>
+<tr class="dy gt6" hidden><td class="dn">31.07<i>пт</i></td><td class="n">248</td><td class="n">220</td><td class="n s">0,30</td><td class="n"><span class="d w">−61%</span></td><td class="n">1 350</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t7" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Август</td><td class="n">7 777</td><td class="n">6 404</td><td class="n s">9,71</td><td class="n"><span class="d w">−44%</span></td><td class="n">1 516</td><td class="bc"><span class="bw"><span class="bf t" style="width:55.6%"></span></span></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">01.08<i>сб</i></td><td class="n">296</td><td class="n">208</td><td class="n s">0,39</td><td class="n"><span class="d w">−73%</span></td><td class="n">1 873</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">02.08<i>вс</i></td><td class="n">219</td><td class="n">174</td><td class="n s">0,27</td><td class="n"><span class="d w">−81%</span></td><td class="n">1 567</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">03.08<i>пн</i></td><td class="n">179</td><td class="n">154</td><td class="n s">0,21</td><td class="n"><span class="d w">−81%</span></td><td class="n">1 368</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">04.08<i>вт</i></td><td class="n">232</td><td class="n">187</td><td class="n s">0,26</td><td class="n"><span class="d w">−64%</span></td><td class="n">1 369</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">05.08<i>ср</i></td><td class="n">333</td><td class="n">284</td><td class="n s">0,37</td><td class="n"><span class="d w">−19%</span></td><td class="n">1 288</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">06.08<i>чт</i></td><td class="n">295</td><td class="n">214</td><td class="n s">0,27</td><td class="n"><span class="d w">−49%</span></td><td class="n">1 243</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">07.08<i>пт</i></td><td class="n">225</td><td class="n">202</td><td class="n s">0,29</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 427</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">08.08<i>сб</i></td><td class="n">529</td><td class="n">432</td><td class="n s">0,82</td><td class="n"><span class="d u">+111%</span></td><td class="n">1 903</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">09.08<i>вс</i></td><td class="n">424</td><td class="n">338</td><td class="n s">0,61</td><td class="n"><span class="d u">+125%</span></td><td class="n">1 816</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">10.08<i>пн</i></td><td class="n">190</td><td class="n">168</td><td class="n s">0,22</td><td class="n"><span class="d u">+6%</span></td><td class="n">1 334</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">11.08<i>вт</i></td><td class="n">204</td><td class="n">179</td><td class="n s">0,26</td><td class="n"><span class="d u">+2%</span></td><td class="n">1 463</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">12.08<i>ср</i></td><td class="n">241</td><td class="n">212</td><td class="n s">0,28</td><td class="n"><span class="d w">−23%</span></td><td class="n">1 333</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">13.08<i>чт</i></td><td class="n">474</td><td class="n">360</td><td class="n s">0,47</td><td class="n"><span class="d u">+78%</span></td><td class="n">1 316</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">14.08<i>пт</i></td><td class="n">185</td><td class="n">149</td><td class="n s">0,22</td><td class="n"><span class="d w">−24%</span></td><td class="n">1 472</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">15.08<i>сб</i></td><td class="n">348</td><td class="n">279</td><td class="n s">0,52</td><td class="n"><span class="d w">−37%</span></td><td class="n">1 869</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">16.08<i>вс</i></td><td class="n">267</td><td class="n">218</td><td class="n s">0,36</td><td class="n"><span class="d w">−42%</span></td><td class="n">1 634</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">17.08<i>пн</i></td><td class="n">141</td><td class="n">116</td><td class="n s">0,17</td><td class="n"><span class="d w">−25%</span></td><td class="n">1 443</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">18.08<i>вт</i></td><td class="n">150</td><td class="n">140</td><td class="n s">0,18</td><td class="n"><span class="d w">−31%</span></td><td class="n">1 297</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">19.08<i>ср</i></td><td class="n">171</td><td class="n">160</td><td class="n s">0,20</td><td class="n"><span class="d w">−29%</span></td><td class="n">1 250</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">20.08<i>чт</i></td><td class="n">335</td><td class="n">259</td><td class="n s">0,34</td><td class="n"><span class="d w">−29%</span></td><td class="n">1 304</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">21.08<i>пт</i></td><td class="n">278</td><td class="n">249</td><td class="n s">0,33</td><td class="n"><span class="d u">+49%</span></td><td class="n">1 316</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">22.08<i>сб</i></td><td class="n">320</td><td class="n">266</td><td class="n s">0,51</td><td class="n"><span class="d w">−3%</span></td><td class="n">1 904</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">23.08<i>вс</i></td><td class="n">202</td><td class="n">161</td><td class="n s">0,31</td><td class="n"><span class="d w">−12%</span></td><td class="n">1 949</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">24.08<i>пн</i></td><td class="n">216</td><td class="n">198</td><td class="n s">0,25</td><td class="n"><span class="d u">+49%</span></td><td class="n">1 257</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">25.08<i>вт</i></td><td class="n">384</td><td class="n">339</td><td class="n s">0,48</td><td class="n"><span class="d u">+164%</span></td><td class="n">1 415</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">26.08<i>ср</i></td><td class="n">152</td><td class="n">121</td><td class="n s">0,15</td><td class="n"><span class="d w">−26%</span></td><td class="n">1 228</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">27.08<i>чт</i></td><td class="n">228</td><td class="n">162</td><td class="n s">0,20</td><td class="n"><span class="d w">−39%</span></td><td class="n">1 265</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">28.08<i>пт</i></td><td class="n">142</td><td class="n">131</td><td class="n s">0,17</td><td class="n"><span class="d w">−48%</span></td><td class="n">1 295</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">29.08<i>сб</i></td><td class="n">157</td><td class="n">111</td><td class="n s">0,22</td><td class="n"><span class="d w">−57%</span></td><td class="n">1 953</td><td class="bc"></td></tr>
+<tr class="dy gt7 we" hidden><td class="dn">30.08<i>вс</i></td><td class="n">167</td><td class="n">146</td><td class="n s">0,28</td><td class="n"><span class="d w">−11%</span></td><td class="n">1 915</td><td class="bc"></td></tr>
+<tr class="dy gt7" hidden><td class="dn">31.08<i>пн</i></td><td class="n">93</td><td class="n">87</td><td class="n s">0,10</td><td class="n"><span class="d w">−58%</span></td><td class="n">1 202</td><td class="bc"></td></tr>
+<tr class="mo" data-g="t8" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Сентябрь <span class="pt">1–14</span></td><td class="n">1 454</td><td class="n">1 210</td><td class="n s">1,74</td><td class="n"><span class="d w">−82%</span></td><td class="n">1 437</td><td class="bc"><span class="bw"><span class="bf t" style="width:9.9%"></span></span></td></tr>
+<tr class="dy gt8" hidden><td class="dn">01.09<i>вт</i></td><td class="n">67</td><td class="n">55</td><td class="n s">0,08</td><td class="n"><span class="d w">−82%</span></td><td class="n">1 544</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">02.09<i>ср</i></td><td class="n">52</td><td class="n">45</td><td class="n s">0,06</td><td class="n"><span class="d w">−60%</span></td><td class="n">1 325</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">03.09<i>чт</i></td><td class="n">107</td><td class="n">84</td><td class="n s">0,11</td><td class="n"><span class="d w">−49%</span></td><td class="n">1 252</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">04.09<i>пт</i></td><td class="n">65</td><td class="n">58</td><td class="n s">0,09</td><td class="n"><span class="d w">−48%</span></td><td class="n">1 525</td><td class="bc"></td></tr>
+<tr class="dy gt8 we" hidden><td class="dn">05.09<i>сб</i></td><td class="n">224</td><td class="n">184</td><td class="n s">0,34</td><td class="n"><span class="d u">+59%</span></td><td class="n">1 871</td><td class="bc"></td></tr>
+<tr class="dy gt8 we" hidden><td class="dn">06.09<i>вс</i></td><td class="n">101</td><td class="n">78</td><td class="n s">0,15</td><td class="n"><span class="d w">−46%</span></td><td class="n">1 920</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">07.09<i>пн</i></td><td class="n">90</td><td class="n">80</td><td class="n s">0,12</td><td class="n"><span class="d u">+15%</span></td><td class="n">1 497</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">08.09<i>вт</i></td><td class="n">115</td><td class="n">99</td><td class="n s">0,14</td><td class="n"><span class="d u">+60%</span></td><td class="n">1 369</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">09.09<i>ср</i></td><td class="n">74</td><td class="n">69</td><td class="n s">0,06</td><td class="n"><span class="d u">+1%</span></td><td class="n">869</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">10.09<i>чт</i></td><td class="n">94</td><td class="n">80</td><td class="n s">0,08</td><td class="n"><span class="d w">−25%</span></td><td class="n">985</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">11.09<i>пт</i></td><td class="n">33</td><td class="n">31</td><td class="n s">0,03</td><td class="n"><span class="d w">−65%</span></td><td class="n">995</td><td class="bc"></td></tr>
+<tr class="dy gt8 we" hidden><td class="dn">12.09<i>сб</i></td><td class="n">213</td><td class="n">169</td><td class="n s">0,24</td><td class="n"><span class="d w">−30%</span></td><td class="n">1 425</td><td class="bc"></td></tr>
+<tr class="dy gt8 we" hidden><td class="dn">13.09<i>вс</i></td><td class="n">176</td><td class="n">142</td><td class="n s">0,20</td><td class="n"><span class="d u">+33%</span></td><td class="n">1 408</td><td class="bc"></td></tr>
+<tr class="dy gt8" hidden><td class="dn">14.09<i>пн</i></td><td class="n">43</td><td class="n">36</td><td class="n s">0,04</td><td class="n"><span class="d w">−66%</span></td><td class="n">1 124</td><td class="bc"></td></tr>
+<tr class="tt"><td>Итого</td><td class="n">55 461</td><td class="n">47 232</td><td class="n s">72,43</td><td class="n"></td><td class="n">1 533</td><td class="bc"></td></tr>
+</tbody></table></div>
+</section>
+
+<section class="band l">
+<div class="bhead">
+<div class="btag">Направление 2</div>
+<h2>Проживание</h2>
+<p class="bnote">Номенклатура «Проживание (свободная цена)» — единственная позиция, которой в кассе оформляют размещение. Ни один тариф термального комплекса в этот блок не попадает.</p>
+</div>
+<div class="kpi">
+<div class="kc"><span class="kl">Выручка</span><span class="kv">95,79<i>млн ₽</i></span><span class="ks">55.9% всей выручки</span></div>
+<div class="kc"><span class="kl">Позиций</span><span class="kv">7 226</span><span class="ks">строк оплаты, не номероночей</span></div>
+<div class="kc"><span class="kl">Средняя цена</span><span class="kv">13 256<i>₽</i></span><span class="ks">за позицию</span></div>
+<div class="kc"><span class="kl">Отношение к термам</span><span class="kv">1.32<i>×</i></span><span class="ks">выручка проживания к выручке термы</span></div>
+</div>
+<div class="scroll"><table>
+<thead><tr><th>Месяц</th><th>Позиций</th><th>Выручка, млн&nbsp;₽</th><th>Δ%</th><th>Ср. цена, ₽</th><th></th></tr></thead>
+<tbody>
+<tr class="mo" data-g="l0" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Январь</td><td class="n">756</td><td class="n s">10,33</td><td class="n"><span class="d n">—</span></td><td class="n">13 658</td><td class="bc"><span class="bw"><span class="bf l" style="width:56.3%"></span></span></td></tr>
+<tr class="dy gl0" hidden><td class="dn">01.01<i>чт</i></td><td class="n">1</td><td class="n s">0,01</td><td class="n"><span class="d n">—</span></td><td class="n">6 000</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">02.01<i>пт</i></td><td class="n">62</td><td class="n s">0,94</td><td class="n"><span class="d n">—</span></td><td class="n">15 131</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">03.01<i>сб</i></td><td class="n">40</td><td class="n s">0,68</td><td class="n"><span class="d n">—</span></td><td class="n">17 013</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">04.01<i>вс</i></td><td class="n">45</td><td class="n s">0,73</td><td class="n"><span class="d n">—</span></td><td class="n">16 197</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">05.01<i>пн</i></td><td class="n">46</td><td class="n s">0,75</td><td class="n"><span class="d n">—</span></td><td class="n">16 269</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">06.01<i>вт</i></td><td class="n">52</td><td class="n s">0,82</td><td class="n"><span class="d n">—</span></td><td class="n">15 679</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">07.01<i>ср</i></td><td class="n">42</td><td class="n s">0,72</td><td class="n"><span class="d n">—</span></td><td class="n">17 070</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">08.01<i>чт</i></td><td class="n">43</td><td class="n s">0,80</td><td class="n"><span class="d u">+13308%</span></td><td class="n">18 708</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">09.01<i>пт</i></td><td class="n">48</td><td class="n s">0,62</td><td class="n"><span class="d w">−34%</span></td><td class="n">12 919</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">10.01<i>сб</i></td><td class="n">50</td><td class="n s">0,69</td><td class="n"><span class="d u">+1%</span></td><td class="n">13 778</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">11.01<i>вс</i></td><td class="n">17</td><td class="n s">0,20</td><td class="n"><span class="d w">−73%</span></td><td class="n">11 556</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">12.01<i>пн</i></td><td class="n">5</td><td class="n s">0,07</td><td class="n"><span class="d w">−90%</span></td><td class="n">14 250</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">13.01<i>вт</i></td><td class="n">8</td><td class="n s">0,11</td><td class="n"><span class="d w">−87%</span></td><td class="n">13 597</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">14.01<i>ср</i></td><td class="n">8</td><td class="n s">0,08</td><td class="n"><span class="d w">−88%</span></td><td class="n">10 594</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">15.01<i>чт</i></td><td class="n">7</td><td class="n s">0,08</td><td class="n"><span class="d w">−90%</span></td><td class="n">12 043</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">16.01<i>пт</i></td><td class="n">13</td><td class="n s">0,16</td><td class="n"><span class="d w">−74%</span></td><td class="n">12 235</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">17.01<i>сб</i></td><td class="n">42</td><td class="n s">0,53</td><td class="n"><span class="d w">−23%</span></td><td class="n">12 588</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">18.01<i>вс</i></td><td class="n">12</td><td class="n s">0,13</td><td class="n"><span class="d w">−34%</span></td><td class="n">10 769</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">19.01<i>пн</i></td><td class="n">7</td><td class="n s">0,06</td><td class="n"><span class="d w">−12%</span></td><td class="n">8 936</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">20.01<i>вт</i></td><td class="n">4</td><td class="n s">0,03</td><td class="n"><span class="d w">−71%</span></td><td class="n">7 800</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">21.01<i>ср</i></td><td class="n">7</td><td class="n s">0,09</td><td class="n"><span class="d u">+7%</span></td><td class="n">12 964</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">22.01<i>чт</i></td><td class="n">13</td><td class="n s">0,13</td><td class="n"><span class="d u">+59%</span></td><td class="n">10 290</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">23.01<i>пт</i></td><td class="n">12</td><td class="n s">0,12</td><td class="n"><span class="d w">−26%</span></td><td class="n">9 788</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">24.01<i>сб</i></td><td class="n">32</td><td class="n s">0,40</td><td class="n"><span class="d w">−24%</span></td><td class="n">12 508</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">25.01<i>вс</i></td><td class="n">9</td><td class="n s">0,08</td><td class="n"><span class="d w">−36%</span></td><td class="n">9 242</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">26.01<i>пн</i></td><td class="n">11</td><td class="n s">0,08</td><td class="n"><span class="d u">+35%</span></td><td class="n">7 650</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">27.01<i>вт</i></td><td class="n">8</td><td class="n s">0,07</td><td class="n"><span class="d u">+121%</span></td><td class="n">8 625</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">28.01<i>ср</i></td><td class="n">4</td><td class="n s">0,02</td><td class="n"><span class="d w">−74%</span></td><td class="n">5 850</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">29.01<i>чт</i></td><td class="n">8</td><td class="n s">0,11</td><td class="n"><span class="d w">−18%</span></td><td class="n">13 746</td><td class="bc"></td></tr>
+<tr class="dy gl0" hidden><td class="dn">30.01<i>пт</i></td><td class="n">47</td><td class="n s">0,40</td><td class="n"><span class="d u">+237%</span></td><td class="n">8 410</td><td class="bc"></td></tr>
+<tr class="dy gl0 we" hidden><td class="dn">31.01<i>сб</i></td><td class="n">53</td><td class="n s">0,61</td><td class="n"><span class="d u">+54%</span></td><td class="n">11 593</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l1" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Февраль</td><td class="n">743</td><td class="n s">8,83</td><td class="n"><span class="d w">−14%</span></td><td class="n">11 890</td><td class="bc"><span class="bw"><span class="bf l" style="width:48.2%"></span></span></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">01.02<i>вс</i></td><td class="n">23</td><td class="n s">0,19</td><td class="n"><span class="d u">+129%</span></td><td class="n">8 264</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">02.02<i>пн</i></td><td class="n">16</td><td class="n s">0,15</td><td class="n"><span class="d u">+82%</span></td><td class="n">9 597</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">03.02<i>вт</i></td><td class="n">5</td><td class="n s">0,05</td><td class="n"><span class="d w">−29%</span></td><td class="n">9 760</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">04.02<i>ср</i></td><td class="n">7</td><td class="n s">0,07</td><td class="n"><span class="d u">+210%</span></td><td class="n">10 371</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">05.02<i>чт</i></td><td class="n">11</td><td class="n s">0,09</td><td class="n"><span class="d w">−15%</span></td><td class="n">8 536</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">06.02<i>пт</i></td><td class="n">26</td><td class="n s">0,31</td><td class="n"><span class="d w">−22%</span></td><td class="n">11 834</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">07.02<i>сб</i></td><td class="n">57</td><td class="n s">0,72</td><td class="n"><span class="d u">+17%</span></td><td class="n">12 582</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">08.02<i>вс</i></td><td class="n">12</td><td class="n s">0,19</td><td class="n"><span class="d u">+0%</span></td><td class="n">15 848</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">09.02<i>пн</i></td><td class="n">6</td><td class="n s">0,07</td><td class="n"><span class="d w">−52%</span></td><td class="n">12 292</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">10.02<i>вт</i></td><td class="n">11</td><td class="n s">0,10</td><td class="n"><span class="d u">+96%</span></td><td class="n">8 691</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">11.02<i>ср</i></td><td class="n">12</td><td class="n s">0,11</td><td class="n"><span class="d u">+47%</span></td><td class="n">8 883</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">12.02<i>чт</i></td><td class="n">17</td><td class="n s">0,16</td><td class="n"><span class="d u">+72%</span></td><td class="n">9 491</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">13.02<i>пт</i></td><td class="n">67</td><td class="n s">0,78</td><td class="n"><span class="d u">+152%</span></td><td class="n">11 581</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">14.02<i>сб</i></td><td class="n">64</td><td class="n s">0,79</td><td class="n"><span class="d u">+10%</span></td><td class="n">12 378</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">15.02<i>вс</i></td><td class="n">34</td><td class="n s">0,37</td><td class="n"><span class="d u">+93%</span></td><td class="n">10 815</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">16.02<i>пн</i></td><td class="n">10</td><td class="n s">0,12</td><td class="n"><span class="d u">+63%</span></td><td class="n">12 022</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">17.02<i>вт</i></td><td class="n">15</td><td class="n s">0,21</td><td class="n"><span class="d u">+120%</span></td><td class="n">14 001</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">18.02<i>ср</i></td><td class="n">16</td><td class="n s">0,14</td><td class="n"><span class="d u">+33%</span></td><td class="n">8 886</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">19.02<i>чт</i></td><td class="n">17</td><td class="n s">0,14</td><td class="n"><span class="d w">−12%</span></td><td class="n">8 371</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">20.02<i>пт</i></td><td class="n">60</td><td class="n s">0,79</td><td class="n"><span class="d u">+2%</span></td><td class="n">13 127</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">21.02<i>сб</i></td><td class="n">61</td><td class="n s">0,83</td><td class="n"><span class="d u">+5%</span></td><td class="n">13 653</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">22.02<i>вс</i></td><td class="n">54</td><td class="n s">0,78</td><td class="n"><span class="d u">+112%</span></td><td class="n">14 438</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">23.02<i>пн</i></td><td class="n">28</td><td class="n s">0,28</td><td class="n"><span class="d u">+135%</span></td><td class="n">10 101</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">24.02<i>вт</i></td><td class="n">13</td><td class="n s">0,13</td><td class="n"><span class="d w">−38%</span></td><td class="n">9 988</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">25.02<i>ср</i></td><td class="n">19</td><td class="n s">0,13</td><td class="n"><span class="d w">−7%</span></td><td class="n">6 933</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">26.02<i>чт</i></td><td class="n">17</td><td class="n s">0,19</td><td class="n"><span class="d u">+36%</span></td><td class="n">11 424</td><td class="bc"></td></tr>
+<tr class="dy gl1" hidden><td class="dn">27.02<i>пт</i></td><td class="n">19</td><td class="n s">0,24</td><td class="n"><span class="d w">−70%</span></td><td class="n">12 510</td><td class="bc"></td></tr>
+<tr class="dy gl1 we" hidden><td class="dn">28.02<i>сб</i></td><td class="n">46</td><td class="n s">0,70</td><td class="n"><span class="d w">−16%</span></td><td class="n">15 135</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l2" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Март</td><td class="n">858</td><td class="n s">10,47</td><td class="n"><span class="d u">+18%</span></td><td class="n">12 201</td><td class="bc"><span class="bw"><span class="bf l" style="width:57.1%"></span></span></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">01.03<i>вс</i></td><td class="n">25</td><td class="n s">0,22</td><td class="n"><span class="d w">−71%</span></td><td class="n">8 913</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">02.03<i>пн</i></td><td class="n">14</td><td class="n s">0,14</td><td class="n"><span class="d w">−52%</span></td><td class="n">9 746</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">03.03<i>вт</i></td><td class="n">14</td><td class="n s">0,15</td><td class="n"><span class="d u">+13%</span></td><td class="n">10 509</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">04.03<i>ср</i></td><td class="n">12</td><td class="n s">0,09</td><td class="n"><span class="d w">−34%</span></td><td class="n">7 217</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">05.03<i>чт</i></td><td class="n">21</td><td class="n s">0,24</td><td class="n"><span class="d u">+22%</span></td><td class="n">11 294</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">06.03<i>пт</i></td><td class="n">54</td><td class="n s">0,63</td><td class="n"><span class="d u">+165%</span></td><td class="n">11 655</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">07.03<i>сб</i></td><td class="n">65</td><td class="n s">1,08</td><td class="n"><span class="d u">+55%</span></td><td class="n">16 574</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">08.03<i>вс</i></td><td class="n">54</td><td class="n s">0,68</td><td class="n"><span class="d u">+205%</span></td><td class="n">12 595</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">09.03<i>пн</i></td><td class="n">30</td><td class="n s">0,30</td><td class="n"><span class="d u">+117%</span></td><td class="n">9 892</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">10.03<i>вт</i></td><td class="n">19</td><td class="n s">0,23</td><td class="n"><span class="d u">+56%</span></td><td class="n">12 102</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">11.03<i>ср</i></td><td class="n">13</td><td class="n s">0,13</td><td class="n"><span class="d u">+54%</span></td><td class="n">10 271</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">12.03<i>чт</i></td><td class="n">19</td><td class="n s">0,19</td><td class="n"><span class="d w">−20%</span></td><td class="n">9 958</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">13.03<i>пт</i></td><td class="n">44</td><td class="n s">0,43</td><td class="n"><span class="d w">−32%</span></td><td class="n">9 680</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">14.03<i>сб</i></td><td class="n">55</td><td class="n s">0,62</td><td class="n"><span class="d w">−42%</span></td><td class="n">11 348</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">15.03<i>вс</i></td><td class="n">18</td><td class="n s">0,21</td><td class="n"><span class="d w">−69%</span></td><td class="n">11 621</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">16.03<i>пн</i></td><td class="n">16</td><td class="n s">0,21</td><td class="n"><span class="d w">−28%</span></td><td class="n">13 340</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">17.03<i>вт</i></td><td class="n">16</td><td class="n s">0,15</td><td class="n"><span class="d w">−36%</span></td><td class="n">9 218</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">18.03<i>ср</i></td><td class="n">22</td><td class="n s">0,22</td><td class="n"><span class="d u">+68%</span></td><td class="n">10 208</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">19.03<i>чт</i></td><td class="n">17</td><td class="n s">0,12</td><td class="n"><span class="d w">−34%</span></td><td class="n">7 297</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">20.03<i>пт</i></td><td class="n">42</td><td class="n s">0,45</td><td class="n"><span class="d u">+6%</span></td><td class="n">10 699</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">21.03<i>сб</i></td><td class="n">56</td><td class="n s">0,67</td><td class="n"><span class="d u">+8%</span></td><td class="n">12 018</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">22.03<i>вс</i></td><td class="n">25</td><td class="n s">0,26</td><td class="n"><span class="d u">+26%</span></td><td class="n">10 516</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">23.03<i>пн</i></td><td class="n">22</td><td class="n s">0,34</td><td class="n"><span class="d u">+58%</span></td><td class="n">15 355</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">24.03<i>вт</i></td><td class="n">30</td><td class="n s">0,33</td><td class="n"><span class="d u">+127%</span></td><td class="n">11 147</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">25.03<i>ср</i></td><td class="n">26</td><td class="n s">0,37</td><td class="n"><span class="d u">+64%</span></td><td class="n">14 170</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">26.03<i>чт</i></td><td class="n">20</td><td class="n s">0,29</td><td class="n"><span class="d u">+137%</span></td><td class="n">14 730</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">27.03<i>пт</i></td><td class="n">33</td><td class="n s">0,49</td><td class="n"><span class="d u">+8%</span></td><td class="n">14 752</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">28.03<i>сб</i></td><td class="n">31</td><td class="n s">0,60</td><td class="n"><span class="d w">−11%</span></td><td class="n">19 338</td><td class="bc"></td></tr>
+<tr class="dy gl2 we" hidden><td class="dn">29.03<i>вс</i></td><td class="n">18</td><td class="n s">0,24</td><td class="n"><span class="d w">−8%</span></td><td class="n">13 446</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">30.03<i>пн</i></td><td class="n">8</td><td class="n s">0,09</td><td class="n"><span class="d w">−74%</span></td><td class="n">11 078</td><td class="bc"></td></tr>
+<tr class="dy gl2" hidden><td class="dn">31.03<i>вт</i></td><td class="n">19</td><td class="n s">0,30</td><td class="n"><span class="d w">−11%</span></td><td class="n">15 580</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l3" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Апрель</td><td class="n">643</td><td class="n s">7,01</td><td class="n"><span class="d w">−33%</span></td><td class="n">10 898</td><td class="bc"><span class="bw"><span class="bf l" style="width:38.2%"></span></span></td></tr>
+<tr class="dy gl3" hidden><td class="dn">01.04<i>ср</i></td><td class="n">21</td><td class="n s">0,38</td><td class="n"><span class="d u">+4%</span></td><td class="n">18 317</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">02.04<i>чт</i></td><td class="n">25</td><td class="n s">0,27</td><td class="n"><span class="d w">−9%</span></td><td class="n">10 743</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">03.04<i>пт</i></td><td class="n">29</td><td class="n s">0,34</td><td class="n"><span class="d w">−30%</span></td><td class="n">11 760</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">04.04<i>сб</i></td><td class="n">42</td><td class="n s">0,55</td><td class="n"><span class="d w">−9%</span></td><td class="n">13 044</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">05.04<i>вс</i></td><td class="n">11</td><td class="n s">0,10</td><td class="n"><span class="d w">−59%</span></td><td class="n">8 998</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">06.04<i>пн</i></td><td class="n">18</td><td class="n s">0,17</td><td class="n"><span class="d u">+95%</span></td><td class="n">9 622</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">07.04<i>вт</i></td><td class="n">15</td><td class="n s">0,17</td><td class="n"><span class="d w">−44%</span></td><td class="n">11 056</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">08.04<i>ср</i></td><td class="n">13</td><td class="n s">0,16</td><td class="n"><span class="d w">−58%</span></td><td class="n">12 327</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">09.04<i>чт</i></td><td class="n">20</td><td class="n s">0,21</td><td class="n"><span class="d w">−20%</span></td><td class="n">10 742</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">10.04<i>пт</i></td><td class="n">43</td><td class="n s">0,40</td><td class="n"><span class="d u">+17%</span></td><td class="n">9 272</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">11.04<i>сб</i></td><td class="n">38</td><td class="n s">0,44</td><td class="n"><span class="d w">−19%</span></td><td class="n">11 630</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">12.04<i>вс</i></td><td class="n">17</td><td class="n s">0,23</td><td class="n"><span class="d u">+129%</span></td><td class="n">13 335</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">13.04<i>пн</i></td><td class="n">13</td><td class="n s">0,13</td><td class="n"><span class="d w">−25%</span></td><td class="n">9 964</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">14.04<i>вт</i></td><td class="n">24</td><td class="n s">0,21</td><td class="n"><span class="d u">+28%</span></td><td class="n">8 818</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">15.04<i>ср</i></td><td class="n">20</td><td class="n s">0,16</td><td class="n"><span class="d w">−0%</span></td><td class="n">8 010</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">16.04<i>чт</i></td><td class="n">8</td><td class="n s">0,08</td><td class="n"><span class="d w">−61%</span></td><td class="n">10 436</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">17.04<i>пт</i></td><td class="n">26</td><td class="n s">0,26</td><td class="n"><span class="d w">−34%</span></td><td class="n">10 123</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">18.04<i>сб</i></td><td class="n">27</td><td class="n s">0,36</td><td class="n"><span class="d w">−18%</span></td><td class="n">13 433</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">19.04<i>вс</i></td><td class="n">14</td><td class="n s">0,15</td><td class="n"><span class="d w">−33%</span></td><td class="n">10 817</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">20.04<i>пн</i></td><td class="n">21</td><td class="n s">0,18</td><td class="n"><span class="d u">+41%</span></td><td class="n">8 703</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">21.04<i>вт</i></td><td class="n">10</td><td class="n s">0,07</td><td class="n"><span class="d w">−68%</span></td><td class="n">6 670</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">22.04<i>ср</i></td><td class="n">21</td><td class="n s">0,14</td><td class="n"><span class="d w">−11%</span></td><td class="n">6 814</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">23.04<i>чт</i></td><td class="n">9</td><td class="n s">0,10</td><td class="n"><span class="d u">+16%</span></td><td class="n">10 728</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">24.04<i>пт</i></td><td class="n">26</td><td class="n s">0,26</td><td class="n"><span class="d u">+0%</span></td><td class="n">10 127</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">25.04<i>сб</i></td><td class="n">44</td><td class="n s">0,55</td><td class="n"><span class="d u">+51%</span></td><td class="n">12 425</td><td class="bc"></td></tr>
+<tr class="dy gl3 we" hidden><td class="dn">26.04<i>вс</i></td><td class="n">20</td><td class="n s">0,21</td><td class="n"><span class="d u">+36%</span></td><td class="n">10 334</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">27.04<i>пн</i></td><td class="n">16</td><td class="n s">0,15</td><td class="n"><span class="d w">−16%</span></td><td class="n">9 571</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">28.04<i>вт</i></td><td class="n">14</td><td class="n s">0,11</td><td class="n"><span class="d u">+58%</span></td><td class="n">7 543</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">29.04<i>ср</i></td><td class="n">14</td><td class="n s">0,11</td><td class="n"><span class="d w">−22%</span></td><td class="n">7 994</td><td class="bc"></td></tr>
+<tr class="dy gl3" hidden><td class="dn">30.04<i>чт</i></td><td class="n">24</td><td class="n s">0,35</td><td class="n"><span class="d u">+258%</span></td><td class="n">14 420</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l4" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Май</td><td class="n">661</td><td class="n s">8,73</td><td class="n"><span class="d u">+25%</span></td><td class="n">13 212</td><td class="bc"><span class="bw"><span class="bf l" style="width:47.6%"></span></span></td></tr>
+<tr class="dy gl4" hidden><td class="dn">01.05<i>пт</i></td><td class="n">49</td><td class="n s">0,87</td><td class="n"><span class="d u">+232%</span></td><td class="n">17 829</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">02.05<i>сб</i></td><td class="n">30</td><td class="n s">0,47</td><td class="n"><span class="d w">−15%</span></td><td class="n">15 507</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">03.05<i>вс</i></td><td class="n">8</td><td class="n s">0,10</td><td class="n"><span class="d w">−51%</span></td><td class="n">12 671</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">04.05<i>пн</i></td><td class="n">8</td><td class="n s">0,06</td><td class="n"><span class="d w">−59%</span></td><td class="n">7 860</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">05.05<i>вт</i></td><td class="n">20</td><td class="n s">0,14</td><td class="n"><span class="d u">+35%</span></td><td class="n">7 106</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">06.05<i>ср</i></td><td class="n">21</td><td class="n s">0,30</td><td class="n"><span class="d u">+164%</span></td><td class="n">14 053</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">07.05<i>чт</i></td><td class="n">11</td><td class="n s">0,09</td><td class="n"><span class="d w">−74%</span></td><td class="n">8 242</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">08.05<i>пт</i></td><td class="n">35</td><td class="n s">0,47</td><td class="n"><span class="d w">−46%</span></td><td class="n">13 567</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">09.05<i>сб</i></td><td class="n">41</td><td class="n s">0,72</td><td class="n"><span class="d u">+55%</span></td><td class="n">17 544</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">10.05<i>вс</i></td><td class="n">51</td><td class="n s">0,82</td><td class="n"><span class="d u">+705%</span></td><td class="n">16 008</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">11.05<i>пн</i></td><td class="n">9</td><td class="n s">0,07</td><td class="n"><span class="d u">+15%</span></td><td class="n">8 018</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">12.05<i>вт</i></td><td class="n">15</td><td class="n s">0,13</td><td class="n"><span class="d w">−7%</span></td><td class="n">8 847</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">13.05<i>ср</i></td><td class="n">15</td><td class="n s">0,16</td><td class="n"><span class="d w">−47%</span></td><td class="n">10 393</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">14.05<i>чт</i></td><td class="n">8</td><td class="n s">0,07</td><td class="n"><span class="d w">−19%</span></td><td class="n">9 208</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">15.05<i>пт</i></td><td class="n">16</td><td class="n s">0,25</td><td class="n"><span class="d w">−48%</span></td><td class="n">15 359</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">16.05<i>сб</i></td><td class="n">74</td><td class="n s">0,74</td><td class="n"><span class="d u">+2%</span></td><td class="n">9 939</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">17.05<i>вс</i></td><td class="n">18</td><td class="n s">0,14</td><td class="n"><span class="d w">−83%</span></td><td class="n">7 777</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">18.05<i>пн</i></td><td class="n">14</td><td class="n s">0,14</td><td class="n"><span class="d u">+92%</span></td><td class="n">9 918</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">19.05<i>вт</i></td><td class="n">10</td><td class="n s">0,09</td><td class="n"><span class="d w">−35%</span></td><td class="n">8 588</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">20.05<i>ср</i></td><td class="n">7</td><td class="n s">0,06</td><td class="n"><span class="d w">−60%</span></td><td class="n">8 967</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">21.05<i>чт</i></td><td class="n">5</td><td class="n s">0,03</td><td class="n"><span class="d w">−55%</span></td><td class="n">6 614</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">22.05<i>пт</i></td><td class="n">22</td><td class="n s">0,29</td><td class="n"><span class="d u">+17%</span></td><td class="n">13 120</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">23.05<i>сб</i></td><td class="n">31</td><td class="n s">0,80</td><td class="n"><span class="d u">+8%</span></td><td class="n">25 708</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">24.05<i>вс</i></td><td class="n">7</td><td class="n s">0,09</td><td class="n"><span class="d w">−38%</span></td><td class="n">12 463</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">25.05<i>пн</i></td><td class="n">19</td><td class="n s">0,23</td><td class="n"><span class="d u">+64%</span></td><td class="n">11 986</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">26.05<i>вт</i></td><td class="n">11</td><td class="n s">0,09</td><td class="n"><span class="d u">+4%</span></td><td class="n">8 093</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">27.05<i>ср</i></td><td class="n">14</td><td class="n s">0,15</td><td class="n"><span class="d u">+138%</span></td><td class="n">10 693</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">28.05<i>чт</i></td><td class="n">7</td><td class="n s">0,15</td><td class="n"><span class="d u">+357%</span></td><td class="n">21 597</td><td class="bc"></td></tr>
+<tr class="dy gl4" hidden><td class="dn">29.05<i>пт</i></td><td class="n">23</td><td class="n s">0,29</td><td class="n"><span class="d u">+0%</span></td><td class="n">12 581</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">30.05<i>сб</i></td><td class="n">48</td><td class="n s">0,58</td><td class="n"><span class="d w">−27%</span></td><td class="n">12 051</td><td class="bc"></td></tr>
+<tr class="dy gl4 we" hidden><td class="dn">31.05<i>вс</i></td><td class="n">14</td><td class="n s">0,16</td><td class="n"><span class="d u">+80%</span></td><td class="n">11 233</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l5" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Июнь</td><td class="n">736</td><td class="n s">9,39</td><td class="n"><span class="d u">+8%</span></td><td class="n">12 761</td><td class="bc"><span class="bw"><span class="bf l" style="width:51.2%"></span></span></td></tr>
+<tr class="dy gl5" hidden><td class="dn">01.06<i>пн</i></td><td class="n">14</td><td class="n s">0,11</td><td class="n"><span class="d w">−51%</span></td><td class="n">8 025</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">02.06<i>вт</i></td><td class="n">14</td><td class="n s">0,15</td><td class="n"><span class="d u">+63%</span></td><td class="n">10 388</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">03.06<i>ср</i></td><td class="n">13</td><td class="n s">0,13</td><td class="n"><span class="d w">−12%</span></td><td class="n">10 113</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">04.06<i>чт</i></td><td class="n">10</td><td class="n s">0,13</td><td class="n"><span class="d w">−15%</span></td><td class="n">12 891</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">05.06<i>пт</i></td><td class="n">19</td><td class="n s">0,27</td><td class="n"><span class="d w">−7%</span></td><td class="n">14 162</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">06.06<i>сб</i></td><td class="n">40</td><td class="n s">0,45</td><td class="n"><span class="d w">−22%</span></td><td class="n">11 340</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">07.06<i>вс</i></td><td class="n">21</td><td class="n s">0,29</td><td class="n"><span class="d u">+82%</span></td><td class="n">13 613</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">08.06<i>пн</i></td><td class="n">16</td><td class="n s">0,13</td><td class="n"><span class="d u">+14%</span></td><td class="n">8 014</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">09.06<i>вт</i></td><td class="n">8</td><td class="n s">0,12</td><td class="n"><span class="d w">−18%</span></td><td class="n">14 841</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">10.06<i>ср</i></td><td class="n">16</td><td class="n s">0,16</td><td class="n"><span class="d u">+25%</span></td><td class="n">10 286</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">11.06<i>чт</i></td><td class="n">30</td><td class="n s">0,36</td><td class="n"><span class="d u">+180%</span></td><td class="n">12 051</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">12.06<i>пт</i></td><td class="n">48</td><td class="n s">0,79</td><td class="n"><span class="d u">+195%</span></td><td class="n">16 510</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">13.06<i>сб</i></td><td class="n">44</td><td class="n s">0,58</td><td class="n"><span class="d u">+28%</span></td><td class="n">13 202</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">14.06<i>вс</i></td><td class="n">11</td><td class="n s">0,13</td><td class="n"><span class="d w">−54%</span></td><td class="n">11 888</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">15.06<i>пн</i></td><td class="n">26</td><td class="n s">0,31</td><td class="n"><span class="d u">+145%</span></td><td class="n">12 090</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">16.06<i>вт</i></td><td class="n">13</td><td class="n s">0,16</td><td class="n"><span class="d u">+38%</span></td><td class="n">12 646</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">17.06<i>ср</i></td><td class="n">17</td><td class="n s">0,24</td><td class="n"><span class="d u">+48%</span></td><td class="n">14 289</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">18.06<i>чт</i></td><td class="n">35</td><td class="n s">0,39</td><td class="n"><span class="d u">+8%</span></td><td class="n">11 201</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">19.06<i>пт</i></td><td class="n">32</td><td class="n s">0,36</td><td class="n"><span class="d w">−54%</span></td><td class="n">11 357</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">20.06<i>сб</i></td><td class="n">43</td><td class="n s">0,56</td><td class="n"><span class="d w">−4%</span></td><td class="n">12 926</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">21.06<i>вс</i></td><td class="n">20</td><td class="n s">0,22</td><td class="n"><span class="d u">+71%</span></td><td class="n">11 164</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">22.06<i>пн</i></td><td class="n">42</td><td class="n s">0,57</td><td class="n"><span class="d u">+82%</span></td><td class="n">13 627</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">23.06<i>вт</i></td><td class="n">27</td><td class="n s">0,36</td><td class="n"><span class="d u">+120%</span></td><td class="n">13 416</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">24.06<i>ср</i></td><td class="n">18</td><td class="n s">0,16</td><td class="n"><span class="d w">−35%</span></td><td class="n">8 752</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">25.06<i>чт</i></td><td class="n">24</td><td class="n s">0,27</td><td class="n"><span class="d w">−30%</span></td><td class="n">11 392</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">26.06<i>пт</i></td><td class="n">27</td><td class="n s">0,41</td><td class="n"><span class="d u">+13%</span></td><td class="n">15 206</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">27.06<i>сб</i></td><td class="n">42</td><td class="n s">0,59</td><td class="n"><span class="d u">+6%</span></td><td class="n">14 007</td><td class="bc"></td></tr>
+<tr class="dy gl5 we" hidden><td class="dn">28.06<i>вс</i></td><td class="n">19</td><td class="n s">0,39</td><td class="n"><span class="d u">+74%</span></td><td class="n">20 488</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">29.06<i>пн</i></td><td class="n">24</td><td class="n s">0,33</td><td class="n"><span class="d w">−43%</span></td><td class="n">13 577</td><td class="bc"></td></tr>
+<tr class="dy gl5" hidden><td class="dn">30.06<i>вт</i></td><td class="n">23</td><td class="n s">0,25</td><td class="n"><span class="d w">−30%</span></td><td class="n">10 976</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l6" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Июль</td><td class="n">1 208</td><td class="n s">18,35</td><td class="n"><span class="d u">+95%</span></td><td class="n">15 188</td><td class="bc"><span class="bw"><span class="bf l" style="width:100.0%"></span></span></td></tr>
+<tr class="dy gl6" hidden><td class="dn">01.07<i>ср</i></td><td class="n">21</td><td class="n s">0,23</td><td class="n"><span class="d u">+44%</span></td><td class="n">10 820</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">02.07<i>чт</i></td><td class="n">24</td><td class="n s">0,22</td><td class="n"><span class="d w">−18%</span></td><td class="n">9 359</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">03.07<i>пт</i></td><td class="n">39</td><td class="n s">0,56</td><td class="n"><span class="d u">+38%</span></td><td class="n">14 485</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">04.07<i>сб</i></td><td class="n">70</td><td class="n s">0,75</td><td class="n"><span class="d u">+28%</span></td><td class="n">10 761</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">05.07<i>вс</i></td><td class="n">48</td><td class="n s">0,70</td><td class="n"><span class="d u">+81%</span></td><td class="n">14 640</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">06.07<i>пн</i></td><td class="n">43</td><td class="n s">0,85</td><td class="n"><span class="d u">+161%</span></td><td class="n">19 781</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">07.07<i>вт</i></td><td class="n">31</td><td class="n s">0,47</td><td class="n"><span class="d u">+86%</span></td><td class="n">15 129</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">08.07<i>ср</i></td><td class="n">34</td><td class="n s">0,36</td><td class="n"><span class="d u">+58%</span></td><td class="n">10 569</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">09.07<i>чт</i></td><td class="n">34</td><td class="n s">0,45</td><td class="n"><span class="d u">+100%</span></td><td class="n">13 226</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">10.07<i>пт</i></td><td class="n">44</td><td class="n s">0,79</td><td class="n"><span class="d u">+39%</span></td><td class="n">17 855</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">11.07<i>сб</i></td><td class="n">53</td><td class="n s">0,69</td><td class="n"><span class="d w">−9%</span></td><td class="n">12 967</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">12.07<i>вс</i></td><td class="n">43</td><td class="n s">0,56</td><td class="n"><span class="d w">−21%</span></td><td class="n">12 940</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">13.07<i>пн</i></td><td class="n">56</td><td class="n s">0,85</td><td class="n"><span class="d w">−0%</span></td><td class="n">15 169</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">14.07<i>вт</i></td><td class="n">27</td><td class="n s">0,40</td><td class="n"><span class="d w">−15%</span></td><td class="n">14 758</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">15.07<i>ср</i></td><td class="n">31</td><td class="n s">0,53</td><td class="n"><span class="d u">+48%</span></td><td class="n">17 204</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">16.07<i>чт</i></td><td class="n">28</td><td class="n s">0,26</td><td class="n"><span class="d w">−43%</span></td><td class="n">9 172</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">17.07<i>пт</i></td><td class="n">23</td><td class="n s">0,36</td><td class="n"><span class="d w">−54%</span></td><td class="n">15 714</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">18.07<i>сб</i></td><td class="n">63</td><td class="n s">0,83</td><td class="n"><span class="d u">+21%</span></td><td class="n">13 225</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">19.07<i>вс</i></td><td class="n">23</td><td class="n s">0,35</td><td class="n"><span class="d w">−37%</span></td><td class="n">15 285</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">20.07<i>пн</i></td><td class="n">37</td><td class="n s">0,62</td><td class="n"><span class="d w">−27%</span></td><td class="n">16 657</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">21.07<i>вт</i></td><td class="n">49</td><td class="n s">0,87</td><td class="n"><span class="d u">+118%</span></td><td class="n">17 738</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">22.07<i>ср</i></td><td class="n">36</td><td class="n s">0,68</td><td class="n"><span class="d u">+27%</span></td><td class="n">18 862</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">23.07<i>чт</i></td><td class="n">34</td><td class="n s">0,55</td><td class="n"><span class="d u">+114%</span></td><td class="n">16 163</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">24.07<i>пт</i></td><td class="n">47</td><td class="n s">0,76</td><td class="n"><span class="d u">+109%</span></td><td class="n">16 074</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">25.07<i>сб</i></td><td class="n">60</td><td class="n s">0,89</td><td class="n"><span class="d u">+7%</span></td><td class="n">14 878</td><td class="bc"></td></tr>
+<tr class="dy gl6 we" hidden><td class="dn">26.07<i>вс</i></td><td class="n">56</td><td class="n s">0,88</td><td class="n"><span class="d u">+151%</span></td><td class="n">15 750</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">27.07<i>пн</i></td><td class="n">49</td><td class="n s">1,14</td><td class="n"><span class="d u">+84%</span></td><td class="n">23 165</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">28.07<i>вт</i></td><td class="n">30</td><td class="n s">0,57</td><td class="n"><span class="d w">−34%</span></td><td class="n">19 107</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">29.07<i>ср</i></td><td class="n">28</td><td class="n s">0,37</td><td class="n"><span class="d w">−46%</span></td><td class="n">13 076</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">30.07<i>чт</i></td><td class="n">19</td><td class="n s">0,39</td><td class="n"><span class="d w">−28%</span></td><td class="n">20 716</td><td class="bc"></td></tr>
+<tr class="dy gl6" hidden><td class="dn">31.07<i>пт</i></td><td class="n">28</td><td class="n s">0,42</td><td class="n"><span class="d w">−44%</span></td><td class="n">15 018</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l7" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Август</td><td class="n">1 238</td><td class="n s">17,21</td><td class="n"><span class="d w">−6%</span></td><td class="n">13 898</td><td class="bc"><span class="bw"><span class="bf l" style="width:93.8%"></span></span></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">01.08<i>сб</i></td><td class="n">50</td><td class="n s">0,67</td><td class="n"><span class="d w">−25%</span></td><td class="n">13 321</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">02.08<i>вс</i></td><td class="n">34</td><td class="n s">0,51</td><td class="n"><span class="d w">−42%</span></td><td class="n">14 921</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">03.08<i>пн</i></td><td class="n">26</td><td class="n s">0,59</td><td class="n"><span class="d w">−48%</span></td><td class="n">22 702</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">04.08<i>вт</i></td><td class="n">30</td><td class="n s">0,45</td><td class="n"><span class="d w">−21%</span></td><td class="n">15 127</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">05.08<i>ср</i></td><td class="n">34</td><td class="n s">0,55</td><td class="n"><span class="d u">+49%</span></td><td class="n">16 087</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">06.08<i>чт</i></td><td class="n">21</td><td class="n s">0,25</td><td class="n"><span class="d w">−37%</span></td><td class="n">11 865</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">07.08<i>пт</i></td><td class="n">53</td><td class="n s">0,64</td><td class="n"><span class="d u">+53%</span></td><td class="n">12 164</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">08.08<i>сб</i></td><td class="n">68</td><td class="n s">0,80</td><td class="n"><span class="d u">+21%</span></td><td class="n">11 820</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">09.08<i>вс</i></td><td class="n">32</td><td class="n s">0,60</td><td class="n"><span class="d u">+19%</span></td><td class="n">18 843</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">10.08<i>пн</i></td><td class="n">37</td><td class="n s">0,79</td><td class="n"><span class="d u">+34%</span></td><td class="n">21 319</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">11.08<i>вт</i></td><td class="n">49</td><td class="n s">0,76</td><td class="n"><span class="d u">+67%</span></td><td class="n">15 498</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">12.08<i>ср</i></td><td class="n">40</td><td class="n s">0,53</td><td class="n"><span class="d w">−4%</span></td><td class="n">13 168</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">13.08<i>чт</i></td><td class="n">41</td><td class="n s">0,48</td><td class="n"><span class="d u">+94%</span></td><td class="n">11 764</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">14.08<i>пт</i></td><td class="n">41</td><td class="n s">0,53</td><td class="n"><span class="d w">−17%</span></td><td class="n">13 043</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">15.08<i>сб</i></td><td class="n">46</td><td class="n s">0,67</td><td class="n"><span class="d w">−17%</span></td><td class="n">14 525</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">16.08<i>вс</i></td><td class="n">34</td><td class="n s">0,48</td><td class="n"><span class="d w">−20%</span></td><td class="n">14 139</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">17.08<i>пн</i></td><td class="n">38</td><td class="n s">0,80</td><td class="n"><span class="d u">+2%</span></td><td class="n">21 155</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">18.08<i>вт</i></td><td class="n">31</td><td class="n s">0,49</td><td class="n"><span class="d w">−36%</span></td><td class="n">15 666</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">19.08<i>ср</i></td><td class="n">43</td><td class="n s">0,76</td><td class="n"><span class="d u">+44%</span></td><td class="n">17 663</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">20.08<i>чт</i></td><td class="n">31</td><td class="n s">0,34</td><td class="n"><span class="d w">−30%</span></td><td class="n">10 957</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">21.08<i>пт</i></td><td class="n">50</td><td class="n s">0,66</td><td class="n"><span class="d u">+23%</span></td><td class="n">13 186</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">22.08<i>сб</i></td><td class="n">48</td><td class="n s">0,64</td><td class="n"><span class="d w">−4%</span></td><td class="n">13 351</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">23.08<i>вс</i></td><td class="n">50</td><td class="n s">0,64</td><td class="n"><span class="d u">+33%</span></td><td class="n">12 827</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">24.08<i>пн</i></td><td class="n">40</td><td class="n s">0,51</td><td class="n"><span class="d w">−36%</span></td><td class="n">12 795</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">25.08<i>вт</i></td><td class="n">53</td><td class="n s">0,55</td><td class="n"><span class="d u">+13%</span></td><td class="n">10 399</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">26.08<i>ср</i></td><td class="n">43</td><td class="n s">0,53</td><td class="n"><span class="d w">−30%</span></td><td class="n">12 277</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">27.08<i>чт</i></td><td class="n">30</td><td class="n s">0,32</td><td class="n"><span class="d w">−5%</span></td><td class="n">10 787</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">28.08<i>пт</i></td><td class="n">42</td><td class="n s">0,47</td><td class="n"><span class="d w">−28%</span></td><td class="n">11 272</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">29.08<i>сб</i></td><td class="n">65</td><td class="n s">0,77</td><td class="n"><span class="d u">+19%</span></td><td class="n">11 773</td><td class="bc"></td></tr>
+<tr class="dy gl7 we" hidden><td class="dn">30.08<i>вс</i></td><td class="n">28</td><td class="n s">0,31</td><td class="n"><span class="d w">−51%</span></td><td class="n">11 240</td><td class="bc"></td></tr>
+<tr class="dy gl7" hidden><td class="dn">31.08<i>пн</i></td><td class="n">10</td><td class="n s">0,10</td><td class="n"><span class="d w">−80%</span></td><td class="n">10 212</td><td class="bc"></td></tr>
+<tr class="mo" data-g="l8" tabindex="0" role="button" aria-expanded="false"><td class="mn"><span class="ar"></span>Сентябрь <span class="pt">1–14</span></td><td class="n">383</td><td class="n s">5,47</td><td class="n"><span class="d w">−68%</span></td><td class="n">14 284</td><td class="bc"><span class="bw"><span class="bf l" style="width:29.8%"></span></span></td></tr>
+<tr class="dy gl8" hidden><td class="dn">01.09<i>вт</i></td><td class="n">16</td><td class="n s">0,18</td><td class="n"><span class="d w">−68%</span></td><td class="n">11 173</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">02.09<i>ср</i></td><td class="n">22</td><td class="n s">0,34</td><td class="n"><span class="d w">−36%</span></td><td class="n">15 396</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">03.09<i>чт</i></td><td class="n">21</td><td class="n s">0,32</td><td class="n"><span class="d u">+0%</span></td><td class="n">15 439</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">04.09<i>пт</i></td><td class="n">43</td><td class="n s">0,65</td><td class="n"><span class="d u">+38%</span></td><td class="n">15 177</td><td class="bc"></td></tr>
+<tr class="dy gl8 we" hidden><td class="dn">05.09<i>сб</i></td><td class="n">38</td><td class="n s">0,55</td><td class="n"><span class="d w">−28%</span></td><td class="n">14 451</td><td class="bc"></td></tr>
+<tr class="dy gl8 we" hidden><td class="dn">06.09<i>вс</i></td><td class="n">23</td><td class="n s">0,29</td><td class="n"><span class="d w">−7%</span></td><td class="n">12 667</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">07.09<i>пн</i></td><td class="n">27</td><td class="n s">0,34</td><td class="n"><span class="d u">+229%</span></td><td class="n">12 436</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">08.09<i>вт</i></td><td class="n">25</td><td class="n s">0,30</td><td class="n"><span class="d u">+68%</span></td><td class="n">12 001</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">09.09<i>ср</i></td><td class="n">15</td><td class="n s">0,16</td><td class="n"><span class="d w">−54%</span></td><td class="n">10 457</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">10.09<i>чт</i></td><td class="n">15</td><td class="n s">0,11</td><td class="n"><span class="d w">−67%</span></td><td class="n">7 236</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">11.09<i>пт</i></td><td class="n">47</td><td class="n s">0,62</td><td class="n"><span class="d w">−6%</span></td><td class="n">13 108</td><td class="bc"></td></tr>
+<tr class="dy gl8 we" hidden><td class="dn">12.09<i>сб</i></td><td class="n">57</td><td class="n s">0,77</td><td class="n"><span class="d u">+40%</span></td><td class="n">13 459</td><td class="bc"></td></tr>
+<tr class="dy gl8 we" hidden><td class="dn">13.09<i>вс</i></td><td class="n">10</td><td class="n s">0,10</td><td class="n"><span class="d w">−66%</span></td><td class="n">9 974</td><td class="bc"></td></tr>
+<tr class="dy gl8" hidden><td class="dn">14.09<i>пн</i></td><td class="n">24</td><td class="n s">0,75</td><td class="n"><span class="d u">+124%</span></td><td class="n">31 319</td><td class="bc"></td></tr>
+<tr class="tt"><td>Итого</td><td class="n">7 226</td><td class="n s">95,79</td><td class="n"></td><td class="n">13 256</td><td class="bc"></td></tr>
+</tbody></table></div>
+</section>
+
+<div class="rest">
+<h3>Прочее — 3,28 млн ₽</h3>
+<p>Остаток между двумя блоками и валовой выручкой подразделения (171,49 млн ₽): товары и мерч, фиш-пилинг, теннисный и падел-корт, обеды и банкеты, мастер-классы, штрафы и компенсации. Полная разбивка — в книге «Баден Сысерть — разбор отчётов 2026», лист «05 Сегменты».</p>
+</div>
+
+<div class="method">
+<h3>Как это посчитано</h3>
+<dl>
+<div><dt>Проходы включают бесплатные</dt><dd>Из 55 461 проходов 8 229 прошли с нулевой суммой: «Ребенок бесплатно 3 часа», «Именинник», сопровождающие групп, а до 29.07 — весь пляж. Поэтому <b>средний чек считается только по платным</b> — иначе он занижен на четверть.</dd></div>
+<div><dt>«Позиций» в проживании — не номероночи</dt><dd>Это число проведённых строк оплаты. За январь–август их 6&#8239;843 против 7&#8239;665 номероночей в отчёте гостиницы — 89%. Номероночи, ADR, RevPAR и загрузка живут в отдельном отчёте PMS.</dd></div>
+<div><dt>Суммы — после возвратов и после скидок</dt><dd>Возвраты (тип движения «Расход», 596&#8239;596&#8239;₽ за период) уже вычтены. Колонка «Сумма скидки» в этом отчёте <b>уже вычтена из суммы</b> — в отличие от Уктуса, где её надо прибавлять.</dd></div>
+<div><dt>Δ% — к предыдущему периоду</dt><dd>У месяцев — к прошлому месяцу, у дней — к тому же дню неделей ранее. Сравнения с 2025 годом нет: выгрузка по Сысерти существует только за 2026&nbsp;год.</dd></div>
+<div><dt>Сентябрь неполный</dt><dd>14 дней из 30. С полными месяцами не сопоставим — помечен отдельно.</dd></div>
+</dl>
+</div>
+</div>
+
+<script>
+document.querySelectorAll("tr.mo").forEach(function(tr){
+  function toggle(){
+    var open = tr.getAttribute("aria-expanded") !== "true";
+    tr.setAttribute("aria-expanded", open ? "true" : "false");
+    document.querySelectorAll("tr.g" + tr.dataset.g).forEach(function(r){ r.hidden = !open; });
+  }
+  tr.addEventListener("click", toggle);
+  tr.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+  });
+});
+</script>
+
+</body></html>
