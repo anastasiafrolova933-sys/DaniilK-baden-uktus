@@ -24,7 +24,7 @@ body{margin:0;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 64px}
-header.top{margin-bottom:22px}
+header.top{margin-bottom:18px}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.09em;
   text-transform:uppercase;color:var(--brand);background:var(--panel);border:1px solid var(--line);
   padding:6px 12px;border-radius:999px}
@@ -35,6 +35,24 @@ section{margin-top:30px}
 h2{font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
 h2 .n{display:inline-block;min-width:26px;color:var(--brand);font-variant-numeric:tabular-nums}
 .lead{color:var(--mute);font-size:14px;margin:0 0 14px;max-width:80ch}
+
+/* ---- переключатель вариантов ---- */
+.switcher{position:sticky;top:0;z-index:20;margin:0 -18px 22px;padding:12px 18px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+.tab{flex:1 1 260px;display:block;text-align:left;cursor:pointer;background:var(--panel);
+  border:1.5px solid var(--line);border-radius:13px;padding:11px 15px;color:var(--ink);
+  font:inherit;transition:border-color .15s,box-shadow .15s,background .15s}
+.tab:hover{border-color:var(--brand)}
+.tab .tt{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.tab .td{font-size:12.5px;color:var(--mute);margin-top:2px}
+.tab .dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+.tab[aria-pressed="true"]{border-color:var(--brand);background:var(--soft);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent)}
+.tab[aria-pressed="true"] .dot{background:var(--brand)}
+
+/* ---- KPI ---- */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .kpi{padding:16px 16px 14px}
 .kpi .lab{font-size:12px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
@@ -43,6 +61,7 @@ h2 .n{display:inline-block;min-width:26px;color:var(--brand);font-variant-numeri
 .kpi .flow{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
 .pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:8px}
 .up{background:var(--bad-bg);color:var(--bad)} .down{background:var(--good-bg);color:var(--good)}
+
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .tw{overflow-x:auto;border-radius:var(--radius)}
 th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -52,8 +71,10 @@ thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(
 tbody tr:last-child td{border-bottom:none}
 tr.total td{font-weight:750;background:var(--soft);border-top:2px solid var(--line)}
 tr.hero td{background:linear-gradient(90deg,rgba(21,74,136,.07),transparent)}
+tr.sup td{background:linear-gradient(90deg,rgba(217,127,54,.10),transparent)}
 .neg{color:var(--good);font-weight:650} .pos{color:var(--bad);font-weight:650}
 .dim{color:var(--mute);font-size:13px}
+
 .bars{padding:18px 18px 8px}
 .row{display:grid;grid-template-columns:172px 1fr 96px;gap:12px;align-items:center;margin-bottom:9px}
 .row .nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -61,29 +82,41 @@ tr.hero td{background:linear-gradient(90deg,rgba(21,74,136,.07),transparent)}
 .bar{height:100%;border-radius:6px;display:block}
 .bar.was{background:linear-gradient(90deg,#d97f36,#eb9a45)}
 .bar.now{background:linear-gradient(90deg,#154a88,#3f93d8)}
-@media (prefers-color-scheme:dark){.bar.now{background:linear-gradient(90deg,#2a6db0,#5aa8e6)}}
+.bar.sup{background:linear-gradient(90deg,#0f7f7a,#28b3ae)}
+@media (prefers-color-scheme:dark){.bar.now{background:linear-gradient(90deg,#2a6db0,#5aa8e6)}
+  .bar.sup{background:linear-gradient(90deg,#12706c,#34c4c0)}}
 .norm{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.45}
 .row .vv{font-size:13px;text-align:right;font-variant-numeric:tabular-nums;color:var(--mute);line-height:1.25}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);padding:4px 18px 16px}
 .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .note{padding:16px 18px}
 .note h3{font-size:14.5px;margin:0 0 9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .note ul{margin:0;padding-left:18px}.note li{margin-bottom:7px;font-size:13.8px}
 .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);
   color:var(--brand);border:1px solid var(--line)}
+.tag.c{color:var(--coral)}
 .callout{border-left:4px solid var(--brand);padding:15px 18px;background:var(--panel);
   border-radius:0 var(--radius) var(--radius) 0;box-shadow:var(--sh);margin-top:14px}
-.callout b{color:var(--brand)}
+.callout.warm{border-left-color:var(--coral)}
+.callout b{color:var(--brand)} .callout.warm b{color:var(--coral)}
 .blockhead{font-size:12px;font-weight:700;color:var(--mute);text-transform:uppercase;
   letter-spacing:.05em;margin-bottom:10px}
 footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:12.5px}
+
+/* ---- логика показа вариантов ---- */
+body.mode-1 .v2{display:none}
+body.mode-1 .only-v2{display:none}
+body.mode-2 .v1{display:none}
+
 @media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}
-  .row{grid-template-columns:110px 1fr 76px}}
-@media print{body{background:#fff}.card,.callout{box-shadow:none}section{break-inside:avoid}}
+  .row{grid-template-columns:110px 1fr 76px}.tab{flex:1 1 100%}}
+@media print{body{background:#fff}.card,.callout{box-shadow:none}section{break-inside:avoid}
+  .switcher{position:static;background:none;backdrop-filter:none}}
 </style>
 </head>
-<body>
+<body class="mode-1">
 <div class="wrap">
 
 <header class="top">
@@ -96,38 +129,58 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
   расписания.</p>
 </header>
 
+<div class="switcher">
+  <div class="tabs">
+    <button class="tab" id="tab1" aria-pressed="true" onclick="setMode(1)">
+      <span class="tt"><i class="dot"></i>Вариант 1 — базовый</span>
+      <span class="td">6 администраторов, 2 старших. ФОТ 918 867 ₽</span>
+    </button>
+    <button class="tab" id="tab2" aria-pressed="false" onclick="setMode(2)">
+      <span class="tt"><i class="dot"></i>Вариант 2 — с супервайзерами</span>
+      <span class="td">+2 супервайзера, 11 ч, 2/2. ФОТ 1 018 867 ₽</span>
+    </button>
+  </div>
+</div>
+
 <section>
   <div class="kpis">
     <div class="card kpi">
       <div class="lab">Рабочие часы</div>
-      <div class="val">+165 ч</div>
-      <div class="flow">2 683 → 2 848 ч</div>
-      <span class="pill up">+6,1 %</span>
+      <div class="val"><span class="v1">+165 ч</span><span class="v2">+506 ч</span></div>
+      <div class="flow">2 683 → <span class="v1">2 848</span><span class="v2">3 189</span> ч</div>
+      <span class="pill up"><span class="v1">+6,1 %</span><span class="v2">+18,9 %</span></span>
     </div>
     <div class="card kpi">
       <div class="lab">ФОТ начислено</div>
-      <div class="val">−11 166 ₽</div>
-      <div class="flow">930 033 → 918 867 ₽</div>
-      <span class="pill down">−1,2 %</span>
+      <div class="val"><span class="v1">−11 166 ₽</span><span class="v2">+88 834 ₽</span></div>
+      <div class="flow">930 033 → <span class="v1">918 867</span><span class="v2">1 018 867</span> ₽</div>
+      <span class="pill down v1">−1,2 %</span><span class="pill up v2">+9,6 %</span>
     </div>
     <div class="card kpi">
       <div class="lab">Цена рабочего часа</div>
-      <div class="val">−24 ₽</div>
-      <div class="flow">347 → 323 ₽/ч</div>
-      <span class="pill down">−6,9 %</span>
+      <div class="val"><span class="v1">−24 ₽</span><span class="v2">−27 ₽</span></div>
+      <div class="flow">347 → <span class="v1">323</span><span class="v2">319</span> ₽/ч</div>
+      <span class="pill down"><span class="v1">−6,9 %</span><span class="v2">−7,8 %</span></span>
     </div>
     <div class="card kpi">
       <div class="lab">Переработка по СПиР</div>
-      <div class="val">−273 ч</div>
-      <div class="flow">479 → 206 ч сверх нормы</div>
-      <span class="pill down">−57 %</span>
+      <div class="val"><span class="v1">−273 ч</span><span class="v2">−265 ч</span></div>
+      <div class="flow">479 → <span class="v1">206</span><span class="v2">214</span> ч сверх нормы</div>
+      <span class="pill down"><span class="v1">−57 %</span><span class="v2">−55 %</span></span>
     </div>
   </div>
 
-  <div class="callout">
+  <div class="callout v1">
     <b>Главный вывод.</b> Часов работы стало больше на 6,1 %, а фонд оплаты труда при этом не вырос,
     а снизился. Четыре дополнительных администратора окупаются выводом одной дорогой ставки: рабочий
     час дешевеет с 347 до 323 ₽. Фактически <b>+165 часов покрытия достаются бесплатно</b>.
+  </div>
+  <div class="callout warm v2">
+    <b>Главный вывод.</b> Два супервайзера переводят проект из экономии в инвестицию: ФОТ растёт на
+    88 834 ₽/мес, то есть <b>+1,07 млн ₽ в год</b>. Но объект получает за это 506 дополнительных
+    часов и присутствие супервайзера каждый день без исключения. Цена часа при этом всё равно ниже
+    сегодняшней — <b>319 против 347 ₽</b>, потому что супервайзер обходится в 293 ₽/ч, дешевле
+    текущей средней.
   </div>
 </section>
 
@@ -137,15 +190,29 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
   часы», поэтому ФОТ зависит не от количества людей, а от цены закрываемого часа.</p>
   <div class="card tw">
     <table>
-      <thead><tr><th>Показатель</th><th>Август факт</th><th>Новый штат</th><th>Δ</th></tr></thead>
+      <thead><tr><th>Показатель</th><th>Август факт</th>
+        <th><span class="v1">Новый штат</span><span class="v2">Вариант 2</span></th><th>Δ</th></tr></thead>
       <tbody>
-        <tr><td>Рабочие часы</td><td>2 683 ч</td><td>2 848 ч</td><td class="pos">+165 ч (+6,1 %)</td></tr>
-        <tr><td>Начислено по ставкам</td><td>822 033 ₽</td><td>808 867 ₽</td><td class="neg">−13 166 ₽</td></tr>
-        <tr><td>Официальные ежемесячные премии</td><td>108 000 ₽</td><td>110 000 ₽</td><td class="pos">+2 000 ₽</td></tr>
-        <tr class="total"><td>ИТОГО ФОТ начислено</td><td>930 033 ₽</td><td>918 867 ₽</td><td class="neg">−11 166 ₽ (−1,2 %)</td></tr>
+        <tr><td>Рабочие часы</td><td>2 683 ч</td>
+          <td><span class="v1">2 848 ч</span><span class="v2">3 189 ч</span></td>
+          <td class="pos"><span class="v1">+165 ч (+6,1 %)</span><span class="v2">+506 ч (+18,9 %)</span></td></tr>
+        <tr><td>Начислено по ставкам</td><td>822 033 ₽</td>
+          <td><span class="v1">808 867 ₽</span><span class="v2">908 867 ₽</span></td>
+          <td><span class="v1 neg">−13 166 ₽</span><span class="v2 pos">+86 834 ₽</span></td></tr>
+        <tr><td>Официальные ежемесячные премии</td><td>108 000 ₽</td><td>110 000 ₽</td>
+          <td class="pos">+2 000 ₽</td></tr>
+        <tr class="total"><td>ИТОГО ФОТ начислено</td><td>930 033 ₽</td>
+          <td><span class="v1">918 867 ₽</span><span class="v2">1 018 867 ₽</span></td>
+          <td><span class="v1 neg">−11 166 ₽ (−1,2 %)</span><span class="v2 pos">+88 834 ₽ (+9,6 %)</span></td></tr>
         <tr><td>С учётом страховых взносов 30 %<span class="dim"> (банщики вне — самозанятые)</span></td>
-            <td>1 128 943 ₽</td><td>1 120 727 ₽</td><td class="neg">−8 216 ₽</td></tr>
-        <tr><td>Средняя стоимость часа</td><td>347 ₽</td><td>323 ₽</td><td class="neg">−24 ₽ (−6,9 %)</td></tr>
+          <td>1 128 943 ₽</td>
+          <td><span class="v1">1 120 727 ₽</span><span class="v2">1 250 727 ₽</span></td>
+          <td><span class="v1 neg">−8 216 ₽</span><span class="v2 pos">+121 784 ₽</span></td></tr>
+        <tr><td>Средняя стоимость часа</td><td>347 ₽</td>
+          <td><span class="v1">323 ₽</span><span class="v2">319 ₽</span></td>
+          <td class="neg"><span class="v1">−24 ₽ (−6,9 %)</span><span class="v2">−27 ₽ (−7,8 %)</span></td></tr>
+        <tr><td>В расчёте на год</td><td>—</td><td>—</td>
+          <td><span class="v1 neg">−133 992 ₽</span><span class="v2 pos">+1 066 008 ₽</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -153,23 +220,31 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
 
 <section>
   <h2><span class="n">2.</span> Разложение по блокам — что именно дало эффект</h2>
-  <p class="lead">Итоговые −11 166 ₽ складываются из разнонаправленных движений. Экономию даёт
-  реформа службы приёма; рост по спасателям к ней отношения не имеет.</p>
+  <p class="lead"><span class="v1">Итоговые −11 166 ₽ складываются из разнонаправленных движений.
+  Экономию даёт реформа службы приёма; рост по спасателям к ней отношения не имеет.</span>
+  <span class="v2">Итоговые +88 834 ₽ — это целиком стоимость супервайзеров. Реформа службы приёма
+  по-прежнему экономит, а рост по спасателям к ней отношения не имеет.</span></p>
   <div class="card tw">
     <table>
-      <thead><tr><th>Блок</th><th>Часы было → стало</th><th>₽ факт</th><th>₽ новый штат</th><th>Δ ₽</th></tr></thead>
+      <thead><tr><th>Блок</th><th>Часы было → стало</th><th>₽ факт</th>
+        <th><span class="v1">₽ новый штат</span><span class="v2">₽ вариант 2</span></th><th>Δ ₽</th></tr></thead>
       <tbody>
         <tr class="hero"><td><b>Служба приёма и размещения</b><br><span class="dim">предмет изменений</span></td>
           <td>1 526 → 1 550 <span class="dim">(+24)</span></td><td>401 775</td><td>364 591</td>
           <td class="neg">−37 184</td></tr>
+        <tr class="sup only-v2"><td><b>Супервайзеры</b><br><span class="dim">2 чел., 11 ч, график 2/2</span></td>
+          <td>0 → 341 <span class="dim">(+341)</span></td><td>—</td><td>100 000</td>
+          <td class="pos">+100 000</td></tr>
         <tr><td>Спасатели<br><span class="dim">закрытие недокомплекта, с реформой не связано</span></td>
           <td>623 → 806 <span class="dim">(+183)</span></td><td>153 258</td><td>198 276</td>
           <td class="pos">+45 018</td></tr>
         <tr><td>Банщики</td><td>534 → 492 <span class="dim">(−42)</span></td><td>267 000</td><td>246 000</td>
           <td class="neg">−21 000</td></tr>
         <tr><td>Официальные премии</td><td>—</td><td>108 000</td><td>110 000</td><td class="pos">+2 000</td></tr>
-        <tr class="total"><td>Итого</td><td>2 683 → 2 848</td><td>930 033</td><td>918 867</td>
-          <td class="neg">−11 166</td></tr>
+        <tr class="total"><td>Итого</td>
+          <td>2 683 → <span class="v1">2 848</span><span class="v2">3 189</span></td><td>930 033</td>
+          <td><span class="v1">918 867</span><span class="v2">1 018 867</span></td>
+          <td><span class="v1 neg">−11 166</span><span class="v2 pos">+88 834</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -178,6 +253,12 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
     Рост +45 018 ₽ по спасателям — не раздувание штата: в августе один спасатель был на больничном
     без содержания и в отпуске, посты стояли в недокомплекте (623 ч против плановых 806). В новом
     табеле смены закрыты полностью. Эти два эффекта необходимо разделять.
+  </div>
+  <div class="callout warm only-v2">
+    <b>Супервайзеры — единственная причина роста ФОТ в варианте 2.</b> Два человека по 11 часов в
+    графике 2/2 закрывают все 31 день месяца, суммарно 341 час. При зарплате 50 000 ₽ на человека
+    это 293 ₽ за час — дешевле текущей средней цены часа по объекту (347 ₽). Если убрать
+    супервайзеров, вариант 2 превращается в вариант 1.
   </div>
 </section>
 
@@ -195,6 +276,8 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
           <tr><td>Старший администратор СПиР</td><td>270</td></tr>
           <tr><td>Администратор СПиР</td><td><b>223</b></td></tr>
           <tr><td>Ночная смена (любой исполнитель)</td><td>223</td></tr>
+          <tr class="sup only-v2"><td>Супервайзер<span class="dim"> — 50 000 ₽ ÷ 170,5 ч</span></td>
+            <td><b>293</b></td></tr>
           <tr><td>Спасатель</td><td>246</td></tr>
           <tr><td>Банщик</td><td>500</td></tr>
         </tbody>
@@ -207,6 +290,7 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
             <b class="neg">−42 504 ₽</b></li>
         <li>ушла ежемесячная премия руководителя → <b class="neg">−24 000 ₽</b></li>
         <li>добавились часы шести администраторов и +2 000 ₽ премий → <b class="pos">+29 320 ₽</b></li>
+        <li class="only-v2">супервайзеры сверх этого → <b class="pos">+100 000 ₽</b></li>
       </ul>
       <p class="dim" style="margin:10px 0 0">Ночное покрытие при этом не изменилось: 341 час и было,
       и стало.</p>
@@ -231,7 +315,7 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
       <div class="row"><div class="nm">Администратор Г</div><div class="track"><span class="bar was" style="width:10.8%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">39 ч<br><span style="font-size:11px">−129</span></div></div>
     </div>
     <div class="bars" style="border-top:1px solid var(--line);padding-top:16px">
-      <div class="blockhead">Новый штат — прогноз</div>
+      <div class="blockhead"><span class="v1">Новый штат — прогноз</span><span class="v2">Вариант 2 — с супервайзерами</span></div>
       <div class="row"><div class="nm">Ст. администратор 1</div><div class="track"><span class="bar now" style="width:61.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">221 ч<br><span style="font-size:11px">+53</span></div></div>
       <div class="row"><div class="nm">Админ 2</div><div class="track"><span class="bar now" style="width:55.0%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">198 ч<br><span style="font-size:11px">+30</span></div></div>
       <div class="row"><div class="nm">Админ 3</div><div class="track"><span class="bar now" style="width:55.0%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">198 ч<br><span style="font-size:11px">+30</span></div></div>
@@ -240,10 +324,13 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
       <div class="row"><div class="nm">Админ 5</div><div class="track"><span class="bar now" style="width:51.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">185 ч<br><span style="font-size:11px">+17</span></div></div>
       <div class="row"><div class="nm">Админ 6</div><div class="track"><span class="bar now" style="width:51.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">185 ч<br><span style="font-size:11px">+17</span></div></div>
       <div class="row"><div class="nm">Ст. администратор 2</div><div class="track"><span class="bar now" style="width:50.6%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">182 ч<br><span style="font-size:11px">+14</span></div></div>
+      <div class="row only-v2"><div class="nm">Супервайзер 1</div><div class="track"><span class="bar sup" style="width:48.9%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">176 ч<br><span style="font-size:11px">+8</span></div></div>
+      <div class="row only-v2"><div class="nm">Супервайзер 2</div><div class="track"><span class="bar sup" style="width:45.8%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">165 ч<br><span style="font-size:11px">−3</span></div></div>
     </div>
     <div class="legend">
       <span><i class="sw" style="background:#d97f36"></i>факт август</span>
       <span><i class="sw" style="background:#154a88"></i>новый штат</span>
+      <span class="only-v2"><i class="sw" style="background:#0f7f7a"></i>супервайзеры</span>
       <span>шкала 0–360 ч · вертикальная линия — норма 168 ч</span>
     </div>
   </div>
@@ -252,6 +339,8 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
     <b>Максимальная переработка падает с +176 до +53 часов.</b> Сегодня руководитель отрабатывает
     две месячные нормы подряд, а ночные смены распределены между дневным персоналом. В новой схеме
     ни один сотрудник не выходит за +53 часа, старшие администраторы полностью снимаются с ночей.
+    <span class="only-v2">Супервайзеры при графике 2/2 работают практически ровно в норму: 176 и
+    165 часов.</span>
   </div>
 </section>
 
@@ -265,9 +354,12 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
       <thead><tr><th>Сценарий</th><th>Переработка СПиР</th><th>Доплата к ФОТ</th></tr></thead>
       <tbody>
         <tr><td>Август факт</td><td>479 ч</td><td class="pos">+158 664 ₽/мес</td></tr>
-        <tr><td>Новый штат</td><td>206 ч</td><td>+49 087 ₽/мес</td></tr>
-        <tr class="total"><td>Снижение потенциальных обязательств</td><td>−273 ч</td>
-          <td class="neg">−109 577 ₽/мес</td></tr>
+        <tr><td><span class="v1">Новый штат</span><span class="v2">Вариант 2</span></td>
+          <td><span class="v1">206 ч</span><span class="v2">214 ч</span></td>
+          <td><span class="v1">+49 087 ₽/мес</span><span class="v2">+51 433 ₽/мес</span></td></tr>
+        <tr class="total"><td>Снижение потенциальных обязательств</td>
+          <td><span class="v1">−273 ч</span><span class="v2">−265 ч</span></td>
+          <td class="neg"><span class="v1">−109 577 ₽/мес</span><span class="v2">−107 231 ₽/мес</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -282,11 +374,18 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
   по ставке администратора. На результат сравнения это не влияет: ночных часов ровно 341 в обеих схемах.</p>
   <div class="card tw">
     <table>
-      <thead><tr><th>Ставка ночного часа</th><th>ФОТ факт</th><th>ФОТ новый штат</th><th>Δ</th></tr></thead>
+      <thead><tr><th>Ставка ночного часа</th><th>ФОТ факт</th>
+        <th><span class="v1">ФОТ новый штат</span><span class="v2">ФОТ вариант 2</span></th><th>Δ</th></tr></thead>
       <tbody>
-        <tr><td>223 ₽ — принято в расчёте</td><td>930 033 ₽</td><td>918 867 ₽</td><td class="neg">−11 166 ₽</td></tr>
-        <tr><td>268 ₽ — с надбавкой +20 % по ст. 154 ТК</td><td>945 378 ₽</td><td>934 212 ₽</td><td class="neg">−11 166 ₽</td></tr>
-        <tr><td>300 ₽ — условно повышенная</td><td>956 290 ₽</td><td>945 124 ₽</td><td class="neg">−11 166 ₽</td></tr>
+        <tr><td>223 ₽ — принято в расчёте</td><td>930 033 ₽</td>
+          <td><span class="v1">918 867 ₽</span><span class="v2">1 018 867 ₽</span></td>
+          <td><span class="v1 neg">−11 166 ₽</span><span class="v2 pos">+88 834 ₽</span></td></tr>
+        <tr><td>268 ₽ — с надбавкой +20 % по ст. 154 ТК</td><td>945 378 ₽</td>
+          <td><span class="v1">934 212 ₽</span><span class="v2">1 034 212 ₽</span></td>
+          <td><span class="v1 neg">−11 166 ₽</span><span class="v2 pos">+88 834 ₽</span></td></tr>
+        <tr><td>300 ₽ — условно повышенная</td><td>956 290 ₽</td>
+          <td><span class="v1">945 124 ₽</span><span class="v2">1 045 124 ₽</span></td>
+          <td><span class="v1 neg">−11 166 ₽</span><span class="v2 pos">+88 834 ₽</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -300,6 +399,9 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
       <ul>
         <li><b>Д = 13 ч, Н = 11 ч</b> — обозначения смен в новом табеле приняты так: 13 + 11 = 24,
             сутки закрываются без разрывов.</li>
+        <li class="only-v2"><b>Супервайзеры:</b> 2 человека, смена 11 ч, график 2/2, по одному
+            в день — это 16 и 15 смен, 176 и 165 часов, все 31 день месяца закрыты. Зарплата принята
+            фиксированной: 50 000 ₽ на человека, 100 000 ₽ всего, вне зависимости от числа часов.</li>
         <li><b>Ставки 270 и 476 ₽/ч</b> для старшего администратора и руководителя выведены как
             «оклад ÷ плановые часы»: в штатном расписании эти ячейки не заполнены. По той же логике
             проверен администратор: 43 400 ÷ 195 = 223 ₽/ч.</li>
@@ -313,6 +415,8 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
       <h3><span class="tag">К доработке</span> штатное расписание</h3>
       <ul>
         <li>Ставок «Администратор СПиР» в штатном расписании <b>пять, требуется шесть</b>.</li>
+        <li class="only-v2">Должности <b>«Супервайзер» в штатном расписании нет</b> — под вариант 2
+            нужно ввести две новые ставки по 50 000 ₽.</li>
         <li>Должность <b>«Ночной администратор» отсутствует</b>, хотя ночные смены закрываются
             фактически. Нужно либо ввести её, либо закрепить ночные часы за администраторами с
             надбавкой по ст. 154 ТК (не менее +20 %).</li>
@@ -331,5 +435,12 @@ footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:v
 </footer>
 
 </div>
+<script>
+function setMode(m){
+  document.body.className = 'mode-' + m;
+  document.getElementById('tab1').setAttribute('aria-pressed', m===1 ? 'true' : 'false');
+  document.getElementById('tab2').setAttribute('aria-pressed', m===2 ? 'true' : 'false');
+}
+</script>
 </body>
 </html>
