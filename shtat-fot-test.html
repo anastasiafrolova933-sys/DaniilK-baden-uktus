@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Новый штат СПиР — сравнение часов и ФОТ (тест)</title>
+<style>
+:root{
+  --maxw:1080px; --bg:#eaf1fa; --panel:#ffffff; --ink:#132840; --mute:#6f83a0;
+  --line:#dbe6f3; --brand:#154a88; --coral:#d97f36; --soft:#f4f8fd;
+  --good:#0f7f7a; --good-bg:#e4f5f4; --bad:#b16919; --bad-bg:#fdf1e4;
+  --radius:16px; --sh:0 1px 2px rgba(19,40,64,.06),0 8px 24px rgba(19,40,64,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0a1120; --panel:#111c2e; --ink:#e9f1fb; --mute:#7387a3; --line:#223349;
+    --brand:#77bce8; --coral:#ef9f52; --soft:#16233a;
+    --good:#52d6d0; --good-bg:#10312f; --bad:#f4b978; --bad-bg:#33240f;
+    --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 64px}
+header.top{margin-bottom:22px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--brand);background:var(--panel);border:1px solid var(--line);
+  padding:6px 12px;border-radius:999px}
+h1{font-size:clamp(23px,3.6vw,34px);line-height:1.18;margin:14px 0 8px;letter-spacing:-.02em}
+.sub{color:var(--mute);font-size:14.5px;max-width:74ch;margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh)}
+section{margin-top:30px}
+h2{font-size:19px;margin:0 0 4px;letter-spacing:-.01em}
+h2 .n{display:inline-block;min-width:26px;color:var(--brand);font-variant-numeric:tabular-nums}
+.lead{color:var(--mute);font-size:14px;margin:0 0 14px;max-width:80ch}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{padding:16px 16px 14px}
+.kpi .lab{font-size:12px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.kpi .val{font-size:clamp(22px,2.6vw,29px);font-weight:750;letter-spacing:-.02em;margin:7px 0 2px;
+  font-variant-numeric:tabular-nums}
+.kpi .flow{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:8px}
+.up{background:var(--bad-bg);color:var(--bad)} .down{background:var(--good-bg);color:var(--good)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto;border-radius:var(--radius)}
+th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);font-weight:700;
+  background:var(--soft);border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+tr.total td{font-weight:750;background:var(--soft);border-top:2px solid var(--line)}
+tr.hero td{background:linear-gradient(90deg,rgba(21,74,136,.07),transparent)}
+.neg{color:var(--good);font-weight:650} .pos{color:var(--bad);font-weight:650}
+.dim{color:var(--mute);font-size:13px}
+.bars{padding:18px 18px 8px}
+.row{display:grid;grid-template-columns:172px 1fr 96px;gap:12px;align-items:center;margin-bottom:9px}
+.row .nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{position:relative;height:22px;background:var(--soft);border-radius:6px;overflow:hidden}
+.bar{height:100%;border-radius:6px;display:block}
+.bar.was{background:linear-gradient(90deg,#d97f36,#eb9a45)}
+.bar.now{background:linear-gradient(90deg,#154a88,#3f93d8)}
+@media (prefers-color-scheme:dark){.bar.now{background:linear-gradient(90deg,#2a6db0,#5aa8e6)}}
+.norm{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.45}
+.row .vv{font-size:13px;text-align:right;font-variant-numeric:tabular-nums;color:var(--mute);line-height:1.25}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);padding:4px 18px 16px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note{padding:16px 18px}
+.note h3{font-size:14.5px;margin:0 0 9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.note ul{margin:0;padding-left:18px}.note li{margin-bottom:7px;font-size:13.8px}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft);
+  color:var(--brand);border:1px solid var(--line)}
+.callout{border-left:4px solid var(--brand);padding:15px 18px;background:var(--panel);
+  border-radius:0 var(--radius) var(--radius) 0;box-shadow:var(--sh);margin-top:14px}
+.callout b{color:var(--brand)}
+.blockhead{font-size:12px;font-weight:700;color:var(--mute);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:10px}
+footer{margin-top:38px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:12.5px}
+@media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}
+  .row{grid-template-columns:110px 1fr 76px}}
+@media print{body{background:#fff}.card,.callout{box-shadow:none}section{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">Баден-Баден · Термаль Фабрика (Сысерть)</span>
+  <span class="eyebrow" style="margin-left:8px;color:var(--coral)">Тестовая публикация · данные обезличены</span>
+  <h1>Новый штат службы приёма: сравнение рабочих часов и ФОТ</h1>
+  <p class="sub">Август 2026 факт против табеля «новый штат — прогноз». Выводится ставка руководителя
+  термального комплекса, вводятся шесть администраторов (3 + 3 по сменам), старшие администраторы
+  снимаются с ночных смен. Расчёт построен на фактических часах табеля и часовых ставках штатного
+  расписания.</p>
+</header>
+
+<section>
+  <div class="kpis">
+    <div class="card kpi">
+      <div class="lab">Рабочие часы</div>
+      <div class="val">+165 ч</div>
+      <div class="flow">2 683 → 2 848 ч</div>
+      <span class="pill up">+6,1 %</span>
+    </div>
+    <div class="card kpi">
+      <div class="lab">ФОТ начислено</div>
+      <div class="val">−11 166 ₽</div>
+      <div class="flow">930 033 → 918 867 ₽</div>
+      <span class="pill down">−1,2 %</span>
+    </div>
+    <div class="card kpi">
+      <div class="lab">Цена рабочего часа</div>
+      <div class="val">−24 ₽</div>
+      <div class="flow">347 → 323 ₽/ч</div>
+      <span class="pill down">−6,9 %</span>
+    </div>
+    <div class="card kpi">
+      <div class="lab">Переработка по СПиР</div>
+      <div class="val">−273 ч</div>
+      <div class="flow">479 → 206 ч сверх нормы</div>
+      <span class="pill down">−57 %</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Главный вывод.</b> Часов работы стало больше на 6,1 %, а фонд оплаты труда при этом не вырос,
+    а снизился. Четыре дополнительных администратора окупаются выводом одной дорогой ставки: рабочий
+    час дешевеет с 347 до 323 ₽. Фактически <b>+165 часов покрытия достаются бесплатно</b>.
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">1.</span> Было / стало — сводно</h2>
+  <p class="lead">Начисление в штатном расписании считается по формуле «часовая ставка × отработанные
+  часы», поэтому ФОТ зависит не от количества людей, а от цены закрываемого часа.</p>
+  <div class="card tw">
+    <table>
+      <thead><tr><th>Показатель</th><th>Август факт</th><th>Новый штат</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr><td>Рабочие часы</td><td>2 683 ч</td><td>2 848 ч</td><td class="pos">+165 ч (+6,1 %)</td></tr>
+        <tr><td>Начислено по ставкам</td><td>822 033 ₽</td><td>808 867 ₽</td><td class="neg">−13 166 ₽</td></tr>
+        <tr><td>Официальные ежемесячные премии</td><td>108 000 ₽</td><td>110 000 ₽</td><td class="pos">+2 000 ₽</td></tr>
+        <tr class="total"><td>ИТОГО ФОТ начислено</td><td>930 033 ₽</td><td>918 867 ₽</td><td class="neg">−11 166 ₽ (−1,2 %)</td></tr>
+        <tr><td>С учётом страховых взносов 30 %<span class="dim"> (банщики вне — самозанятые)</span></td>
+            <td>1 128 943 ₽</td><td>1 120 727 ₽</td><td class="neg">−8 216 ₽</td></tr>
+        <tr><td>Средняя стоимость часа</td><td>347 ₽</td><td>323 ₽</td><td class="neg">−24 ₽ (−6,9 %)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">2.</span> Разложение по блокам — что именно дало эффект</h2>
+  <p class="lead">Итоговые −11 166 ₽ складываются из разнонаправленных движений. Экономию даёт
+  реформа службы приёма; рост по спасателям к ней отношения не имеет.</p>
+  <div class="card tw">
+    <table>
+      <thead><tr><th>Блок</th><th>Часы было → стало</th><th>₽ факт</th><th>₽ новый штат</th><th>Δ ₽</th></tr></thead>
+      <tbody>
+        <tr class="hero"><td><b>Служба приёма и размещения</b><br><span class="dim">предмет изменений</span></td>
+          <td>1 526 → 1 550 <span class="dim">(+24)</span></td><td>401 775</td><td>364 591</td>
+          <td class="neg">−37 184</td></tr>
+        <tr><td>Спасатели<br><span class="dim">закрытие недокомплекта, с реформой не связано</span></td>
+          <td>623 → 806 <span class="dim">(+183)</span></td><td>153 258</td><td>198 276</td>
+          <td class="pos">+45 018</td></tr>
+        <tr><td>Банщики</td><td>534 → 492 <span class="dim">(−42)</span></td><td>267 000</td><td>246 000</td>
+          <td class="neg">−21 000</td></tr>
+        <tr><td>Официальные премии</td><td>—</td><td>108 000</td><td>110 000</td><td class="pos">+2 000</td></tr>
+        <tr class="total"><td>Итого</td><td>2 683 → 2 848</td><td>930 033</td><td>918 867</td>
+          <td class="neg">−11 166</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <b>Реформа службы приёма даёт −37 184 ₽/мес, то есть −446 тыс ₽/год, при +24 часах покрытия.</b>
+    Рост +45 018 ₽ по спасателям — не раздувание штата: в августе один спасатель был на больничном
+    без содержания и в отпуске, посты стояли в недокомплекте (623 ч против плановых 806). В новом
+    табеле смены закрыты полностью. Эти два эффекта необходимо разделять.
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">3.</span> Механика: почему четыре человека сверху удешевляют час</h2>
+  <p class="lead">Сегодня 168 дневных и 176 ночных часов закрывает руководитель термального комплекса.
+  Ночь оплачивается по ставке ночного администратора, а дневной час руководителя стоит вдвое дороже
+  администраторского.</p>
+  <div class="grid2">
+    <div class="card tw">
+      <table>
+        <thead><tr><th>Должность</th><th>Ставка, ₽/ч</th></tr></thead>
+        <tbody>
+          <tr><td>Руководитель термального комплекса</td><td><b>476</b></td></tr>
+          <tr><td>Старший администратор СПиР</td><td>270</td></tr>
+          <tr><td>Администратор СПиР</td><td><b>223</b></td></tr>
+          <tr><td>Ночная смена (любой исполнитель)</td><td>223</td></tr>
+          <tr><td>Спасатель</td><td>246</td></tr>
+          <tr><td>Банщик</td><td>500</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card note">
+      <h3><span class="tag">−37 184 ₽</span> из чего сложилось по службе приёма</h3>
+      <ul>
+        <li>168 дневных часов руководителя по 476 ₽/ч заместили администраторскими по 223 ₽/ч →
+            <b class="neg">−42 504 ₽</b></li>
+        <li>ушла ежемесячная премия руководителя → <b class="neg">−24 000 ₽</b></li>
+        <li>добавились часы шести администраторов и +2 000 ₽ премий → <b class="pos">+29 320 ₽</b></li>
+      </ul>
+      <p class="dim" style="margin:10px 0 0">Ночное покрытие при этом не изменилось: 341 час и было,
+      и стало.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">4.</span> Нагрузка на людей — где сейчас горит</h2>
+  <p class="lead">Норма августа 2026 года — 168 часов (21 рабочий день). Сегодня трое сотрудников
+  фактически живут на работе, и часть смен при этом закрывается руководителем.</p>
+
+  <div class="card">
+    <div class="bars">
+      <div class="blockhead">Август 2026 — факт</div>
+      <div class="row"><div class="nm">Руководитель ТК</div><div class="track"><span class="bar was" style="width:95.6%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">344 ч<br><span style="font-size:11px">+176</span></div></div>
+      <div class="row"><div class="nm">Ст. администратор 1</div><div class="track"><span class="bar was" style="width:82.2%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">296 ч<br><span style="font-size:11px">+128</span></div></div>
+      <div class="row"><div class="nm">Администратор А</div><div class="track"><span class="bar was" style="width:77.2%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">278 ч<br><span style="font-size:11px">+110</span></div></div>
+      <div class="row"><div class="nm">Администратор Б</div><div class="track"><span class="bar was" style="width:55.0%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">198 ч<br><span style="font-size:11px">+30</span></div></div>
+      <div class="row"><div class="nm">Ст. администратор 2</div><div class="track"><span class="bar was" style="width:54.2%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">195 ч<br><span style="font-size:11px">+27</span></div></div>
+      <div class="row"><div class="nm">Администратор В</div><div class="track"><span class="bar was" style="width:48.9%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">176 ч<br><span style="font-size:11px">+8</span></div></div>
+      <div class="row"><div class="nm">Администратор Г</div><div class="track"><span class="bar was" style="width:10.8%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">39 ч<br><span style="font-size:11px">−129</span></div></div>
+    </div>
+    <div class="bars" style="border-top:1px solid var(--line);padding-top:16px">
+      <div class="blockhead">Новый штат — прогноз</div>
+      <div class="row"><div class="nm">Ст. администратор 1</div><div class="track"><span class="bar now" style="width:61.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">221 ч<br><span style="font-size:11px">+53</span></div></div>
+      <div class="row"><div class="nm">Админ 2</div><div class="track"><span class="bar now" style="width:55.0%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">198 ч<br><span style="font-size:11px">+30</span></div></div>
+      <div class="row"><div class="nm">Админ 3</div><div class="track"><span class="bar now" style="width:55.0%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">198 ч<br><span style="font-size:11px">+30</span></div></div>
+      <div class="row"><div class="nm">Админ 1</div><div class="track"><span class="bar now" style="width:54.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">196 ч<br><span style="font-size:11px">+28</span></div></div>
+      <div class="row"><div class="nm">Админ 4</div><div class="track"><span class="bar now" style="width:51.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">185 ч<br><span style="font-size:11px">+17</span></div></div>
+      <div class="row"><div class="nm">Админ 5</div><div class="track"><span class="bar now" style="width:51.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">185 ч<br><span style="font-size:11px">+17</span></div></div>
+      <div class="row"><div class="nm">Админ 6</div><div class="track"><span class="bar now" style="width:51.4%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">185 ч<br><span style="font-size:11px">+17</span></div></div>
+      <div class="row"><div class="nm">Ст. администратор 2</div><div class="track"><span class="bar now" style="width:50.6%"></span><span class="norm" style="left:46.7%"></span></div><div class="vv">182 ч<br><span style="font-size:11px">+14</span></div></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:#d97f36"></i>факт август</span>
+      <span><i class="sw" style="background:#154a88"></i>новый штат</span>
+      <span>шкала 0–360 ч · вертикальная линия — норма 168 ч</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Максимальная переработка падает с +176 до +53 часов.</b> Сегодня руководитель отрабатывает
+    две месячные нормы подряд, а ночные смены распределены между дневным персоналом. В новой схеме
+    ни один сотрудник не выходит за +53 часа, старшие администраторы полностью снимаются с ночей.
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">5.</span> Скрытый риск: оплата сверхурочных</h2>
+  <p class="lead">Сейчас переработка оплачивается в одинарном размере (ставка × часы), тогда как
+  ст. 152 ТК РФ требует повышенной оплаты. Если привести расчёт в соответствие, разрыв между двумя
+  схемами становится кратным.</p>
+  <div class="card tw">
+    <table>
+      <thead><tr><th>Сценарий</th><th>Переработка СПиР</th><th>Доплата к ФОТ</th></tr></thead>
+      <tbody>
+        <tr><td>Август факт</td><td>479 ч</td><td class="pos">+158 664 ₽/мес</td></tr>
+        <tr><td>Новый штат</td><td>206 ч</td><td>+49 087 ₽/мес</td></tr>
+        <tr class="total"><td>Снижение потенциальных обязательств</td><td>−273 ч</td>
+          <td class="neg">−109 577 ₽/мес</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="dim" style="margin-top:10px">Оценка по принципу доплаты сверхурочных часов до двойного
+  размера. Точная сумма зависит от принятого учётного периода при суммированном учёте рабочего
+  времени.</p>
+</section>
+
+<section>
+  <h2><span class="n">6.</span> Устойчивость расчёта к ставке ночной смены</h2>
+  <p class="lead">Должности «ночной администратор» в штатном расписании нет, поэтому ночной час принят
+  по ставке администратора. На результат сравнения это не влияет: ночных часов ровно 341 в обеих схемах.</p>
+  <div class="card tw">
+    <table>
+      <thead><tr><th>Ставка ночного часа</th><th>ФОТ факт</th><th>ФОТ новый штат</th><th>Δ</th></tr></thead>
+      <tbody>
+        <tr><td>223 ₽ — принято в расчёте</td><td>930 033 ₽</td><td>918 867 ₽</td><td class="neg">−11 166 ₽</td></tr>
+        <tr><td>268 ₽ — с надбавкой +20 % по ст. 154 ТК</td><td>945 378 ₽</td><td>934 212 ₽</td><td class="neg">−11 166 ₽</td></tr>
+        <tr><td>300 ₽ — условно повышенная</td><td>956 290 ₽</td><td>945 124 ₽</td><td class="neg">−11 166 ₽</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">7.</span> Допущения и что поправить</h2>
+  <div class="grid2">
+    <div class="card note">
+      <h3><span class="tag">Допущения</span> требуют подтверждения</h3>
+      <ul>
+        <li><b>Д = 13 ч, Н = 11 ч</b> — обозначения смен в новом табеле приняты так: 13 + 11 = 24,
+            сутки закрываются без разрывов.</li>
+        <li><b>Ставки 270 и 476 ₽/ч</b> для старшего администратора и руководителя выведены как
+            «оклад ÷ плановые часы»: в штатном расписании эти ячейки не заполнены. По той же логике
+            проверен администратор: 43 400 ÷ 195 = 223 ₽/ч.</li>
+        <li><b>Банщик — 500 ₽/ч</b> из штатного расписания. При 218 часах это 109 000 ₽/мес, требует
+            сверки: не «за смену» ли указана ставка.</li>
+        <li>Штатное расписание датировано <b>июлем 2024 года</b>. Если ставки индексировались, расчёт
+            нужно обновить.</li>
+      </ul>
+    </div>
+    <div class="card note">
+      <h3><span class="tag">К доработке</span> штатное расписание</h3>
+      <ul>
+        <li>Ставок «Администратор СПиР» в штатном расписании <b>пять, требуется шесть</b>.</li>
+        <li>Должность <b>«Ночной администратор» отсутствует</b>, хотя ночные смены закрываются
+            фактически. Нужно либо ввести её, либо закрепить ночные часы за администраторами с
+            надбавкой по ст. 154 ТК (не менее +20 %).</li>
+        <li>Три гардеробщика в обоих табелях стоят с нулём часов — уточнить, работают ли они.</li>
+        <li>Отпускные спасателя за август начислялись сверх табеля и в сравнение часов не входят.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Источники: табель «Август 2026 факт» и «Август, новый штат — прогноз»; штатное расписание
+  «ШТАТКА ФАБРИКА», блоки «Гостиница/Отель» и «Термальный комплекс».
+  Метод: начислено = часовая ставка × фактические часы табеля (формула расчётного листа).
+  Норма месяца — 168 часов. Подготовлено 16 сентября 2026 года. Тестовая публикация: персональные данные заменены обезличенными обозначениями должностей.
+</footer>
+
+</div>
+</body>
+</html>
