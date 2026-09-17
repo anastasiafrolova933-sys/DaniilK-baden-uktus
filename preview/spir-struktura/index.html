@@ -183,6 +183,20 @@ table.sched tr.vacrow td.nm{color:var(--coral)}
 .glegend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:16px;height:14px;border-radius:3px;border:1px solid var(--line);display:inline-block}
 
+
+/* общий табель локации */
+.loctabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.locstat{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px 4px}
+table.sched tr.sec td{background:var(--soft);border-top:1.5px solid var(--line);border-bottom:1px solid var(--line)}
+table.sched tr.sec td.nm{font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--mute);background:var(--soft)}
+table.sched tr.sub td{font-size:10px;color:var(--mute);border-bottom:1px solid var(--line);font-weight:600}
+table.sched tr.sub td.nm{font-size:11px;color:var(--mute);font-weight:600;padding-left:22px}
+table.sched tr.sub td.low{background:var(--bad-bg);color:var(--bad)}
+table.sched tr.grand td{background:var(--soft);font-weight:700;color:var(--ink);
+  border-top:2px solid var(--line);border-bottom:none;font-size:11px}
+table.sched tr.grand td.nm{font-weight:700;background:var(--soft)}
+
 @media (max-width:980px){
   .kpis{grid-template-columns:repeat(2,1fr)}
   .locs{grid-template-columns:1fr;gap:30px;margin-top:40px}
@@ -253,7 +267,21 @@ table.sched tr.vacrow td.nm{color:var(--coral)}
 </section>
 
 <section>
-  <h2><span class="n">02</span>Сводка по ставкам</h2>
+  <h2><span class="n">02</span>Общие табеля локаций</h2>
+  <p class="lead">Весь персонал площадки в одной шахматке: строки сгруппированы по направлениям, под каждой
+  группой — сколько человек она выводит в этот день, внизу — сколько человек локация держит на смене всего.</p>
+
+  <div class="loctabs" id="loctabs"></div>
+
+  <div class="card">
+    <div class="locstat" id="locstat"></div>
+    <div class="gridwrap"><table class="sched" id="locgrid"></table></div>
+    <div class="glegend" id="locleg"></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">03</span>Сводка по ставкам</h2>
   <p class="lead">Целевая структура против того, что стоит в действующих табелях.</p>
   <div class="card tablecard">
     <table id="sumtable"></table>
@@ -261,7 +289,7 @@ table.sched tr.vacrow td.nm{color:var(--coral)}
 </section>
 
 <section>
-  <h2><span class="n">03</span>Открытые вопросы</h2>
+  <h2><span class="n">04</span>Открытые вопросы</h2>
   <p class="lead">То, что нужно закрыть до утверждения структуры.</p>
   <div class="card">
     <ul class="qlist">
@@ -741,6 +769,111 @@ tgl.addEventListener('click', () => {
 });
 
 /* ---------- модалка ---------- */
+
+/* ---------- общий табель локации ---------- */
+const LOCT = {
+  uktus:  {name:'Уктус',   period:'сентябрь 2026',      keys:['u-sa','u-adm','u-res','u-night','u-ss','u-sav','u-med','u-sp','u-pm']},
+  sysert: {name:'Сысерть', period:'действующий табель', keys:['s-sa','s-adm','s-sav','s-pm']},
+  tavatuy:{name:'Таватуй', period:'сентябрь 2026',      keys:['t-sa','t-adm','t-term','t-sav']}
+};
+
+document.getElementById('loctabs').innerHTML = Object.keys(LOCT).map(function(id, i){
+  return '<button class="btn locbtn" data-loct="' + id + '" aria-pressed="' + (i === 0) + '">' +
+         esc(LOCT[id].name) + '</button>';
+}).join('');
+
+function renderLoc(id){
+  const L = LOCT[id];
+  const secs = L.keys.map(k => T[k]).filter(Boolean);
+
+  let h = '<thead><tr><th class="nm">' + esc(L.name) + ' · ' + esc(L.period) + '</th>';
+  for (let d = 1; d <= DAYS; d++) h += '<th class="d' + (isWE(d) ? ' we' : '') + '">' + d + '</th>';
+  h += '</tr><tr><th class="nm" style="font-weight:600">Позиция</th>';
+  for (let d = 1; d <= DAYS; d++) h += '<th class="d' + (isWE(d) ? ' we' : '') + '">' + DOW[dowOf(d)] + '</th>';
+  h += '</tr></thead><tbody>';
+
+  const grand = {}, grandNight = {};
+  let people = 0, vacs = 0;
+
+  secs.forEach(function(t){
+    const rows = t.rows.filter(r => !r.grp && r.sc);
+    const cells = rows.map(p => cellVals(p.sc));
+
+    h += '<tr class="sec"><td class="nm">' + esc(t.title) +
+         (t.need ? ' · норма ' + t.need + ' на смене' : '') + '</td>';
+    for (let d = 1; d <= DAYS; d++) h += '<td class="d' + (isWE(d) ? ' we' : '') + '"></td>';
+    h += '</tr>';
+
+    rows.forEach(function(p, i){
+      if (p.vac) vacs++; else people++;
+      h += '<tr' + (p.vac ? ' class="vacrow"' : '') + '><td class="nm">' + esc(p.fio) + (p.vac ? ' •' : '') + '</td>';
+      for (let d = 1; d <= DAYS; d++){
+        const v = cells[i][d];
+        if (v && !p.vac){
+          grand[d] = (grand[d] || 0) + 1;
+          if (v === 'Н') grandNight[d] = (grandNight[d] || 0) + 1;
+        }
+        const cls = 'd' + (isWE(d) ? ' we' : '') + (v ? (v === 'Н' ? ' nt' : ' on') : '');
+        h += '<td class="' + cls + '">' + (v ? esc(v) : '') + '</td>';
+      }
+      h += '</tr>';
+    });
+
+    h += '<tr class="sub"><td class="nm">на смене</td>';
+    for (let d = 1; d <= DAYS; d++){
+      let n = 0;
+      rows.forEach(function(p, i){ if (cells[i][d] && !p.vac) n++; });
+      h += '<td class="d' + (t.need && n < t.need ? ' low' : '') + '">' + n + '</td>';
+    }
+    h += '</tr>';
+  });
+
+  h += '<tr class="grand"><td class="nm">Всего на смене, чел.</td>';
+  let mn = Infinity, mx = 0;
+  for (let d = 1; d <= DAYS; d++){
+    const n = grand[d] || 0;
+    if (n < mn) mn = n;
+    if (n > mx) mx = n;
+    h += '<td class="d">' + n + '</td>';
+  }
+  h += '</tr>';
+
+  let anyNight = false;
+  for (let d = 1; d <= DAYS; d++) if (grandNight[d]) anyNight = true;
+  if (anyNight){
+    h += '<tr class="grand"><td class="nm">из них в ночь</td>';
+    for (let d = 1; d <= DAYS; d++) h += '<td class="d">' + (grandNight[d] || '') + '</td>';
+    h += '</tr>';
+  }
+  h += '</tbody>';
+
+  document.getElementById('locgrid').innerHTML = h;
+
+  document.getElementById('locstat').innerHTML =
+    '<span class="chip">Человек в табеле: <b>' + people + '</b></span>' +
+    '<span class="chip">Направлений: <b>' + secs.length + '</b></span>' +
+    '<span class="chip">На смене в сутки: <b>' + mn + '–' + mx + '</b></span>' +
+    (vacs ? '<span class="chip" style="color:var(--coral)">Вакансий: <b>' + vacs + '</b></span>' : '');
+
+  let lg = '<span><i class="sw" style="background:var(--grid-on)"></i> смена</span>';
+  if (anyNight) lg += '<span><i class="sw" style="background:var(--grid-night)"></i> ночь</span>';
+  lg += '<span><i class="sw" style="background:var(--grid-we)"></i> суббота и воскресенье</span>' +
+        '<span><i class="sw" style="background:var(--bad-bg)"></i> группа выводит меньше нормы</span>' +
+        '<span style="color:var(--coral)">• вакансия — в подсчёт «на смене» не входит</span>' +
+        '<span>Ритм графика взят из табеля; точные даты выходов сверяйте с оригиналом.</span>';
+  document.getElementById('locleg').innerHTML = lg;
+}
+
+document.getElementById('loctabs').addEventListener('click', function(e){
+  const b = e.target.closest('[data-loct]');
+  if (!b) return;
+  document.querySelectorAll('.locbtn').forEach(function(x){
+    x.setAttribute('aria-pressed', String(x === b));
+  });
+  renderLoc(b.getAttribute('data-loct'));
+});
+renderLoc('uktus');
+
 const ov = document.getElementById('ov');
 
 function buildGrid(t){
