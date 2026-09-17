@@ -13,6 +13,7 @@
   --uktus:#154a88; --uktus-bg:#e8f0fa;
   --sysert:#0f7f7a; --sysert-bg:#e4f5f4;
   --tavatuy:#7b4bb7; --tavatuy-bg:#efe9fa;
+  --grid-on:#cfe0f5; --grid-night:#cdd6ea; --grid-we:#f0f4fa;
   --radius:16px; --sh:0 1px 2px rgba(19,40,64,.06),0 8px 24px rgba(19,40,64,.06);
 }
 @media (prefers-color-scheme:dark){
@@ -23,6 +24,7 @@
     --uktus:#77bce8; --uktus-bg:#152741;
     --sysert:#52d6d0; --sysert-bg:#0f2f2d;
     --tavatuy:#b79aec; --tavatuy-bg:#241a3d;
+    --grid-on:#1e4067; --grid-night:#2d3554; --grid-we:#18243a;
     --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   }
 }
@@ -57,51 +59,58 @@ h2 .n{display:inline-block;min-width:28px;color:var(--brand);font-variant-numeri
 @media (prefers-color-scheme:dark){.btn[aria-pressed="true"]{color:#07101f}}
 .hint{font-size:12.5px;color:var(--mute)}
 
+/* ---------- схема ---------- */
 .chartwrap{position:relative}
 svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
 svg.linkstop{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
 .chartwrap.nofunc .fnlink{opacity:0}
 .headrow{display:flex;justify-content:center;position:relative;z-index:2}
-.headcard{padding:16px 22px;text-align:center;max-width:470px;border-top:3px solid var(--brand)}
-.headcard .r{font-size:17px;font-weight:700}
-.headcard .m{font-size:12.5px;color:var(--mute);margin-top:3px}
-.headcard .tag{display:inline-block;margin-top:9px;font-size:11.5px;font-weight:700;letter-spacing:.05em;
+.headcard{padding:14px 22px;text-align:center;max-width:440px;border-top:3px solid var(--brand)}
+.headcard .r{font-size:16px;font-weight:700}
+.headcard .m{font-size:12px;color:var(--mute);margin-top:3px}
+.headcard .tag{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;letter-spacing:.05em;
   text-transform:uppercase;color:var(--coral);background:var(--bad-bg);padding:4px 10px;border-radius:999px}
 .locs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px;position:relative;z-index:2}
 .loc{padding:0;overflow:hidden;display:flex;flex-direction:column}
-.loc .lochead{padding:14px 16px;border-bottom:1px solid var(--line)}
-.loc .locname{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.loc .lochead{padding:13px 15px;border-bottom:1px solid var(--line)}
+.loc .locname{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
-.loc .locmeta{font-size:12px;color:var(--mute);margin-top:3px}
-.locbadge{display:inline-block;margin-top:9px;font-size:10.5px;font-weight:700;letter-spacing:.04em;
-  text-transform:uppercase;padding:4px 9px;border-radius:999px}
-.locbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:14px;flex:1}
-.branch{border-left:2px solid var(--line);padding-left:12px}
-.node{width:100%;text-align:left;border:1px solid var(--line);background:var(--soft);color:inherit;
-  font:inherit;border-radius:12px;padding:10px 12px;cursor:pointer;display:block;
-  transition:border-color .15s,transform .12s,box-shadow .15s}
-.node:hover{border-color:var(--brand);transform:translateY(-1px);box-shadow:var(--sh)}
+.loc .locmeta{font-size:11.5px;color:var(--mute);margin-top:3px}
+.locbadge{display:inline-block;margin-top:8px;font-size:10px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.locbody{padding:13px 15px 16px;display:flex;flex-direction:column;gap:16px;flex:1}
 
-.node .nr{font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.node .cnt{font-size:12px;font-weight:700;color:#fff;border-radius:999px;padding:2px 9px;flex:none}
+.node{width:100%;text-align:left;border:1.5px solid var(--line);background:var(--panel);color:inherit;
+  font:inherit;border-radius:10px;padding:9px 11px;cursor:pointer;display:block;position:relative;
+  transition:border-color .15s,box-shadow .15s}
+.node:hover{border-color:var(--brand);box-shadow:var(--sh)}
+.node .nr{font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.3}
+.node .cnt{font-size:11.5px;font-weight:700;color:#fff;border-radius:6px;padding:2px 7px;flex:none;
+  font-variant-numeric:tabular-nums}
 @media (prefers-color-scheme:dark){.node .cnt{color:#07101f}}
-.node .nn{display:block;font-size:12.5px;color:var(--mute);margin-top:3px}
-.node .open{font-size:11.5px;font-weight:700;color:var(--brand);margin-top:7px;display:inline-block}
-.kids{margin:9px 0 0 10px;display:flex;flex-direction:column;gap:7px}
-.kid{border:1px dashed var(--line);border-radius:10px;padding:8px 11px;background:var(--panel);
-  cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%;
-  transition:border-color .15s,background .15s,border-style .15s}
-.kid:hover{border-color:var(--brand);border-style:solid;background:var(--soft)}
+.node .nn{display:block;font-size:11.5px;color:var(--mute);margin-top:3px}
 
-.kid .kr{font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.kid .kc{font-size:12px;font-weight:700;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
-.kid .kn{display:block;font-size:11.5px;color:var(--mute);margin-top:2px}
-.fnbadge{display:inline-block;margin-top:7px;font-size:10.5px;font-weight:600;color:var(--uktus);
-  background:var(--uktus-bg);border-radius:999px;padding:3px 8px;line-height:1.3}
+.kids{position:relative;margin:0;padding:10px 0 0 0;display:flex;flex-direction:column}
+.kw{position:relative;padding-left:20px;padding-bottom:7px}
+.kw:last-child{padding-bottom:0}
+.kw::before{content:'';position:absolute;left:11px;top:-10px;bottom:0;border-left:1.5px solid var(--line)}
+.kw:last-child::before{bottom:auto;height:50%;min-height:16px}
+.kw::after{content:'';position:absolute;left:11px;top:50%;width:9px;border-top:1.5px solid var(--line)}
+.kid{border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--soft);
+  cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%;
+  transition:border-color .15s,background .15s}
+.kid:hover{border-color:var(--brand);background:var(--panel)}
+.kid .kr{font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.3}
+.kid .kc{font-size:11.5px;font-weight:700;color:var(--mute);font-variant-numeric:tabular-nums;flex:none}
+.kid .kn{display:block;font-size:11px;color:var(--mute);margin-top:2px}
+.shiftbadge{display:inline-block;margin-top:5px;font-size:10.5px;font-weight:700;
+  color:var(--good);background:var(--good-bg);border-radius:5px;padding:2px 7px;line-height:1.35}
+.fnbadge{display:inline-block;margin-top:5px;font-size:10px;font-weight:600;color:var(--coral);
+  background:var(--bad-bg);border-radius:5px;padding:2px 7px;line-height:1.35}
 .vac{color:var(--coral);font-weight:700}
-.removed{padding:10px 12px;border:1px dashed var(--coral);border-radius:12px;background:var(--bad-bg);
-  font-size:12.5px;color:var(--bad)}
-.removed b{display:block;font-size:13px;text-decoration:line-through;margin-bottom:2px}
+.removed{padding:9px 11px;border:1.5px dashed var(--coral);border-radius:10px;background:var(--bad-bg);
+  font-size:11.5px;color:var(--bad)}
+.removed b{display:block;font-size:12.5px;text-decoration:line-through;margin-bottom:2px}
 
 .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:20px;font-size:12.5px;color:var(--mute)}
 .legend span{display:inline-flex;align-items:center;gap:7px}
@@ -118,21 +127,16 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
   letter-spacing:.05em;color:var(--mute)}
 .tablecard{overflow-x:auto}
 
-.changes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.chg{padding:15px 17px;border-left:3px solid var(--good)}
-.chg.warn{border-left-color:var(--coral)}
-.chg .t{font-size:14.5px;font-weight:700;margin-bottom:4px}
-.chg .d{font-size:13px;color:var(--mute)}
-
 .qlist{padding:6px 0;margin:0;list-style:none}
 .qlist li{padding:11px 17px;border-bottom:1px solid var(--line);font-size:13.5px}
 .qlist li:last-child{border-bottom:none}
 .qlist b{display:block;font-size:13px;color:var(--coral);margin-bottom:2px}
 
+/* ---------- модалка ---------- */
 .ov{position:fixed;inset:0;background:rgba(10,17,32,.55);backdrop-filter:blur(3px);
   display:none;align-items:flex-start;justify-content:center;padding:26px 14px;z-index:100;overflow:auto}
 .ov.on{display:flex}
-.modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:940px;width:100%;
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:1010px;width:100%;
   box-shadow:0 24px 70px rgba(10,17,32,.35);animation:pop .18s ease}
 @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .mhead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
@@ -147,16 +151,47 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
 .chip{font-size:12px;font-weight:600;background:var(--soft);border:1px solid var(--line);
   border-radius:999px;padding:5px 11px;color:var(--mute)}
 .chip b{color:var(--ink);font-variant-numeric:tabular-nums}
+.mtabs{display:flex;gap:6px;padding:10px 20px 0;border-bottom:1px solid var(--line)}
+.mtab{appearance:none;border:1px solid var(--line);border-bottom:none;background:var(--panel);color:var(--mute);
+  font:inherit;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:9px 9px 0 0;cursor:pointer;
+  margin-bottom:-1px}
+.mtab[aria-selected="true"]{background:var(--soft);color:var(--ink);border-color:var(--brand)}
+.mpane{display:none}
+.mpane.on{display:block}
+
+.gridwrap{overflow-x:auto}
+table.sched{border-collapse:separate;border-spacing:0;font-size:11px;width:auto;min-width:100%}
+table.sched th,table.sched td{padding:0;border:none;text-align:center;background:transparent}
+table.sched th.nm,table.sched td.nm{text-align:left;padding:5px 10px;min-width:180px;position:sticky;left:0;
+  background:var(--panel);z-index:2;border-right:1px solid var(--line);font-size:12px;white-space:nowrap;
+  text-transform:none;letter-spacing:0;color:var(--ink);font-weight:500}
+table.sched thead th{background:var(--soft);font-size:10px;text-transform:none;letter-spacing:0;
+  padding:4px 0;border-bottom:1px solid var(--line);color:var(--mute)}
+table.sched thead th.nm{background:var(--soft);font-weight:700}
+table.sched td.d,table.sched th.d{width:25px;min-width:25px;font-variant-numeric:tabular-nums}
+table.sched td.d{height:27px;border-bottom:1px solid var(--line);font-size:10.5px;font-weight:600;color:var(--mute)}
+table.sched td.we{background:var(--grid-we)}
+table.sched td.on{background:var(--grid-on);color:var(--ink)}
+table.sched td.nt{background:var(--grid-night);color:var(--ink)}
+table.sched th.we{color:var(--coral)}
+table.sched tr.cov td{background:var(--soft);font-weight:700;color:var(--ink);border-top:1.5px solid var(--line);
+  border-bottom:none}
+table.sched tr.cov td.low{background:var(--bad-bg);color:var(--bad)}
+table.sched tr.vacrow td.nm{color:var(--coral)}
+.glegend{display:flex;flex-wrap:wrap;gap:14px;padding:11px 20px;font-size:11.5px;color:var(--mute);
+  border-top:1px solid var(--line)}
+.glegend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:16px;height:14px;border-radius:3px;border:1px solid var(--line);display:inline-block}
 
 @media (max-width:980px){
   .kpis{grid-template-columns:repeat(2,1fr)}
   .locs{grid-template-columns:1fr;gap:30px;margin-top:40px}
-  .changes{grid-template-columns:1fr}
   .headcard{max-width:none}
 }
 @media (max-width:560px){
   .kpis{grid-template-columns:1fr}
   th,td{padding:8px 9px;font-size:12.5px}
+  table.sched th.nm,table.sched td.nm{min-width:132px}
 }
 </style>
 </head>
@@ -170,7 +205,7 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
   <p class="sub">Уктус берётся за типовую модель. На Сысерти локальное руководство снимается, управление переходит
   старшим администраторам площадки, а выход и табеля спасателей и пармастеров функционально контролируют
   профильные старшие Уктуса. На Таватуе спасатели остаются в контуре старших администраторов локации.
-  Нажмите на любой блок — откроется табель по этой группе. Это публичный превью-вариант: в табелях сохранены должности, смены и часы, а ФИО и базовые ставки убраны.</p>
+  Нажмите на любой блок — откроется шахматка выходов на смену и состав группы. Это публичный превью-вариант: должности, смены и часы сохранены, ФИО и базовые ставки убраны.</p>
 </header>
 
 <div class="kpis">
@@ -187,11 +222,12 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
 <section>
   <h2><span class="n">01</span>Схема подчинения</h2>
   <p class="lead">Сплошная линия — прямое (административное) подчинение. Пунктир — функциональный контроль:
-  выход, табеля и профессиональные выводы остаются за профильным старшим Уктуса.</p>
+  выход, табеля и профессиональные выводы остаются за профильным старшим Уктуса. Зелёная метка на блоке —
+  сколько человек этой группы стоит на смене одновременно.</p>
 
   <div class="controls">
     <button class="btn" id="tgl" aria-pressed="true">Функциональные связи</button>
-    <span class="hint">Клик по блоку → табель группы</span>
+    <span class="hint">Клик по блоку → шахматка выходов на смену</span>
   </div>
 
   <div class="chartwrap" id="chart">
@@ -217,34 +253,7 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
 </section>
 
 <section>
-  <h2><span class="n">02</span>Что меняется</h2>
-  <p class="lead">Четыре решения, из которых состоит проект.</p>
-  <div class="changes">
-    <div class="chg card warn">
-      <div class="t">Сысерть теряет локального руководителя</div>
-      <div class="d">Ставка «Руководитель термального комплекса» убирается. Оперативное
-      управление площадкой переходит двум старшим администраторам Сысерти.</div>
-    </div>
-    <div class="chg card">
-      <div class="t">Руководитель СПиР Уктуса становится трёхлокационным</div>
-      <div class="d">Уктус сохраняет структуру без изменений и работает как эталон: по нему выравниваются
-      Сысерть и Таватуй.</div>
-    </div>
-    <div class="chg card">
-      <div class="t">Профильный контроль остаётся на Уктусе</div>
-      <div class="d">Старший спасатель Уктуса ведёт выход и табеля спасателей Сысерти, старший пармастер
-      Уктуса — пармастеров Сысерти и их выводы. Административно люди подчинены старшим администраторам площадки.</div>
-    </div>
-    <div class="chg card">
-      <div class="t">На Таватуе спасатели под старшими администраторами</div>
-      <div class="d">Отдельного старшего спасателя на локации нет — выход спасателей контролируют два старших
-      администратора Таватуя.</div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2><span class="n">03</span>Сводка по ставкам</h2>
+  <h2><span class="n">02</span>Сводка по ставкам</h2>
   <p class="lead">Целевая структура против того, что стоит в действующих табелях.</p>
   <div class="card tablecard">
     <table id="sumtable"></table>
@@ -252,7 +261,7 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
 </section>
 
 <section>
-  <h2><span class="n">04</span>Открытые вопросы</h2>
+  <h2><span class="n">03</span>Открытые вопросы</h2>
   <p class="lead">То, что нужно закрыть до утверждения структуры.</p>
   <div class="card">
     <ul class="qlist">
@@ -282,286 +291,318 @@ tr.grp td{background:var(--soft);font-size:11.5px;font-weight:700;text-transform
       <button class="x" id="mx" aria-label="Закрыть">&times;</button>
     </div>
     <div class="chips" id="mchips"></div>
-    <div class="tablecard"><table id="mtable"></table></div>
+    <div class="mtabs">
+      <button class="mtab" id="tab-g" aria-selected="true">Выходы на смену</button>
+      <button class="mtab" id="tab-r" aria-selected="false">Состав и часы</button>
+    </div>
+    <div class="mpane on" id="pane-g">
+      <div class="gridwrap"><table class="sched" id="mgrid"></table></div>
+      <div class="glegend" id="glegend"></div>
+    </div>
+    <div class="mpane" id="pane-r">
+      <div class="tablecard"><table id="mtable"></table></div>
+    </div>
     <div class="mnote" id="mnote"></div>
   </div>
 </div>
 
 <script>
-/* ---------- данные ---------- */
+/* ---------- календарь: сентябрь 2026 — 30 дней, 1-е число вторник ---------- */
+const DAYS = 30, FIRST_DOW = 2;                 // 1 = пн … 7 = вс
+const DOW = ['пн','вт','ср','чт','пт','сб','вс'];
+const dowOf = d => ((FIRST_DOW - 1 + d - 1) % 7);
+const isWE = d => dowOf(d) >= 5;
 
+/* Ритмы графика:
+   '2/2'  — два через два, s = день начала блока
+   'alt'  — через день, s = день первого выхода
+   'rot3' — сысертская ротация: шестеро администраторов, каждый день на посту двое (день + ночь) */
+function shifts(sc){
+  const out = {};
+  if (!sc) return out;
+  if (sc.m === '2/2'){
+    for (let d = 1; d <= DAYS; d++){
+      const p = ((d - sc.s) % 4 + 4) % 4;
+      if (p === 0 || p === 1) out[d] = true;
+    }
+  } else if (sc.m === 'alt'){
+    for (let d = sc.s; d <= DAYS; d += 2) out[d] = true;
+  } else if (sc.m === 'rot3'){
+    for (let d = 1; d <= DAYS; d++) if ((d + sc.i) % 3 === 0) out[d] = true;
+  }
+  return out;
+}
+/* значение в ячейке: строка — одинаково во все выходы, массив — по кругу */
+function cellVals(sc){
+  const days = shifts(sc);
+  const keys = Object.keys(days).map(Number).sort((a, b) => a - b);
+  const res = {};
+  keys.forEach((d, i) => { res[d] = Array.isArray(sc.v) ? sc.v[i % sc.v.length] : sc.v; });
+  return res;
+}
+
+/* ---------- табеля ---------- */
 const T = {
-  /* ===== УКТУС ===== */
   'u-sa': {
-    title: 'Старшие администраторы Уктуса', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Ст. администратор 1', pos:'Старший администратор', sh:'14–15 ч', h:'228'},
-      {fio:'Ст. администратор 2', pos:'Старший администратор', sh:'14–15 ч', h:'214'}
+    title:'Старшие администраторы Уктуса', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Ст. администратор 1', pos:'Старший администратор', sh:'14–15 ч', h:'228', sc:{m:'2/2',s:1,v:'14'}},
+      {fio:'Ст. администратор 2', pos:'Старший администратор', sh:'14–15 ч', h:'214', sc:{m:'2/2',s:3,v:'14'}}
     ],
-    note:'Дежурные менеджеры локации. Ведут смены администраторов термаля, резиденции и ночных.'
+    note:'Дежурные менеджеры локации: один старший на смене каждый день. Ведут смены администраторов термаля, резиденции и ночных.'
   },
   'u-adm': {
-    title: 'Администраторы термального комплекса', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
-    rows: [
+    title:'Администраторы термального комплекса', loc:'Уктус', period:'сентябрь 2026', need:5,
+    cols:[['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
+    rows:[
       {grp:'1-я смена'},
-      {fio:'Администратор 1', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Администратор 2', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Администратор 3', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Администратор 4', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Ставка — вакансия', sh:'11 ч', n:'16', h:'176', vac:1},
+      {fio:'Администратор 1', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор 2', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор 3', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор 4', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Ставка — вакансия', sh:'11 ч', n:'16', h:'176', vac:1, sc:{m:'2/2',s:1,v:'11'}},
       {grp:'2-я смена'},
-      {fio:'Администратор 5', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Администратор 6', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Администратор 7', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Администратор 8', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Администратор 9', sh:'11 ч', n:'14', h:'154'}
+      {fio:'Администратор 5', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Администратор 6', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Администратор 7', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Администратор 8', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Администратор 9', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}}
     ],
-    note:'5 + 5 по сменам. Одна ставка 1-й смены не закрыта.'
+    note:'5 + 5 по сменам, два через два. Норма — пять администраторов на стойке, но одна ставка 1-й смены не закрыта: в её блоки выходят четверо.'
   },
   'u-res': {
-    title: 'Администраторы резиденции', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Администратор резиденции 1', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Администратор резиденции 2', sh:'11 ч', n:'14', h:'154'}
+    title:'Администраторы резиденции', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Администратор резиденции 1', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор резиденции 2', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}}
     ],
-    note:'1 + 1 по сменам.'
+    note:'1 + 1 по сменам: резиденция закрыта одним администратором каждый день.'
   },
   'u-night': {
-    title: 'Ночные администраторы', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Ставка — вакансия', sh:'11 ч', n:'14', h:'154', vac:1},
-      {fio:'Ночной администратор 1', sh:'11 ч', n:'14', h:'154'}
+    title:'Ночные администраторы', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Ставка — вакансия', sh:'11 ч', n:'14', h:'154', vac:1, sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Ночной администратор 1', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}}
     ],
-    note:'1 + 1 по сменам. Одна ставка не закрыта.'
+    note:'1 + 1 по сменам. Половина ночей приходится на вакансию — в шахматке это дни с нулём в строке «на смене».'
   },
   'u-ss': {
-    title: 'Старшие спасатели Уктуса', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Ст. спасатель 1', pos:'Старший спасатель', sh:'13,5–14,5 ч', h:'206,5'},
-      {fio:'Ст. спасатель 2', pos:'Старший спасатель', sh:'13,5–14,5 ч', h:'206,5'}
+    title:'Старшие спасатели Уктуса', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Ст. спасатель 1', pos:'Старший спасатель', sh:'13,5–14,5 ч', h:'206,5', sc:{m:'2/2',s:1,v:'13,5'}},
+      {fio:'Ст. спасатель 2', pos:'Старший спасатель', sh:'13,5–14,5 ч', h:'206,5', sc:{m:'2/2',s:3,v:'13,5'}}
     ],
-    note:'По одному старшему на смену. Дополнительно ведут выход и табеля спасателей Сысерти.'
+    note:'По одному старшему на смене каждый день. Дополнительно ведут выход и табеля спасателей Сысерти.'
   },
   'u-sav': {
-    title: 'Спасатели Уктуса', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Спасатель 1', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Спасатель 2', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Спасатель 3', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Спасатель 4', sh:'11 ч', n:'15', h:'165'},
-      {fio:'Спасатель 5', sh:'11 ч', n:'15', h:'165'},
-      {fio:'Спасатель 6', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Спасатель 7', sh:'11 ч', n:'14', h:'154'},
-      {fio:'Спасатель 8', sh:'11 ч', n:'14', h:'154'}
+    title:'Спасатели Уктуса', loc:'Уктус', period:'сентябрь 2026', need:6,
+    cols:[['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Спасатель 1', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Спасатель 2', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Спасатель 3', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Спасатель 4', sh:'11 ч', n:'15', h:'165', sc:{m:'2/2',s:2,v:'11'}},
+      {fio:'Спасатель 5', sh:'11 ч', n:'15', h:'165', sc:{m:'2/2',s:2,v:'11'}},
+      {fio:'Спасатель 6', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Спасатель 7', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Спасатель 8', sh:'11 ч', n:'14', h:'154', sc:{m:'2/2',s:3,v:'11'}}
     ],
-    note:'Целевая модель — 6 спасателей на смену, то есть 12 ставок. В табеле сентября восемь человек: дефицит 4.'
+    note:'Целевая модель — 6 спасателей на смену, то есть 12 ставок. В табеле восемь человек: в строке «на смене» ни один день не дотягивает до шести, оранжевым подсвечены провалы.'
   },
   'u-med': {
-    title: 'Мед. работники', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
-    rows: [
-      {fio:'Мед. работник 1', sh:'11 ч', n:'16', h:'176'},
-      {fio:'Мед. работник 2', sh:'11 ч', n:'15', h:'165'}
+    title:'Мед. работники', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['sh','Смена'],['n','Смен',1],['h','Итого, ч',1]],
+    rows:[
+      {fio:'Мед. работник 1', sh:'11 ч', n:'16', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Мед. работник 2', sh:'11 ч', n:'15', h:'165', sc:{m:'2/2',s:2,v:'11'}}
     ],
     note:'1 + 1 по сменам, в подчинении старших спасателей. На Сысерти и Таватуе медиков в табелях нет.'
   },
   'u-sp': {
-    title: 'Старший пармастер', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1],['h','Итого парений',1]],
-    rows: [
-      {fio:'Ст. пармастер', pos:'Ст. банщик', sh:'10', h:'160'}
+    title:'Старший пармастер', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1],['h','Итого парений',1]],
+    rows:[
+      {fio:'Ст. пармастер', pos:'Ст. банщик', sh:'10', h:'160', sc:{m:'2/2',s:1,v:'10'}}
     ],
-    note:'В табеле пармастеров указаны не часы, а количество парений. Дополнительно ведёт пармастеров Сысерти и их выводы.'
+    note:'В табеле пармастеров указаны не часы, а количество парений: 10 за смену. Дополнительно ведёт пармастеров Сысерти и их выводы.'
   },
   'u-pm': {
-    title: 'Пармастеры Уктуса', loc: 'Уктус', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1],['h','Итого парений',1]],
-    rows: [
-      {fio:'Пармастер 1', pos:'Банщик', sh:'10', h:'160'},
-      {fio:'Пармастер 2', pos:'Банщик', sh:'10', h:'150'},
-      {fio:'Пармастер 3', pos:'Банщик', sh:'10', h:'150'}
+    title:'Пармастеры Уктуса', loc:'Уктус', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1],['h','Итого парений',1]],
+    rows:[
+      {fio:'Пармастер 1', pos:'Банщик', sh:'10', h:'160', sc:{m:'2/2',s:1,v:'10'}},
+      {fio:'Пармастер 2', pos:'Банщик', sh:'10', h:'150', sc:{m:'2/2',s:3,v:'10'}},
+      {fio:'Пармастер 3', pos:'Банщик', sh:'10', h:'150', sc:{m:'2/2',s:3,v:'10'}}
     ],
-    note:'Цифры в табеле — количество парений, не часы.'
+    note:'Цифры в шахматке — количество парений за смену, не часы. В блоках 1-й смены выходит один банщик, в блоках 2-й — двое.'
   },
 
-  /* ===== СЫСЕРТЬ ===== */
   's-sa': {
-    title: 'Старшие администраторы Сысерти', loc: 'Сысерть', period: 'действующий табель',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['gr','График']],
-    rows: [
-      {fio:'Ст. администратор 1', pos:'Старший администратор', sh:'13 ч', gr:'через день'},
-      {fio:'Ст. администратор 2', pos:'Старший администратор', sh:'13 ч', gr:'через день, в противофазе'}
+    title:'Старшие администраторы Сысерти', loc:'Сысерть', period:'действующий табель', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['gr','График']],
+    rows:[
+      {fio:'Ст. администратор 1', pos:'Старший администратор', sh:'13 ч', gr:'через день', sc:{m:'alt',s:1,v:'13'}},
+      {fio:'Ст. администратор 2', pos:'Старший администратор', sh:'13 ч', gr:'через день, в противофазе', sc:{m:'alt',s:2,v:'13'}}
     ],
-    note:'После снятия руководителя термального комплекса это верхний уровень управления на площадке: смены администраторов, выход спасателей и банщиков.'
+    note:'После снятия руководителя термального комплекса это верхний уровень управления на площадке: смены администраторов, выход спасателей и банщиков. Работают через день — локация закрыта старшим ежедневно.'
   },
   's-adm': {
-    title: 'Администраторы Сысерти', loc: 'Сысерть', period: 'действующий табель',
-    cols: [['fio','Позиция'],['sh','Смена'],['gr','График']],
-    rows: [
+    title:'Администраторы Сысерти', loc:'Сысерть', period:'действующий табель', need:2,
+    cols:[['fio','Позиция'],['sh','Смена'],['gr','График']],
+    rows:[
       {grp:'1-я смена'},
-      {fio:'Админ 1', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'},
-      {fio:'Админ 2', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'},
-      {fio:'Админ 3', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'},
+      {fio:'Админ 1', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:0,v:['Д','Н']}},
+      {fio:'Админ 2', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:1,v:['Д','Н']}},
+      {fio:'Админ 3', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:2,v:['Д','Н']}},
       {grp:'2-я смена'},
-      {fio:'Админ 4', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'},
-      {fio:'Админ 5', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'},
-      {fio:'Админ 6', sh:'Д 13 ч / Н 11 ч', gr:'Д / Н в ротации'}
+      {fio:'Админ 4', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:0,v:['Н','Д']}},
+      {fio:'Админ 5', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:1,v:['Н','Д']}},
+      {fio:'Админ 6', sh:'Д 13 ч / Н 11 ч', gr:'день / ночь в ротации', sc:{m:'rot3',i:2,v:['Н','Д']}}
     ],
-    note:'3 + 3 по сменам. В исходном табеле фамилии не проставлены — стоят обозначения Админ 1…6. День — 13 ч, ночь — 11 ч.'
+    note:'3 + 3 по сменам. Каждый день на стойке двое: один в день (13 ч), один в ночь (11 ч). В исходном табеле фамилии не проставлены — стоят обозначения Админ 1…6.'
   },
   's-sav': {
-    title: 'Спасатели Сысерти', loc: 'Сысерть', period: 'действующий табель',
-    cols: [['fio','Позиция'],['sh','Смена'],['gr','График']],
-    rows: [
-      {fio:'Спасатель 1', sh:'13 ч', gr:'2 / 2'},
-      {fio:'Спасатель 2', sh:'13 ч', gr:'2 / 2'},
-      {fio:'Спасатель 3', sh:'13 ч', gr:'2 / 2, в противофазе'},
-      {fio:'Спасатель 4', sh:'13 ч', gr:'2 / 2, в противофазе'}
+    title:'Спасатели Сысерти', loc:'Сысерть', period:'действующий табель', need:2,
+    cols:[['fio','Позиция'],['sh','Смена'],['gr','График']],
+    rows:[
+      {fio:'Спасатель 1', sh:'13 ч', gr:'2 / 2', sc:{m:'2/2',s:1,v:'13'}},
+      {fio:'Спасатель 2', sh:'13 ч', gr:'2 / 2', sc:{m:'2/2',s:1,v:'13'}},
+      {fio:'Спасатель 3', sh:'13 ч', gr:'2 / 2, в противофазе', sc:{m:'2/2',s:3,v:'13'}},
+      {fio:'Спасатель 4', sh:'13 ч', gr:'2 / 2, в противофазе', sc:{m:'2/2',s:3,v:'13'}}
     ],
-    note:'Административно подчинены старшим администраторам Сысерти. Выход и табеля ведёт старший спасатель Уктуса.'
+    note:'Двое на воде каждый день. Административно подчинены старшим администраторам Сысерти, выход и табеля ведёт старший спасатель Уктуса.'
   },
   's-pm': {
-    title: 'Банщики (пармастеры) Сысерти', loc: 'Сысерть', period: 'действующий табель',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1]],
-    rows: [
-      {fio:'Банщик 1', pos:'Банщик', sh:'12 / 6'},
-      {fio:'Банщик 2', pos:'Банщик', sh:'12 / 6', unk:1},
-      {fio:'Банщик 3', pos:'Банщик', sh:'6 / 12'},
-      {fio:'Банщик 4', pos:'Банщик', sh:'6 / 12'}
+    title:'Банщики (пармастеры) Сысерти', loc:'Сысерть', period:'действующий табель', need:2,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Парений за смену',1]],
+    rows:[
+      {fio:'Банщик 1', pos:'Банщик', sh:'12 / 6', sc:{m:'2/2',s:1,v:['12','6']}},
+      {fio:'Банщик 2', pos:'Банщик', sh:'12 / 6', unk:1, sc:{m:'2/2',s:1,v:['12','6']}},
+      {fio:'Банщик 3', pos:'Банщик', sh:'6 / 12', sc:{m:'2/2',s:3,v:['6','12']}},
+      {fio:'Банщик 4', pos:'Банщик', sh:'6 / 12', sc:{m:'2/2',s:3,v:['6','12']}}
     ],
-    note:'В исходном табеле во второй строке продублирована фамилия спасателя — требуется актуальная. Профессиональные выводы ведёт старший пармастер Уктуса.'
+    note:'В шахматке — количество парений за смену. Двое на смене. В исходном табеле во второй строке продублирована фамилия спасателя — требуется актуальная. Профессиональные выводы ведёт старший пармастер Уктуса.'
   },
 
-  /* ===== ТАВАТУЙ ===== */
   't-sa': {
-    title: 'Старшие администраторы Таватуя', loc: 'Таватуй', period: 'новые позиции',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['gr','Статус']],
-    rows: [
-      {fio:'Ставка 1', pos:'Старший администратор', sh:'—', gr:'нет в действующем табеле', vac:1},
-      {fio:'Ставка 2', pos:'Старший администратор', sh:'—', gr:'нет в действующем табеле', vac:1}
+    title:'Старшие администраторы Таватуя', loc:'Таватуй', period:'новые позиции', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['gr','Статус']],
+    rows:[
+      {fio:'Ставка 1', pos:'Старший администратор', sh:'по образцу локации', gr:'нет в действующем табеле', vac:1, sc:{m:'2/2',s:1,v:'см'}},
+      {fio:'Ставка 2', pos:'Старший администратор', sh:'по образцу локации', gr:'нет в действующем табеле', vac:1, sc:{m:'2/2',s:3,v:'см'}}
     ],
-    note:'Две новые позиции. Помимо администраторов контролируют выход спасателей локации — отдельного старшего спасателя на Таватуе нет.'
+    note:'Две новые позиции — шахматка показывает предполагаемый выход 2 / 2, по одному старшему на смене. Помимо администраторов контролируют выход спасателей локации: отдельного старшего спасателя на Таватуе нет.'
   },
   't-adm': {
-    title: 'Администраторы ресепшена заселения', loc: 'Таватуй', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
-    rows: [
-      {fio:'Администратор СПиР 1', pos:'Администратор СПиР', sh:'11 ч', h:'176'},
-      {fio:'Администратор СПиР 2', pos:'Администратор СПиР', sh:'11 ч', h:'176'},
-      {fio:'Администратор СПиР 3', pos:'Администратор СПиР', sh:'11 ч', h:'165'},
-      {fio:'Администратор СПиР 4', pos:'Администратор СПиР', sh:'11 ч', h:'165'}
+    title:'Администраторы ресепшена заселения', loc:'Таватуй', period:'сентябрь 2026', need:2,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
+    rows:[
+      {fio:'Администратор СПиР 1', pos:'Администратор СПиР', sh:'11 ч', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор СПиР 2', pos:'Администратор СПиР', sh:'11 ч', h:'176', sc:{m:'2/2',s:1,v:'11'}},
+      {fio:'Администратор СПиР 3', pos:'Администратор СПиР', sh:'11 ч', h:'165', sc:{m:'2/2',s:3,v:'11'}},
+      {fio:'Администратор СПиР 4', pos:'Администратор СПиР', sh:'11 ч', h:'165', sc:{m:'2/2',s:3,v:'11'}}
     ],
-    note:'2 + 2 по сменам, график 2 / 2. Подразделение «Отель». Отпуска и больничные в фактическом табеле не учитывались.'
+    note:'2 + 2 по сменам, график 2 / 2 — двое на заселении каждый день. Подразделение «Отель». Отпуска и больничные фактического табеля в шахматке не учтены.'
   },
   't-term': {
-    title: 'Администраторы ресепшена термаля', loc: 'Таватуй', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
-    rows: [
-      {fio:'Администратор-кассир 1', pos:'Администратор-кассир', sh:'12 ч', h:'176'},
-      {fio:'Администратор-кассир 2', pos:'Администратор-кассир', sh:'12 ч', h:'165'}
+    title:'Администраторы ресепшена термаля', loc:'Таватуй', period:'сентябрь 2026', need:1,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
+    rows:[
+      {fio:'Администратор-кассир 1', pos:'Администратор-кассир', sh:'12 ч', h:'176', sc:{m:'2/2',s:1,v:'12'}},
+      {fio:'Администратор-кассир 2', pos:'Администратор-кассир', sh:'12 ч', h:'165', sc:{m:'2/2',s:3,v:'12'}}
     ],
     note:'1 + 1 по сменам, график 2 / 2. Подразделение «ФОК Термаль».'
   },
   't-sav': {
-    title: 'Спасатели Таватуя', loc: 'Таватуй', period: 'сентябрь 2026',
-    cols: [['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
-    rows: [
-      {fio:'Спасатель 1', pos:'Спасатель', sh:'12 ч', h:'176'},
-      {fio:'Спасатель 2', pos:'Спасатель', sh:'12 ч', h:'176'},
-      {fio:'Спасатель 3', pos:'Спасатель', sh:'12 ч', h:'165'},
-      {fio:'Спасатель 4', pos:'Спасатель', sh:'12 ч', h:'165'}
+    title:'Спасатели Таватуя', loc:'Таватуй', period:'сентябрь 2026', need:2,
+    cols:[['fio','Позиция'],['pos','Должность'],['sh','Смена'],['h','Норма, ч',1]],
+    rows:[
+      {fio:'Спасатель 1', pos:'Спасатель', sh:'12 ч', h:'176', sc:{m:'2/2',s:1,v:'12'}},
+      {fio:'Спасатель 2', pos:'Спасатель', sh:'12 ч', h:'176', sc:{m:'2/2',s:1,v:'12'}},
+      {fio:'Спасатель 3', pos:'Спасатель', sh:'12 ч', h:'165', sc:{m:'2/2',s:3,v:'12'}},
+      {fio:'Спасатель 4', pos:'Спасатель', sh:'12 ч', h:'165', sc:{m:'2/2',s:3,v:'12'}}
     ],
-    note:'2 + 2 по сменам, график 2 / 2. Выход контролируют старшие администраторы Таватуя — старшего спасателя на локации нет.'
+    note:'2 + 2 по сменам, график 2 / 2 — двое на воде каждый день. Выход контролируют старшие администраторы Таватуя: старшего спасателя на локации нет.'
   }
 };
 
+/* ---------- структура ---------- */
 const LOCS = [
   {
     id:'uktus', name:'Уктус', color:'var(--uktus)', bg:'var(--uktus-bg)',
-    meta:'Типовая модель · структура сохраняется полностью',
-    badge:'эталон',
+    meta:'Типовая модель · структура сохраняется полностью', badge:'эталон',
     branches:[
-      {node:'u-sa', role:'Старший администратор', count:2, plan:2, sub:'дежурный менеджер смены',
+      {node:'u-sa', role:'Старший администратор', count:2, plan:2, sub:'дежурный менеджер', per:'1 на смене',
        kids:[
-        {node:'u-adm', role:'Администраторы термаля', count:9, plan:10, sub:'5 + 5 по сменам · 11 ч', vac:1},
-        {node:'u-res', role:'Администраторы резиденции', count:2, plan:2, sub:'1 + 1 по сменам · 11 ч'},
-        {node:'u-night', role:'Ночные администраторы', count:1, plan:2, sub:'1 + 1 по сменам · 11 ч', vac:1}
+        {node:'u-adm', role:'Администраторы термаля', count:9, plan:10, sub:'5 + 5 · 11 ч', per:'5 на смене', vac:1},
+        {node:'u-res', role:'Резиденция', count:2, plan:2, sub:'1 + 1 · 11 ч', per:'1 на смене'},
+        {node:'u-night', role:'Ночные администраторы', count:1, plan:2, sub:'1 + 1 · 11 ч', per:'1 в ночь', vac:1}
       ]},
-      {node:'u-ss', role:'Старший спасатель', count:2, plan:2, sub:'по одному на смену',
+      {node:'u-ss', role:'Старший спасатель', count:2, plan:2, sub:'13,5–14,5 ч', per:'1 на смене',
        kids:[
-        {node:'u-sav', role:'Спасатели', count:8, plan:12, sub:'6 + 6 по сменам · 11 ч'},
-        {node:'u-med', role:'Мед. работники', count:2, plan:2, sub:'1 + 1 по сменам · 11 ч'}
+        {node:'u-sav', role:'Спасатели', count:8, plan:12, sub:'6 + 6 · 11 ч', per:'6 на смене — цель'},
+        {node:'u-med', role:'Мед. работники', count:2, plan:2, sub:'1 + 1 · 11 ч', per:'1 на смене'}
       ]},
-      {node:'u-sp', role:'Старший пармастер', count:1, plan:1, sub:'ст. банщик',
+      {node:'u-sp', role:'Старший пармастер', count:1, plan:1, sub:'ст. банщик', per:'1 на локацию',
        kids:[
-        {node:'u-pm', role:'Пармастеры', count:3, plan:3, sub:'банщики · парения'}
+        {node:'u-pm', role:'Пармастеры', count:3, plan:3, sub:'банщики · парения', per:'1–2 на смене'}
       ]}
     ]
   },
   {
     id:'sysert', name:'Сысерть', color:'var(--sysert)', bg:'var(--sysert-bg)',
-    meta:'Локальное руководство снимается',
-    badge:'без руководителя локации',
-    removed:{role:'Руководитель термального комплекса', who:'ставка закрыта сотрудником локации'},
+    meta:'Локальное руководство снимается', badge:'без руководителя локации',
+    removed:{role:'Руководитель термального комплекса', who:'ставка на локации'},
     branches:[
-      {node:'s-sa', role:'Старший администратор', count:2, plan:2, sub:'верхний уровень на площадке',
+      {node:'s-sa', role:'Старший администратор', count:2, plan:2, sub:'верхний уровень площадки', per:'1 на смене',
        kids:[
-        {node:'s-adm', role:'Администраторы', count:6, plan:6, sub:'3 + 3 по сменам · Д 13 ч / Н 11 ч'},
-        {node:'s-sav', role:'Спасатели', count:4, plan:4, sub:'13 ч · график 2 / 2',
+        {node:'s-adm', role:'Администраторы', count:6, plan:6, sub:'3 + 3 · Д 13 / Н 11', per:'1 день + 1 ночь'},
+        {node:'s-sav', role:'Спасатели', count:4, plan:4, sub:'13 ч · 2 / 2', per:'2 на смене',
          fn:'выход и табеля — ст. спасатель Уктуса'},
-        {node:'s-pm', role:'Банщики (пармастеры)', count:4, plan:4, sub:'парения',
+        {node:'s-pm', role:'Банщики (пармастеры)', count:4, plan:4, sub:'парения', per:'2 на смене',
          fn:'выводы — ст. пармастер Уктуса'}
       ]}
     ]
   },
   {
     id:'tavatuy', name:'Таватуй', color:'var(--tavatuy)', bg:'var(--tavatuy-bg)',
-    meta:'Два ресепшена · спасатели под старшими администраторами',
-    badge:'старшие админы — новые',
+    meta:'Два ресепшена · спасатели под старшими администраторами', badge:'старшие админы — новые',
     branches:[
-      {node:'t-sa', role:'Старший администратор', count:0, plan:2, sub:'две новые позиции', vac:1,
+      {node:'t-sa', role:'Старший администратор', count:0, plan:2, sub:'две новые позиции', per:'1 на смене', vac:1,
        kids:[
-        {node:'t-adm', role:'Ресепшен заселения', count:4, plan:4, sub:'2 + 2 по сменам · 11 ч'},
-        {node:'t-term', role:'Ресепшен термаля', count:2, plan:2, sub:'1 + 1 по сменам · 12 ч'},
-        {node:'t-sav', role:'Спасатели', count:4, plan:4, sub:'2 + 2 по сменам · 12 ч'}
+        {node:'t-adm', role:'Ресепшен заселения', count:4, plan:4, sub:'2 + 2 · 11 ч', per:'2 на смене'},
+        {node:'t-term', role:'Ресепшен термаля', count:2, plan:2, sub:'1 + 1 · 12 ч', per:'1 на смене'},
+        {node:'t-sav', role:'Спасатели', count:4, plan:4, sub:'2 + 2 · 12 ч', per:'2 на смене'}
       ]}
     ]
   }
 ];
 
-const FNLINKS = [
-  {from:'u-ss', to:'s-sav'},
-  {from:'u-sp', to:'s-pm'}
-];
+const FNLINKS = [{from:'u-ss', to:'s-sav'}, {from:'u-sp', to:'s-pm'}];
 
-/* ---------- отрисовка схемы ---------- */
-
+/* ---------- схема ---------- */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const numOf = b => b.count === b.plan ? String(b.count) : b.count + ' / ' + b.plan;
 
 function nodeHTML(b, color){
-  const vac = b.vac ? ' <span class="vac">•</span>' : '';
-  const num = b.count === b.plan ? b.count : b.count + ' / ' + b.plan;
   return '<button class="node" data-node="' + b.node + '" data-open="' + b.node + '">' +
-    '<span class="nr"><span>' + esc(b.role) + vac + '</span>' +
-    '<span class="cnt" style="background:' + color + '">' + num + '</span></span>' +
+    '<span class="nr"><span>' + esc(b.role) + (b.vac ? ' <span class="vac">•</span>' : '') + '</span>' +
+    '<span class="cnt" style="background:' + color + '">' + numOf(b) + '</span></span>' +
     '<span class="nn">' + esc(b.sub) + '</span>' +
-    '<span class="open">Открыть табель →</span></button>';
+    '<span class="shiftbadge">' + esc(b.per) + '</span></button>';
 }
-
-function kidHTML(k, color){
-  const vac = k.vac ? ' <span class="vac">•</span>' : '';
-  const num = k.count === k.plan ? k.count : k.count + ' / ' + k.plan;
-  return '<button class="kid" data-node="' + k.node + '" data-open="' + k.node + '">' +
-    '<span class="kr"><span>' + esc(k.role) + vac + '</span><span class="kc">' + num + '</span></span>' +
+function kidHTML(k){
+  return '<div class="kw"><button class="kid" data-node="' + k.node + '" data-open="' + k.node + '">' +
+    '<span class="kr"><span>' + esc(k.role) + (k.vac ? ' <span class="vac">•</span>' : '') + '</span>' +
+    '<span class="kc">' + numOf(k) + '</span></span>' +
     '<span class="kn">' + esc(k.sub) + '</span>' +
+    '<span class="shiftbadge">' + esc(k.per) + '</span>' +
     (k.fn ? '<span class="fnbadge">⇠ ' + esc(k.fn) + '</span>' : '') +
-    '</button>';
+    '</button></div>';
 }
 
 document.getElementById('locs').innerHTML = LOCS.map(L => {
@@ -569,37 +610,28 @@ document.getElementById('locs').innerHTML = LOCS.map(L => {
     ? '<div class="removed"><b>' + esc(L.removed.role) + ' — ' + esc(L.removed.who) + '</b>ставка убирается из структуры</div>'
     : '';
   const br = L.branches.map(b =>
-    '<div class="branch" style="border-left-color:' + L.color + '">' +
-      nodeHTML(b, L.color) +
-      '<div class="kids">' + b.kids.map(k => kidHTML(k, L.color)).join('') + '</div>' +
-    '</div>').join('');
+    '<div class="branch">' + nodeHTML(b, L.color) +
+    '<div class="kids">' + b.kids.map(kidHTML).join('') + '</div></div>').join('');
   return '<div class="loc card" data-loc="' + L.id + '">' +
     '<div class="lochead" style="background:' + L.bg + '">' +
       '<div class="locname"><i class="dot" style="background:' + L.color + '"></i>' + esc(L.name) + '</div>' +
       '<div class="locmeta">' + esc(L.meta) + '</div>' +
       '<span class="locbadge" style="color:' + L.color + ';background:var(--panel)">' + esc(L.badge) + '</span>' +
-    '</div>' +
-    '<div class="locbody">' + rm + br + '</div></div>';
+    '</div><div class="locbody">' + rm + br + '</div></div>';
 }).join('');
 
 /* ---------- KPI и сводка ---------- */
-
-let planTotal = 1, factTotal = 1, seniorTotal = 0; // +1 — руководитель СПиР
+let planTotal = 1, factTotal = 1, seniorTotal = 0;   // +1 — руководитель СПиР
 const sumRows = [];
 LOCS.forEach(L => {
   let lp = 0, lf = 0;
   L.branches.forEach(b => {
     lp += b.plan; lf += b.count; seniorTotal += b.plan;
     sumRows.push({loc:L.name, role:b.role, plan:b.plan, fact:b.count, senior:1});
-    b.kids.forEach(k => {
-      lp += k.plan; lf += k.count;
-      sumRows.push({loc:L.name, role:k.role, plan:k.plan, fact:k.count});
-    });
+    b.kids.forEach(k => { lp += k.plan; lf += k.count; sumRows.push({loc:L.name, role:k.role, plan:k.plan, fact:k.count}); });
   });
-  L.planSum = lp; L.factSum = lf;
-  planTotal += lp; factTotal += lf;
+  L.planSum = lp; L.factSum = lf; planTotal += lp; factTotal += lf;
 });
-
 document.getElementById('k-total').textContent = planTotal;
 document.getElementById('k-fact').textContent = factTotal;
 document.getElementById('k-fact-h').textContent = 'не закрыто ' + (planTotal - factTotal) + ' позиций';
@@ -614,24 +646,19 @@ document.getElementById('k-senior').textContent = seniorTotal;
       const d = r.fact - r.plan;
       h += '<tr><td>' + (r.senior ? '' : '&nbsp;&nbsp;&nbsp;') + '</td><td>' + esc(r.role) + '</td>' +
            '<td class="num">' + r.plan + '</td><td class="num">' + r.fact + '</td>' +
-           '<td class="num" style="color:' + (d < 0 ? 'var(--coral)' : 'var(--mute)') + '">' +
-           (d === 0 ? '—' : d) + '</td></tr>';
+           '<td class="num" style="color:' + (d < 0 ? 'var(--coral)' : 'var(--mute)') + '">' + (d === 0 ? '—' : d) + '</td></tr>';
     });
     h += '<tr class="total"><td></td><td>Итого ' + esc(L.name) + '</td><td class="num">' + L.planSum +
          '</td><td class="num">' + L.factSum + '</td><td class="num">' +
          (L.factSum - L.planSum === 0 ? '—' : L.factSum - L.planSum) + '</td></tr>';
   });
-  h += '<tr class="total"><td></td><td>Руководитель СПиР (на три локации)</td>' +
-       '<td class="num">1</td><td class="num">1</td><td class="num">—</td></tr>';
+  h += '<tr class="total"><td></td><td>Руководитель СПиР (на три локации)</td><td class="num">1</td><td class="num">1</td><td class="num">—</td></tr>';
   h += '<tr class="total"><td></td><td>Всего по трём локациям</td><td class="num">' + planTotal +
-       '</td><td class="num">' + factTotal + '</td><td class="num" style="color:var(--coral)">' +
-       (factTotal - planTotal) + '</td></tr>';
-  h += '</tbody>';
+       '</td><td class="num">' + factTotal + '</td><td class="num" style="color:var(--coral)">' + (factTotal - planTotal) + '</td></tr></tbody>';
   document.getElementById('sumtable').innerHTML = h;
 })();
 
 /* ---------- связи ---------- */
-
 const chart = document.getElementById('chart');
 const svg = document.getElementById('svg');
 const svgtop = document.getElementById('svgtop');
@@ -649,73 +676,58 @@ function locBox(id){
   const c = chart.getBoundingClientRect(), r = el.getBoundingClientRect();
   return {x:r.left - c.left, y:r.top - c.top, w:r.width, h:r.height};
 }
-
 function path(d, cls, color, dash){
   const p = document.createElementNS(NS, 'path');
-  p.setAttribute('d', d);
-  p.setAttribute('fill', 'none');
-  p.setAttribute('stroke', color);
-  p.setAttribute('stroke-width', '2');
+  p.setAttribute('d', d); p.setAttribute('fill', 'none');
+  p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2');
   p.setAttribute('stroke-linecap', 'round');
   if (dash) p.setAttribute('stroke-dasharray', '6 5');
   if (cls) p.setAttribute('class', cls);
   p.style.transition = 'opacity .2s';
   return p;
 }
-
 function draw(){
-  svg.innerHTML = '';
-  svgtop.innerHTML = '';
+  svg.innerHTML = ''; svgtop.innerHTML = '';
   const head = box('head');
   if (!head) return;
   const cs = getComputedStyle(document.documentElement);
-  const lineCol = cs.getPropertyValue('--line').trim() || '#dbe6f3';
   const fnCol = cs.getPropertyValue('--coral').trim() || '#d97f36';
-
   const hx = head.x + head.w / 2, hy = head.y + head.h;
 
   LOCS.forEach(L => {
     const b = locBox(L.id);
     if (!b) return;
-    const tx = b.x + b.w / 2, ty = b.y;
-    const mid = hy + (ty - hy) * 0.55;
-    const col = cs.getPropertyValue('--' + L.id).trim() || lineCol;
-    svg.appendChild(path(
-      'M ' + hx + ' ' + hy + ' C ' + hx + ' ' + mid + ', ' + tx + ' ' + mid + ', ' + tx + ' ' + ty,
-      '', col, false));
+    const tx = b.x + b.w / 2, ty = b.y, mid = hy + (ty - hy) * 0.55;
+    const col = cs.getPropertyValue('--' + L.id).trim() || '#dbe6f3';
+    svg.appendChild(path('M ' + hx + ' ' + hy + ' C ' + hx + ' ' + mid + ', ' + tx + ' ' + mid + ', ' + tx + ' ' + ty, '', col, false));
     const dot = document.createElementNS(NS, 'circle');
-    dot.setAttribute('cx', tx); dot.setAttribute('cy', ty);
-    dot.setAttribute('r', '3.5'); dot.setAttribute('fill', col);
+    dot.setAttribute('cx', tx); dot.setAttribute('cy', ty); dot.setAttribute('r', '3.5'); dot.setAttribute('fill', col);
     svg.appendChild(dot);
   });
 
   FNLINKS.forEach(l => {
     const a = box(l.from), z = box(l.to);
     if (!a || !z) return;
-    let d;
-    if (z.x > a.x + a.w - 10) {
-      const x1 = a.x + a.w, y1 = a.y + a.h / 2;
-      const x2 = z.x, y2 = z.y + z.h / 2;
+    let d, ex, ey;
+    if (z.x > a.x + a.w - 10){
+      const x1 = a.x + a.w, y1 = a.y + a.h / 2, x2 = z.x, y2 = z.y + z.h / 2;
       const dx = Math.max(40, (x2 - x1) * 0.55);
       d = 'M ' + x1 + ' ' + y1 + ' C ' + (x1 + dx) + ' ' + y1 + ', ' + (x2 - dx) + ' ' + y2 + ', ' + x2 + ' ' + y2;
+      ex = x2; ey = y2;
     } else {
-      const x1 = a.x + a.w / 2, y1 = a.y + a.h;
-      const x2 = z.x + z.w / 2, y2 = z.y;
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = z.x + z.w / 2, y2 = z.y;
       const dy = Math.max(30, (y2 - y1) * 0.4);
       d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 + dy) + ', ' + x2 + ' ' + (y2 - dy) + ', ' + x2 + ' ' + y2;
+      ex = x2; ey = y2;
     }
     svgtop.appendChild(path(d, 'fnlink', fnCol, true));
-    const head2 = document.createElementNS(NS, 'circle');
-    head2.setAttribute('class', 'fnlink');
-    head2.setAttribute('r', '4');
-    head2.setAttribute('fill', fnCol);
-    if (z.x > a.x + a.w - 10) { head2.setAttribute('cx', z.x); head2.setAttribute('cy', z.y + z.h / 2); }
-    else { head2.setAttribute('cx', z.x + z.w / 2); head2.setAttribute('cy', z.y); }
-    head2.style.transition = 'opacity .2s';
-    svgtop.appendChild(head2);
+    const h2 = document.createElementNS(NS, 'circle');
+    h2.setAttribute('class', 'fnlink'); h2.setAttribute('r', '4'); h2.setAttribute('fill', fnCol);
+    h2.setAttribute('cx', ex); h2.setAttribute('cy', ey);
+    h2.style.transition = 'opacity .2s';
+    svgtop.appendChild(h2);
   });
 }
-
 draw();
 window.addEventListener('resize', draw);
 if (window.ResizeObserver) new ResizeObserver(draw).observe(chart);
@@ -728,9 +740,49 @@ tgl.addEventListener('click', () => {
   chart.classList.toggle('nofunc', on);
 });
 
-/* ---------- модалка табеля ---------- */
-
+/* ---------- модалка ---------- */
 const ov = document.getElementById('ov');
+
+function buildGrid(t){
+  const people = t.rows.filter(r => !r.grp && r.sc);
+  if (!people.length) return {html:'', legend:''};
+
+  const cells = people.map(p => cellVals(p.sc));
+  const hasNight = people.some(p => Array.isArray(p.sc.v) ? p.sc.v.indexOf('Н') >= 0 : p.sc.v === 'Н');
+
+  let h = '<thead><tr><th class="nm">' + esc(t.period) + '</th>';
+  for (let d = 1; d <= DAYS; d++) h += '<th class="d' + (isWE(d) ? ' we' : '') + '">' + d + '</th>';
+  h += '</tr><tr><th class="nm" style="font-weight:600">Позиция</th>';
+  for (let d = 1; d <= DAYS; d++) h += '<th class="d' + (isWE(d) ? ' we' : '') + '">' + DOW[dowOf(d)] + '</th>';
+  h += '</tr></thead><tbody>';
+
+  people.forEach((p, i) => {
+    h += '<tr' + (p.vac ? ' class="vacrow"' : '') + '><td class="nm">' + esc(p.fio) + (p.vac ? ' •' : '') + '</td>';
+    for (let d = 1; d <= DAYS; d++){
+      const v = cells[i][d];
+      const cls = 'd' + (isWE(d) ? ' we' : '') + (v ? (v === 'Н' ? ' nt' : ' on') : '');
+      h += '<td class="' + cls + '">' + (v ? esc(v) : '') + '</td>';
+    }
+    h += '</tr>';
+  });
+
+  h += '<tr class="cov"><td class="nm">На смене, чел.</td>';
+  for (let d = 1; d <= DAYS; d++){
+    let n = 0;
+    people.forEach((p, i) => { if (cells[i][d] && !p.vac) n++; });
+    const low = t.need && n < t.need;
+    h += '<td class="d' + (low ? ' low' : '') + '">' + n + '</td>';
+  }
+  h += '</tr></tbody>';
+
+  let legend = '<span><i class="sw" style="background:var(--grid-on)"></i> смена</span>';
+  if (hasNight) legend += '<span><i class="sw" style="background:var(--grid-night)"></i> ночь</span>';
+  legend += '<span><i class="sw" style="background:var(--grid-we)"></i> суббота и воскресенье</span>';
+  if (t.need) legend += '<span><i class="sw" style="background:var(--bad-bg)"></i> меньше нормы (' + t.need + ' чел.)</span>';
+  legend += '<span style="color:var(--coral)">• вакансия — в строку «на смене» не входит</span>';
+  legend += '<span>Ритм графика взят из табеля; точные даты выходов сверяйте с оригиналом.</span>';
+  return {html:h, legend};
+}
 
 function openT(id){
   const t = T[id];
@@ -740,18 +792,23 @@ function openT(id){
 
   const people = t.rows.filter(r => !r.grp);
   const vacs = people.filter(r => r.vac).length;
+  const unks = people.filter(r => r.unk).length;
   let chips = '<span class="chip">Человек: <b>' + (people.length - vacs) + '</b></span>' +
               '<span class="chip">Строк в табеле: <b>' + people.length + '</b></span>';
-  const unks = people.filter(r => r.unk).length;
+  if (t.need) chips += '<span class="chip">Норма на смену: <b>' + t.need + '</b></span>';
   if (vacs) chips += '<span class="chip" style="color:var(--coral)">Не закрыто: <b>' + vacs + '</b></span>';
   document.getElementById('mchips').innerHTML = chips;
+
+  const g = buildGrid(t);
+  document.getElementById('mgrid').innerHTML = g.html;
+  document.getElementById('glegend').innerHTML = g.legend;
 
   let h = '<thead><tr><th class="num">№</th>';
   t.cols.forEach(c => { h += '<th' + (c[2] ? ' class="num"' : '') + '>' + esc(c[1]) + '</th>'; });
   h += '</tr></thead><tbody>';
   let i = 0;
   t.rows.forEach(r => {
-    if (r.grp) { h += '<tr class="grp"><td colspan="' + (t.cols.length + 1) + '">' + esc(r.grp) + '</td></tr>'; return; }
+    if (r.grp){ h += '<tr class="grp"><td colspan="' + (t.cols.length + 1) + '">' + esc(r.grp) + '</td></tr>'; return; }
     i++;
     h += '<tr><td class="num" style="color:var(--mute)">' + i + '</td>';
     t.cols.forEach((c, j) => {
@@ -761,19 +818,27 @@ function openT(id){
     });
     h += '</tr>';
   });
-  h += '</tbody>';
-  document.getElementById('mtable').innerHTML = h;
+  document.getElementById('mtable').innerHTML = h + '</tbody>';
   document.getElementById('mnote').textContent = t.note;
 
+  showPane('g');
   ov.classList.add('on');
   document.body.style.overflow = 'hidden';
 }
 
+function showPane(which){
+  ['g','r'].forEach(k => {
+    document.getElementById('pane-' + k).classList.toggle('on', k === which);
+    document.getElementById('tab-' + k).setAttribute('aria-selected', String(k === which));
+  });
+}
 function closeT(){ ov.classList.remove('on'); document.body.style.overflow = ''; }
 
+document.getElementById('tab-g').addEventListener('click', () => showPane('g'));
+document.getElementById('tab-r').addEventListener('click', () => showPane('r'));
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-open]');
-  if (b) { openT(b.getAttribute('data-open')); return; }
+  if (b){ openT(b.getAttribute('data-open')); return; }
   if (e.target === ov || e.target.id === 'mx') closeT();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeT(); });
