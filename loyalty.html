@@ -297,6 +297,39 @@
   .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent3)); transition: width 0.4s ease; }
   .bar-val { font-size: 0.8rem; color: var(--text); width: 32px; text-align: right; flex-shrink: 0; }
 
+  /* Регистрации: рост базы + по дням (SVG-графики) */
+  .chart-card.wide { grid-column: 1 / -1; }
+  .chart-card .chart-sub { display: block; font-size: 0.78rem; color: var(--text2); margin-top: -8px; margin-bottom: 14px; text-transform: none; letter-spacing: normal; }
+  .reg-legend { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+  .reg-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text2); }
+  .reg-legend-swatch { width: 11px; height: 11px; border-radius: 3px; background: rgba(200,169,126,.22); border: 1px solid var(--accent2); flex: none; }
+  .reg-legend-line { width: 14px; height: 2px; background: var(--accent); border-radius: 2px; flex: none; }
+  .reg-chart-wrap { position: relative; width: 100%; }
+  .reg-chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .reg-grid-line { stroke: rgba(255,255,255,.06); stroke-width: 1; }
+  .reg-axis-label { fill: var(--text2); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .reg-area { fill: var(--accent); opacity: .12; }
+  .reg-line { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+  .reg-end-dot { fill: var(--accent3); stroke: var(--surface); stroke-width: 2.5; }
+  .reg-end-label { font-size: 14px; font-weight: 700; fill: var(--accent3); }
+  .reg-ann-dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+  .reg-ann-label { font-size: 10.5px; fill: var(--text2); }
+  .reg-ann-label .num { fill: var(--accent3); font-weight: 700; }
+  .reg-crosshair { stroke: var(--text2); stroke-width: 1; stroke-dasharray: 3 3; pointer-events: none; opacity: 0; }
+  .reg-hover-dot { fill: var(--accent3); stroke: var(--surface); stroke-width: 2; pointer-events: none; opacity: 0; }
+  .reg-bar { fill: rgba(200,169,126,.30); transition: fill .1s; }
+  .reg-bar.hovered { fill: var(--accent); }
+  .reg-ma-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .reg-tooltip {
+    position: absolute; pointer-events: none; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 11px; font-size: 0.76rem; color: var(--text2);
+    box-shadow: 0 6px 20px rgba(0,0,0,.4); opacity: 0; transform: translate(-50%, calc(-100% - 10px));
+    transition: opacity .08s; white-space: nowrap; z-index: 10;
+  }
+  .reg-tooltip.visible { opacity: 1; }
+  .reg-tooltip .tt-date { color: var(--text); font-weight: 600; margin-bottom: 3px; }
+  .reg-tooltip .tt-val { color: var(--accent3); font-weight: 700; }
+
   /* Rating stars */
   .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .rating-label { font-size: 0.8rem; color: var(--text2); width: 130px; flex-shrink: 0; }
@@ -616,7 +649,7 @@
 <script>
 // ── Pre-loaded data (injected by publish script) ──────────────────────────────
 window.__preloaded = {
-  updatedAt: '23.09.2026 13:32',
+  updatedAt: '23.09.2026 14:32',
   guests:  `ID,Имя,Телефон,Дата рождения,Город,Telegram ID,QR-код,Дата регистрации,Активен
 1,Klimenko Daniil,89047298610,2001-03-26,,1267746004,2Y8QTFMK,2026-05-25 10:53:26,Да
 4,Тест Тест Тест,89826603432,2001-03-15,,,KQ3V8WSL,2026-05-25 13:40:40,Нет
@@ -3679,16 +3712,28 @@ function buildAnalytics() {
       cities.map(([c,n]) => bar(esc(c), n, maxC)).join('') + `</div></div>`;
   }
 
-  // ── Регистрации по месяцам (вся история) ──
+  // ── Регистрации гостей: рост базы + по дням (вся история) ──
   if (data.guests.length) {
-    const byRegMonth = {};
-    data.guests.forEach(r => { const m = (r[7]||'').slice(0,7); if (m) byRegMonth[m] = (byRegMonth[m]||0)+1; });
-    const regMonths = Object.keys(byRegMonth).sort();
-    if (regMonths.length) {
-      const maxR = Math.max(...Object.values(byRegMonth), 1);
-      html += `<div class="chart-card"><h3>Регистрации по месяцам</h3><div class="bar-list">` +
-        regMonths.map(m => bar(formatMonth(m), byRegMonth[m], maxR)).join('') + `</div></div>`;
-    }
+    html += `<div class="chart-card wide">
+      <h3>Рост базы гостей</h3>
+      <span class="chart-sub">Накопительно · с запуска по сегодня · наведите курсор для деталей по дню</span>
+      <div class="reg-chart-wrap">
+        <svg id="regGrowthChart" viewBox="0 0 1000 260" preserveAspectRatio="none"></svg>
+        <div class="reg-tooltip" id="regGrowthTooltip"></div>
+      </div>
+    </div>
+    <div class="chart-card wide">
+      <h3>Регистрации по дням</h3>
+      <span class="chart-sub">Новые гости за день</span>
+      <div class="reg-legend">
+        <span class="reg-legend-item"><span class="reg-legend-swatch"></span>Регистраций в день</span>
+        <span class="reg-legend-item"><span class="reg-legend-line"></span>Скользящее среднее, 7 дней</span>
+      </div>
+      <div class="reg-chart-wrap">
+        <svg id="regDailyChart" viewBox="0 0 1000 220" preserveAspectRatio="none"></svg>
+        <div class="reg-tooltip" id="regDailyTooltip"></div>
+      </div>
+    </div>`;
   }
 
   // ── Опросы: средние оценки + Q3 (по периоду) ──
@@ -3723,6 +3768,221 @@ function buildAnalytics() {
 
   if (!html) html = '<div class="no-data" style="grid-column:1/-1">Нет данных за выбранный период</div>';
   document.getElementById('analytics-grid').innerHTML = html;
+  if (data.guests.length) renderRegistrationCharts(data.guests);
+}
+
+// ── Регистрации гостей: SVG-графики (рост базы + по дням) ──────────────────────
+function renderRegistrationCharts(guests) {
+  const byDate = {};
+  guests.forEach(r => {
+    const d = (r[7] || '').slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) byDate[d] = (byDate[d] || 0) + 1;
+  });
+  const dateKeys = Object.keys(byDate).sort();
+  if (!dateKeys.length) return;
+
+  const toUTC = iso => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  const fromUTC = ms => {
+    const d = new Date(ms);
+    return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0');
+  };
+  const now = new Date();
+  const todayISO = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+  const DAY = 86400000;
+  const startMs = toUTC(dateKeys[0]);
+  const endMs = Math.max(toUTC(todayISO), toUTC(dateKeys[dateKeys.length - 1]));
+  const days = [];
+  let cum = 0;
+  for (let t = startMs; t <= endMs; t += DAY) {
+    const iso = fromUTC(t);
+    const count = byDate[iso] || 0;
+    cum += count;
+    days.push({ date: iso, count, cum });
+  }
+  if (days.length < 2) return;
+
+  const ma7 = days.map((d, i) => {
+    const s = Math.max(0, i - 6);
+    const slice = days.slice(s, i + 1);
+    return slice.reduce((a, b) => a + b.count, 0) / slice.length;
+  });
+
+  renderRegGrowthSVG(days);
+  renderRegDailySVG(days, ma7);
+}
+
+function fmtRegDay(iso, withYear) {
+  const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const [y, m, d] = iso.split('-').map(Number);
+  return d + ' ' + MONTHS_GEN[m - 1] + (withYear ? ' ' + y : '');
+}
+
+function regNiceStep(max, steps) {
+  const raw = (max / steps) || 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const nice = norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10;
+  return nice * mag;
+}
+
+function renderRegGrowthSVG(days) {
+  const svg = document.getElementById('regGrowthChart');
+  const tooltip = document.getElementById('regGrowthTooltip');
+  if (!svg || !tooltip) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const W = 1000, H = 260, padL = 46, padR = 14, padT = 16, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const n = days.length;
+  const maxCum = Math.max(days[n - 1].cum, 1);
+  const stepV = regNiceStep(maxCum, 4);
+  const yMax = Math.ceil(maxCum / stepV) * stepV;
+  const x = i => padL + (i / (n - 1)) * plotW;
+  const y = v => padT + plotH - (v / yMax) * plotH;
+
+  for (let v = 0; v <= yMax + 0.01; v += stepV) {
+    const gy = y(v);
+    svg.appendChild(el('line', { x1: padL, x2: W - padR, y1: gy, y2: gy, class: 'reg-grid-line' }));
+    const t = el('text', { x: padL - 8, y: gy + 4, class: 'reg-axis-label', 'text-anchor': 'end' });
+    t.textContent = Math.round(v).toLocaleString('ru-RU');
+    svg.appendChild(t);
+  }
+  let lastMonth = '';
+  days.forEach((d, i) => {
+    const m = d.date.slice(0, 7);
+    if (m !== lastMonth) {
+      lastMonth = m;
+      const t = el('text', { x: x(i), y: H - 8, class: 'reg-axis-label', 'text-anchor': 'start' });
+      t.textContent = formatMonth(m).split(' ')[0];
+      svg.appendChild(t);
+    }
+  });
+
+  let areaD = 'M ' + x(0) + ' ' + y(0) + ' ';
+  let lineD = 'M ' + x(0) + ' ' + y(days[0].cum) + ' ';
+  days.forEach((d, i) => { areaD += 'L ' + x(i) + ' ' + y(d.cum) + ' '; if (i > 0) lineD += 'L ' + x(i) + ' ' + y(d.cum) + ' '; });
+  areaD += 'L ' + x(n - 1) + ' ' + y(0) + ' Z';
+  svg.appendChild(el('path', { d: areaD, class: 'reg-area' }));
+  svg.appendChild(el('path', { d: lineD, class: 'reg-line' }));
+
+  const peak = days.reduce((a, b) => (b.count > a.count ? b : a), days[0]);
+  const peakI = days.indexOf(peak);
+  if (peak.count > 0 && peakI < n - 1) {
+    svg.appendChild(el('circle', { cx: x(peakI), cy: y(peak.cum), r: 4, class: 'reg-ann-dot' }));
+    const anchor = peakI < n * 0.15 ? 'start' : peakI > n * 0.85 ? 'end' : 'middle';
+    const lbl = el('text', { x: x(peakI), y: y(peak.cum) - 12, class: 'reg-ann-label', 'text-anchor': anchor });
+    lbl.innerHTML = '<tspan class="num">+' + peak.count + '</tspan> · ' + fmtRegDay(peak.date);
+    svg.appendChild(lbl);
+  }
+
+  const lastI = n - 1;
+  svg.appendChild(el('circle', { cx: x(lastI), cy: y(days[lastI].cum), r: 4.5, class: 'reg-end-dot' }));
+  const endLabel = el('text', { x: x(lastI) - 8, y: y(days[lastI].cum) - 12, class: 'reg-end-label', 'text-anchor': 'end' });
+  endLabel.textContent = days[lastI].cum.toLocaleString('ru-RU');
+  svg.appendChild(endLabel);
+
+  const crosshair = el('line', { x1: 0, x2: 0, y1: padT, y2: H - padB, class: 'reg-crosshair' });
+  const hoverDot = el('circle', { r: 4.5, class: 'reg-hover-dot' });
+  svg.appendChild(crosshair);
+  svg.appendChild(hoverDot);
+  const hitRect = el('rect', { x: padL, y: padT, width: plotW, height: plotH, fill: 'transparent' });
+  svg.appendChild(hitRect);
+
+  function show(i) {
+    const d = days[i];
+    crosshair.setAttribute('x1', x(i)); crosshair.setAttribute('x2', x(i)); crosshair.style.opacity = 1;
+    hoverDot.setAttribute('cx', x(i)); hoverDot.setAttribute('cy', y(d.cum)); hoverDot.style.opacity = 1;
+    tooltip.innerHTML = '<div class="tt-date">' + fmtRegDay(d.date, true) + '</div>' +
+      '<div>Всего гостей: <span class="tt-val">' + d.cum.toLocaleString('ru-RU') + '</span></div>' +
+      '<div style="color:var(--text2)">Новых в этот день: ' + d.count + '</div>';
+    const rect = svg.getBoundingClientRect();
+    const wrapRect = svg.parentElement.getBoundingClientRect();
+    const px = rect.left + (x(i) / W) * rect.width;
+    const py = rect.top + (y(d.cum) / H) * rect.height;
+    tooltip.style.left = (px - wrapRect.left) + 'px';
+    tooltip.style.top = (py - wrapRect.top) + 'px';
+    tooltip.classList.add('visible');
+  }
+  function hide() { crosshair.style.opacity = 0; hoverDot.style.opacity = 0; tooltip.classList.remove('visible'); }
+  hitRect.addEventListener('pointermove', e => {
+    const rect = svg.getBoundingClientRect();
+    const relX = ((e.clientX - rect.left) / rect.width) * W;
+    let i = Math.round(((relX - padL) / plotW) * (n - 1));
+    i = Math.max(0, Math.min(n - 1, i));
+    show(i);
+  });
+  hitRect.addEventListener('pointerleave', hide);
+}
+
+function renderRegDailySVG(days, ma7) {
+  const svg = document.getElementById('regDailyChart');
+  const tooltip = document.getElementById('regDailyTooltip');
+  if (!svg || !tooltip) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const W = 1000, H = 220, padL = 36, padR = 14, padT = 14, padB = 22;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const n = days.length;
+  const maxCount = Math.max(...days.map(d => d.count), 1);
+  const stepV = regNiceStep(maxCount, 3);
+  const yMax = Math.ceil(maxCount / stepV) * stepV;
+  const colW = plotW / n;
+  const xC = i => padL + i * colW + colW / 2;
+  const y = v => padT + plotH - (v / yMax) * plotH;
+
+  for (let v = 0; v <= yMax + 0.01; v += stepV) {
+    const gy = y(v);
+    svg.appendChild(el('line', { x1: padL, x2: W - padR, y1: gy, y2: gy, class: 'reg-grid-line' }));
+    const t = el('text', { x: padL - 8, y: gy + 4, class: 'reg-axis-label', 'text-anchor': 'end' });
+    t.textContent = Math.round(v).toLocaleString('ru-RU');
+    svg.appendChild(t);
+  }
+  let lastMonth = '';
+  days.forEach((d, i) => {
+    const m = d.date.slice(0, 7);
+    if (m !== lastMonth) {
+      lastMonth = m;
+      const t = el('text', { x: padL + i * colW, y: H - 6, class: 'reg-axis-label', 'text-anchor': 'start' });
+      t.textContent = formatMonth(m).split(' ')[0];
+      svg.appendChild(t);
+    }
+  });
+
+  const barW = Math.max(1.2, colW * 0.62);
+  const bars = [];
+  days.forEach((d, i) => {
+    const bh = (d.count / yMax) * plotH;
+    const bar = el('rect', { x: xC(i) - barW / 2, y: y(d.count), width: barW, height: Math.max(0, bh), rx: Math.min(2, barW / 2), class: 'reg-bar' });
+    svg.appendChild(bar);
+    bars.push(bar);
+  });
+
+  let maD = '';
+  ma7.forEach((v, i) => { maD += (i === 0 ? 'M' : 'L') + ' ' + xC(i) + ' ' + y(v) + ' '; });
+  svg.appendChild(el('path', { d: maD, class: 'reg-ma-line' }));
+
+  days.forEach((d, i) => {
+    const hit = el('rect', { x: padL + i * colW, y: padT, width: colW, height: plotH, fill: 'transparent' });
+    svg.appendChild(hit);
+    hit.addEventListener('pointerenter', () => {
+      bars.forEach((b, bi) => b.classList.toggle('hovered', bi === i));
+      tooltip.innerHTML = '<div class="tt-date">' + fmtRegDay(d.date, true) + '</div>' +
+        '<div>Регистраций: <span class="tt-val">' + d.count + '</span></div>' +
+        '<div style="color:var(--text2)">Среднее (7 дн.): ' + ma7[i].toFixed(1).replace('.', ',') + '</div>';
+      const rect = svg.getBoundingClientRect();
+      const wrapRect = svg.parentElement.getBoundingClientRect();
+      const px = rect.left + (xC(i) / W) * rect.width;
+      const py = rect.top + (y(Math.max(d.count, ma7[i])) / H) * rect.height;
+      tooltip.style.left = (px - wrapRect.left) + 'px';
+      tooltip.style.top = (py - wrapRect.top) + 'px';
+      tooltip.classList.add('visible');
+    });
+    hit.addEventListener('pointerleave', () => {
+      bars.forEach(b => b.classList.remove('hovered'));
+      tooltip.classList.remove('visible');
+    });
+  });
 }
 
 // ── Экспорт текущей (отфильтрованной) вкладки в CSV (Excel) ────────────────────
@@ -3894,6 +4154,6 @@ function formatMonth(m) {
 </script>
 
 <!-- BADEN_CHAT_WIDGET -->
-<script src="chat-widget.js?v=202609231332" data-report="loyalty"></script>
+<script src="chat-widget.js?v=202609231432" data-report="loyalty"></script>
 </body>
 </html>
